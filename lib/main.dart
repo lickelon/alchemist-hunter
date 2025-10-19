@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/screens/dungeon_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -52,7 +53,9 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               Tab(child: Column(children: [Icon(Icons.spa), Text('Weapons')])),
-              Tab(child: Column(children: [Icon(Icons.shield), Text('Armor')])),
+              Tab(
+                child: Column(children: [Icon(Icons.shield), Text('Dungeons')]),
+              ),
               Tab(child: Column(children: [Icon(Icons.pets), Text('Pets')])),
             ],
           ),
@@ -78,7 +81,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
             Center(child: Text('Page 2')),
-            Center(child: Text('Page 3')),
+            Center(child: DungeonScreen()),
             Center(child: Text('Page 4')),
           ],
         ),
