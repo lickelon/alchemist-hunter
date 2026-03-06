@@ -1,62 +1,34 @@
-import 'package:alchemist_hunter/common/widgets/list_card.dart';
+import 'package:alchemist_hunter/features/game/providers/game_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DungeonScreen extends StatefulWidget {
+class DungeonScreen extends ConsumerWidget {
   const DungeonScreen({super.key});
 
   @override
-  State<DungeonScreen> createState() => _DungeonScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<String> stages = ref.watch(stageListProvider);
+    final game = ref.watch(gameControllerProvider);
 
-class _DungeonScreenState extends State<DungeonScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return const DungeonListView();
-  }
-}
-
-class DungeonListView extends StatefulWidget {
-  const DungeonListView({super.key});
-
-  @override
-  State<DungeonListView> createState() => _DungeonListViewState();
-}
-
-class _DungeonListViewState extends State<DungeonListView> {
-  @override
-  Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return DungeonListCard(
-          dungeonName: 'Dungeon Name ${index + 1}',
-          dungeonDescription: 'Dungeon Description ${index + 1}',
+      itemCount: stages.length,
+      itemBuilder: (BuildContext context, int index) {
+        final String stage = stages[index];
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: ListTile(
+            leading: const Icon(Icons.shield),
+            title: Text(stage),
+            subtitle: Text('Auto battle / Gold: ${game.gold}'),
+            trailing: FilledButton(
+              onPressed: () {
+                ref.read(gameControllerProvider.notifier).runAutoBattle(stage);
+              },
+              child: const Text('Run'),
+            ),
+          ),
         );
       },
-    );
-  }
-}
-
-class DungeonListCard extends StatefulWidget {
-  final String dungeonName;
-  final String dungeonDescription;
-  const DungeonListCard({
-    super.key,
-    required this.dungeonName,
-    required this.dungeonDescription,
-  });
-
-  @override
-  State<DungeonListCard> createState() => _DungeonListCardState();
-}
-
-class _DungeonListCardState extends State<DungeonListCard> {
-  @override
-  Widget build(BuildContext context) {
-    return ListCard(
-      name: widget.dungeonName,
-      description: widget.dungeonDescription,
-      buttonText: 'Enter',
     );
   }
 }
