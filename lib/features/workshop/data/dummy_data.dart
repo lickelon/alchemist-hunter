@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/features/game/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 class DummyData {
   static final List<TraitUnit> traits = <TraitUnit>[
@@ -84,6 +84,43 @@ class DummyData {
     ),
   );
 
+  static final List<PotionRecipeRule> potionRecipeRules = <PotionRecipeRule>[
+    const PotionRecipeRule(
+      id: 'r_hp_atk',
+      requiredTraits: <String>{'t_hp', 't_atk'},
+      resultPotionId: 'p_3',
+    ),
+    const PotionRecipeRule(
+      id: 'r_def_spd',
+      requiredTraits: <String>{'t_def', 't_spd'},
+      resultPotionId: 'p_4',
+    ),
+  ];
+
+  static final List<PotionRecipeBranchRule> potionRecipeBranchRules = <PotionRecipeBranchRule>[
+    const PotionRecipeBranchRule(
+      recipeId: 'r_hp_atk',
+      dominantTrait: 't_hp',
+      ratioGapMin: 0.05,
+      branchedPotionId: 'p_1',
+    ),
+    const PotionRecipeBranchRule(
+      recipeId: 'r_hp_atk',
+      dominantTrait: 't_atk',
+      ratioGapMin: 0.05,
+      branchedPotionId: 'p_2',
+    ),
+  ];
+
+  static const PotionQualityRule potionQualityRule = PotionQualityRule(
+    gradeThresholds: <PotionQualityGrade, double>{
+      PotionQualityGrade.s: 0.92,
+      PotionQualityGrade.a: 0.78,
+      PotionQualityGrade.b: 0.58,
+      PotionQualityGrade.c: 0,
+    },
+  );
+
   static final List<ExtractionProfile> extractionProfiles = <ExtractionProfile>[
     const ExtractionProfile(
       id: 'full_basic',
@@ -109,17 +146,7 @@ class DummyData {
   static ShopState generalShopState(DateTime now) {
     return ShopState(
       shopType: ShopType.general,
-      items: materials
-          .take(8)
-          .map(
-            (MaterialEntity m) => ShopItem(
-              materialId: m.id,
-              name: m.name,
-              price: 50,
-              quantity: 20,
-            ),
-          )
-          .toList(),
+      items: buildGeneralShopItems(),
       nextRefreshAt: now.add(const Duration(minutes: 15)),
       forcedRefreshCost: 25,
       baseRefreshCost: 25,
@@ -131,18 +158,7 @@ class DummyData {
   static ShopState catalystShopState(DateTime now) {
     return ShopState(
       shopType: ShopType.catalyst,
-      items: materials
-          .skip(24)
-          .take(6)
-          .map(
-            (MaterialEntity m) => ShopItem(
-              materialId: m.id,
-              name: m.name,
-              price: 180,
-              quantity: 8,
-            ),
-          )
-          .toList(),
+      items: buildCatalystShopItems(),
       nextRefreshAt: now.add(const Duration(minutes: 30)),
       forcedRefreshCost: 90,
       baseRefreshCost: 90,
@@ -164,5 +180,35 @@ class DummyData {
         BattleDropEntry(materialId: 'm_30', min: 1, max: 2, chance: 0.2),
       ],
     );
+  }
+
+  static List<ShopItem> buildGeneralShopItems() {
+    return materials
+        .where((MaterialEntity m) => m.source == 'general_shop')
+        .take(8)
+        .map(
+          (MaterialEntity m) => ShopItem(
+            materialId: m.id,
+            name: m.name,
+            price: 50,
+            quantity: 20,
+          ),
+        )
+        .toList();
+  }
+
+  static List<ShopItem> buildCatalystShopItems() {
+    return materials
+        .skip(24)
+        .take(6)
+        .map(
+          (MaterialEntity m) => ShopItem(
+            materialId: m.id,
+            name: m.name,
+            price: 180,
+            quantity: 8,
+          ),
+        )
+        .toList();
   }
 }

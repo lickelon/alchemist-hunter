@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/features/game/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 class EconomyService {
   int sellPotion({required PotionBlueprint blueprint, required int quantity}) {
@@ -72,6 +72,27 @@ class EconomyService {
         forcedRefreshCost: nextCost,
       ),
       costPaid: paid,
+    );
+  }
+
+  ({ShopState shop, bool refreshed}) applyAutoRefresh({
+    required ShopState shop,
+    required DateTime now,
+    required List<ShopItem> nextItems,
+    required Duration refreshInterval,
+  }) {
+    if (now.isBefore(shop.nextRefreshAt)) {
+      return (shop: shop, refreshed: false);
+    }
+
+    return (
+      shop: shop.copyWith(
+        items: nextItems,
+        nextRefreshAt: now.add(refreshInterval),
+        forcedRefreshCost: shop.baseRefreshCost,
+        cycleRefreshCount: 0,
+      ),
+      refreshed: true,
     );
   }
 }
