@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/features/game/providers/game_providers.dart';
+import 'package:alchemist_hunter/features/town/application/game_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,17 +14,24 @@ class DungeonScreen extends ConsumerWidget {
       itemCount: stages.length,
       itemBuilder: (BuildContext context, int index) {
         final String stage = stages[index];
+        final bool unlocked = index == 0 || game.progress.unlockFlags.contains(stage);
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: ListTile(
             leading: const Icon(Icons.shield),
             title: Text(stage),
-            subtitle: Text('Auto battle / Gold: ${game.gold}'),
+            subtitle: Text(
+              unlocked
+                  ? 'Auto battle / Gold: ${game.gold} / Essence: ${game.essence}'
+                  : 'Locked: requires stage/material unlock',
+            ),
             trailing: FilledButton(
-              onPressed: () {
-                ref.read(gameControllerProvider.notifier).runAutoBattle(stage);
-              },
-              child: const Text('Run'),
+              onPressed: unlocked
+                  ? () {
+                      ref.read(gameControllerProvider.notifier).runAutoBattle(stage);
+                    }
+                  : null,
+              child: Text(unlocked ? 'Run' : 'Locked'),
             ),
           ),
         );

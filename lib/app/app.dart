@@ -1,7 +1,7 @@
-import 'package:alchemist_hunter/screens/characters_screen.dart';
-import 'package:alchemist_hunter/screens/dungeon_screen.dart';
-import 'package:alchemist_hunter/screens/pets_screen.dart';
-import 'package:alchemist_hunter/screens/weapons_screen.dart';
+import 'package:alchemist_hunter/features/battle/presentation/screens/dungeon_screen.dart';
+import 'package:alchemist_hunter/features/characters/presentation/screens/characters_screen.dart';
+import 'package:alchemist_hunter/features/town/presentation/screens/town_screen.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/screens/workshop_screen.dart';
 import 'package:flutter/material.dart';
 
 class App extends StatelessWidget {
@@ -29,10 +29,10 @@ class HomePage extends StatelessWidget {
         bottomNavigationBar: _MainTabBar(),
         body: TabBarView(
           children: <Widget>[
+            TownScreen(),
+            WorkshopScreen(),
             CharactersScreen(),
-            WeaponsScreen(),
             DungeonScreen(),
-            PetsScreen(),
           ],
         ),
       ),
@@ -82,10 +82,10 @@ class _MainTabBar extends StatelessWidget {
         labelColor: Colors.orange,
         unselectedLabelColor: Colors.grey,
         tabs: const <Widget>[
+          Tab(icon: Icon(Icons.location_city), text: 'Town'),
+          Tab(icon: Icon(Icons.science), text: 'Workshop'),
           Tab(icon: Icon(Icons.person), text: 'Characters'),
-          Tab(icon: Icon(Icons.spa), text: 'Weapons'),
-          Tab(icon: Icon(Icons.shield), text: 'Dungeons'),
-          Tab(icon: Icon(Icons.pets), text: 'Pets'),
+          Tab(icon: Icon(Icons.shield), text: 'Battle'),
         ],
       ),
     );
