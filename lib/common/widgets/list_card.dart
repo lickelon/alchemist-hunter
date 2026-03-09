@@ -3,15 +3,19 @@ import 'package:flutter/material.dart';
 class ListCard extends StatelessWidget {
   final String name;
   final String description;
-  final String buttonText;
+  final String? buttonText;
   final IconData icon;
+  final VoidCallback? onTap;
+  final VoidCallback? onButtonPressed;
 
   const ListCard({
     super.key,
     required this.name,
     required this.description,
-    required this.buttonText,
+    this.buttonText,
     this.icon = Icons.shield,
+    this.onTap,
+    this.onButtonPressed,
   });
 
   @override
@@ -24,10 +28,16 @@ class ListCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         child: ListTile(
+          onTap: onTap,
           leading: Icon(icon),
           title: Text(name),
           subtitle: Text(description),
-          trailing: ElevatedButton(onPressed: () {}, child: Text(buttonText)),
+          trailing: buttonText == null
+              ? const Icon(Icons.chevron_right)
+              : ElevatedButton(
+                  onPressed: onButtonPressed ?? onTap,
+                  child: Text(buttonText!),
+                ),
         ),
       ),
     );
