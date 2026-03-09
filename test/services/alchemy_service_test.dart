@@ -1,5 +1,5 @@
-import 'package:alchemist_hunter/features/game/domain/models.dart';
-import 'package:alchemist_hunter/features/game/services/alchemy_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/application/services/alchemy_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

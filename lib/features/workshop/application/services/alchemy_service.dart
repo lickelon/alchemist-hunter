@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/features/game/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 class AlchemyService {
   List<TraitUnit> analyzeMaterial(MaterialEntity material) {

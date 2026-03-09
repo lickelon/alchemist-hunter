@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:alchemist_hunter/features/game/domain/models.dart';
-import 'package:alchemist_hunter/features/game/services/craft_queue_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/application/services/craft_queue_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:alchemist_hunter/features/game/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 class CraftQueueService {
   CraftQueueService({Random? random}) : _random = random ?? Random();
