@@ -19,6 +19,12 @@ class DungeonScreen extends ConsumerWidget {
         final String stage = stages[index];
         final bool unlocked =
             index == 0 || progress.unlockFlags.contains(stage);
+        String lockedReason(String id) {
+          if (id == 'stage_2') {
+            return 'Locked: 특수 재료 m_30 1개 이상 획득 필요';
+          }
+          return 'Locked: 이전 스테이지/특수 재료 조건 필요';
+        }
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: ListTile(
@@ -27,7 +33,7 @@ class DungeonScreen extends ConsumerWidget {
             subtitle: Text(
               unlocked
                   ? 'Auto battle / Gold: $gold / Essence: $essence'
-                  : 'Locked: requires stage/material unlock',
+                  : lockedReason(stage),
             ),
             trailing: FilledButton(
               onPressed: unlocked

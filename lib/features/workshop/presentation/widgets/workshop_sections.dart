@@ -122,8 +122,8 @@ class _WorkshopQueueSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final List<CraftQueueJob> queue = ref.watch(craftQueueProvider);
-    final List<PotionBlueprint> potions = ref.watch(
-      workshopPotionCatalogProvider,
+    final List<PotionQueueOption> options = ref.watch(
+      workshopPotionQueueOptionsProvider,
     );
 
     return SafeArea(
@@ -139,19 +139,8 @@ class _WorkshopQueueSheet extends ConsumerWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
+              Row(
                 children: <Widget>[
-                  FilledButton.tonal(
-                    onPressed: potions.isEmpty
-                        ? null
-                        : () {
-                            ref
-                                .read(workshopControllerProvider)
-                                .enqueuePotion(potions.first.id, 3);
-                          },
-                    child: const Text('포션 x3 등록'),
-                  ),
                   FilledButton(
                     onPressed: () {
                       ref.read(workshopControllerProvider).tickCraftQueue();
@@ -161,6 +150,32 @@ class _WorkshopQueueSheet extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 8),
+              const Text('포션 등록', style: TextStyle(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 6),
+              if (options.isEmpty)
+                const Text('등록 가능한 포션이 없습니다')
+              else
+                ...options.take(8).map((PotionQueueOption option) {
+                  return ListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(option.blueprint.name),
+                    subtitle: Text(
+                      option.unlocked ? '해금됨' : '잠김: ${option.lockReason}',
+                    ),
+                    trailing: FilledButton.tonal(
+                      onPressed: option.unlocked
+                          ? () {
+                              ref
+                                  .read(workshopControllerProvider)
+                                  .enqueuePotion(option.blueprint.id, 3);
+                            }
+                          : null,
+                      child: const Text('x3 등록'),
+                    ),
+                  );
+                }),
+              const Divider(),
               Expanded(
                 child: queue.isEmpty
                     ? const Center(child: Text('대기열이 비어있습니다'))

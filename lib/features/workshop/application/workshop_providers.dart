@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:alchemist_hunter/features/session/application/session_logic.dart';
 import 'package:alchemist_hunter/features/session/application/session_providers.dart';
+import 'package:alchemist_hunter/features/session/application/session_logic.dart';
 import 'package:alchemist_hunter/features/workshop/application/services/craft_queue_service.dart';
 import 'package:alchemist_hunter/features/workshop/application/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
@@ -118,4 +118,57 @@ final Provider<List<String>> recentLogsProvider = Provider<List<String>>((
 final Provider<List<PotionBlueprint>> workshopPotionCatalogProvider =
     Provider<List<PotionBlueprint>>((Ref ref) {
       return ref.watch(potionsProvider);
+    });
+
+class PotionQueueOption {
+  const PotionQueueOption({
+    required this.blueprint,
+    required this.unlocked,
+    required this.lockReason,
+  });
+
+  final PotionBlueprint blueprint;
+  final bool unlocked;
+  final String lockReason;
+}
+
+final Provider<List<PotionQueueOption>> workshopPotionQueueOptionsProvider =
+    Provider<List<PotionQueueOption>>((Ref ref) {
+      final List<PotionBlueprint> catalog = ref.watch(workshopPotionCatalogProvider);
+      final Set<String> unlockFlags = ref.watch(
+        sessionControllerProvider.select(
+          (SessionState state) => state.battle.progress.unlockFlags,
+        ),
+      );
+
+      bool isUnlocked(PotionBlueprint potion) {
+        final int index = catalog.indexWhere((PotionBlueprint p) => p.id == potion.id);
+        if (index < 10) {
+          return true;
+        }
+        if (index < 13) {
+          return unlockFlags.contains('potion_special_1');
+        }
+        return unlockFlags.contains('potion_special_2');
+      }
+
+      String lockReason(PotionBlueprint potion) {
+        final int index = catalog.indexWhere((PotionBlueprint p) => p.id == potion.id);
+        if (index < 10) {
+          return '';
+        }
+        if (index < 13) {
+          return '특수 재료 m_27 드롭 필요';
+        }
+        return '특수 재료 m_30 드롭 필요';
+      }
+
+      return catalog.map((PotionBlueprint potion) {
+        final bool unlocked = isUnlocked(potion);
+        return PotionQueueOption(
+          blueprint: potion,
+          unlocked: unlocked,
+          lockReason: unlocked ? '' : lockReason(potion),
+        );
+      }).toList();
     });
