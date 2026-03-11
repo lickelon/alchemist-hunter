@@ -13,12 +13,11 @@ class PotionCraftingService {
     required Map<String, int> inventory,
     required List<MaterialEntity> materials,
   }) {
-    final List<MapEntry<String, double>> orderedTraits = blueprint.targetTraits.entries
-        .toList()
-      ..sort(
-        (MapEntry<String, double> left, MapEntry<String, double> right) =>
-            right.value.compareTo(left.value),
-      );
+    final List<MapEntry<String, double>> orderedTraits =
+        blueprint.targetTraits.entries.toList()..sort(
+          (MapEntry<String, double> left, MapEntry<String, double> right) =>
+              right.value.compareTo(left.value),
+        );
 
     final Map<String, int> workingInventory = <String, int>{...inventory};
     final Map<String, double> extractedTraits = <String, double>{};
@@ -60,7 +59,10 @@ class PotionCraftingService {
   }) {
     Map<String, int> workingInventory = <String, int>{...inventory};
     for (int index = 0; index < repeatCount; index++) {
-      final ({Map<String, int> nextInventory, Map<String, double> extractedTraits})?
+      final ({
+        Map<String, int> nextInventory,
+        Map<String, double> extractedTraits,
+      })?
       prepared = prepareCraftFromInventory(
         blueprint: blueprint,
         inventory: workingInventory,
@@ -83,7 +85,10 @@ class PotionCraftingService {
     Map<String, int> workingInventory = <String, int>{...inventory};
     int count = 0;
     while (count < cap) {
-      final ({Map<String, int> nextInventory, Map<String, double> extractedTraits})?
+      final ({
+        Map<String, int> nextInventory,
+        Map<String, double> extractedTraits,
+      })?
       prepared = prepareCraftFromInventory(
         blueprint: blueprint,
         inventory: workingInventory,
@@ -105,7 +110,9 @@ class PotionCraftingService {
     required List<PotionRecipeBranchRule> branchRules,
     required PotionQualityRule qualityRule,
   }) {
-    final Map<String, double> normalizedTraits = _normalizeTraits(extractedTraits);
+    final Map<String, double> normalizedTraits = _normalizeTraits(
+      extractedTraits,
+    );
     final String typePotionId = _resolvePotionType(
       requestedBlueprint: requestedBlueprint,
       normalizedTraits: normalizedTraits,
@@ -134,9 +141,13 @@ class PotionCraftingService {
     required List<PotionRecipeBranchRule> branchRules,
   }) {
     final Set<String> traitIds = normalizedTraits.keys.toSet();
-    final List<PotionRecipeRule> matchedRules = recipeRules.where((PotionRecipeRule rule) {
+    final List<PotionRecipeRule> matchedRules = recipeRules.where((
+      PotionRecipeRule rule,
+    ) {
       final bool requiredOk = rule.requiredTraits.every(traitIds.contains);
-      final bool forbiddenOk = rule.forbiddenTraits.every((String id) => !traitIds.contains(id));
+      final bool forbiddenOk = rule.forbiddenTraits.every(
+        (String id) => !traitIds.contains(id),
+      );
       return requiredOk && forbiddenOk;
     }).toList();
 
@@ -156,8 +167,11 @@ class PotionCraftingService {
       return selectedRule.resultPotionId;
     }
 
-    final List<MapEntry<String, double>> sortedTraits = normalizedTraits.entries.toList()
-      ..sort((MapEntry<String, double> a, MapEntry<String, double> b) => b.value.compareTo(a.value));
+    final List<MapEntry<String, double>> sortedTraits =
+        normalizedTraits.entries.toList()..sort(
+          (MapEntry<String, double> a, MapEntry<String, double> b) =>
+              b.value.compareTo(a.value),
+        );
 
     if (sortedTraits.length < 2) {
       return selectedRule.resultPotionId;
@@ -166,7 +180,8 @@ class PotionCraftingService {
     final String dominantTrait = sortedTraits.first.key;
     final double ratioGap = sortedTraits.first.value - sortedTraits[1].value;
     for (final PotionRecipeBranchRule branch in candidates) {
-      if (branch.dominantTrait == dominantTrait && ratioGap >= branch.ratioGapMin) {
+      if (branch.dominantTrait == dominantTrait &&
+          ratioGap >= branch.ratioGapMin) {
         return branch.branchedPotionId;
       }
     }
@@ -267,12 +282,18 @@ class PotionCraftingService {
     if (traits.isEmpty) {
       return const <String, double>{};
     }
-    final double sum = traits.values.fold(0, (double prev, double e) => prev + e);
+    final double sum = traits.values.fold(
+      0,
+      (double prev, double e) => prev + e,
+    );
     if (sum <= 0) {
-      return traits.map((String key, double value) => MapEntry<String, double>(key, 0));
+      return traits.map(
+        (String key, double value) => MapEntry<String, double>(key, 0),
+      );
     }
     return traits.map(
-      (String key, double value) => MapEntry<String, double>(key, value < 0 ? 0 : value / sum),
+      (String key, double value) =>
+          MapEntry<String, double>(key, value < 0 ? 0 : value / sum),
     );
   }
 }

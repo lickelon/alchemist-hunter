@@ -2,18 +2,78 @@ import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 class DummyData {
   static final List<TraitUnit> traits = <TraitUnit>[
-    const TraitUnit(id: 't_hp', name: 'Vital', type: TraitType.single, potency: 1),
-    const TraitUnit(id: 't_atk', name: 'Aggro', type: TraitType.single, potency: 1),
-    const TraitUnit(id: 't_def', name: 'Guard', type: TraitType.single, potency: 1),
-    const TraitUnit(id: 't_spd', name: 'Swift', type: TraitType.single, potency: 1),
-    const TraitUnit(id: 't_crit', name: 'Ruthless', type: TraitType.single, potency: 1),
-    const TraitUnit(id: 't_life', name: 'Leech', type: TraitType.single, potency: 1),
-    const TraitUnit(id: 't_focus', name: 'Focus', type: TraitType.single, potency: 1),
-    const TraitUnit(id: 't_drop', name: 'Fortune', type: TraitType.single, potency: 1),
-    const TraitUnit(id: 't_dark', name: 'Light', type: TraitType.single, potency: 1),
-    const TraitUnit(id: 't_pure', name: 'Purity', type: TraitType.single, potency: 1),
-    const TraitUnit(id: 't_mana', name: 'Mana', type: TraitType.single, potency: 1),
-    const TraitUnit(id: 't_regen', name: 'Regen', type: TraitType.single, potency: 1),
+    const TraitUnit(
+      id: 't_hp',
+      name: 'Vital',
+      type: TraitType.single,
+      potency: 1,
+    ),
+    const TraitUnit(
+      id: 't_atk',
+      name: 'Aggro',
+      type: TraitType.single,
+      potency: 1,
+    ),
+    const TraitUnit(
+      id: 't_def',
+      name: 'Guard',
+      type: TraitType.single,
+      potency: 1,
+    ),
+    const TraitUnit(
+      id: 't_spd',
+      name: 'Swift',
+      type: TraitType.single,
+      potency: 1,
+    ),
+    const TraitUnit(
+      id: 't_crit',
+      name: 'Ruthless',
+      type: TraitType.single,
+      potency: 1,
+    ),
+    const TraitUnit(
+      id: 't_life',
+      name: 'Leech',
+      type: TraitType.single,
+      potency: 1,
+    ),
+    const TraitUnit(
+      id: 't_focus',
+      name: 'Focus',
+      type: TraitType.single,
+      potency: 1,
+    ),
+    const TraitUnit(
+      id: 't_drop',
+      name: 'Fortune',
+      type: TraitType.single,
+      potency: 1,
+    ),
+    const TraitUnit(
+      id: 't_dark',
+      name: 'Light',
+      type: TraitType.single,
+      potency: 1,
+    ),
+    const TraitUnit(
+      id: 't_pure',
+      name: 'Purity',
+      type: TraitType.single,
+      potency: 1,
+    ),
+    const TraitUnit(
+      id: 't_mana',
+      name: 'Mana',
+      type: TraitType.single,
+      potency: 1,
+    ),
+    const TraitUnit(
+      id: 't_regen',
+      name: 'Regen',
+      type: TraitType.single,
+      potency: 1,
+    ),
     const TraitUnit(
       id: 'c_vigor',
       name: 'Vigor Blend',
@@ -64,7 +124,10 @@ class DummyData {
       id: 'm_${i + 1}',
       name: 'Material ${i + 1}',
       rarity: i < 24 ? MaterialRarity.common : MaterialRarity.rare,
-      traits: <TraitUnit>[traits[i % traits.length], traits[(i + 3) % traits.length]],
+      traits: <TraitUnit>[
+        traits[i % traits.length],
+        traits[(i + 3) % traits.length],
+      ],
       analyzable: true,
       source: i < 18 ? 'general_shop' : 'battle',
     ),
@@ -97,20 +160,21 @@ class DummyData {
     ),
   ];
 
-  static final List<PotionRecipeBranchRule> potionRecipeBranchRules = <PotionRecipeBranchRule>[
-    const PotionRecipeBranchRule(
-      recipeId: 'r_hp_atk',
-      dominantTrait: 't_hp',
-      ratioGapMin: 0.05,
-      branchedPotionId: 'p_1',
-    ),
-    const PotionRecipeBranchRule(
-      recipeId: 'r_hp_atk',
-      dominantTrait: 't_atk',
-      ratioGapMin: 0.05,
-      branchedPotionId: 'p_2',
-    ),
-  ];
+  static final List<PotionRecipeBranchRule> potionRecipeBranchRules =
+      <PotionRecipeBranchRule>[
+        const PotionRecipeBranchRule(
+          recipeId: 'r_hp_atk',
+          dominantTrait: 't_hp',
+          ratioGapMin: 0.05,
+          branchedPotionId: 'p_1',
+        ),
+        const PotionRecipeBranchRule(
+          recipeId: 'r_hp_atk',
+          dominantTrait: 't_atk',
+          ratioGapMin: 0.05,
+          branchedPotionId: 'p_2',
+        ),
+      ];
 
   static const PotionQualityRule potionQualityRule = PotionQualityRule(
     gradeThresholds: <PotionQualityGrade, double>{
@@ -138,10 +202,15 @@ class DummyData {
     ),
   ];
 
-  static final List<String> stages = List<String>.generate(5, (int i) => 'stage_${i + 1}');
+  static final List<String> stages = List<String>.generate(
+    5,
+    (int i) => 'stage_${i + 1}',
+  );
 
-  static final List<String> enemySets =
-      List<String>.generate(20, (int i) => 'enemy_set_${i + 1}');
+  static final List<String> enemySets = List<String>.generate(
+    20,
+    (int i) => 'enemy_set_${i + 1}',
+  );
 
   static ShopState generalShopState(DateTime now) {
     return ShopState(
@@ -187,12 +256,8 @@ class DummyData {
         .where((MaterialEntity m) => m.source == 'general_shop')
         .take(8)
         .map(
-          (MaterialEntity m) => ShopItem(
-            materialId: m.id,
-            name: m.name,
-            price: 50,
-            quantity: 20,
-          ),
+          (MaterialEntity m) =>
+              ShopItem(materialId: m.id, name: m.name, price: 50, quantity: 20),
         )
         .toList();
   }
@@ -202,12 +267,8 @@ class DummyData {
         .skip(24)
         .take(6)
         .map(
-          (MaterialEntity m) => ShopItem(
-            materialId: m.id,
-            name: m.name,
-            price: 180,
-            quantity: 8,
-          ),
+          (MaterialEntity m) =>
+              ShopItem(materialId: m.id, name: m.name, price: 180, quantity: 8),
         )
         .toList();
   }

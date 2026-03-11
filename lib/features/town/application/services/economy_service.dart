@@ -54,7 +54,8 @@ class EconomyService {
     required List<ShopItem> nextItems,
   }) {
     ShopState normalized = shop;
-    if (now.isAfter(shop.nextRefreshAt) || now.isAtSameMomentAs(shop.nextRefreshAt)) {
+    if (now.isAfter(shop.nextRefreshAt) ||
+        now.isAtSameMomentAs(shop.nextRefreshAt)) {
       normalized = shop.copyWith(
         cycleRefreshCount: 0,
         forcedRefreshCost: shop.baseRefreshCost,
@@ -63,7 +64,8 @@ class EconomyService {
 
     final int paid = normalized.forcedRefreshCost;
     final int nextCount = normalized.cycleRefreshCount + 1;
-    final int nextCost = normalized.baseRefreshCost + (normalized.refreshCostStep * nextCount);
+    final int nextCost =
+        normalized.baseRefreshCost + (normalized.refreshCostStep * nextCount);
 
     return (
       shop: normalized.copyWith(

@@ -25,6 +25,7 @@ class DungeonScreen extends ConsumerWidget {
           }
           return 'Locked: 이전 스테이지/특수 재료 조건 필요';
         }
+
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: ListTile(

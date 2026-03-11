@@ -50,7 +50,8 @@ class CharacterProgress {
     return tierIndex * 3;
   }
 
-  bool get canRankUp => level >= maxLevelForRank && rank < maxRankForCurrentTier;
+  bool get canRankUp =>
+      level >= maxLevelForRank && rank < maxRankForCurrentTier;
 
   bool get canTierUp => rank >= maxRankForCurrentTier && tierIndex < maxTier;
 
@@ -76,10 +77,7 @@ class CharacterProgress {
 
 @immutable
 class CharactersState {
-  const CharactersState({
-    required this.mercenaries,
-    required this.homunculi,
-  });
+  const CharactersState({required this.mercenaries, required this.homunculi});
 
   final List<CharacterProgress> mercenaries;
   final List<CharacterProgress> homunculi;

@@ -103,9 +103,7 @@ class PotionRecipeBranchRule {
 
 @immutable
 class PotionQualityRule {
-  const PotionQualityRule({
-    required this.gradeThresholds,
-  });
+  const PotionQualityRule({required this.gradeThresholds});
 
   final Map<PotionQualityGrade, double> gradeThresholds;
 }
@@ -277,7 +275,11 @@ class BattleDropTable {
 
 @immutable
 class HeroProfile {
-  const HeroProfile({required this.id, required this.name, required this.power});
+  const HeroProfile({
+    required this.id,
+    required this.name,
+    required this.power,
+  });
 
   final String id;
   final String name;

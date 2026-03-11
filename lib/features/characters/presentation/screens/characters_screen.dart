@@ -8,27 +8,40 @@ class CharactersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<CharacterProgress> mercenaries = ref.watch(mercenaryListProvider);
+    final List<CharacterProgress> mercenaries = ref.watch(
+      mercenaryListProvider,
+    );
     final List<CharacterProgress> homunculi = ref.watch(homunculusListProvider);
-    final CharacterController controller = ref.read(characterControllerProvider);
+    final CharacterController controller = ref.read(
+      characterControllerProvider,
+    );
 
     return DefaultTabController(
       length: 2,
       child: Column(
         children: <Widget>[
-          const TabBar(tabs: <Widget>[Tab(text: 'Mercenary'), Tab(text: 'Homunculus')]),
+          const TabBar(
+            tabs: <Widget>[
+              Tab(text: 'Mercenary'),
+              Tab(text: 'Homunculus'),
+            ],
+          ),
           Expanded(
             child: TabBarView(
               children: <Widget>[
                 _CharacterList(
                   characters: mercenaries,
-                  onRankUp: (String id) => controller.rankUp(CharacterType.mercenary, id),
-                  onTierUp: (String id) => controller.tierUp(CharacterType.mercenary, id),
+                  onRankUp: (String id) =>
+                      controller.rankUp(CharacterType.mercenary, id),
+                  onTierUp: (String id) =>
+                      controller.tierUp(CharacterType.mercenary, id),
                 ),
                 _CharacterList(
                   characters: homunculi,
-                  onRankUp: (String id) => controller.rankUp(CharacterType.homunculus, id),
-                  onTierUp: (String id) => controller.tierUp(CharacterType.homunculus, id),
+                  onRankUp: (String id) =>
+                      controller.rankUp(CharacterType.homunculus, id),
+                  onTierUp: (String id) =>
+                      controller.tierUp(CharacterType.homunculus, id),
                 ),
               ],
             ),
@@ -65,7 +78,10 @@ class _CharacterList extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(character.name, style: const TextStyle(fontWeight: FontWeight.w700)),
+                Text(
+                  character.name,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
                 const SizedBox(height: 6),
                 Text(
                   'Lv ${character.level} / Rank ${character.rank} / Tier ${character.tierIndex}',
@@ -78,11 +94,15 @@ class _CharacterList extends StatelessWidget {
                   spacing: 8,
                   children: <Widget>[
                     FilledButton.tonal(
-                      onPressed: character.canRankUp ? () => onRankUp(character.id) : null,
+                      onPressed: character.canRankUp
+                          ? () => onRankUp(character.id)
+                          : null,
                       child: const Text('Rank Up'),
                     ),
                     FilledButton.tonal(
-                      onPressed: character.canTierUp ? () => onTierUp(character.id) : null,
+                      onPressed: character.canTierUp
+                          ? () => onTierUp(character.id)
+                          : null,
                       child: const Text('Tier Up'),
                     ),
                   ],

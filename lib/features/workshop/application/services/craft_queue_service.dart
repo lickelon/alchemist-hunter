@@ -11,7 +11,10 @@ class CraftQueueService {
     return <CraftQueueJob>[...jobs, job];
   }
 
-  List<CraftQueueJob> processTick(List<CraftQueueJob> jobs, Duration deltaTime) {
+  List<CraftQueueJob> processTick(
+    List<CraftQueueJob> jobs,
+    Duration deltaTime,
+  ) {
     if (jobs.isEmpty) {
       return jobs;
     }
@@ -32,7 +35,9 @@ class CraftQueueService {
 
       final Duration nextEta = job.eta - remaining;
       if (nextEta > Duration.zero) {
-        updated.add(job.copyWith(status: QueueJobStatus.processing, eta: nextEta));
+        updated.add(
+          job.copyWith(status: QueueJobStatus.processing, eta: nextEta),
+        );
         remaining = Duration.zero;
         continue;
       }
@@ -48,7 +53,9 @@ class CraftQueueService {
             ),
           );
         } else {
-          updated.add(job.copyWith(status: QueueJobStatus.failed, eta: Duration.zero));
+          updated.add(
+            job.copyWith(status: QueueJobStatus.failed, eta: Duration.zero),
+          );
         }
       } else {
         final int nextRepeat = job.currentRepeat + 1;
@@ -78,17 +85,15 @@ class CraftQueueService {
   }
 
   List<CraftQueueJob> retryFailed(List<CraftQueueJob> jobs, String jobId) {
-    return jobs
-        .map((CraftQueueJob job) {
-          if (job.id != jobId || job.status != QueueJobStatus.failed) {
-            return job;
-          }
-          return job.copyWith(
-            status: QueueJobStatus.queued,
-            retryCount: 0,
-            eta: const Duration(seconds: 10),
-          );
-        })
-        .toList();
+    return jobs.map((CraftQueueJob job) {
+      if (job.id != jobId || job.status != QueueJobStatus.failed) {
+        return job;
+      }
+      return job.copyWith(
+        status: QueueJobStatus.queued,
+        retryCount: 0,
+        eta: const Duration(seconds: 10),
+      );
+    }).toList();
   }
 }

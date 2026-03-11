@@ -8,10 +8,7 @@ class AlchemyService {
     return material.traits;
   }
 
-  List<TraitUnit> decomposeCompound(
-    MaterialEntity material,
-    String traitId,
-  ) {
+  List<TraitUnit> decomposeCompound(MaterialEntity material, String traitId) {
     final TraitUnit trait = material.traits.firstWhere(
       (TraitUnit t) => t.id == traitId,
       orElse: () => throw ArgumentError('Trait not found: $traitId'),
@@ -50,7 +47,8 @@ class AlchemyService {
     }
 
     final Map<String, double> normalized = components.map(
-      (String key, double value) => MapEntry<String, double>(key, value / total),
+      (String key, double value) =>
+          MapEntry<String, double>(key, value / total),
     );
 
     return TraitUnit(
