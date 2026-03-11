@@ -351,8 +351,149 @@ class WorkshopDomain {
   }
 }
 
+class CharacterDomain {
+  const CharacterDomain();
+
+  CharactersState grantBattleXp({
+    required CharactersState state,
+    required int xpGain,
+  }) {
+    return state.copyWith(
+      mercenaries: _grantXpList(state.mercenaries, xpGain),
+      homunculi: _grantXpList(state.homunculi, xpGain),
+    );
+  }
+
+  SessionMutationResult rankUp({
+    required SessionState state,
+    required CharacterType type,
+    required String characterId,
+  }) {
+    final List<CharacterProgress> source = type == CharacterType.mercenary
+        ? state.characters.mercenaries
+        : state.characters.homunculi;
+    final int index = source.indexWhere((CharacterProgress c) => c.id == characterId);
+    if (index < 0) {
+      return SessionMutationResult(state: state, logMessage: 'Character not found');
+    }
+
+    final CharacterProgress current = source[index];
+    if (!current.canRankUp) {
+      return SessionMutationResult(state: state, logMessage: 'Rank up condition not met');
+    }
+
+    final CharacterProgress updated = current.copyWith(
+      rank: current.rank + 1,
+      level: 1,
+      xp: 0,
+    );
+    final List<CharacterProgress> nextList = <CharacterProgress>[...source];
+    nextList[index] = updated;
+
+    return SessionMutationResult(
+      state: state.copyWith(
+        characters: type == CharacterType.mercenary
+            ? state.characters.copyWith(mercenaries: nextList)
+            : state.characters.copyWith(homunculi: nextList),
+      ),
+      logMessage: 'Rank up ${current.name} -> Rank ${updated.rank}',
+    );
+  }
+
+  SessionMutationResult tierUp({
+    required SessionState state,
+    required CharacterType type,
+    required String characterId,
+  }) {
+    final List<CharacterProgress> source = type == CharacterType.mercenary
+        ? state.characters.mercenaries
+        : state.characters.homunculi;
+    final int index = source.indexWhere((CharacterProgress c) => c.id == characterId);
+    if (index < 0) {
+      return SessionMutationResult(state: state, logMessage: 'Character not found');
+    }
+    final CharacterProgress current = source[index];
+    if (!current.canTierUp) {
+      return SessionMutationResult(state: state, logMessage: 'Tier up condition not met');
+    }
+
+    final String requiredMaterial = _tierMaterialKey(current);
+    if ((state.player.materialInventory[requiredMaterial] ?? 0) < 1) {
+      return SessionMutationResult(
+        state: state,
+        logMessage: 'Tier material missing: $requiredMaterial',
+      );
+    }
+
+    final Map<String, int> materials = <String, int>{...state.player.materialInventory};
+    materials[requiredMaterial] = (materials[requiredMaterial] ?? 0) - 1;
+    if (materials[requiredMaterial] == 0) {
+      materials.remove(requiredMaterial);
+    }
+
+    CharacterProgress updated;
+    if (current.type == CharacterType.mercenary) {
+      final MercenaryTier tier = (current.mercenaryTier ?? MercenaryTier.rookie);
+      updated = current.copyWith(
+        mercenaryTier: MercenaryTier.values[tier.index + 1],
+        rank: 1,
+        level: 1,
+        xp: 0,
+      );
+    } else {
+      final HomunculusTier tier = (current.homunculusTier ?? HomunculusTier.nigredo);
+      updated = current.copyWith(
+        homunculusTier: HomunculusTier.values[tier.index + 1],
+        rank: 1,
+        level: 1,
+        xp: 0,
+      );
+    }
+
+    final List<CharacterProgress> nextList = <CharacterProgress>[...source];
+    nextList[index] = updated;
+
+    return SessionMutationResult(
+      state: state.copyWith(
+        player: state.player.copyWith(materialInventory: materials),
+        characters: type == CharacterType.mercenary
+            ? state.characters.copyWith(mercenaries: nextList)
+            : state.characters.copyWith(homunculi: nextList),
+      ),
+      logMessage: 'Tier up ${current.name} -> Tier ${updated.tierIndex}',
+    );
+  }
+
+  List<CharacterProgress> _grantXpList(List<CharacterProgress> source, int xpGain) {
+    return source.map((CharacterProgress character) {
+      int level = character.level;
+      int xp = character.xp + xpGain;
+      while (level < character.maxLevelForRank) {
+        final int need = level * 20;
+        if (xp < need) {
+          break;
+        }
+        xp -= need;
+        level += 1;
+      }
+      return character.copyWith(level: level, xp: xp);
+    }).toList();
+  }
+
+  String _tierMaterialKey(CharacterProgress character) {
+    final int nextTier = character.tierIndex + 1;
+    if (character.type == CharacterType.mercenary) {
+      return 'tier_mat_mercenary_$nextTier';
+    }
+    return 'tier_mat_homunculus_$nextTier';
+  }
+}
+
 class BattleDomain {
-  const BattleDomain();
+  const BattleDomain({CharacterDomain characterDomain = const CharacterDomain()})
+    : _characterDomain = characterDomain;
+
+  final CharacterDomain _characterDomain;
 
   SessionMutationResult runAutoBattle({
     required SessionState state,
@@ -390,6 +531,11 @@ class BattleDomain {
     final int nextGold =
         state.player.gold - result.failurePenalty + (result.success ? 35 : 0);
     final int essenceGain = result.success ? 6 : 2;
+    final int xpGain = result.success ? 24 : 10;
+    final CharactersState nextCharacters = _characterDomain.grantBattleXp(
+      state: state.characters,
+      xpGain: xpGain,
+    );
 
     return SessionMutationResult(
       state: state.copyWith(
@@ -405,8 +551,10 @@ class BattleDomain {
             sessionPhase: state.battle.progress.sessionPhase,
           ),
         ),
+        characters: nextCharacters,
       ),
-      logMessage: 'Battle ${result.success ? 'win' : 'fail'} on $stageId / essence+$essenceGain',
+      logMessage:
+          'Battle ${result.success ? 'win' : 'fail'} on $stageId / essence+$essenceGain / xp+$xpGain',
     );
   }
 }
