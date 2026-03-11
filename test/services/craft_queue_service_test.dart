@@ -1,12 +1,10 @@
-import 'dart:math';
-
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/application/services/craft_queue_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('queue tick completes or advances job state', () {
-    final CraftQueueService service = CraftQueueService(random: Random(1));
+  test('queue tick completes job without random failure', () {
+    final CraftQueueService service = CraftQueueService();
     final CraftQueueJob job = CraftQueueJob(
       id: 'j1',
       potionId: 'p1',
@@ -20,10 +18,6 @@ void main() {
         service.processTick(<CraftQueueJob>[job], const Duration(seconds: 10));
 
     expect(result, hasLength(1));
-    expect(
-      <QueueJobStatus>{QueueJobStatus.completed, QueueJobStatus.failed}
-          .contains(result.first.status),
-      true,
-    );
+    expect(result.first.status, QueueJobStatus.completed);
   });
 }

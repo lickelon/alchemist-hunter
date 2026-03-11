@@ -1,11 +1,7 @@
-import 'dart:math';
-
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 class CraftQueueService {
-  CraftQueueService({Random? random}) : _random = random ?? Random();
-
-  final Random _random;
+  CraftQueueService();
 
   List<CraftQueueJob> enqueue(List<CraftQueueJob> jobs, CraftQueueJob job) {
     return <CraftQueueJob>[...jobs, job];
@@ -42,40 +38,23 @@ class CraftQueueService {
         continue;
       }
 
-      final bool failed = _random.nextDouble() < 0.1;
-      if (failed) {
-        if (job.retryCount < job.retryPolicy.maxRetries) {
-          updated.add(
-            job.copyWith(
-              status: QueueJobStatus.queued,
-              retryCount: job.retryCount + 1,
-              eta: const Duration(seconds: 10),
-            ),
-          );
-        } else {
-          updated.add(
-            job.copyWith(status: QueueJobStatus.failed, eta: Duration.zero),
-          );
-        }
+      final int nextRepeat = job.currentRepeat + 1;
+      if (nextRepeat >= job.repeatCount) {
+        updated.add(
+          job.copyWith(
+            status: QueueJobStatus.completed,
+            currentRepeat: nextRepeat,
+            eta: Duration.zero,
+          ),
+        );
       } else {
-        final int nextRepeat = job.currentRepeat + 1;
-        if (nextRepeat >= job.repeatCount) {
-          updated.add(
-            job.copyWith(
-              status: QueueJobStatus.completed,
-              currentRepeat: nextRepeat,
-              eta: Duration.zero,
-            ),
-          );
-        } else {
-          updated.add(
-            job.copyWith(
-              status: QueueJobStatus.queued,
-              currentRepeat: nextRepeat,
-              eta: const Duration(seconds: 15),
-            ),
-          );
-        }
+        updated.add(
+          job.copyWith(
+            status: QueueJobStatus.queued,
+            currentRepeat: nextRepeat,
+            eta: const Duration(seconds: 15),
+          ),
+        );
       }
 
       remaining = Duration.zero;
@@ -84,15 +63,14 @@ class CraftQueueService {
     return updated;
   }
 
-  List<CraftQueueJob> retryFailed(List<CraftQueueJob> jobs, String jobId) {
+  List<CraftQueueJob> resumeBlocked(List<CraftQueueJob> jobs, String jobId) {
     return jobs.map((CraftQueueJob job) {
-      if (job.id != jobId || job.status != QueueJobStatus.failed) {
+      if (job.id != jobId || job.status != QueueJobStatus.blocked) {
         return job;
       }
       return job.copyWith(
         status: QueueJobStatus.queued,
-        retryCount: 0,
-        eta: const Duration(seconds: 10),
+        eta: const Duration(seconds: 15),
       );
     }).toList();
   }

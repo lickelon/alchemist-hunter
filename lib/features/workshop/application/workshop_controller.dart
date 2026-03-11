@@ -8,9 +8,7 @@ import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final Provider<CraftQueueService> craftQueueServiceProvider =
-    Provider<CraftQueueService>(
-      (Ref ref) => CraftQueueService(random: Random(7)),
-    );
+    Provider<CraftQueueService>((Ref ref) => CraftQueueService());
 
 final Provider<PotionCraftingService> potionCraftingServiceProvider =
     Provider<PotionCraftingService>(
@@ -58,6 +56,22 @@ class WorkshopController {
     _apply(nextState, logMessage: _tickLogMessage(current, nextState));
   }
 
+  void resumeBlocked(String jobId) {
+    final SessionState current = _session.snapshot();
+    final SessionState nextState = _workshopDomain.resumeBlockedJob(
+      state: current,
+      jobId: jobId,
+      queueService: _queueService,
+      craftingService: _craftingService,
+    );
+    _apply(
+      nextState,
+      logMessage: identical(nextState, current)
+          ? 'Cannot resume $jobId / materials missing'
+          : 'Resumed craft job $jobId',
+    );
+  }
+
   String? _tickLogMessage(SessionState current, SessionState nextState) {
     CraftQueueJob? activeJob;
     for (final CraftQueueJob job in current.workshop.queue) {
@@ -69,8 +83,8 @@ class WorkshopController {
     }
     if (activeJob != null) {
       for (final CraftQueueJob job in nextState.workshop.queue) {
-        if (job.id == activeJob.id && job.status == QueueJobStatus.failed) {
-          return 'Craft blocked for ${activeJob.potionId} / materials missing';
+        if (job.id == activeJob.id && job.status == QueueJobStatus.blocked) {
+          return 'Craft paused for ${activeJob.potionId} / materials missing';
         }
       }
     }

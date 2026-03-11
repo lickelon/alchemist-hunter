@@ -8,7 +8,7 @@ enum ExtractionMode { full, selective }
 
 enum PotionUseType { sell, combat, both }
 
-enum QueueJobStatus { queued, processing, completed, failed }
+enum QueueJobStatus { queued, processing, completed, blocked }
 
 enum ShopType { general, catalyst }
 

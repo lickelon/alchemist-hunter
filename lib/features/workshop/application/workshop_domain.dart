@@ -195,6 +195,42 @@ class WorkshopDomain {
     );
   }
 
+  SessionState resumeBlockedJob({
+    required SessionState state,
+    required String jobId,
+    required CraftQueueService queueService,
+    required PotionCraftingService craftingService,
+  }) {
+    CraftQueueJob? blockedJob;
+    for (final CraftQueueJob job in state.workshop.queue) {
+      if (job.id == jobId && job.status == QueueJobStatus.blocked) {
+        blockedJob = job;
+        break;
+      }
+    }
+    if (blockedJob == null) {
+      return state;
+    }
+
+    final int remainingCount = blockedJob.repeatCount - blockedJob.currentRepeat;
+    final PotionBlueprint blueprint = _findBlueprint(blockedJob.potionId);
+    final bool canCraft = craftingService.canCraftRepeatCount(
+      blueprint: blueprint,
+      inventory: state.player.materialInventory,
+      materials: DummyData.materials,
+      repeatCount: remainingCount,
+    );
+    if (!canCraft) {
+      return state;
+    }
+
+    return state.copyWith(
+      workshop: state.workshop.copyWith(
+        queue: queueService.resumeBlocked(state.workshop.queue, jobId),
+      ),
+    );
+  }
+
   PotionBlueprint _findBlueprint(String potionId) {
     return DummyData.potions.firstWhere(
       (PotionBlueprint potion) => potion.id == potionId,
@@ -210,7 +246,7 @@ class WorkshopDomain {
       if (job.id != jobId) {
         return job;
       }
-      return job.copyWith(status: QueueJobStatus.failed, eta: Duration.zero);
+      return job.copyWith(status: QueueJobStatus.blocked, eta: Duration.zero);
     }).toList();
   }
 }

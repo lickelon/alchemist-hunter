@@ -16,12 +16,11 @@ void main() {
 
   WorkshopController buildController(
     SessionController session, {
-    int queueSeed = 7,
     int craftingSeed = 13,
   }) {
     return WorkshopController(
       session,
-      CraftQueueService(random: Random(queueSeed)),
+      CraftQueueService(),
       PotionCraftingService(random: Random(craftingSeed)),
     );
   }
@@ -35,7 +34,6 @@ void main() {
     );
     final WorkshopController controller = buildController(
       session,
-      queueSeed: 3,
       craftingSeed: 5,
     );
 
@@ -66,7 +64,6 @@ void main() {
     final SessionController session = buildSession();
     final WorkshopController controller = buildController(
       session,
-      queueSeed: 3,
       craftingSeed: 5,
     );
 
@@ -120,5 +117,48 @@ void main() {
     expect(specialPotion.unlocked, true);
     expect(lockedPotion.unlocked, false);
     expect(lockedPotion.lockReason, '특수 재료 m_30 드롭 필요');
+  });
+
+  test('resumeBlocked requeues blocked job when materials are replenished', () {
+    final SessionController session = buildSession();
+    final WorkshopController controller = buildController(
+      session,
+      craftingSeed: 5,
+    );
+
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        queue: <CraftQueueJob>[
+          CraftQueueJob(
+            id: 'job_retry',
+            potionId: 'p_1',
+            repeatCount: 1,
+            retryPolicy: const CraftRetryPolicy(maxRetries: 2),
+            status: QueueJobStatus.blocked,
+            eta: Duration.zero,
+          ),
+        ],
+      ),
+    );
+
+    controller.resumeBlocked('job_retry');
+
+    expect(session.state.workshop.queue.single.status, QueueJobStatus.blocked);
+    expect(
+      session.state.workshop.logs.first,
+      'Cannot resume job_retry / materials missing',
+    );
+
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: const <String, int>{'m_1': 1, 'm_2': 1},
+      ),
+    );
+
+    controller.resumeBlocked('job_retry');
+
+    expect(session.state.workshop.queue.single.status, QueueJobStatus.queued);
+    expect(session.state.workshop.queue.single.eta, const Duration(seconds: 15));
+    expect(session.state.workshop.logs.first, 'Resumed craft job job_retry');
   });
 }
