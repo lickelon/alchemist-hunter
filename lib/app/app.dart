@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/features/battle/presentation/screens/dungeon_screen.dart';
 import 'package:alchemist_hunter/features/characters/presentation/screens/characters_screen.dart';
+import 'package:alchemist_hunter/features/session/application/session_sync_scope.dart';
 import 'package:alchemist_hunter/features/town/presentation/screens/town_screen.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/screens/workshop_screen.dart';
 import 'package:flutter/material.dart';
@@ -22,18 +23,20 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        appBar: _HomeAppBar(),
-        bottomNavigationBar: _MainTabBar(),
-        body: TabBarView(
-          children: <Widget>[
-            TownScreen(),
-            WorkshopScreen(),
-            CharactersScreen(),
-            DungeonScreen(),
-          ],
+    return const SessionSyncScope(
+      child: DefaultTabController(
+        length: 4,
+        child: Scaffold(
+          appBar: _HomeAppBar(),
+          bottomNavigationBar: _MainTabBar(),
+          body: TabBarView(
+            children: <Widget>[
+              TownScreen(),
+              WorkshopScreen(),
+              CharactersScreen(),
+              DungeonScreen(),
+            ],
+          ),
         ),
       ),
     );
