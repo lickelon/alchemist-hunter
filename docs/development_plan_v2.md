@@ -22,7 +22,7 @@
 ### 2.1 현재 기준 폴더
 - `lib/app`: 앱 엔트리/탭 구조
 - `lib/features/*`: 기능(feature) 단위 폴더
-- `lib/screens`: 탭별 UI
+- `lib/features/*/presentation`: 탭/기능 UI
 
 ### 2.2 feature-based 폴더 구조 규칙 (확정)
 - [ ] `lib/features` 아래는 반드시 기능 단위로 분리
@@ -62,20 +62,20 @@
   - `application`은 interface에만 의존
 
 ### 2.5 폴더 마이그레이션 매핑 (신규)
-- [ ] 기존 `lib/features/game/*` 분해 이전
+- [x] 기존 `lib/features/game/*` 분해 이전
   - 연금/제조/인챈트/부화 관련 -> `lib/features/workshop/*`
   - 상점/판매/장비제작/용병고용 관련 -> `lib/features/town/*`
   - 전투/드롭/스테이지 관련 -> `lib/features/battle/*`
   - 캐릭터 성장/편성/티어승급 관련 -> `lib/features/characters/*`
-- [ ] 기존 `lib/screens/*` 분해 이전
+- [x] 기존 `lib/screens/*` 분해 이전
   - 탭 루트 화면은 각 feature `presentation/screens`로 이동
   - 공통 위젯만 `lib/shared/widgets`로 이동
 - [ ] 테스트 구조 동기화
   - `test/features/<feature>/<layer>/...` 구조로 재배치
   - 기존 `test/services/*`는 feature 하위로 이동
 - [ ] 완료 기준
-  - `lib/features/game` 잔존 코드 0(호환용 export 파일 제외)
-  - 신규 코드가 `lib/screens`에 추가되지 않음
+  - `lib/features/game` 잔존 코드 0
+  - 신규 코드가 `lib/features/*/presentation`에만 추가됨
   - `flutter analyze` 경고 없이 통과
 
 ## 3) 시스템별 상세 상태
@@ -116,16 +116,16 @@
 
 ### 3.1 제조/특성 시스템
 - [x] 단일/복합 특성 엔티티 정의
-  - 파일: `lib/features/game/domain/models.dart`
+  - 파일: `lib/features/workshop/domain/models.dart`
   - 검증: 복합 trait의 components 구조 확인
 - [x] 복합 -> 단일 분해 로직
-  - 파일: `lib/features/game/services/alchemy_service.dart`
+  - 파일: `lib/features/workshop/application/services/alchemy_service.dart`
   - 테스트: `test/services/alchemy_service_test.dart`
 - [x] 단일 -> 복합 합성 로직
-  - 파일: `lib/features/game/services/alchemy_service.dart`
+  - 파일: `lib/features/workshop/application/services/alchemy_service.dart`
   - 테스트: `test/services/alchemy_service_test.dart`
 - [x] 추출 프로필(전체/선택) 계산
-  - 파일: `lib/features/game/services/alchemy_service.dart`
+  - 파일: `lib/features/workshop/application/services/alchemy_service.dart`
 - [-] 추출 결과를 포션 제조 입력 재고와 연결
 - [x] 포션 품질 점수 계산(목표 trait 비율 매칭)
   - 필요 작업:
@@ -154,12 +154,12 @@
 
 ### 3.2 제작 큐 시스템
 - [x] 큐 데이터 모델(반복, 재시도, eta, 상태)
-  - 파일: `lib/features/game/domain/models.dart`
+  - 파일: `lib/features/workshop/domain/models.dart`
 - [x] 큐 처리 tick 로직
-  - 파일: `lib/features/game/services/craft_queue_service.dart`
+  - 파일: `lib/features/workshop/application/services/craft_queue_service.dart`
   - 테스트: `test/services/craft_queue_service_test.dart`
 - [x] UI 연결(큐 등록/틱 처리/상태 표시)
-  - 파일: `lib/screens/weapons_screen.dart`
+  - 파일: `lib/features/workshop/presentation/screens/workshop_screen.dart`
 - [x] 큐 처리 결과물(포션 완제품) 인벤토리 반영
 - [ ] 큐 슬롯 제한(초기 2칸, 확장 가능) 및 다이아 확장 로직
 
@@ -167,21 +167,21 @@
 
 #### 3.3.1 상점
 - [x] 2상점 구조(일반/촉매)
-  - 파일: `lib/features/game/data/dummy_data.dart`, `game_providers.dart`
+  - 파일: `lib/features/workshop/data/dummy_data.dart`, `lib/features/town/application/town_providers.dart`
 - [x] 강제 갱신 누적 비용/주기초기화
-  - 파일: `lib/features/game/services/economy_service.dart`
+  - 파일: `lib/features/town/application/services/economy_service.dart`
   - 테스트: `test/services/economy_service_test.dart`
 - [x] UI 강제 갱신 버튼 연결
-  - 파일: `lib/screens/weapons_screen.dart`
+  - 파일: `lib/features/town/presentation/screens/town_screen.dart`
 - [x] 상점 기능을 마을 화면으로 이전(구매/판매 통합)
 - [x] 자동 갱신 스케줄러(실시간 주기 만료 시 자동 리롤)
 - [ ] 상점별 구매 제한/품절 재입고 정책
 
 #### 3.3.2 전투 드롭
 - [x] normal/special drop 분리 테이블
-  - 파일: `lib/features/game/domain/models.dart`, `dummy_data.dart`
+  - 파일: `lib/features/workshop/domain/models.dart`, `lib/features/workshop/data/dummy_data.dart`
 - [x] 자동전투 결과 loot 반영
-  - 파일: `lib/features/game/services/battle_service.dart`, `game_providers.dart`
+  - 파일: `lib/features/battle/application/services/battle_service.dart`, `lib/features/battle/application/battle_providers.dart`
 - [-] 특수 재료 기반 해금 연결
   - 필요 작업:
     - `unlockFlags` 업데이트 조건 추가
@@ -189,7 +189,7 @@
 
 ### 3.4 전투 시스템
 - [x] 완전 자동 전투 진입/결과 반영 흐름
-  - 파일: `lib/screens/dungeon_screen.dart`, `game_providers.dart`
+  - 파일: `lib/features/battle/presentation/screens/dungeon_screen.dart`, `lib/features/battle/application/battle_providers.dart`
 - [x] 실패 경미 페널티(골드 감소) 적용
 - [ ] 스테이지별 적 세트/권장 전투력/승률 곡선 반영
 - [ ] 포션 loadout 소모 규칙 반영
@@ -315,7 +315,7 @@
 ### 4.1 탭 구조
 - [x] 하단 탭을 `마을 / 작업실 / 캐릭터 / 전투`로 개편
   - 기존 4탭(`Characters / Weapons / Dungeons / Pets`)은 폐기 대상
-  - 파일 영향 범위: `lib/app/app.dart`, `lib/screens/*`
+  - 파일 영향 범위: `lib/app/app.dart`, `lib/features/*/presentation/*`
   - 완료 기준:
     - 탭 라벨/아이콘/라우팅이 4개 새 탭 기준으로 동작
     - 기존 Weapons 기능은 작업실로, Dungeons 기능은 전투로 이전
@@ -341,10 +341,10 @@
 - [-] 기존 `Weapons` 단일 화면 사용 중단(읽기 전용 또는 제거)
 
 ### 4.2.1 기존 UI 마이그레이션 체크리스트 (신규)
-- [-] 기존 `lib/screens/weapons_screen.dart` 기능 분해
+- [x] 기존 `lib/screens/weapons_screen.dart` 기능 분해
   - 상점/판매/장비/용병 기능 -> `마을` 화면으로 이전
   - 추출/제조/인챈트/부화 기능 -> `작업실` 화면으로 이전
-- [x] 기존 `lib/screens/dungeon_screen.dart`를 `전투` 탭 구조에 맞춰 라우팅/상태 정리
+- [x] 기존 `lib/features/battle/presentation/screens/dungeon_screen.dart`를 `전투` 탭 구조에 맞춰 라우팅/상태 정리
 - [ ] 기존 `Characters/Pets` 화면 요소를 `캐릭터(용병/호문쿨루스)` 화면으로 통합
 - [-] 구 UI 진입 경로 차단
   - 하단 탭/딥링크/내부 버튼에서 폐기 화면 접근 불가
@@ -482,11 +482,11 @@
   - [x] `features/game`를 `town/workshop/battle/characters`로 실제 이동
 - [x] 상점 자동 갱신 스케줄러
 
-### M3 캐릭터 성장/해금 루프 (미착수)
-- [ ] 용병/호문쿨루스 공통 성장축(Level/Rank/Tier) 적용
-- [ ] 전투 기반 XP 성장 + 랭크업/티어업 플로우
-- [ ] 티어 승급 재료(타입/티어별) 소모 규칙 적용
-- [ ] 특수 재료 기반 콘텐츠 해금 UI(잠김/조건 표시)
+### M3 캐릭터 성장/해금 루프 (진행중)
+- [x] 용병/호문쿨루스 공통 성장축(Level/Rank/Tier) 적용
+- [x] 전투 기반 XP 성장 + 랭크업/티어업 플로우
+- [x] 티어 승급 재료(타입/티어별) 소모 규칙 적용
+- [-] 특수 재료 기반 콘텐츠 해금 UI(잠김/조건 표시)
 
 ### M4 이원화 스킬트리/재화 체계 (미착수)
 - [ ] 마을 스킬트리(Town) 구현: TownInsight + Gold 복합 비용
@@ -507,9 +507,8 @@
 - [ ] 편의성 과금 훅(슬롯 확장/가속) 최소 연동
 
 ## 8) 즉시 다음 작업(실행 순서)
-1. `M3 착수: Level/Rank/Tier 성장 플로우 + 티어 승급 재료`
-2. `M3 착수: 전투 기반 XP/랭크업/티어업 UI 연결`
-3. `M3 착수: 특수 재료 기반 해금 UI(잠금/조건 표기) 완성`
-4. `M4 준비: 마을/작업실 스킬트리 노드 데이터 스키마 확정`
-5. `M4 착수: 이원화 스킬트리 + 복합 비용 결제`
-6. `M5 준비: 로컬 저장소 스키마/마이그레이션 설계`
+1. `M3 진행: 특수 재료 기반 해금 UI(잠금/조건 표기) 완성`
+2. `M3 진행: 캐릭터 성장 수치 밸런스(경험치 곡선/랭크 캡) 조정`
+3. `M4 준비: 마을/작업실 스킬트리 노드 데이터 스키마 확정`
+4. `M4 착수: 이원화 스킬트리 + 복합 비용 결제`
+5. `M5 준비: 로컬 저장소 스키마/마이그레이션 설계`
