@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/features/battle/application/services/battle_service.dart';
+import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:alchemist_hunter/features/town/application/services/economy_service.dart';
 import 'package:alchemist_hunter/features/workshop/application/services/craft_queue_service.dart';
 import 'package:alchemist_hunter/features/workshop/application/services/potion_crafting_service.dart';
@@ -31,6 +32,30 @@ SessionState createInitialSessionState(DateTime now) {
         automationTier: 1,
         sessionPhase: SessionPhase.early,
       ),
+    ),
+    characters: const CharactersState(
+      mercenaries: <CharacterProgress>[
+        CharacterProgress(
+          id: 'merc_1',
+          name: 'Rookie Swordsman',
+          type: CharacterType.mercenary,
+          level: 1,
+          rank: 1,
+          xp: 0,
+          mercenaryTier: MercenaryTier.rookie,
+        ),
+      ],
+      homunculi: <CharacterProgress>[
+        CharacterProgress(
+          id: 'homo_1',
+          name: 'Nigredo Seed',
+          type: CharacterType.homunculus,
+          level: 1,
+          rank: 1,
+          xp: 0,
+          homunculusTier: HomunculusTier.nigredo,
+        ),
+      ],
     ),
   );
 }
