@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:alchemist_hunter/features/battle/application/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/application/services/battle_service.dart';
+import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:alchemist_hunter/features/session/application/session_logic.dart';
 import 'package:alchemist_hunter/features/session/application/session_providers.dart';
 import 'package:alchemist_hunter/features/town/application/services/economy_service.dart';
@@ -161,5 +162,30 @@ void main() {
       true,
     );
     expect(session.state.workshop.logs.first, contains('Battle '));
+  });
+
+  test('runAutoBattle does not overflow xp at rank max level', () {
+    final SessionController session = buildSession();
+    final BattleController controller = buildBattleController(session);
+    final CharacterProgress merc = session.state.characters.mercenaries.first;
+    final CharacterProgress homo = session.state.characters.homunculi.first;
+
+    session.state = session.state.copyWith(
+      characters: session.state.characters.copyWith(
+        mercenaries: <CharacterProgress>[
+          merc.copyWith(level: merc.maxLevelForRank, xp: 999),
+        ],
+        homunculi: <CharacterProgress>[
+          homo.copyWith(level: homo.maxLevelForRank, xp: 999),
+        ],
+      ),
+    );
+
+    controller.runAutoBattle('stage_5');
+
+    expect(session.state.characters.mercenaries.first.level, merc.maxLevelForRank);
+    expect(session.state.characters.homunculi.first.level, homo.maxLevelForRank);
+    expect(session.state.characters.mercenaries.first.xp, 0);
+    expect(session.state.characters.homunculi.first.xp, 0);
   });
 }

@@ -57,4 +57,15 @@ void main() {
     expect(updated.level, 1);
     expect(session.state.player.materialInventory.containsKey(matKey), false);
   });
+
+  test('xpToNextLevel is zero at max level', () {
+    final SessionController session = buildSession();
+    final CharacterProgress target = session.state.characters.mercenaries.first;
+    final CharacterProgress maxed = target.copyWith(
+      level: target.maxLevelForRank,
+      xp: 0,
+    );
+
+    expect(maxed.xpToNextLevel, 0);
+  });
 }

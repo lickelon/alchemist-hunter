@@ -30,7 +30,7 @@ class CharacterProgress {
 
   int get maxLevelForRank => rank * 5;
 
-  int get xpToNextLevel => level * 20;
+  int get xpToNextLevel => level >= maxLevelForRank ? 0 : level * 20;
 
   int get tierIndex {
     if (type == CharacterType.mercenary) {
