@@ -19,22 +19,17 @@ class DungeonScreen extends ConsumerWidget {
         final String stage = stages[index];
         final bool unlocked =
             index == 0 || progress.unlockFlags.contains(stage);
-        String lockedReason(String id) {
-          if (id == 'stage_2') {
-            return 'Locked: 특수 재료 m_30 1개 이상 획득 필요';
-          }
-          return 'Locked: 이전 스테이지/특수 재료 조건 필요';
-        }
+        final String stageLabel = stage.replaceFirst('stage_', 'Stage ');
 
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: ListTile(
             leading: const Icon(Icons.shield),
-            title: Text(stage),
+            title: Text(stageLabel),
             subtitle: Text(
               unlocked
                   ? 'Auto battle / Gold: $gold / Essence: $essence'
-                  : lockedReason(stage),
+                  : _lockedReason(stage),
             ),
             trailing: FilledButton(
               onPressed: unlocked
@@ -48,5 +43,15 @@ class DungeonScreen extends ConsumerWidget {
         );
       },
     );
+  }
+
+  String _lockedReason(String stageId) {
+    return switch (stageId) {
+      'stage_2' => '잠금 조건: 특수 재료 m_30 1개 이상 획득',
+      'stage_3' => '잠금 조건: Stage 2 개방 이후 추가 해금 예정',
+      'stage_4' => '잠금 조건: Stage 3 개방 이후 추가 해금 예정',
+      'stage_5' => '잠금 조건: Stage 4 개방 이후 추가 해금 예정',
+      _ => '잠금 조건: 이전 스테이지 진행 필요',
+    };
   }
 }
