@@ -2,6 +2,22 @@ import 'package:alchemist_hunter/features/session/application/session_providers.
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+class MaterialInventoryView {
+  const MaterialInventoryView({
+    required this.id,
+    required this.name,
+    required this.rarity,
+    required this.quantity,
+    required this.traitSummary,
+  });
+
+  final String id;
+  final String name;
+  final MaterialRarity rarity;
+  final int quantity;
+  final String traitSummary;
+}
+
 final Provider<int> workshopEssenceProvider = Provider<int>((Ref ref) {
   return ref.watch(
     sessionControllerProvider.select(
@@ -31,6 +47,31 @@ final Provider<List<MapEntry<String, int>>> sortedMaterialInventoryProvider =
         return right.value.compareTo(left.value);
       });
       return entries;
+    });
+
+final Provider<List<MaterialInventoryView>> materialInventoryViewsProvider =
+    Provider<List<MaterialInventoryView>>((Ref ref) {
+      final List<MaterialEntity> materials = ref.watch(materialsProvider);
+      final List<MapEntry<String, int>> inventory = ref.watch(
+        sortedMaterialInventoryProvider,
+      );
+      final Map<String, MaterialEntity> materialMap = <String, MaterialEntity>{
+        for (final MaterialEntity material in materials) material.id: material,
+      };
+
+      return inventory.map((MapEntry<String, int> entry) {
+        final MaterialEntity? material = materialMap[entry.key];
+        final String traitSummary = material == null
+            ? '특성 정보 없음'
+            : material.traits.map((TraitUnit trait) => trait.name).join(' / ');
+        return MaterialInventoryView(
+          id: entry.key,
+          name: material?.name ?? entry.key,
+          rarity: material?.rarity ?? MaterialRarity.common,
+          quantity: entry.value,
+          traitSummary: traitSummary,
+        );
+      }).toList();
     });
 
 final Provider<Map<String, int>> craftedPotionStacksProvider =

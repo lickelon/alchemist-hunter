@@ -1,5 +1,7 @@
 import 'package:alchemist_hunter/features/workshop/application/workshop_providers.dart';
+import 'package:alchemist_hunter/features/workshop/application/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/session/application/session_providers.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +40,16 @@ class _WorkshopQueueSheet extends ConsumerWidget {
     final List<CraftQueueJob> queue = ref.watch(craftQueueProvider);
     final List<PotionQueueOption> options = ref.watch(
       workshopPotionQueueOptionsProvider,
+    );
+    final WorkshopController controller = ref.read(workshopControllerProvider);
+    final PotionCraftingService craftingService = ref.read(
+      potionCraftingServiceProvider,
+    );
+    final List<MaterialEntity> materials = ref.watch(materialsProvider);
+    final Map<String, int> inventory = ref.watch(
+      sessionControllerProvider.select(
+        (SessionState state) => state.player.materialInventory,
+      ),
     );
 
     return SafeArea(
@@ -89,7 +101,14 @@ class _WorkshopQueueSheet extends ConsumerWidget {
                             trailing: FilledButton.tonal(
                               onPressed: option.unlocked && option.craftableNow
                                   ? () {
-                                      _showEnqueueOptions(context, ref, option);
+                                      _showEnqueueOptions(
+                                        context,
+                                        controller,
+                                        craftingService,
+                                        materials,
+                                        inventory,
+                                        option,
+                                      );
                                     }
                                   : null,
                               child: const Text('등록'),
@@ -110,14 +129,48 @@ class _WorkshopQueueSheet extends ConsumerWidget {
                     ? const Center(child: Text('대기열이 비어있습니다'))
                     : ListView(
                         children: queue.take(20).map((CraftQueueJob job) {
+                          final PotionBlueprint blueprint = options
+                              .map((PotionQueueOption option) => option.blueprint)
+                              .firstWhere(
+                                (PotionBlueprint option) => option.id == job.potionId,
+                                orElse: () => PotionBlueprint(
+                                  id: job.potionId,
+                                  name: job.potionId,
+                                  targetTraits: const <String, double>{},
+                                  baseValue: 0,
+                                  useType: PotionUseType.sell,
+                                ),
+                              );
+                          final int remainingCount =
+                              job.repeatCount - job.currentRepeat;
+                          final bool canResume =
+                              job.status == QueueJobStatus.blocked &&
+                              remainingCount > 0 &&
+                              craftingService.canCraftRepeatCount(
+                                blueprint: blueprint,
+                                inventory: inventory,
+                                materials: materials,
+                                repeatCount: remainingCount,
+                              );
                           return ListTile(
                             dense: true,
                             title: Text(
-                              '${job.potionId} ${job.currentRepeat}/${job.repeatCount}',
+                              '${blueprint.name} ${job.currentRepeat}/${job.repeatCount}',
                             ),
                             subtitle: Text(
-                              '상태 ${job.status.name}, 재시도 ${job.retryCount}, ETA ${job.eta.inSeconds}s',
+                              _queueStatusText(
+                                job: job,
+                                canResume: canResume,
+                              ),
                             ),
+                            trailing: job.status == QueueJobStatus.blocked
+                                ? FilledButton.tonal(
+                                    onPressed: canResume
+                                        ? () => controller.resumeBlocked(job.id)
+                                        : null,
+                                    child: const Text('재개'),
+                                  )
+                                : null,
                           );
                         }).toList(),
                       ),
@@ -131,7 +184,10 @@ class _WorkshopQueueSheet extends ConsumerWidget {
 
   void _showEnqueueOptions(
     BuildContext context,
-    WidgetRef ref,
+    WorkshopController controller,
+    PotionCraftingService craftingService,
+    List<MaterialEntity> materials,
+    Map<String, int> inventory,
     PotionQueueOption option,
   ) {
     final List<int> quantities = <int>{
@@ -161,19 +217,30 @@ class _WorkshopQueueSheet extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Text('최대 ${option.maxCraftableCount}회 제작 가능'),
                 const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: quantities.map((int quantity) {
+                    final Map<String, int>? requirements = craftingService
+                        .requiredMaterialsForRepeatCount(
+                          blueprint: option.blueprint,
+                          inventory: inventory,
+                          materials: materials,
+                          repeatCount: quantity,
+                        );
                     final bool isMax = quantity == option.maxCraftableCount;
-                    return FilledButton.tonal(
-                      onPressed: () {
-                        ref
-                            .read(workshopControllerProvider)
-                            .enqueuePotion(option.blueprint.id, quantity);
-                        Navigator.of(bottomSheetContext).pop();
-                      },
-                      child: Text(isMax ? '최대' : '$quantity회'),
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(isMax ? '최대 등록' : '$quantity회 등록'),
+                      subtitle: Text(
+                        _formatMaterialRequirements(requirements, materials),
+                      ),
+                      trailing: FilledButton.tonal(
+                        onPressed: () {
+                          controller.enqueuePotion(option.blueprint.id, quantity);
+                          Navigator.of(bottomSheetContext).pop();
+                        },
+                        child: const Text('등록'),
+                      ),
                     );
                   }).toList(),
                 ),
@@ -183,5 +250,40 @@ class _WorkshopQueueSheet extends ConsumerWidget {
         );
       },
     );
+  }
+
+  String _formatMaterialRequirements(
+    Map<String, int>? requirements,
+    List<MaterialEntity> materials,
+  ) {
+    if (requirements == null || requirements.isEmpty) {
+      return '필요 재료 계산 불가';
+    }
+
+    final Map<String, String> materialNames = <String, String>{
+      for (final MaterialEntity material in materials) material.id: material.name,
+    };
+    return requirements.entries
+        .map(
+          (MapEntry<String, int> entry) =>
+              '${materialNames[entry.key] ?? entry.key} x${entry.value}',
+        )
+        .join(', ');
+  }
+
+  String _queueStatusText({
+    required CraftQueueJob job,
+    required bool canResume,
+  }) {
+    if (job.status == QueueJobStatus.blocked) {
+      return canResume ? '상태 진행 불가, 재료 보충 후 재개 가능' : '상태 진행 불가, 재료 부족';
+    }
+    if (job.status == QueueJobStatus.completed) {
+      return '상태 완료';
+    }
+    if (job.status == QueueJobStatus.processing) {
+      return '상태 진행 중, ETA ${job.eta.inSeconds}s';
+    }
+    return '상태 대기 중, ${job.currentRepeat}/${job.repeatCount}';
   }
 }

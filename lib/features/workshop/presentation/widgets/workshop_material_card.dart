@@ -41,8 +41,8 @@ class _WorkshopMaterialSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<MapEntry<String, int>> materials = ref.watch(
-      sortedMaterialInventoryProvider,
+    final List<MaterialInventoryView> materials = ref.watch(
+      materialInventoryViewsProvider,
     );
 
     return SafeArea(
@@ -64,11 +64,14 @@ class _WorkshopMaterialSheet extends ConsumerWidget {
                     : ListView.builder(
                         itemCount: materials.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final MapEntry<String, int> entry = materials[index];
+                          final MaterialInventoryView entry = materials[index];
                           return ListTile(
                             dense: true,
-                            title: Text(entry.key),
-                            trailing: Text('x${entry.value}'),
+                            title: Text(entry.name),
+                            subtitle: Text(
+                              '${entry.rarity.name} / ${entry.traitSummary}',
+                            ),
+                            trailing: Text('x${entry.quantity}'),
                           );
                         },
                       ),

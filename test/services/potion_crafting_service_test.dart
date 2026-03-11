@@ -72,4 +72,21 @@ void main() {
     expect(prepared.extractedTraits.containsKey('t_hp'), true);
     expect(prepared.extractedTraits.containsKey('t_atk'), true);
   });
+
+  test('requiredMaterialsForRepeatCount returns aggregated material counts', () {
+    final PotionBlueprint blueprint = DummyData.potions.firstWhere(
+      (PotionBlueprint p) => p.id == 'p_1',
+    );
+
+    final Map<String, int>? required = service.requiredMaterialsForRepeatCount(
+      blueprint: blueprint,
+      inventory: <String, int>{'m_1': 2, 'm_2': 2},
+      materials: DummyData.materials,
+      repeatCount: 2,
+    );
+
+    expect(required, isNotNull);
+    expect(required!['m_1'], 2);
+    expect(required['m_2'], 2);
+  });
 }
