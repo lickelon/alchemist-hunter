@@ -140,7 +140,9 @@ void main() {
     final BattleController controller = buildBattleController(session);
     final int previousGold = session.state.player.gold;
     final int previousEssence = session.state.player.essence;
+    final int previousMercLevel = session.state.characters.mercenaries.first.level;
     final int previousMercXp = session.state.characters.mercenaries.first.xp;
+    final int previousHomoLevel = session.state.characters.homunculi.first.level;
     final int previousHomoXp = session.state.characters.homunculi.first.xp;
 
     controller.runAutoBattle('stage_1');
@@ -148,8 +150,16 @@ void main() {
     expect(session.state.player.gold, isNot(previousGold));
     expect(session.state.player.essence, greaterThan(previousEssence));
     expect(session.state.player.materialInventory, isNotEmpty);
-    expect(session.state.characters.mercenaries.first.xp, greaterThan(previousMercXp));
-    expect(session.state.characters.homunculi.first.xp, greaterThan(previousHomoXp));
+    expect(
+      session.state.characters.mercenaries.first.level > previousMercLevel ||
+          session.state.characters.mercenaries.first.xp > previousMercXp,
+      true,
+    );
+    expect(
+      session.state.characters.homunculi.first.level > previousHomoLevel ||
+          session.state.characters.homunculi.first.xp > previousHomoXp,
+      true,
+    );
     expect(session.state.workshop.logs.first, contains('Battle '));
   });
 }

@@ -531,7 +531,7 @@ class BattleDomain {
     final int nextGold =
         state.player.gold - result.failurePenalty + (result.success ? 35 : 0);
     final int essenceGain = result.success ? 6 : 2;
-    final int xpGain = result.success ? 24 : 10;
+    final int xpGain = _xpGainForStage(stageId: stageId, success: result.success);
     final CharactersState nextCharacters = _characterDomain.grantBattleXp(
       state: state.characters,
       xpGain: xpGain,
@@ -556,5 +556,13 @@ class BattleDomain {
       logMessage:
           'Battle ${result.success ? 'win' : 'fail'} on $stageId / essence+$essenceGain / xp+$xpGain',
     );
+  }
+
+  int _xpGainForStage({required String stageId, required bool success}) {
+    final int stageNumber = int.tryParse(stageId.replaceFirst('stage_', '')) ?? 1;
+    if (success) {
+      return 16 + (stageNumber * 4);
+    }
+    return 6 + (stageNumber * 2);
   }
 }
