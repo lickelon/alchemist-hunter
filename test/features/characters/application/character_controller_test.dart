@@ -23,7 +23,8 @@ void main() {
 
     controller.rankUp(CharacterType.mercenary, target.id);
 
-    final CharacterProgress updated = session.state.characters.mercenaries.first;
+    final CharacterProgress updated =
+        session.state.characters.mercenaries.first;
     expect(updated.rank, 2);
     expect(updated.level, 1);
     expect(updated.xp, 0);
@@ -51,7 +52,8 @@ void main() {
 
     controller.tierUp(CharacterType.mercenary, target.id);
 
-    final CharacterProgress updated = session.state.characters.mercenaries.first;
+    final CharacterProgress updated =
+        session.state.characters.mercenaries.first;
     expect(updated.tierIndex, 2);
     expect(updated.rank, 1);
     expect(updated.level, 1);
