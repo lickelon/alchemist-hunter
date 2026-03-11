@@ -152,31 +152,40 @@ class _WorkshopQueueSheet extends ConsumerWidget {
               const SizedBox(height: 8),
               const Text('포션 등록', style: TextStyle(fontWeight: FontWeight.w700)),
               const SizedBox(height: 6),
-              if (options.isEmpty)
-                const Text('등록 가능한 포션이 없습니다')
-              else
-                ...options.take(8).map((PotionQueueOption option) {
-                  return ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(option.blueprint.name),
-                    subtitle: Text(
-                      option.unlocked ? '해금됨' : '잠김: ${option.lockReason}',
-                    ),
-                    trailing: FilledButton.tonal(
-                      onPressed: option.unlocked
-                          ? () {
-                              ref
-                                  .read(workshopControllerProvider)
-                                  .enqueuePotion(option.blueprint.id, 3);
-                            }
-                          : null,
-                      child: const Text('x3 등록'),
-                    ),
-                  );
-                }),
-              const Divider(),
               Expanded(
+                flex: 3,
+                child: options.isEmpty
+                    ? const Center(child: Text('등록 가능한 포션이 없습니다'))
+                    : ListView.builder(
+                        itemCount: options.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final PotionQueueOption option = options[index];
+                          return ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(option.blueprint.name),
+                            subtitle: Text(
+                              option.unlocked ? '해금됨' : '잠김: ${option.lockReason}',
+                            ),
+                            trailing: FilledButton.tonal(
+                              onPressed: option.unlocked
+                                  ? () {
+                                      ref
+                                          .read(workshopControllerProvider)
+                                          .enqueuePotion(option.blueprint.id, 3);
+                                    }
+                                  : null,
+                              child: const Text('x3 등록'),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              const Divider(),
+              const Text('현재 대기열', style: TextStyle(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 6),
+              Expanded(
+                flex: 2,
                 child: queue.isEmpty
                     ? const Center(child: Text('대기열이 비어있습니다'))
                     : ListView(

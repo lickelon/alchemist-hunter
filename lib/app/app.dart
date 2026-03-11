@@ -49,22 +49,25 @@ class _HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: const Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
+      leading: const Icon(Icons.menu),
+      title: const Text(
+        'Alchemist Hunter',
+        overflow: TextOverflow.ellipsis,
+      ),
+      actions: const <Widget>[
+        Padding(
+          padding: EdgeInsets.only(right: 12),
+          child: Row(
             children: <Widget>[
-              Icon(Icons.menu),
-              SizedBox(width: 6),
-              Text('Alchemist Hunter'),
+              Text('Diamonds'),
+              SizedBox(width: 4),
+              Icon(Icons.diamond),
             ],
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[Text('Diamonds'), Icon(Icons.diamond)],
-          ),
-        ],
-      ),
+        ),
+      ],
+      titleSpacing: 8,
+      actionsPadding: EdgeInsets.zero,
     );
   }
 

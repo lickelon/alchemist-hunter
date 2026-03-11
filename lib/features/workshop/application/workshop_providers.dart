@@ -163,6 +163,11 @@ final Provider<List<PotionQueueOption>> workshopPotionQueueOptionsProvider =
         return '특수 재료 m_30 드롭 필요';
       }
 
+      int potionOrder(String id) {
+        final String numericSuffix = id.split('_').last;
+        return int.tryParse(numericSuffix) ?? 999999;
+      }
+
       return catalog.map((PotionBlueprint potion) {
         final bool unlocked = isUnlocked(potion);
         return PotionQueueOption(
@@ -170,5 +175,12 @@ final Provider<List<PotionQueueOption>> workshopPotionQueueOptionsProvider =
           unlocked: unlocked,
           lockReason: unlocked ? '' : lockReason(potion),
         );
-      }).toList();
+      }).toList()
+        ..sort((PotionQueueOption left, PotionQueueOption right) {
+          if (left.unlocked == right.unlocked) {
+            return potionOrder(left.blueprint.id)
+                .compareTo(potionOrder(right.blueprint.id));
+          }
+          return left.unlocked ? -1 : 1;
+        });
     });
