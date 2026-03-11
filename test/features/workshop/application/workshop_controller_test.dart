@@ -161,4 +161,39 @@ void main() {
     expect(session.state.workshop.queue.single.eta, const Duration(seconds: 15));
     expect(session.state.workshop.logs.first, 'Resumed craft job job_retry');
   });
+
+  test('clearCompleted removes completed jobs from queue', () {
+    final SessionController session = buildSession();
+    final WorkshopController controller = buildController(session);
+
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        queue: <CraftQueueJob>[
+          CraftQueueJob(
+            id: 'job_done',
+            potionId: 'p_1',
+            repeatCount: 1,
+            retryPolicy: const CraftRetryPolicy(maxRetries: 2),
+            status: QueueJobStatus.completed,
+            eta: Duration.zero,
+            currentRepeat: 1,
+          ),
+          CraftQueueJob(
+            id: 'job_wait',
+            potionId: 'p_2',
+            repeatCount: 1,
+            retryPolicy: const CraftRetryPolicy(maxRetries: 2),
+            status: QueueJobStatus.queued,
+            eta: const Duration(seconds: 15),
+          ),
+        ],
+      ),
+    );
+
+    controller.clearCompleted();
+
+    expect(session.state.workshop.queue, hasLength(1));
+    expect(session.state.workshop.queue.single.id, 'job_wait');
+    expect(session.state.workshop.logs.first, 'Cleared completed craft jobs');
+  });
 }

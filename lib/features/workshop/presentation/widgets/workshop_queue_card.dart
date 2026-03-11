@@ -51,6 +51,11 @@ class _WorkshopQueueSheet extends ConsumerWidget {
         (SessionState state) => state.player.materialInventory,
       ),
     );
+    final List<CraftQueueJob> sortedQueue = <CraftQueueJob>[...queue]
+      ..sort(_compareQueueJob);
+    final int completedCount = queue
+        .where((CraftQueueJob job) => job.status == QueueJobStatus.completed)
+        .length;
 
     return SafeArea(
       child: Padding(
@@ -72,6 +77,15 @@ class _WorkshopQueueSheet extends ConsumerWidget {
                       ref.read(workshopControllerProvider).tickCraftQueue();
                     },
                     child: const Text('틱 처리'),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton.tonal(
+                    onPressed: completedCount > 0
+                        ? () {
+                            ref.read(workshopControllerProvider).clearCompleted();
+                          }
+                        : null,
+                    child: Text('완료 정리 ($completedCount)'),
                   ),
                 ],
               ),
@@ -128,7 +142,7 @@ class _WorkshopQueueSheet extends ConsumerWidget {
                 child: queue.isEmpty
                     ? const Center(child: Text('대기열이 비어있습니다'))
                     : ListView(
-                        children: queue.take(20).map((CraftQueueJob job) {
+                        children: sortedQueue.take(20).map((CraftQueueJob job) {
                           final PotionBlueprint blueprint = options
                               .map((PotionQueueOption option) => option.blueprint)
                               .firstWhere(
@@ -143,6 +157,15 @@ class _WorkshopQueueSheet extends ConsumerWidget {
                               );
                           final int remainingCount =
                               job.repeatCount - job.currentRepeat;
+                          final Map<String, int>? requiredMaterials =
+                              remainingCount > 0
+                              ? craftingService.requiredMaterialsForRepeatCount(
+                                  blueprint: blueprint,
+                                  inventory: inventory,
+                                  materials: materials,
+                                  repeatCount: remainingCount,
+                                )
+                              : null;
                           final bool canResume =
                               job.status == QueueJobStatus.blocked &&
                               remainingCount > 0 &&
@@ -161,6 +184,13 @@ class _WorkshopQueueSheet extends ConsumerWidget {
                               _queueStatusText(
                                 job: job,
                                 canResume: canResume,
+                                lackingMaterials: _formatMissingMaterials(
+                                  blueprint: blueprint,
+                                  repeatCount: remainingCount,
+                                  requirements: requiredMaterials,
+                                  inventory: inventory,
+                                  materials: materials,
+                                ),
                               ),
                             ),
                             trailing: job.status == QueueJobStatus.blocked
@@ -274,9 +304,16 @@ class _WorkshopQueueSheet extends ConsumerWidget {
   String _queueStatusText({
     required CraftQueueJob job,
     required bool canResume,
+    required String? lackingMaterials,
   }) {
     if (job.status == QueueJobStatus.blocked) {
-      return canResume ? '상태 진행 불가, 재료 보충 후 재개 가능' : '상태 진행 불가, 재료 부족';
+      if (canResume) {
+        return '상태 진행 불가, 재료 보충 후 재개 가능';
+      }
+      if (lackingMaterials != null && lackingMaterials.isNotEmpty) {
+        return '상태 진행 불가, 부족 재료: $lackingMaterials';
+      }
+      return '상태 진행 불가, 재료 부족';
     }
     if (job.status == QueueJobStatus.completed) {
       return '상태 완료';
@@ -285,5 +322,112 @@ class _WorkshopQueueSheet extends ConsumerWidget {
       return '상태 진행 중, ETA ${job.eta.inSeconds}s';
     }
     return '상태 대기 중, ${job.currentRepeat}/${job.repeatCount}';
+  }
+
+  String? _formatMissingMaterials({
+    required PotionBlueprint blueprint,
+    required int repeatCount,
+    required Map<String, int>? requirements,
+    required Map<String, int> inventory,
+    required List<MaterialEntity> materials,
+  }) {
+    final Map<String, int> effectiveRequirements =
+        (requirements == null || requirements.isEmpty)
+        ? _estimateRequirements(
+            blueprint: blueprint,
+            repeatCount: repeatCount,
+            materials: materials,
+          )
+        : requirements;
+
+    final Map<String, String> materialNames = <String, String>{
+      for (final MaterialEntity material in materials) material.id: material.name,
+    };
+    final List<String> missing = <String>[];
+    for (final MapEntry<String, int> entry in effectiveRequirements.entries) {
+      final int owned = inventory[entry.key] ?? 0;
+      if (owned >= entry.value) {
+        continue;
+      }
+      missing.add(
+        '${materialNames[entry.key] ?? entry.key} x${entry.value - owned}',
+      );
+    }
+    if (missing.isEmpty) {
+      return null;
+    }
+    return missing.join(', ');
+  }
+
+  Map<String, int> _estimateRequirements({
+    required PotionBlueprint blueprint,
+    required int repeatCount,
+    required List<MaterialEntity> materials,
+  }) {
+    final Map<String, int> result = <String, int>{};
+    final List<MapEntry<String, double>> orderedTraits =
+        blueprint.targetTraits.entries.toList()
+      ..sort(
+        (MapEntry<String, double> left, MapEntry<String, double> right) =>
+            right.value.compareTo(left.value),
+      );
+
+    for (int index = 0; index < repeatCount; index++) {
+      for (final MapEntry<String, double> trait in orderedTraits) {
+        final MaterialEntity? material = _bestMaterialForTrait(
+          trait.key,
+          materials,
+        );
+        if (material == null) {
+          continue;
+        }
+        result[material.id] = (result[material.id] ?? 0) + 1;
+      }
+    }
+
+    return result;
+  }
+
+  MaterialEntity? _bestMaterialForTrait(
+    String traitId,
+    List<MaterialEntity> materials,
+  ) {
+    MaterialEntity? best;
+    double bestScore = -1;
+
+    for (final MaterialEntity material in materials) {
+      double score = 0;
+      for (final TraitUnit trait in material.traits) {
+        if (trait.type == TraitType.single && trait.id == traitId) {
+          score += trait.potency;
+        }
+        if (trait.type == TraitType.compound) {
+          score += (trait.components[traitId] ?? 0) * trait.potency;
+        }
+      }
+      if (score > bestScore) {
+        best = material;
+        bestScore = score;
+      }
+    }
+
+    return bestScore > 0 ? best : null;
+  }
+
+  int _compareQueueJob(CraftQueueJob left, CraftQueueJob right) {
+    int rank(QueueJobStatus status) {
+      return switch (status) {
+        QueueJobStatus.processing => 0,
+        QueueJobStatus.blocked => 1,
+        QueueJobStatus.queued => 2,
+        QueueJobStatus.completed => 3,
+      };
+    }
+
+    final int statusCompare = rank(left.status).compareTo(rank(right.status));
+    if (statusCompare != 0) {
+      return statusCompare;
+    }
+    return left.id.compareTo(right.id);
   }
 }

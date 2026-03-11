@@ -82,4 +82,58 @@ void main() {
     expect(find.text('common / Vital / Swift'), findsOneWidget);
     expect(find.text('x2'), findsOneWidget);
   });
+
+  testWidgets('workshop queue sheet shows clear completed button and missing materials', (
+    WidgetTester tester,
+  ) async {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final SessionController session = container.read(
+      sessionControllerProvider.notifier,
+    );
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: const <String, int>{'m_1': 1},
+      ),
+      workshop: session.state.workshop.copyWith(
+        queue: <CraftQueueJob>[
+          const CraftQueueJob(
+            id: 'job_done',
+            potionId: 'p_1',
+            repeatCount: 1,
+            retryPolicy: CraftRetryPolicy(maxRetries: 2),
+            status: QueueJobStatus.completed,
+            eta: Duration.zero,
+            currentRepeat: 1,
+          ),
+          const CraftQueueJob(
+            id: 'job_blocked',
+            potionId: 'p_1',
+            repeatCount: 1,
+            retryPolicy: CraftRetryPolicy(maxRetries: 2),
+            status: QueueJobStatus.blocked,
+            eta: Duration.zero,
+          ),
+        ],
+      ),
+    );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: Scaffold(body: WorkshopQueueCard(jobCount: 2)),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Craft Queue'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('완료 정리 (1)'), findsOneWidget);
+    expect(find.textContaining('부족 재료:'), findsOneWidget);
+    expect(find.text('Potion 1 0/1'), findsOneWidget);
+    expect(find.text('Potion 1 1/1'), findsOneWidget);
+  });
 }

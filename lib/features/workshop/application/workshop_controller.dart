@@ -72,6 +72,19 @@ class WorkshopController {
     );
   }
 
+  void clearCompleted() {
+    final SessionState current = _session.snapshot();
+    final SessionState nextState = _workshopDomain.clearCompletedJobs(
+      state: current,
+    );
+    _apply(
+      nextState,
+      logMessage: identical(nextState, current)
+          ? null
+          : 'Cleared completed craft jobs',
+    );
+  }
+
   String? _tickLogMessage(SessionState current, SessionState nextState) {
     CraftQueueJob? activeJob;
     for (final CraftQueueJob job in current.workshop.queue) {

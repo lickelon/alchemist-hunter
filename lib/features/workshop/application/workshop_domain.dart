@@ -231,6 +231,19 @@ class WorkshopDomain {
     );
   }
 
+  SessionState clearCompletedJobs({required SessionState state}) {
+    final List<CraftQueueJob> remaining = state.workshop.queue
+        .where((CraftQueueJob job) => job.status != QueueJobStatus.completed)
+        .toList();
+    if (remaining.length == state.workshop.queue.length) {
+      return state;
+    }
+
+    return state.copyWith(
+      workshop: state.workshop.copyWith(queue: remaining),
+    );
+  }
+
   PotionBlueprint _findBlueprint(String potionId) {
     return DummyData.potions.firstWhere(
       (PotionBlueprint potion) => potion.id == potionId,
