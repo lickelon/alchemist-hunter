@@ -90,6 +90,11 @@ void main() {
 
   test('tickCraftQueue produces crafted potion entries', () {
     final SessionController session = buildSession();
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: <String, int>{'m_1': 2, 'm_2': 2},
+      ),
+    );
     final WorkshopController controller = buildWorkshopController(
       session,
       queueSeed: 3,
@@ -109,10 +114,35 @@ void main() {
     );
     expect(session.state.workshop.craftedPotionDetails, isNotEmpty);
     expect(session.state.workshop.logs.first, 'Processed queue tick / produced 1');
+    expect(session.state.player.materialInventory['m_1'], 1);
+    expect(session.state.player.materialInventory['m_2'], 1);
+  });
+
+  test('enqueuePotion is blocked when materials are missing', () {
+    final SessionController session = buildSession();
+    final WorkshopController controller = buildWorkshopController(
+      session,
+      queueSeed: 3,
+      craftingSeed: 5,
+    );
+
+    controller.enqueuePotion('p_1', 1);
+
+    expect(session.state.workshop.queue, isEmpty);
+    expect(session.state.workshop.craftedPotionStacks, isEmpty);
+    expect(
+      session.state.workshop.logs.first,
+      'Cannot enqueue p_1 x1 / materials missing',
+    );
   });
 
   test('sellCraftedPotion removes stack and adds gold', () {
     final SessionController session = buildSession();
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: <String, int>{'m_1': 2, 'm_2': 2},
+      ),
+    );
     final WorkshopController workshopController = buildWorkshopController(
       session,
       queueSeed: 3,

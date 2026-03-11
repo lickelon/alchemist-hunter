@@ -205,7 +205,22 @@ class WorkshopDomain {
     required int repeatCount,
     required DateTime now,
     required CraftQueueService queueService,
+    required PotionCraftingService craftingService,
   }) {
+    final PotionBlueprint blueprint = _findBlueprint(potionId);
+    final bool canCraft = craftingService.canCraftRepeatCount(
+      blueprint: blueprint,
+      inventory: state.player.materialInventory,
+      materials: DummyData.materials,
+      repeatCount: repeatCount,
+    );
+    if (!canCraft) {
+      return SessionMutationResult(
+        state: state,
+        logMessage: 'Cannot enqueue $potionId x$repeatCount / materials missing',
+      );
+    }
+
     final CraftQueueJob job = CraftQueueJob(
       id: 'job_${now.millisecondsSinceEpoch}',
       potionId: potionId,
@@ -230,6 +245,34 @@ class WorkshopDomain {
     required CraftQueueService queueService,
     required PotionCraftingService craftingService,
   }) {
+    CraftQueueJob? activeJob;
+    for (final CraftQueueJob job in state.workshop.queue) {
+      if (job.status == QueueJobStatus.queued ||
+          job.status == QueueJobStatus.processing) {
+        activeJob = job;
+        break;
+      }
+    }
+    if (activeJob != null) {
+      final PotionBlueprint activeBlueprint = _findBlueprint(activeJob.potionId);
+      final bool canPrepare = craftingService.prepareCraftFromInventory(
+            blueprint: activeBlueprint,
+            inventory: state.player.materialInventory,
+            materials: DummyData.materials,
+          ) !=
+          null;
+      if (!canPrepare) {
+        return SessionMutationResult(
+          state: state.copyWith(
+            workshop: state.workshop.copyWith(
+              queue: _markCraftBlocked(state.workshop.queue, activeJob.id),
+            ),
+          ),
+          logMessage: 'Craft blocked for ${activeJob.potionId} / materials missing',
+        );
+      }
+    }
+
     final List<CraftQueueJob> previousQueue = state.workshop.queue;
     final List<CraftQueueJob> nextQueue = queueService.processTick(
       state.workshop.queue,
@@ -242,26 +285,45 @@ class WorkshopDomain {
     final Map<String, CraftedPotion> details = <String, CraftedPotion>{
       ...state.workshop.craftedPotionDetails,
     };
+    final Map<String, int> inventory = <String, int>{
+      ...state.player.materialInventory,
+    };
 
     int producedCount = 0;
+    List<CraftQueueJob> resolvedQueue = nextQueue;
     for (final CraftQueueJob job in nextQueue) {
       final CraftQueueJob? previousJob = previousQueue
           .where((CraftQueueJob candidate) => candidate.id == job.id)
           .firstOrNull;
-      if (job.status != QueueJobStatus.completed || previousJob == null) {
+      if (previousJob == null) {
         continue;
       }
-      if (previousJob.status == QueueJobStatus.completed) {
+
+      final int producedDelta = job.currentRepeat - previousJob.currentRepeat;
+      if (producedDelta <= 0) {
         continue;
       }
 
       final PotionBlueprint blueprint = _findBlueprint(job.potionId);
-      for (int index = 0; index < job.currentRepeat; index++) {
-        final Map<String, double> inputTraits = craftingService
-            .generateCraftInputTraits(blueprint);
+      for (int index = 0; index < producedDelta; index++) {
+        final ({
+          Map<String, int> nextInventory,
+          Map<String, double> extractedTraits,
+        })? prepared = craftingService.prepareCraftFromInventory(
+          blueprint: blueprint,
+          inventory: inventory,
+          materials: DummyData.materials,
+        );
+        if (prepared == null) {
+          resolvedQueue = _markCraftBlocked(resolvedQueue, job.id);
+          break;
+        }
+        inventory
+          ..clear()
+          ..addAll(prepared.nextInventory);
         final CraftedPotion crafted = craftingService.craftPotion(
           requestedBlueprint: blueprint,
-          extractedTraits: inputTraits,
+          extractedTraits: prepared.extractedTraits,
           recipeRules: DummyData.potionRecipeRules,
           branchRules: DummyData.potionRecipeBranchRules,
           qualityRule: DummyData.potionQualityRule,
@@ -276,13 +338,16 @@ class WorkshopDomain {
 
     return SessionMutationResult(
       state: state.copyWith(
+        player: state.player.copyWith(materialInventory: inventory),
         workshop: state.workshop.copyWith(
-          queue: nextQueue,
+          queue: resolvedQueue,
           craftedPotionStacks: stacks,
           craftedPotionDetails: details,
         ),
       ),
-      logMessage: 'Processed queue tick / produced $producedCount',
+      logMessage: producedCount > 0
+          ? 'Processed queue tick / produced $producedCount'
+          : null,
     );
   }
 
@@ -348,6 +413,15 @@ class WorkshopDomain {
       (PotionBlueprint potion) => potion.id == potionId,
       orElse: () => DummyData.potions.first,
     );
+  }
+
+  List<CraftQueueJob> _markCraftBlocked(List<CraftQueueJob> jobs, String jobId) {
+    return jobs.map((CraftQueueJob job) {
+      if (job.id != jobId) {
+        return job;
+      }
+      return job.copyWith(status: QueueJobStatus.failed, eta: Duration.zero);
+    }).toList();
   }
 }
 

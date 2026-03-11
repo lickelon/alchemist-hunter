@@ -52,4 +52,24 @@ void main() {
     expect(low.qualityGrade, PotionQualityGrade.c);
     expect(high.qualityScore > low.qualityScore, true);
   });
+
+  test('prepareCraftFromInventory consumes matching materials', () {
+    final PotionBlueprint blueprint = DummyData.potions.firstWhere(
+      (PotionBlueprint p) => p.id == 'p_1',
+    );
+
+    final ({
+      Map<String, int> nextInventory,
+      Map<String, double> extractedTraits,
+    })? prepared = service.prepareCraftFromInventory(
+      blueprint: blueprint,
+      inventory: <String, int>{'m_1': 1, 'm_2': 1},
+      materials: DummyData.materials,
+    );
+
+    expect(prepared, isNotNull);
+    expect(prepared!.nextInventory, isEmpty);
+    expect(prepared.extractedTraits.containsKey('t_hp'), true);
+    expect(prepared.extractedTraits.containsKey('t_atk'), true);
+  });
 }
