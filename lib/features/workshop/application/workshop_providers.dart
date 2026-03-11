@@ -38,6 +38,7 @@ class WorkshopController {
         repeatCount: repeatCount,
         now: _session.now(),
         queueService: _queueService,
+        craftingService: _craftingService,
       ),
     );
   }
@@ -125,11 +126,17 @@ class PotionQueueOption {
     required this.blueprint,
     required this.unlocked,
     required this.lockReason,
+    required this.craftableNow,
+    required this.maxCraftableCount,
+    required this.materialHint,
   });
 
   final PotionBlueprint blueprint;
   final bool unlocked;
   final String lockReason;
+  final bool craftableNow;
+  final int maxCraftableCount;
+  final String materialHint;
 }
 
 final Provider<List<PotionQueueOption>> workshopPotionQueueOptionsProvider =
@@ -139,6 +146,14 @@ final Provider<List<PotionQueueOption>> workshopPotionQueueOptionsProvider =
         sessionControllerProvider.select(
           (SessionState state) => state.battle.progress.unlockFlags,
         ),
+      );
+      final Map<String, int> inventory = ref.watch(
+        sessionControllerProvider.select(
+          (SessionState state) => state.player.materialInventory,
+        ),
+      );
+      final PotionCraftingService craftingService = ref.watch(
+        potionCraftingServiceProvider,
       );
 
       bool isUnlocked(PotionBlueprint potion) {
@@ -170,10 +185,21 @@ final Provider<List<PotionQueueOption>> workshopPotionQueueOptionsProvider =
 
       return catalog.map((PotionBlueprint potion) {
         final bool unlocked = isUnlocked(potion);
+        final int maxCraftableCount = craftingService.maxCraftableRepeatCount(
+          blueprint: potion,
+          inventory: inventory,
+          materials: ref.read(materialsProvider),
+        );
+        final bool craftableNow = maxCraftableCount > 0;
         return PotionQueueOption(
           blueprint: potion,
           unlocked: unlocked,
           lockReason: unlocked ? '' : lockReason(potion),
+          craftableNow: unlocked && craftableNow,
+          maxCraftableCount: unlocked ? maxCraftableCount : 0,
+          materialHint: unlocked
+              ? (craftableNow ? '최대 $maxCraftableCount회 제작 가능' : '재료 부족')
+              : lockReason(potion),
         );
       }).toList()
         ..sort((PotionQueueOption left, PotionQueueOption right) {

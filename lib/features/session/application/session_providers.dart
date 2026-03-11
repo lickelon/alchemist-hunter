@@ -141,6 +141,9 @@ class SessionController extends StateNotifier<SessionState> {
   }
 
   void appendLog(String message) {
+    if (state.workshop.logs.isNotEmpty && state.workshop.logs.first == message) {
+      return;
+    }
     state = state.copyWith(
       workshop: state.workshop.copyWith(
         logs: <String>[message, ...state.workshop.logs].take(20).toList(),

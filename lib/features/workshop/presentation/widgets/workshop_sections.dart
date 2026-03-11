@@ -165,17 +165,21 @@ class _WorkshopQueueSheet extends ConsumerWidget {
                             contentPadding: EdgeInsets.zero,
                             title: Text(option.blueprint.name),
                             subtitle: Text(
-                              option.unlocked ? '해금됨' : '잠김: ${option.lockReason}',
+                              option.unlocked
+                                  ? option.materialHint
+                                  : '잠김: ${option.lockReason}',
                             ),
                             trailing: FilledButton.tonal(
-                              onPressed: option.unlocked
+                              onPressed: option.unlocked && option.craftableNow
                                   ? () {
-                                      ref
-                                          .read(workshopControllerProvider)
-                                          .enqueuePotion(option.blueprint.id, 3);
+                                      _showEnqueueOptions(
+                                        context,
+                                        ref,
+                                        option,
+                                      );
                                     }
                                   : null,
-                              child: const Text('x3 등록'),
+                              child: const Text('등록'),
                             ),
                           );
                         },
@@ -206,6 +210,63 @@ class _WorkshopQueueSheet extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showEnqueueOptions(
+    BuildContext context,
+    WidgetRef ref,
+    PotionQueueOption option,
+  ) {
+    final List<int> quantities = <int>{
+      if (option.maxCraftableCount >= 1) 1,
+      if (option.maxCraftableCount >= 3) 3,
+      if (option.maxCraftableCount >= 5) 5,
+      option.maxCraftableCount,
+    }.toList()
+      ..sort();
+
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext bottomSheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  option.blueprint.name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text('최대 ${option.maxCraftableCount}회 제작 가능'),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: quantities.map((int quantity) {
+                    final bool isMax = quantity == option.maxCraftableCount;
+                    return FilledButton.tonal(
+                      onPressed: () {
+                        ref
+                            .read(workshopControllerProvider)
+                            .enqueuePotion(option.blueprint.id, quantity);
+                        Navigator.of(bottomSheetContext).pop();
+                      },
+                      child: Text(isMax ? '최대' : '$quantity회'),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
