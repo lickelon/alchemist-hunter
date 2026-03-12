@@ -33,15 +33,14 @@ final Provider<List<PotionQueueOption>> workshopPotionQueueOptionsProvider =
           (SessionState state) => state.battle.progress.unlockFlags,
         ),
       );
-      final Map<String, int> inventory = ref.watch(
+      final Map<String, double> extractedInventory = ref.watch(
         sessionControllerProvider.select(
-          (SessionState state) => state.player.materialInventory,
+          (SessionState state) => state.workshop.extractedTraitInventory,
         ),
       );
       final PotionCraftingService craftingService = ref.watch(
         potionCraftingServiceProvider,
       );
-      final List<MaterialEntity> materials = ref.watch(materialsProvider);
 
       bool isUnlocked(PotionBlueprint potion) {
         final int index = catalog.indexWhere(
@@ -78,8 +77,7 @@ final Provider<List<PotionQueueOption>> workshopPotionQueueOptionsProvider =
         final bool unlocked = isUnlocked(potion);
         final int maxCraftableCount = craftingService.maxCraftableRepeatCount(
           blueprint: potion,
-          inventory: inventory,
-          materials: materials,
+          extractedInventory: extractedInventory,
         );
         final bool craftableNow = maxCraftableCount > 0;
         return PotionQueueOption(
@@ -89,7 +87,7 @@ final Provider<List<PotionQueueOption>> workshopPotionQueueOptionsProvider =
           craftableNow: unlocked && craftableNow,
           maxCraftableCount: unlocked ? maxCraftableCount : 0,
           materialHint: unlocked
-              ? (craftableNow ? '최대 $maxCraftableCount회 제작 가능' : '재료 부족')
+              ? (craftableNow ? '최대 $maxCraftableCount회 제작 가능' : '추출 특성 부족')
               : lockReason(potion),
         );
       }).toList()..sort((PotionQueueOption left, PotionQueueOption right) {

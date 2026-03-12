@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/features/session/application/session_providers.dart';
+import 'package:alchemist_hunter/features/workshop/application/services/alchemy_service.dart';
 import 'package:alchemist_hunter/features/workshop/application/services/craft_queue_service.dart';
 import 'package:alchemist_hunter/features/workshop/application/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/data/dummy_data.dart';
@@ -6,6 +7,64 @@ import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 class WorkshopDomain {
   const WorkshopDomain();
+
+  SessionState extractMaterial({
+    required SessionState state,
+    required String materialId,
+    required String profileId,
+    required AlchemyService alchemyService,
+    List<String>? selectedTraits,
+  }) {
+    final int owned = state.player.materialInventory[materialId] ?? 0;
+    if (owned <= 0) {
+      return state;
+    }
+
+    final MaterialEntity material = DummyData.materials.firstWhere(
+      (MaterialEntity entry) => entry.id == materialId,
+      orElse: () => throw ArgumentError('Material not found: $materialId'),
+    );
+    final ExtractionProfile profile = DummyData.extractionProfiles.firstWhere(
+      (ExtractionProfile entry) => entry.id == profileId,
+      orElse: () => throw ArgumentError('ExtractionProfile not found: $profileId'),
+    );
+    if (profile.mode == ExtractionMode.selective &&
+        (selectedTraits == null || selectedTraits.isEmpty)) {
+      return state;
+    }
+
+    final Map<String, double> extractedTraits = alchemyService
+        .extractTraitInventory(
+          material: material,
+          profile: profile,
+          selectedTraits: selectedTraits,
+        );
+    if (extractedTraits.isEmpty) {
+      return state;
+    }
+
+    final Map<String, int> materials = <String, int>{
+      ...state.player.materialInventory,
+    };
+    final int nextCount = owned - 1;
+    if (nextCount <= 0) {
+      materials.remove(materialId);
+    } else {
+      materials[materialId] = nextCount;
+    }
+
+    final Map<String, double> inventory = <String, double>{
+      ...state.workshop.extractedTraitInventory,
+    };
+    extractedTraits.forEach((String traitId, double amount) {
+      inventory[traitId] = (inventory[traitId] ?? 0) + amount;
+    });
+
+    return state.copyWith(
+      player: state.player.copyWith(materialInventory: materials),
+      workshop: state.workshop.copyWith(extractedTraitInventory: inventory),
+    );
+  }
 
   SessionState enqueuePotion({
     required SessionState state,
@@ -18,8 +77,7 @@ class WorkshopDomain {
     final PotionBlueprint blueprint = _findBlueprint(potionId);
     final bool canCraft = craftingService.canCraftRepeatCount(
       blueprint: blueprint,
-      inventory: state.player.materialInventory,
-      materials: DummyData.materials,
+      extractedInventory: state.workshop.extractedTraitInventory,
       repeatCount: repeatCount,
     );
     if (!canCraft) {
@@ -60,10 +118,9 @@ class WorkshopDomain {
         activeJob.potionId,
       );
       final bool canPrepare =
-          craftingService.prepareCraftFromInventory(
+          craftingService.prepareCraftFromExtractedInventory(
             blueprint: activeBlueprint,
-            inventory: state.player.materialInventory,
-            materials: DummyData.materials,
+            extractedInventory: state.workshop.extractedTraitInventory,
           ) !=
           null;
       if (!canPrepare) {
@@ -87,8 +144,8 @@ class WorkshopDomain {
     final Map<String, CraftedPotion> details = <String, CraftedPotion>{
       ...state.workshop.craftedPotionDetails,
     };
-    final Map<String, int> inventory = <String, int>{
-      ...state.player.materialInventory,
+    final Map<String, double> extractedInventory = <String, double>{
+      ...state.workshop.extractedTraitInventory,
     };
 
     List<CraftQueueJob> resolvedQueue = nextQueue;
@@ -108,21 +165,20 @@ class WorkshopDomain {
       final PotionBlueprint blueprint = _findBlueprint(job.potionId);
       for (int index = 0; index < producedDelta; index++) {
         final ({
-          Map<String, int> nextInventory,
+          Map<String, double> nextExtractedInventory,
           Map<String, double> extractedTraits,
         })?
-        prepared = craftingService.prepareCraftFromInventory(
+        prepared = craftingService.prepareCraftFromExtractedInventory(
           blueprint: blueprint,
-          inventory: inventory,
-          materials: DummyData.materials,
+          extractedInventory: extractedInventory,
         );
         if (prepared == null) {
           resolvedQueue = _markCraftBlocked(resolvedQueue, job.id);
           break;
         }
-        inventory
+        extractedInventory
           ..clear()
-          ..addAll(prepared.nextInventory);
+          ..addAll(prepared.nextExtractedInventory);
         final CraftedPotion crafted = craftingService.craftPotion(
           requestedBlueprint: blueprint,
           extractedTraits: prepared.extractedTraits,
@@ -138,8 +194,8 @@ class WorkshopDomain {
     }
 
     return state.copyWith(
-      player: state.player.copyWith(materialInventory: inventory),
       workshop: state.workshop.copyWith(
+        extractedTraitInventory: extractedInventory,
         queue: resolvedQueue,
         craftedPotionStacks: stacks,
         craftedPotionDetails: details,
@@ -216,8 +272,7 @@ class WorkshopDomain {
     final PotionBlueprint blueprint = _findBlueprint(blockedJob.potionId);
     final bool canCraft = craftingService.canCraftRepeatCount(
       blueprint: blueprint,
-      inventory: state.player.materialInventory,
-      materials: DummyData.materials,
+      extractedInventory: state.workshop.extractedTraitInventory,
       repeatCount: remainingCount,
     );
     if (!canCraft) {

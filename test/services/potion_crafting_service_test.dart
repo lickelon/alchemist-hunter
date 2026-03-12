@@ -53,40 +53,38 @@ void main() {
     expect(high.qualityScore > low.qualityScore, true);
   });
 
-  test('prepareCraftFromInventory consumes matching materials', () {
+  test('prepareCraftFromExtractedInventory consumes matching traits', () {
     final PotionBlueprint blueprint = DummyData.potions.firstWhere(
       (PotionBlueprint p) => p.id == 'p_1',
     );
 
     final ({
-      Map<String, int> nextInventory,
+      Map<String, double> nextExtractedInventory,
       Map<String, double> extractedTraits,
-    })? prepared = service.prepareCraftFromInventory(
+    })? prepared = service.prepareCraftFromExtractedInventory(
       blueprint: blueprint,
-      inventory: <String, int>{'m_1': 1, 'm_2': 1},
-      materials: DummyData.materials,
+      extractedInventory: <String, double>{'t_hp': 0.7, 't_atk': 0.6},
     );
 
     expect(prepared, isNotNull);
-    expect(prepared!.nextInventory, isEmpty);
+    expect(prepared!.nextExtractedInventory['t_hp'], closeTo(0.1, 0.0001));
+    expect(prepared.nextExtractedInventory['t_atk'], closeTo(0.2, 0.0001));
     expect(prepared.extractedTraits.containsKey('t_hp'), true);
     expect(prepared.extractedTraits.containsKey('t_atk'), true);
   });
 
-  test('requiredMaterialsForRepeatCount returns aggregated material counts', () {
+  test('requiredTraitsForRepeatCount returns aggregated trait amounts', () {
     final PotionBlueprint blueprint = DummyData.potions.firstWhere(
       (PotionBlueprint p) => p.id == 'p_1',
     );
 
-    final Map<String, int>? required = service.requiredMaterialsForRepeatCount(
+    final Map<String, double>? required = service.requiredTraitsForRepeatCount(
       blueprint: blueprint,
-      inventory: <String, int>{'m_1': 2, 'm_2': 2},
-      materials: DummyData.materials,
       repeatCount: 2,
     );
 
     expect(required, isNotNull);
-    expect(required!['m_1'], 2);
-    expect(required['m_2'], 2);
+    expect(required!['t_hp'], closeTo(1.2, 0.0001));
+    expect(required['t_atk'], closeTo(0.8, 0.0001));
   });
 }

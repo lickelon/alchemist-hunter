@@ -7,113 +7,74 @@ class PotionCraftingService {
 
   final Random _random;
 
-  ({Map<String, int> nextInventory, Map<String, double> extractedTraits})?
-  prepareCraftFromInventory({
+  ({
+    Map<String, double> nextExtractedInventory,
+    Map<String, double> extractedTraits,
+  })? prepareCraftFromExtractedInventory({
     required PotionBlueprint blueprint,
-    required Map<String, int> inventory,
-    required List<MaterialEntity> materials,
+    required Map<String, double> extractedInventory,
   }) {
-    final ({
-      Map<String, int> nextInventory,
-      Map<String, double> extractedTraits,
-      Map<String, int> usedMaterials,
-    })? prepared = _prepareCraftPlan(
-      blueprint: blueprint,
-      inventory: inventory,
-      materials: materials,
-    );
-    if (prepared == null) {
+    if (!_canCraftOnce(blueprint, extractedInventory)) {
       return null;
     }
 
+    final Map<String, double> nextInventory = <String, double>{
+      ...extractedInventory,
+    };
+    final Map<String, double> extractedTraits = <String, double>{
+      ...blueprint.targetTraits,
+    };
+    blueprint.targetTraits.forEach((String traitId, double cost) {
+      final double remaining = (nextInventory[traitId] ?? 0) - cost;
+      if (remaining <= 0.0001) {
+        nextInventory.remove(traitId);
+      } else {
+        nextInventory[traitId] = remaining;
+      }
+    });
+
     return (
-      nextInventory: prepared.nextInventory,
-      extractedTraits: prepared.extractedTraits,
+      nextExtractedInventory: nextInventory,
+      extractedTraits: extractedTraits,
     );
   }
 
-  Map<String, int>? requiredMaterialsForRepeatCount({
+  Map<String, double>? requiredTraitsForRepeatCount({
     required PotionBlueprint blueprint,
-    required Map<String, int> inventory,
-    required List<MaterialEntity> materials,
     required int repeatCount,
   }) {
-    Map<String, int> workingInventory = <String, int>{...inventory};
-    final Map<String, int> usedMaterials = <String, int>{};
-
-    for (int index = 0; index < repeatCount; index++) {
-      final ({
-        Map<String, int> nextInventory,
-        Map<String, double> extractedTraits,
-        Map<String, int> usedMaterials,
-      })? prepared = _prepareCraftPlan(
-        blueprint: blueprint,
-        inventory: workingInventory,
-        materials: materials,
-      );
-      if (prepared == null) {
-        return null;
-      }
-
-      workingInventory = prepared.nextInventory;
-      prepared.usedMaterials.forEach((String id, int quantity) {
-        usedMaterials[id] = (usedMaterials[id] ?? 0) + quantity;
-      });
-    }
-
-    return usedMaterials;
+    final Map<String, double> required = blueprint.targetTraits.map(
+      (String key, double value) => MapEntry<String, double>(key, value * repeatCount),
+    );
+    return required;
   }
 
   bool canCraftRepeatCount({
     required PotionBlueprint blueprint,
-    required Map<String, int> inventory,
-    required List<MaterialEntity> materials,
+    required Map<String, double> extractedInventory,
     required int repeatCount,
   }) {
-    Map<String, int> workingInventory = <String, int>{...inventory};
-    for (int index = 0; index < repeatCount; index++) {
-      final ({
-        Map<String, int> nextInventory,
-        Map<String, double> extractedTraits,
-      })?
-      prepared = prepareCraftFromInventory(
-        blueprint: blueprint,
-        inventory: workingInventory,
-        materials: materials,
-      );
-      if (prepared == null) {
-        return false;
-      }
-      workingInventory = prepared.nextInventory;
-    }
-    return true;
+    return _canCraft(blueprint, extractedInventory, repeatCount);
   }
 
   int maxCraftableRepeatCount({
     required PotionBlueprint blueprint,
-    required Map<String, int> inventory,
-    required List<MaterialEntity> materials,
+    required Map<String, double> extractedInventory,
     int cap = 99,
   }) {
-    Map<String, int> workingInventory = <String, int>{...inventory};
-    int count = 0;
-    while (count < cap) {
-      final ({
-        Map<String, int> nextInventory,
-        Map<String, double> extractedTraits,
-      })?
-      prepared = prepareCraftFromInventory(
-        blueprint: blueprint,
-        inventory: workingInventory,
-        materials: materials,
-      );
-      if (prepared == null) {
-        break;
-      }
-      workingInventory = prepared.nextInventory;
-      count += 1;
+    if (blueprint.targetTraits.isEmpty) {
+      return 0;
     }
-    return count;
+    final List<int> counts = blueprint.targetTraits.entries
+        .map(
+          (MapEntry<String, double> entry) =>
+              ((extractedInventory[entry.key] ?? 0) / entry.value).floor(),
+        )
+        .toList();
+    if (counts.isEmpty) {
+      return 0;
+    }
+    return counts.reduce(min).clamp(0, cap);
   }
 
   CraftedPotion craftPotion({
@@ -247,99 +208,25 @@ class PotionCraftingService {
     return _normalizeTraits(noisy);
   }
 
-  MaterialEntity? _selectMaterialForTrait({
-    required String traitId,
-    required Map<String, int> inventory,
-    required List<MaterialEntity> materials,
-  }) {
-    MaterialEntity? best;
-    double bestScore = -1;
-
-    for (final MaterialEntity material in materials) {
-      final int owned = inventory[material.id] ?? 0;
-      if (owned <= 0) {
-        continue;
-      }
-
-      final Map<String, double> traits = _expandTraits(material.traits);
-      final double score = traits[traitId] ?? 0;
-      if (score <= 0) {
-        continue;
-      }
-
-      if (score > bestScore) {
-        best = material;
-        bestScore = score;
-      }
+  bool _canCraft(
+    PotionBlueprint blueprint,
+    Map<String, double> extractedInventory,
+    int repeatCount,
+  ) {
+    if (repeatCount <= 0) {
+      return false;
     }
-
-    return best;
+    return blueprint.targetTraits.entries.every((MapEntry<String, double> entry) {
+      return (extractedInventory[entry.key] ?? 0) + 0.0001 >=
+          (entry.value * repeatCount);
+    });
   }
 
-  ({
-    Map<String, int> nextInventory,
-    Map<String, double> extractedTraits,
-    Map<String, int> usedMaterials,
-  })? _prepareCraftPlan({
-    required PotionBlueprint blueprint,
-    required Map<String, int> inventory,
-    required List<MaterialEntity> materials,
-  }) {
-    final List<MapEntry<String, double>> orderedTraits = blueprint.targetTraits.entries
-        .toList()
-      ..sort(
-        (MapEntry<String, double> left, MapEntry<String, double> right) =>
-            right.value.compareTo(left.value),
-      );
-
-    final Map<String, int> workingInventory = <String, int>{...inventory};
-    final Map<String, double> extractedTraits = <String, double>{};
-    final Map<String, int> usedMaterials = <String, int>{};
-
-    for (final MapEntry<String, double> traitEntry in orderedTraits) {
-      final MaterialEntity? selected = _selectMaterialForTrait(
-        traitId: traitEntry.key,
-        inventory: workingInventory,
-        materials: materials,
-      );
-      if (selected == null) {
-        return null;
-      }
-
-      final int nextCount = (workingInventory[selected.id] ?? 0) - 1;
-      if (nextCount <= 0) {
-        workingInventory.remove(selected.id);
-      } else {
-        workingInventory[selected.id] = nextCount;
-      }
-      usedMaterials[selected.id] = (usedMaterials[selected.id] ?? 0) + 1;
-
-      final Map<String, double> materialTraits = _expandTraits(selected.traits);
-      materialTraits.forEach((String id, double amount) {
-        extractedTraits[id] = (extractedTraits[id] ?? 0) + amount;
-      });
-    }
-
-    return (
-      nextInventory: workingInventory,
-      extractedTraits: _normalizeTraits(extractedTraits),
-      usedMaterials: usedMaterials,
-    );
-  }
-
-  Map<String, double> _expandTraits(List<TraitUnit> traits) {
-    final Map<String, double> expanded = <String, double>{};
-    for (final TraitUnit trait in traits) {
-      if (trait.type == TraitType.single) {
-        expanded[trait.id] = (expanded[trait.id] ?? 0) + trait.potency;
-        continue;
-      }
-
-      trait.components.forEach((String id, double ratio) {
-        expanded[id] = (expanded[id] ?? 0) + (trait.potency * ratio);
-      });
-    }
-    return expanded;
+  bool _canCraftOnce(
+    PotionBlueprint blueprint,
+    Map<String, double> extractedInventory,
+  ) {
+    return _canCraft(blueprint, extractedInventory, 1);
   }
 
   Map<String, double> _normalizeTraits(Map<String, double> traits) {

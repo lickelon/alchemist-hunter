@@ -83,4 +83,40 @@ class AlchemyService {
         )
         .toList();
   }
+
+  Map<String, double> extractTraitInventory({
+    required MaterialEntity material,
+    required ExtractionProfile profile,
+    List<String>? selectedTraits,
+  }) {
+    final List<ExtractedTrait> extracted = extractTraits(
+      material: material,
+      profile: profile,
+      selectedTraits: selectedTraits,
+    );
+    final Map<String, double> result = <String, double>{};
+
+    for (final ExtractedTrait trait in extracted) {
+      final TraitUnit source = material.traits.firstWhere(
+        (TraitUnit unit) => unit.id == trait.traitId,
+        orElse: () => TraitUnit(
+          id: trait.traitId,
+          name: trait.name,
+          type: TraitType.single,
+          potency: trait.amount,
+        ),
+      );
+
+      if (source.type == TraitType.single) {
+        result[source.id] = (result[source.id] ?? 0) + trait.amount;
+        continue;
+      }
+
+      source.components.forEach((String id, double ratio) {
+        result[id] = (result[id] ?? 0) + (trait.amount * ratio);
+      });
+    }
+
+    return result;
+  }
 }

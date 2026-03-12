@@ -42,4 +42,39 @@ void main() {
     expect(result.potency, 4);
     expect(result.components['b'], 0.75);
   });
+
+  test('extractTraitInventory flattens compound traits into single traits', () {
+    const MaterialEntity material = MaterialEntity(
+      id: 'm2',
+      name: 'Test 2',
+      rarity: MaterialRarity.common,
+      analyzable: true,
+      source: 'test',
+      traits: <TraitUnit>[
+        TraitUnit(
+          id: 'c1',
+          name: 'Combo',
+          type: TraitType.compound,
+          potency: 2,
+          components: <String, double>{'a': 0.5, 'b': 0.5},
+        ),
+      ],
+    );
+
+    const ExtractionProfile profile = ExtractionProfile(
+      id: 'full',
+      mode: ExtractionMode.full,
+      yieldRate: 0.5,
+      purityRate: 1,
+      timeCost: Duration.zero,
+    );
+
+    final Map<String, double> extracted = service.extractTraitInventory(
+      material: material,
+      profile: profile,
+    );
+
+    expect(extracted['a'], 0.5);
+    expect(extracted['b'], 0.5);
+  });
 }

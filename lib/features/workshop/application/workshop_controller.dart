@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:alchemist_hunter/features/session/application/session_providers.dart';
+import 'package:alchemist_hunter/features/workshop/application/services/alchemy_service.dart';
 import 'package:alchemist_hunter/features/workshop/application/services/craft_queue_service.dart';
 import 'package:alchemist_hunter/features/workshop/application/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/application/workshop_domain.dart';
@@ -15,18 +16,44 @@ final Provider<PotionCraftingService> potionCraftingServiceProvider =
       (Ref ref) => PotionCraftingService(random: Random(13)),
     );
 
+final Provider<AlchemyService> alchemyServiceProvider =
+    Provider<AlchemyService>((Ref ref) => AlchemyService());
+
 class WorkshopController {
   WorkshopController(
     this._session,
+    this._alchemyService,
     this._queueService,
     this._craftingService, {
     WorkshopDomain workshopDomain = const WorkshopDomain(),
   }) : _workshopDomain = workshopDomain;
 
   final SessionController _session;
+  final AlchemyService _alchemyService;
   final CraftQueueService _queueService;
   final PotionCraftingService _craftingService;
   final WorkshopDomain _workshopDomain;
+
+  void extractMaterial(
+    String materialId,
+    String profileId, {
+    List<String>? selectedTraits,
+  }) {
+    final SessionState current = _session.snapshot();
+    final SessionState nextState = _workshopDomain.extractMaterial(
+      state: current,
+      materialId: materialId,
+      profileId: profileId,
+      alchemyService: _alchemyService,
+      selectedTraits: selectedTraits,
+    );
+    _apply(
+      nextState,
+      logMessage: identical(nextState, current)
+          ? 'Cannot extract $materialId / unavailable'
+          : 'Extracted $materialId with $profileId',
+    );
+  }
 
   void enqueuePotion(String potionId, int repeatCount) {
     final SessionState current = _session.snapshot();
@@ -127,6 +154,7 @@ final Provider<WorkshopController> workshopControllerProvider =
     Provider<WorkshopController>((Ref ref) {
       return WorkshopController(
         ref.read(sessionControllerProvider.notifier),
+        ref.read(alchemyServiceProvider),
         ref.read(craftQueueServiceProvider),
         ref.read(potionCraftingServiceProvider),
       );

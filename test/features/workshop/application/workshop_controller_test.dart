@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:alchemist_hunter/features/session/application/session_providers.dart';
+import 'package:alchemist_hunter/features/workshop/application/services/alchemy_service.dart';
 import 'package:alchemist_hunter/features/workshop/application/services/craft_queue_service.dart';
 import 'package:alchemist_hunter/features/workshop/application/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/application/workshop_controller.dart';
@@ -20,6 +21,7 @@ void main() {
   }) {
     return WorkshopController(
       session,
+      AlchemyService(),
       CraftQueueService(),
       PotionCraftingService(random: Random(craftingSeed)),
     );
@@ -28,8 +30,8 @@ void main() {
   test('tickCraftQueue consumes inventory and produces crafted potions', () {
     final SessionController session = buildSession();
     session.state = session.state.copyWith(
-      player: session.state.player.copyWith(
-        materialInventory: const <String, int>{'m_1': 2, 'm_2': 2},
+      workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{'t_hp': 1.2, 't_atk': 0.8},
       ),
     );
     final WorkshopController controller = buildController(
@@ -52,8 +54,14 @@ void main() {
       1,
     );
     expect(session.state.workshop.craftedPotionDetails, isNotEmpty);
-    expect(session.state.player.materialInventory['m_1'], 1);
-    expect(session.state.player.materialInventory['m_2'], 1);
+    expect(
+      session.state.workshop.extractedTraitInventory['t_hp'],
+      closeTo(0.6, 0.0001),
+    );
+    expect(
+      session.state.workshop.extractedTraitInventory['t_atk'],
+      closeTo(0.4, 0.0001),
+    );
     expect(
       session.state.workshop.logs.first,
       'Processed queue tick / produced 1',
@@ -85,8 +93,8 @@ void main() {
       sessionControllerProvider.notifier,
     );
     session.state = session.state.copyWith(
-      player: session.state.player.copyWith(
-        materialInventory: const <String, int>{'m_1': 4, 'm_2': 4},
+      workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{'t_hp': 2.4, 't_atk': 1.6},
       ),
       battle: session.state.battle.copyWith(
         progress: ProgressState(
@@ -150,8 +158,8 @@ void main() {
     );
 
     session.state = session.state.copyWith(
-      player: session.state.player.copyWith(
-        materialInventory: const <String, int>{'m_1': 1, 'm_2': 1},
+      workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{'t_hp': 0.6, 't_atk': 0.4},
       ),
     );
 
@@ -160,6 +168,24 @@ void main() {
     expect(session.state.workshop.queue.single.status, QueueJobStatus.queued);
     expect(session.state.workshop.queue.single.eta, const Duration(seconds: 15));
     expect(session.state.workshop.logs.first, 'Resumed craft job job_retry');
+  });
+
+  test('extractMaterial consumes material and stores extracted traits', () {
+    final SessionController session = buildSession();
+    final WorkshopController controller = buildController(session);
+
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: const <String, int>{'m_1': 1},
+      ),
+    );
+
+    controller.extractMaterial('m_1', 'full_basic');
+
+    expect(session.state.player.materialInventory.containsKey('m_1'), false);
+    expect(session.state.workshop.extractedTraitInventory['t_hp'], isNotNull);
+    expect(session.state.workshop.extractedTraitInventory['t_spd'], isNotNull);
+    expect(session.state.workshop.logs.first, 'Extracted m_1 with full_basic');
   });
 
   test('clearCompleted removes completed jobs from queue', () {

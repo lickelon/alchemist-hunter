@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/features/session/application/session_providers.dart';
+import 'package:alchemist_hunter/features/workshop/data/dummy_data.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,6 +17,18 @@ class MaterialInventoryView {
   final MaterialRarity rarity;
   final int quantity;
   final String traitSummary;
+}
+
+class ExtractedTraitInventoryView {
+  const ExtractedTraitInventoryView({
+    required this.id,
+    required this.name,
+    required this.amount,
+  });
+
+  final String id;
+  final String name;
+  final double amount;
 }
 
 final Provider<int> workshopEssenceProvider = Provider<int>((Ref ref) {
@@ -47,6 +60,41 @@ final Provider<List<MapEntry<String, int>>> sortedMaterialInventoryProvider =
         return right.value.compareTo(left.value);
       });
       return entries;
+    });
+
+final Provider<Map<String, double>> extractedTraitInventoryProvider =
+    Provider<Map<String, double>>((Ref ref) {
+      return ref.watch(
+        sessionControllerProvider.select(
+          (SessionState state) => state.workshop.extractedTraitInventory,
+        ),
+      );
+    });
+
+final Provider<List<ExtractedTraitInventoryView>> extractedTraitViewsProvider =
+    Provider<List<ExtractedTraitInventoryView>>((Ref ref) {
+      final Map<String, double> inventory = ref.watch(
+        extractedTraitInventoryProvider,
+      );
+      final Map<String, TraitUnit> traitMap = <String, TraitUnit>{
+        for (final TraitUnit trait in DummyData.traits) trait.id: trait,
+      };
+
+      final List<ExtractedTraitInventoryView> views = inventory.entries
+          .map((MapEntry<String, double> entry) {
+            final TraitUnit? trait = traitMap[entry.key];
+            return ExtractedTraitInventoryView(
+              id: entry.key,
+              name: trait?.name ?? entry.key,
+              amount: entry.value,
+            );
+          })
+          .toList();
+      views.sort(
+        (ExtractedTraitInventoryView left, ExtractedTraitInventoryView right) =>
+            right.amount.compareTo(left.amount),
+      );
+      return views;
     });
 
 final Provider<List<MaterialInventoryView>> materialInventoryViewsProvider =
