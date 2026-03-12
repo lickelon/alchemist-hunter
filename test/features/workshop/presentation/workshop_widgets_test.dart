@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/features/session/application/session_providers.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_extraction_card.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_material_card.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_queue_card.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +19,9 @@ void main() {
     );
     session.state = session.state.copyWith(
       player: session.state.player.copyWith(
-        materialInventory: const <String, int>{'m_1': 1, 'm_2': 1},
       ),
       workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{'t_hp': 0.6, 't_atk': 0.4},
         queue: <CraftQueueJob>[
           const CraftQueueJob(
             id: 'job_1',
@@ -48,7 +49,7 @@ void main() {
 
     expect(find.text('재개'), findsOneWidget);
     expect(find.text('Potion 1 0/1'), findsOneWidget);
-    expect(find.text('상태 진행 불가, 재료 보충 후 재개 가능'), findsOneWidget);
+    expect(find.text('상태 진행 불가, 추출 특성 보충 후 재개 가능'), findsOneWidget);
   });
 
   testWidgets('workshop material sheet shows material name and trait summary', (
@@ -97,6 +98,7 @@ void main() {
         materialInventory: const <String, int>{'m_1': 1},
       ),
       workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{'t_hp': 0.2},
         queue: <CraftQueueJob>[
           const CraftQueueJob(
             id: 'job_done',
@@ -132,8 +134,48 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('완료 정리 (1)'), findsOneWidget);
-    expect(find.textContaining('부족 재료:'), findsOneWidget);
+    expect(find.textContaining('부족 특성:'), findsOneWidget);
     expect(find.text('Potion 1 0/1'), findsOneWidget);
     expect(find.text('Potion 1 1/1'), findsOneWidget);
+  });
+
+  testWidgets('workshop extraction sheet shows trait stock and extraction actions', (
+    WidgetTester tester,
+  ) async {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final SessionController session = container.read(
+      sessionControllerProvider.notifier,
+    );
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: const <String, int>{'m_1': 2},
+      ),
+      workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{'t_hp': 0.85},
+      ),
+    );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: Scaffold(
+            body: WorkshopExtractionCard(
+              materialTypeCount: 1,
+              extractedTraitTypeCount: 1,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Extraction'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('보유 추출 특성'), findsOneWidget);
+    expect(find.textContaining('Vital 0.85'), findsOneWidget);
+    expect(find.text('분석/추출'), findsOneWidget);
   });
 }

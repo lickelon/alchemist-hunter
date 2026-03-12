@@ -10,6 +10,9 @@ class WorkshopScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int essence = ref.watch(workshopEssenceProvider);
+    final List<ExtractedTraitInventoryView> extractedTraits = ref.watch(
+      extractedTraitViewsProvider,
+    );
     final List<CraftQueueJob> queue = ref.watch(craftQueueProvider);
     final List<MapEntry<String, int>> materials = ref.watch(
       sortedMaterialInventoryProvider,
@@ -30,8 +33,15 @@ class WorkshopScreen extends ConsumerWidget {
           child: ListTile(
             leading: const Icon(Icons.science_outlined),
             title: const Text('Workshop Resources'),
-            subtitle: Text('Essence: $essence / ArcaneDust: (준비중)'),
+            subtitle: Text(
+              'Essence: $essence / Extracted Traits: ${extractedTraits.length}종',
+            ),
           ),
+        ),
+        const SizedBox(height: 8),
+        WorkshopExtractionCard(
+          materialTypeCount: materials.length,
+          extractedTraitTypeCount: extractedTraits.length,
         ),
         const SizedBox(height: 8),
         WorkshopQueueCard(jobCount: queue.length),
