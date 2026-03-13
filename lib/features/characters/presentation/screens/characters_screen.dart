@@ -1,6 +1,5 @@
 import 'package:alchemist_hunter/features/characters/application/character_providers.dart';
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
-import 'package:alchemist_hunter/features/session/application/session_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,10 +8,12 @@ class CharactersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<CharacterProgress> mercenaries = ref.watch(
-      mercenaryListProvider,
+    final List<CharacterListItemView> mercenaries = ref.watch(
+      mercenaryListItemViewsProvider,
     );
-    final List<CharacterProgress> homunculi = ref.watch(homunculusListProvider);
+    final List<CharacterListItemView> homunculi = ref.watch(
+      homunculusListItemViewsProvider,
+    );
     final CharacterController controller = ref.read(
       characterControllerProvider,
     );
@@ -60,24 +61,19 @@ class _CharacterList extends ConsumerWidget {
     required this.onTierUp,
   });
 
-  final List<CharacterProgress> characters;
+  final List<CharacterListItemView> characters;
   final ValueChanged<String> onRankUp;
   final ValueChanged<String> onTierUp;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Map<String, int> inventory = ref.watch(
-      sessionControllerProvider.select(
-        (SessionState state) => state.player.materialInventory,
-      ),
-    );
-
     if (characters.isEmpty) {
       return const Center(child: Text('No characters'));
     }
     return ListView(
       padding: const EdgeInsets.all(8),
-      children: characters.map((CharacterProgress character) {
+      children: characters.map((CharacterListItemView item) {
+        final CharacterProgress character = item.character;
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
           child: Padding(
@@ -116,14 +112,14 @@ class _CharacterList extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _rankUpHint(character),
+                  item.rankHint,
                   style: Theme.of(
                     context,
                   ).textTheme.bodySmall?.copyWith(color: Colors.black54),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _tierUpHint(character, inventory),
+                  item.tierHint,
                   style: Theme.of(
                     context,
                   ).textTheme.bodySmall?.copyWith(color: Colors.black54),
@@ -134,38 +130,5 @@ class _CharacterList extends ConsumerWidget {
         );
       }).toList(),
     );
-  }
-
-  String _rankUpHint(CharacterProgress character) {
-    if (character.canRankUp) {
-      return '랭크업 가능';
-    }
-    if (character.rank >= character.maxRankForCurrentTier) {
-      return '현재 티어 최대 랭크 도달';
-    }
-    return '랭크업 조건: Lv ${character.maxLevelForRank} 도달 필요';
-  }
-
-  String _tierUpHint(
-    CharacterProgress character,
-    Map<String, int> inventory,
-  ) {
-    if (character.tierIndex >= character.maxTier) {
-      return '티어 승급 완료';
-    }
-
-    final String materialKey = character.type == CharacterType.mercenary
-        ? 'tier_mat_mercenary_${character.tierIndex + 1}'
-        : 'tier_mat_homunculus_${character.tierIndex + 1}';
-    final int owned = inventory[materialKey] ?? 0;
-
-    if (character.canTierUp) {
-      if (owned > 0) {
-        return '티어업 가능';
-      }
-      return '티어업 조건 충족, 승급 재료 부족';
-    }
-
-    return '티어업 조건: Rank ${character.maxRankForCurrentTier} 도달 필요';
   }
 }

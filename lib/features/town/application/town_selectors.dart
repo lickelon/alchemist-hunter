@@ -27,21 +27,3 @@ final Provider<ShopState> catalystShopStateProvider = Provider<ShopState>((
     ),
   );
 });
-
-final Provider<Map<String, int>> sellablePotionStacksProvider =
-    Provider<Map<String, int>>((Ref ref) {
-      return ref.watch(
-        sessionControllerProvider.select(
-          (SessionState state) => state.workshop.craftedPotionStacks,
-        ),
-      );
-    });
-
-final Provider<Map<String, CraftedPotion>> sellablePotionDetailsProvider =
-    Provider<Map<String, CraftedPotion>>((Ref ref) {
-      return ref.watch(
-        sessionControllerProvider.select(
-          (SessionState state) => state.workshop.craftedPotionDetails,
-        ),
-      );
-    });

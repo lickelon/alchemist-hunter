@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/application/workshop_providers.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -147,9 +148,8 @@ class _TownPotionSellSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Map<String, int> stacks = ref.watch(sellablePotionStacksProvider);
-    final Map<String, CraftedPotion> details = ref.watch(
-      sellablePotionDetailsProvider,
+    final List<CraftedPotionStackView> views = ref.watch(
+      craftedPotionStackViewsProvider,
     );
 
     return SafeArea(
@@ -166,24 +166,23 @@ class _TownPotionSellSheet extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Expanded(
-                child: stacks.isEmpty
+                child: views.isEmpty
                     ? const Center(child: Text('판매 가능한 포션이 없습니다'))
                     : ListView(
-                        children: stacks.entries.map((
-                          MapEntry<String, int> entry,
-                        ) {
-                          final CraftedPotion? detail = details[entry.key];
+                        children: views.map((CraftedPotionStackView entry) {
                           return ListTile(
                             dense: true,
-                            title: Text('${entry.key} x${entry.value}'),
+                            title: Text('${entry.stackKey} x${entry.quantity}'),
                             subtitle: Text(
-                              '품질 ${detail?.qualityGrade.name.toUpperCase() ?? '-'} / 점수 ${(detail?.qualityScore ?? 0).toStringAsFixed(2)}',
+                              '품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}',
                             ),
                             trailing: FilledButton.tonal(
                               onPressed: () {
                                 ref
-                                    .read(townControllerProvider)
-                                    .sellCraftedPotion(entry.key, 1);
+                                    .read(
+                                      workshopCraftedInventoryControllerProvider,
+                                    )
+                                    .sellCraftedPotion(entry.stackKey, 1);
                               },
                               child: const Text('판매'),
                             ),

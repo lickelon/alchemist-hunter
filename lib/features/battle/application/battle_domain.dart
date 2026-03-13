@@ -1,5 +1,5 @@
 import 'package:alchemist_hunter/features/battle/application/services/battle_service.dart';
-import 'package:alchemist_hunter/features/characters/application/character_domain.dart';
+import 'package:alchemist_hunter/features/characters/application/character_progression_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:alchemist_hunter/features/session/application/session_providers.dart';
 import 'package:alchemist_hunter/features/workshop/data/dummy_data.dart';
@@ -7,10 +7,11 @@ import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 class BattleDomain {
   const BattleDomain({
-    CharacterDomain characterDomain = const CharacterDomain(),
-  }) : _characterDomain = characterDomain;
+    CharacterProgressionService characterProgressionService =
+        const CharacterProgressionService(),
+  }) : _characterProgressionService = characterProgressionService;
 
-  final CharacterDomain _characterDomain;
+  final CharacterProgressionService _characterProgressionService;
 
   SessionState runAutoBattle({
     required SessionState state,
@@ -52,10 +53,8 @@ class BattleDomain {
       stageId: stageId,
       success: result.success,
     );
-    final CharactersState nextCharacters = _characterDomain.grantBattleXp(
-      state: state.characters,
-      xpGain: xpGain,
-    );
+    final CharactersState nextCharacters = _characterProgressionService
+        .grantBattleXp(state: state.characters, xpGain: xpGain);
 
     return state.copyWith(
       player: state.player.copyWith(

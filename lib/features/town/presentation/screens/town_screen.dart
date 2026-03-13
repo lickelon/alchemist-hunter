@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/features/town/presentation/widgets/town_sections.dart';
 import 'package:alchemist_hunter/features/town/application/town_providers.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/application/workshop_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,8 +13,8 @@ class TownScreen extends ConsumerWidget {
     final int gold = ref.watch(townGoldProvider);
     final ShopState generalShop = ref.watch(generalShopStateProvider);
     final ShopState catalystShop = ref.watch(catalystShopStateProvider);
-    final Map<String, int> craftedPotionStacks = ref.watch(
-      sellablePotionStacksProvider,
+    final List<CraftedPotionStackView> craftedPotionStacks = ref.watch(
+      craftedPotionStackViewsProvider,
     );
 
     return ListView(

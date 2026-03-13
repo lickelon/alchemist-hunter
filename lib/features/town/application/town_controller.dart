@@ -1,7 +1,6 @@
 import 'package:alchemist_hunter/features/session/application/session_providers.dart';
 import 'package:alchemist_hunter/features/town/application/services/economy_service.dart';
 import 'package:alchemist_hunter/features/town/application/town_domain.dart';
-import 'package:alchemist_hunter/features/workshop/application/workshop_domain.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,14 +12,11 @@ class TownController {
     this._session,
     this._economy, {
     TownDomain townDomain = const TownDomain(),
-    WorkshopDomain workshopDomain = const WorkshopDomain(),
-  }) : _townDomain = townDomain,
-       _workshopDomain = workshopDomain;
+  }) : _townDomain = townDomain;
 
   final SessionController _session;
   final EconomyService _economy;
   final TownDomain _townDomain;
-  final WorkshopDomain _workshopDomain;
 
   void buyGeneralMaterial(String materialId, int quantity) {
     _syncShops();
@@ -72,29 +68,6 @@ class TownController {
       logMessage: identical(nextState, current)
           ? 'Not enough gold for refresh'
           : 'Forced refresh ${shopType.name} shop',
-    );
-  }
-
-  void sellCraftedPotion(String stackKey, int quantity) {
-    final SessionState current = _session.snapshot();
-    final int owned = current.workshop.craftedPotionStacks[stackKey] ?? 0;
-    final bool hasEnough = quantity > 0 && owned >= quantity;
-    final bool hasDetails = current.workshop.craftedPotionDetails.containsKey(
-      stackKey,
-    );
-    final SessionState nextState = _workshopDomain.sellCraftedPotion(
-      state: current,
-      stackKey: stackKey,
-      quantity: quantity,
-    );
-    final int earned = nextState.player.gold - current.player.gold;
-    _apply(
-      nextState,
-      logMessage: !hasEnough
-          ? 'Not enough crafted potion to sell'
-          : !hasDetails
-          ? 'Potion detail not found'
-          : 'Sold potion $stackKey x$quantity for $earned gold',
     );
   }
 
