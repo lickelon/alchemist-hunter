@@ -18,10 +18,12 @@ void main() {
       sessionControllerProvider.notifier,
     );
     session.state = session.state.copyWith(
-      player: session.state.player.copyWith(
-      ),
+      player: session.state.player.copyWith(),
       workshop: session.state.workshop.copyWith(
-        extractedTraitInventory: const <String, double>{'t_hp': 0.6, 't_atk': 0.4},
+        extractedTraitInventory: const <String, double>{
+          't_hp': 0.6,
+          't_atk': 0.4,
+        },
         queue: <CraftQueueJob>[
           const CraftQueueJob(
             id: 'job_1',
@@ -71,7 +73,9 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(body: WorkshopMaterialCard(materialTypeCount: 1, totalCount: 2)),
+          home: Scaffold(
+            body: WorkshopMaterialCard(materialTypeCount: 1, totalCount: 2),
+          ),
         ),
       ),
     );
@@ -84,98 +88,100 @@ void main() {
     expect(find.text('x2'), findsOneWidget);
   });
 
-  testWidgets('workshop queue sheet shows clear completed button and missing materials', (
-    WidgetTester tester,
-  ) async {
-    final ProviderContainer container = ProviderContainer();
-    addTearDown(container.dispose);
+  testWidgets(
+    'workshop queue sheet shows clear completed button and missing materials',
+    (WidgetTester tester) async {
+      final ProviderContainer container = ProviderContainer();
+      addTearDown(container.dispose);
 
-    final SessionController session = container.read(
-      sessionControllerProvider.notifier,
-    );
-    session.state = session.state.copyWith(
-      player: session.state.player.copyWith(
-        materialInventory: const <String, int>{'m_1': 1},
-      ),
-      workshop: session.state.workshop.copyWith(
-        extractedTraitInventory: const <String, double>{'t_hp': 0.2},
-        queue: <CraftQueueJob>[
-          const CraftQueueJob(
-            id: 'job_done',
-            potionId: 'p_1',
-            repeatCount: 1,
-            retryPolicy: CraftRetryPolicy(maxRetries: 2),
-            status: QueueJobStatus.completed,
-            eta: Duration.zero,
-            currentRepeat: 1,
-          ),
-          const CraftQueueJob(
-            id: 'job_blocked',
-            potionId: 'p_1',
-            repeatCount: 1,
-            retryPolicy: CraftRetryPolicy(maxRetries: 2),
-            status: QueueJobStatus.blocked,
-            eta: Duration.zero,
-          ),
-        ],
-      ),
-    );
-
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: const MaterialApp(
-          home: Scaffold(body: WorkshopQueueCard(jobCount: 2)),
+      final SessionController session = container.read(
+        sessionControllerProvider.notifier,
+      );
+      session.state = session.state.copyWith(
+        player: session.state.player.copyWith(
+          materialInventory: const <String, int>{'m_1': 1},
         ),
-      ),
-    );
+        workshop: session.state.workshop.copyWith(
+          extractedTraitInventory: const <String, double>{'t_hp': 0.2},
+          queue: <CraftQueueJob>[
+            const CraftQueueJob(
+              id: 'job_done',
+              potionId: 'p_1',
+              repeatCount: 1,
+              retryPolicy: CraftRetryPolicy(maxRetries: 2),
+              status: QueueJobStatus.completed,
+              eta: Duration.zero,
+              currentRepeat: 1,
+            ),
+            const CraftQueueJob(
+              id: 'job_blocked',
+              potionId: 'p_1',
+              repeatCount: 1,
+              retryPolicy: CraftRetryPolicy(maxRetries: 2),
+              status: QueueJobStatus.blocked,
+              eta: Duration.zero,
+            ),
+          ],
+        ),
+      );
 
-    await tester.tap(find.text('Craft Queue'));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(
+            home: Scaffold(body: WorkshopQueueCard(jobCount: 2)),
+          ),
+        ),
+      );
 
-    expect(find.text('완료 정리 (1)'), findsOneWidget);
-    expect(find.textContaining('부족 특성:'), findsOneWidget);
-    expect(find.text('Potion 1 0/1'), findsOneWidget);
-    expect(find.text('Potion 1 1/1'), findsOneWidget);
-  });
+      await tester.tap(find.text('Craft Queue'));
+      await tester.pumpAndSettle();
 
-  testWidgets('workshop extraction sheet shows trait stock and extraction actions', (
-    WidgetTester tester,
-  ) async {
-    final ProviderContainer container = ProviderContainer();
-    addTearDown(container.dispose);
+      expect(find.text('완료 정리 (1)'), findsOneWidget);
+      expect(find.textContaining('부족 특성:'), findsOneWidget);
+      expect(find.text('Potion 1 0/1'), findsOneWidget);
+      expect(find.text('Potion 1 1/1'), findsOneWidget);
+    },
+  );
 
-    final SessionController session = container.read(
-      sessionControllerProvider.notifier,
-    );
-    session.state = session.state.copyWith(
-      player: session.state.player.copyWith(
-        materialInventory: const <String, int>{'m_1': 2},
-      ),
-      workshop: session.state.workshop.copyWith(
-        extractedTraitInventory: const <String, double>{'t_hp': 0.85},
-      ),
-    );
+  testWidgets(
+    'workshop extraction sheet shows trait stock and extraction actions',
+    (WidgetTester tester) async {
+      final ProviderContainer container = ProviderContainer();
+      addTearDown(container.dispose);
 
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: const MaterialApp(
-          home: Scaffold(
-            body: WorkshopExtractionCard(
-              materialTypeCount: 1,
-              extractedTraitTypeCount: 1,
+      final SessionController session = container.read(
+        sessionControllerProvider.notifier,
+      );
+      session.state = session.state.copyWith(
+        player: session.state.player.copyWith(
+          materialInventory: const <String, int>{'m_1': 2},
+        ),
+        workshop: session.state.workshop.copyWith(
+          extractedTraitInventory: const <String, double>{'t_hp': 0.85},
+        ),
+      );
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(
+            home: Scaffold(
+              body: WorkshopExtractionCard(
+                materialTypeCount: 1,
+                extractedTraitTypeCount: 1,
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
 
-    await tester.tap(find.text('Extraction'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Extraction'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('보유 추출 특성'), findsOneWidget);
-    expect(find.textContaining('Vital 0.85'), findsOneWidget);
-    expect(find.text('분석/추출'), findsOneWidget);
-  });
+      expect(find.text('보유 추출 특성'), findsOneWidget);
+      expect(find.textContaining('Vital 0.85'), findsOneWidget);
+      expect(find.text('분석/추출'), findsOneWidget);
+    },
+  );
 }
