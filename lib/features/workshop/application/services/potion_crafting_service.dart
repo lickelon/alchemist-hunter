@@ -10,7 +10,8 @@ class PotionCraftingService {
   ({
     Map<String, double> nextExtractedInventory,
     Map<String, double> extractedTraits,
-  })? prepareCraftFromExtractedInventory({
+  })?
+  prepareCraftFromExtractedInventory({
     required PotionBlueprint blueprint,
     required Map<String, double> extractedInventory,
   }) {
@@ -44,7 +45,8 @@ class PotionCraftingService {
     required int repeatCount,
   }) {
     final Map<String, double> required = blueprint.targetTraits.map(
-      (String key, double value) => MapEntry<String, double>(key, value * repeatCount),
+      (String key, double value) =>
+          MapEntry<String, double>(key, value * repeatCount),
     );
     return required;
   }
@@ -216,7 +218,9 @@ class PotionCraftingService {
     if (repeatCount <= 0) {
       return false;
     }
-    return blueprint.targetTraits.entries.every((MapEntry<String, double> entry) {
+    return blueprint.targetTraits.entries.every((
+      MapEntry<String, double> entry,
+    ) {
       return (extractedInventory[entry.key] ?? 0) + 0.0001 >=
           (entry.value * repeatCount);
     });

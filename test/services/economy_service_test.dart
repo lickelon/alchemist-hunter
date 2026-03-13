@@ -43,7 +43,9 @@ void main() {
     final ({ShopState shop, bool refreshed}) result = service.applyAutoRefresh(
       shop: state,
       now: now,
-      nextItems: const <ShopItem>[ShopItem(materialId: 'm_1', name: 'M1', price: 10, quantity: 1)],
+      nextItems: const <ShopItem>[
+        ShopItem(materialId: 'm_1', name: 'M1', price: 10, quantity: 1),
+      ],
       refreshInterval: const Duration(minutes: 15),
     );
 

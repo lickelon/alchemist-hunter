@@ -50,10 +50,7 @@ class _HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       leading: const Icon(Icons.menu),
-      title: const Text(
-        'Alchemist Hunter',
-        overflow: TextOverflow.ellipsis,
-      ),
+      title: const Text('Alchemist Hunter', overflow: TextOverflow.ellipsis),
       actions: const <Widget>[
         Padding(
           padding: EdgeInsets.only(right: 12),

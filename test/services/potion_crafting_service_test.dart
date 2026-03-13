@@ -6,10 +6,14 @@ import 'package:alchemist_hunter/features/workshop/application/services/potion_c
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  final PotionCraftingService service = PotionCraftingService(random: Random(1));
+  final PotionCraftingService service = PotionCraftingService(
+    random: Random(1),
+  );
 
   test('recipe branch changes potion type by dominant trait ratio', () {
-    final PotionBlueprint blueprint = DummyData.potions.firstWhere((PotionBlueprint p) => p.id == 'p_1');
+    final PotionBlueprint blueprint = DummyData.potions.firstWhere(
+      (PotionBlueprint p) => p.id == 'p_1',
+    );
 
     final CraftedPotion hpDominant = service.craftPotion(
       requestedBlueprint: blueprint,
@@ -31,7 +35,9 @@ void main() {
   });
 
   test('quality grade is calculated by target ratio score', () {
-    final PotionBlueprint blueprint = DummyData.potions.firstWhere((PotionBlueprint p) => p.id == 'p_1');
+    final PotionBlueprint blueprint = DummyData.potions.firstWhere(
+      (PotionBlueprint p) => p.id == 'p_1',
+    );
 
     final CraftedPotion high = service.craftPotion(
       requestedBlueprint: blueprint,
@@ -61,7 +67,8 @@ void main() {
     final ({
       Map<String, double> nextExtractedInventory,
       Map<String, double> extractedTraits,
-    })? prepared = service.prepareCraftFromExtractedInventory(
+    })?
+    prepared = service.prepareCraftFromExtractedInventory(
       blueprint: blueprint,
       extractedInventory: <String, double>{'t_hp': 0.7, 't_atk': 0.6},
     );

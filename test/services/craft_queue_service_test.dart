@@ -14,8 +14,9 @@ void main() {
       eta: const Duration(seconds: 5),
     );
 
-    final List<CraftQueueJob> result =
-        service.processTick(<CraftQueueJob>[job], const Duration(seconds: 10));
+    final List<CraftQueueJob> result = service.processTick(<CraftQueueJob>[
+      job,
+    ], const Duration(seconds: 10));
 
     expect(result, hasLength(1));
     expect(result.first.status, QueueJobStatus.completed);
