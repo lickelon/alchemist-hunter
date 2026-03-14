@@ -1,4 +1,5 @@
-import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/static_potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_potion_sale_controller.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,6 +13,7 @@ void main() {
     final SessionController session = buildSession();
     final TownPotionSaleController controller = TownPotionSaleController(
       session,
+      potionCatalogRepository: const StaticPotionCatalogRepository(),
     );
     const String stackKey = 'p_1|a';
     final CraftedPotion sample = CraftedPotion(

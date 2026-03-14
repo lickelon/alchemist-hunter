@@ -1,7 +1,7 @@
-import 'package:alchemist_hunter/core/session/session_factory.dart';
-import 'package:alchemist_hunter/core/session/state/session_state.dart';
-import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/static_potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/equipment_enchant_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_enchant_use_case.dart';
@@ -53,6 +53,7 @@ void main() {
         equipmentId: 'eq_instance_1',
         potionStackKey: 'p_1|a',
         enchantService: const EquipmentEnchantService(),
+        potionCatalogRepository: const StaticPotionCatalogRepository(),
       );
 
       expect(
@@ -93,6 +94,7 @@ void main() {
         equipmentId: 'eq_instance_1',
         potionStackKey: 'p_1|a',
         enchantService: const EquipmentEnchantService(),
+        potionCatalogRepository: const StaticPotionCatalogRepository(),
       );
 
       expect(

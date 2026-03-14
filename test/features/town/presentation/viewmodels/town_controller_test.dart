@@ -1,7 +1,10 @@
-import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/town/data/repositories/static_equipment_blueprint_repository.dart';
+import 'package:alchemist_hunter/features/town/data/repositories/static_mercenary_template_repository.dart';
+import 'package:alchemist_hunter/features/town/data/repositories/static_shop_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
-import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_controller.dart';
+import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -9,13 +12,33 @@ void main() {
     return SessionController(clock: () => now ?? DateTime(2026, 1, 1, 10));
   }
 
-  TownController buildController(SessionController session) {
-    return TownController(session, EconomyService());
+  ShopController buildShopController(SessionController session) {
+    return ShopController(
+      session,
+      EconomyService(),
+      shopCatalogRepository: const StaticShopCatalogRepository(),
+    );
+  }
+
+  EquipmentCraftController buildEquipmentCraftController(
+    SessionController session,
+  ) {
+    return EquipmentCraftController(
+      session,
+      equipmentBlueprintRepository: const StaticEquipmentBlueprintRepository(),
+    );
+  }
+
+  MercenaryController buildMercenaryController(SessionController session) {
+    return MercenaryController(
+      session,
+      mercenaryTemplateRepository: const StaticMercenaryTemplateRepository(),
+    );
   }
 
   test('buyGeneralMaterial updates gold inventory and shop stock', () {
     final SessionController session = buildSession();
-    final TownController controller = buildController(session);
+    final ShopController controller = buildShopController(session);
 
     final ShopItem item = session.state.town.generalShop.items.first;
     controller.buyGeneralMaterial(item.materialId, 2);
@@ -38,7 +61,7 @@ void main() {
 
   test('forceRefresh updates shop and consumes gold', () {
     final SessionController session = buildSession();
-    final TownController controller = buildController(session);
+    final ShopController controller = buildShopController(session);
     final int previousGold = session.state.player.gold;
     final DateTime previousRefreshAt =
         session.state.town.generalShop.nextRefreshAt;
@@ -55,7 +78,7 @@ void main() {
     final SessionController session = buildSession(
       now: DateTime(2026, 1, 1, 10, 30),
     );
-    final TownController controller = buildController(session);
+    final ShopController controller = buildShopController(session);
 
     session.state = session.state.copyWith(
       town: session.state.town.copyWith(
@@ -80,7 +103,9 @@ void main() {
 
   test('craftEquipment consumes gold and stores equipment instance', () {
     final SessionController session = buildSession();
-    final TownController controller = buildController(session);
+    final EquipmentCraftController controller = buildEquipmentCraftController(
+      session,
+    );
     session.state = session.state.copyWith(
       player: session.state.player.copyWith(
         materialInventory: const <String, int>{'m_1': 2, 'm_2': 1},
@@ -98,7 +123,7 @@ void main() {
 
   test('hireMercenary consumes gold and appends mercenary', () {
     final SessionController session = buildSession();
-    final TownController controller = buildController(session);
+    final MercenaryController controller = buildMercenaryController(session);
     final MercenaryCandidate candidate = session.state.town.mercenaryCandidates.first;
 
     controller.hireMercenary(candidate.id);
@@ -112,7 +137,7 @@ void main() {
 
   test('refreshMercenaryCandidates rotates candidate list', () {
     final SessionController session = buildSession();
-    final TownController controller = buildController(session);
+    final MercenaryController controller = buildMercenaryController(session);
     final List<String> previousIds = session.state.town.mercenaryCandidates
         .map((MercenaryCandidate entry) => entry.id)
         .toList(growable: false);

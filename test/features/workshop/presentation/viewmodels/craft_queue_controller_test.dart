@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/craft_queue_controller.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/craft_queue_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/static_potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,6 +23,7 @@ void main() {
       session,
       CraftQueueService(),
       PotionCraftingService(random: Random(craftingSeed)),
+      potionCatalogRepository: const StaticPotionCatalogRepository(),
     );
   }
 

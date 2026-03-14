@@ -1,4 +1,6 @@
-import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/static_extraction_profile_repository.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/static_material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/extraction_controller.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/alchemy_service.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,7 +13,13 @@ void main() {
   test('extractMaterial consumes material and stores extracted traits', () {
     final SessionController session = buildSession();
     final WorkshopExtractionController controller =
-        WorkshopExtractionController(session, AlchemyService());
+        WorkshopExtractionController(
+          session,
+          AlchemyService(),
+          materialCatalogRepository: const StaticMaterialCatalogRepository(),
+          extractionProfileRepository:
+              const StaticExtractionProfileRepository(),
+        );
 
     session.state = session.state.copyWith(
       player: session.state.player.copyWith(
@@ -30,7 +38,13 @@ void main() {
   test('extractMaterial supports bulk quantity', () {
     final SessionController session = buildSession();
     final WorkshopExtractionController controller =
-        WorkshopExtractionController(session, AlchemyService());
+        WorkshopExtractionController(
+          session,
+          AlchemyService(),
+          materialCatalogRepository: const StaticMaterialCatalogRepository(),
+          extractionProfileRepository:
+              const StaticExtractionProfileRepository(),
+        );
 
     session.state = session.state.copyWith(
       player: session.state.player.copyWith(

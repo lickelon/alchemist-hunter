@@ -1,9 +1,10 @@
 import 'dart:math';
 
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_controller.dart';
+import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
-import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
-import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -16,7 +17,11 @@ void main() {
     SessionController session, {
     int battleSeed = 11,
   }) {
-    return BattleController(session, BattleService(random: Random(battleSeed)));
+    return BattleController(
+      session,
+      BattleService(random: Random(battleSeed)),
+      battleCatalogRepository: const StaticBattleCatalogRepository(),
+    );
   }
 
   test('runAutoBattle updates rewards progression and battle xp', () {
