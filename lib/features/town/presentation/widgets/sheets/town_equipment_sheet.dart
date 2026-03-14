@@ -1,6 +1,3 @@
-import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/town/town_catalog.dart';
-import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,19 +7,11 @@ class TownEquipmentSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<EquipmentBlueprint> blueprints = ref.watch(
-      townEquipmentBlueprintsProvider,
+    final List<TownEquipmentBlueprintView> blueprints = ref.watch(
+      townEquipmentBlueprintViewsProvider,
     );
     final List<TownEquipmentInventoryView> inventory = ref.watch(
       townEquipmentInventoryViewsProvider,
-    );
-    final Map<String, int> materials = ref.watch(
-      sessionControllerProvider.select(
-        (SessionState state) => state.player.materialInventory,
-      ),
-    );
-    final Map<String, String> materialNames = ref.watch(
-      townEquipmentMaterialNamesProvider,
     );
 
     return SafeArea(
@@ -45,15 +34,15 @@ class TownEquipmentSheet extends ConsumerWidget {
               const SizedBox(height: 6),
               Expanded(
                 child: ListView(
-                  children: blueprints.map((EquipmentBlueprint entry) {
+                  children: blueprints.map((TownEquipmentBlueprintView entry) {
                     return ListTile(
                       dense: true,
                       title: Text(entry.name),
                       subtitle: Text(
-                        '${entry.slot.name} / ATK ${entry.attack} / DEF ${entry.defense} / HP ${entry.health}\n${_formatMaterialCosts(entry, materialNames)}',
+                        '${entry.slotLabel} / ${entry.statLabel}\n${entry.materialCostLabel}',
                       ),
                       trailing: FilledButton.tonal(
-                        onPressed: _canCraft(entry, materials)
+                        onPressed: entry.canCraft
                             ? () {
                                 ref
                                     .read(equipmentCraftControllerProvider)
@@ -94,26 +83,5 @@ class TownEquipmentSheet extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  bool _canCraft(EquipmentBlueprint blueprint, Map<String, int> inventory) {
-    for (final MapEntry<String, int> entry in blueprint.materialCosts.entries) {
-      if ((inventory[entry.key] ?? 0) < entry.value) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  String _formatMaterialCosts(
-    EquipmentBlueprint blueprint,
-    Map<String, String> materialNames,
-  ) {
-    return blueprint.materialCosts.entries
-        .map(
-          (MapEntry<String, int> entry) =>
-              '${materialNames[entry.key] ?? entry.key} x${entry.value}',
-        )
-        .join(', ');
   }
 }

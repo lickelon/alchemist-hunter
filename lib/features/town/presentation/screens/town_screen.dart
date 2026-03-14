@@ -11,10 +11,14 @@ class TownScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final int gold = ref.watch(townGoldProvider);
     final int townInsight = ref.watch(townInsightProvider);
-    final int unlockedSkillNodes = ref.watch(townUnlockedSkillNodeCountProvider);
+    final int unlockedSkillNodes = ref.watch(
+      townUnlockedSkillNodeCountProvider,
+    );
     final int totalSkillNodes = ref.watch(townSkillNodeCountProvider);
     final ShopState generalShop = ref.watch(generalShopStateProvider);
     final ShopState catalystShop = ref.watch(catalystShopStateProvider);
+    final int generalRefreshCost = ref.watch(generalShopRefreshCostProvider);
+    final int catalystRefreshCost = ref.watch(catalystShopRefreshCostProvider);
     final int equipmentCount = ref.watch(townEquipmentCountProvider);
     final int mercenaryCandidateCount = ref.watch(
       townMercenaryCandidateCountProvider,
@@ -41,14 +45,14 @@ class TownScreen extends ConsumerWidget {
           title: 'General Shop',
           shopType: ShopType.general,
           itemCount: generalShop.items.length,
-          refreshCost: generalShop.forcedRefreshCost,
+          refreshCost: generalRefreshCost,
         ),
         const SizedBox(height: 8),
         TownShopCard(
           title: 'Catalyst Shop',
           shopType: ShopType.catalyst,
           itemCount: catalystShop.items.length,
-          refreshCost: catalystShop.forcedRefreshCost,
+          refreshCost: catalystRefreshCost,
         ),
         const SizedBox(height: 8),
         TownMercenaryHireCard(

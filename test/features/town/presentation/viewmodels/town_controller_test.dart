@@ -2,8 +2,10 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_equipment_blueprint_repository.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_mercenary_template_repository.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_shop_catalog_repository.dart';
+import 'package:alchemist_hunter/features/town/data/repositories/static_town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
+import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -17,6 +19,8 @@ void main() {
       session,
       EconomyService(),
       shopCatalogRepository: const StaticShopCatalogRepository(),
+      townSkillTreeRepository: const StaticTownSkillTreeRepository(),
+      townSkillTreeService: const TownSkillTreeService(),
     );
   }
 
@@ -26,6 +30,8 @@ void main() {
     return EquipmentCraftController(
       session,
       equipmentBlueprintRepository: const StaticEquipmentBlueprintRepository(),
+      townSkillTreeRepository: const StaticTownSkillTreeRepository(),
+      townSkillTreeService: const TownSkillTreeService(),
     );
   }
 
@@ -33,6 +39,8 @@ void main() {
     return MercenaryController(
       session,
       mercenaryTemplateRepository: const StaticMercenaryTemplateRepository(),
+      townSkillTreeRepository: const StaticTownSkillTreeRepository(),
+      townSkillTreeService: const TownSkillTreeService(),
     );
   }
 
@@ -72,6 +80,23 @@ void main() {
     expect(session.state.town.generalShop.cycleRefreshCount, 1);
     expect(session.state.town.generalShop.nextRefreshAt, previousRefreshAt);
     expect(session.state.workshop.logs.first, 'Forced refresh general shop');
+  });
+
+  test('forceRefresh applies town trade ledger discount', () {
+    final SessionController session = buildSession();
+    final ShopController controller = buildShopController(session);
+    session.state = session.state.copyWith(
+      town: session.state.town.copyWith(
+        skillTree: session.state.town.skillTree.copyWith(
+          nodeLevels: const <String, int>{'town_trade_ledger': 1},
+          unlockedNodes: const <String>{'town_trade_ledger'},
+        ),
+      ),
+    );
+
+    controller.forceRefresh(ShopType.general);
+
+    expect(session.state.player.gold, 1477);
   });
 
   test('syncShopAutoRefresh refreshes overdue shop state', () {
@@ -121,10 +146,37 @@ void main() {
     expect(session.state.workshop.logs.first, 'Crafted Bronze Sword');
   });
 
+  test('craftEquipment applies forge rack material reduction', () {
+    final SessionController session = buildSession();
+    final EquipmentCraftController controller = buildEquipmentCraftController(
+      session,
+    );
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: const <String, int>{'m_1': 1, 'm_2': 1},
+      ),
+      town: session.state.town.copyWith(
+        skillTree: session.state.town.skillTree.copyWith(
+          nodeLevels: const <String, int>{
+            'town_trade_ledger': 1,
+            'town_forge_rack': 1,
+          },
+          unlockedNodes: const <String>{'town_trade_ledger', 'town_forge_rack'},
+        ),
+      ),
+    );
+
+    controller.craftEquipment('eq_1');
+
+    expect(session.state.player.materialInventory, isEmpty);
+    expect(session.state.town.equipmentInventory.first.name, 'Bronze Sword');
+  });
+
   test('hireMercenary consumes gold and appends mercenary', () {
     final SessionController session = buildSession();
     final MercenaryController controller = buildMercenaryController(session);
-    final MercenaryCandidate candidate = session.state.town.mercenaryCandidates.first;
+    final MercenaryCandidate candidate =
+        session.state.town.mercenaryCandidates.first;
 
     controller.hireMercenary(candidate.id);
 
@@ -133,6 +185,31 @@ void main() {
     expect(session.state.characters.mercenaries.last.name, candidate.name);
     expect(session.state.town.mercenaryCandidates, hasLength(2));
     expect(session.state.workshop.logs.first, 'Hired ${candidate.name}');
+  });
+
+  test('hireMercenary applies hiring board discount', () {
+    final SessionController session = buildSession();
+    final MercenaryController controller = buildMercenaryController(session);
+    final MercenaryCandidate candidate =
+        session.state.town.mercenaryCandidates.first;
+    session.state = session.state.copyWith(
+      town: session.state.town.copyWith(
+        skillTree: session.state.town.skillTree.copyWith(
+          nodeLevels: const <String, int>{
+            'town_trade_ledger': 1,
+            'town_hiring_board': 1,
+          },
+          unlockedNodes: const <String>{
+            'town_trade_ledger',
+            'town_hiring_board',
+          },
+        ),
+      ),
+    );
+
+    controller.hireMercenary(candidate.id);
+
+    expect(session.state.player.gold, 1500 - 166);
   });
 
   test('refreshMercenaryCandidates rotates candidate list', () {

@@ -1,7 +1,9 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
+import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
+import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.dart';
 import 'package:alchemist_hunter/features/town/town_catalog.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
@@ -13,13 +15,19 @@ class ShopController {
     this._economy, {
     TownUseCase townUseCase = const TownUseCase(),
     required ShopCatalogRepository shopCatalogRepository,
+    required TownSkillTreeRepository townSkillTreeRepository,
+    required TownSkillTreeService townSkillTreeService,
   }) : _townUseCase = townUseCase,
-       _shopCatalogRepository = shopCatalogRepository;
+       _shopCatalogRepository = shopCatalogRepository,
+       _townSkillTreeRepository = townSkillTreeRepository,
+       _townSkillTreeService = townSkillTreeService;
 
   final SessionController _session;
   final EconomyService _economy;
   final TownUseCase _townUseCase;
   final ShopCatalogRepository _shopCatalogRepository;
+  final TownSkillTreeRepository _townSkillTreeRepository;
+  final TownSkillTreeService _townSkillTreeService;
 
   void buyGeneralMaterial(String materialId, int quantity) {
     syncShopAutoRefresh();
@@ -66,6 +74,8 @@ class ShopController {
       now: _session.now(),
       economy: _economy,
       shopCatalogRepository: _shopCatalogRepository,
+      townSkillTreeRepository: _townSkillTreeRepository,
+      townSkillTreeService: _townSkillTreeService,
     );
     _apply(
       nextState,
@@ -105,5 +115,7 @@ final Provider<ShopController> shopControllerProvider =
         ref.read(sessionControllerProvider.notifier),
         ref.read(economyServiceProvider),
         shopCatalogRepository: ref.read(shopCatalogRepositoryProvider),
+        townSkillTreeRepository: ref.read(townSkillTreeRepositoryProvider),
+        townSkillTreeService: ref.read(townSkillTreeServiceProvider),
       );
     });

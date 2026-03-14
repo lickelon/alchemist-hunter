@@ -1,6 +1,8 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/mercenary_template_repository.dart';
+import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/mercenary_recruitment_service.dart';
+import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/hire_mercenary_use_case.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/refresh_mercenary_candidates_use_case.dart';
 import 'package:alchemist_hunter/features/town/town_catalog.dart';
@@ -16,16 +18,22 @@ class MercenaryController {
     MercenaryRecruitmentService recruitmentService =
         const MercenaryRecruitmentService(),
     required MercenaryTemplateRepository mercenaryTemplateRepository,
+    required TownSkillTreeRepository townSkillTreeRepository,
+    required TownSkillTreeService townSkillTreeService,
   }) : _refreshMercenaryCandidatesUseCase = refreshMercenaryCandidatesUseCase,
        _hireMercenaryUseCase = hireMercenaryUseCase,
        _recruitmentService = recruitmentService,
-       _mercenaryTemplateRepository = mercenaryTemplateRepository;
+       _mercenaryTemplateRepository = mercenaryTemplateRepository,
+       _townSkillTreeRepository = townSkillTreeRepository,
+       _townSkillTreeService = townSkillTreeService;
 
   final SessionController _session;
   final RefreshMercenaryCandidatesUseCase _refreshMercenaryCandidatesUseCase;
   final HireMercenaryUseCase _hireMercenaryUseCase;
   final MercenaryRecruitmentService _recruitmentService;
   final MercenaryTemplateRepository _mercenaryTemplateRepository;
+  final TownSkillTreeRepository _townSkillTreeRepository;
+  final TownSkillTreeService _townSkillTreeService;
 
   void refreshMercenaryCandidates() {
     final SessionState current = _session.snapshot();
@@ -51,6 +59,8 @@ class MercenaryController {
     final SessionState nextState = _hireMercenaryUseCase.hireCandidate(
       state: current,
       candidateId: candidateId,
+      townSkillTreeRepository: _townSkillTreeRepository,
+      townSkillTreeService: _townSkillTreeService,
     );
     _session.applyState(nextState);
     _session.appendLog(
@@ -69,5 +79,7 @@ final Provider<MercenaryController> mercenaryControllerProvider =
         mercenaryTemplateRepository: ref.read(
           mercenaryTemplateRepositoryProvider,
         ),
+        townSkillTreeRepository: ref.read(townSkillTreeRepositoryProvider),
+        townSkillTreeService: ref.read(townSkillTreeServiceProvider),
       );
     });

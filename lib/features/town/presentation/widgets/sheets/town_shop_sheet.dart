@@ -4,11 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TownShopSheet extends ConsumerWidget {
-  const TownShopSheet({
-    super.key,
-    required this.title,
-    required this.shopType,
-  });
+  const TownShopSheet({super.key, required this.title, required this.shopType});
 
   final String title;
   final ShopType shopType;
@@ -19,6 +15,11 @@ class TownShopSheet extends ConsumerWidget {
       shopType == ShopType.general
           ? generalShopStateProvider
           : catalystShopStateProvider,
+    );
+    final int refreshCost = ref.watch(
+      shopType == ShopType.general
+          ? generalShopRefreshCostProvider
+          : catalystShopRefreshCostProvider,
     );
 
     return SafeArea(
@@ -31,14 +32,17 @@ class TownShopSheet extends ConsumerWidget {
             children: <Widget>[
               Text(
                 title,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 8),
               FilledButton.tonal(
                 onPressed: () {
                   ref.read(shopControllerProvider).forceRefresh(shopType);
                 },
-                child: Text('강제 갱신 (${shop.forcedRefreshCost})'),
+                child: Text('강제 갱신 ($refreshCost)'),
               ),
               const SizedBox(height: 8),
               Expanded(

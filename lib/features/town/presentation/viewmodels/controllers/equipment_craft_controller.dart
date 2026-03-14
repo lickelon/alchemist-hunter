@@ -1,7 +1,10 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/equipment_blueprint_repository.dart';
+import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/craft_equipment_use_case.dart';
 import 'package:alchemist_hunter/features/town/town_catalog.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EquipmentCraftController {
@@ -9,12 +12,18 @@ class EquipmentCraftController {
     this._session, {
     CraftEquipmentUseCase craftEquipmentUseCase = const CraftEquipmentUseCase(),
     required EquipmentBlueprintRepository equipmentBlueprintRepository,
+    required TownSkillTreeRepository townSkillTreeRepository,
+    required TownSkillTreeService townSkillTreeService,
   }) : _craftEquipmentUseCase = craftEquipmentUseCase,
-       _equipmentBlueprintRepository = equipmentBlueprintRepository;
+       _equipmentBlueprintRepository = equipmentBlueprintRepository,
+       _townSkillTreeRepository = townSkillTreeRepository,
+       _townSkillTreeService = townSkillTreeService;
 
   final SessionController _session;
   final CraftEquipmentUseCase _craftEquipmentUseCase;
   final EquipmentBlueprintRepository _equipmentBlueprintRepository;
+  final TownSkillTreeRepository _townSkillTreeRepository;
+  final TownSkillTreeService _townSkillTreeService;
 
   void craftEquipment(String blueprintId) {
     final SessionState current = _session.snapshot();
@@ -28,6 +37,8 @@ class EquipmentCraftController {
       state: current,
       blueprint: blueprint,
       now: _session.now(),
+      townSkillTreeRepository: _townSkillTreeRepository,
+      townSkillTreeService: _townSkillTreeService,
     );
     _session.applyState(nextState);
     _session.appendLog(
@@ -45,5 +56,7 @@ final Provider<EquipmentCraftController> equipmentCraftControllerProvider =
         equipmentBlueprintRepository: ref.read(
           equipmentBlueprintRepositoryProvider,
         ),
+        townSkillTreeRepository: ref.read(townSkillTreeRepositoryProvider),
+        townSkillTreeService: ref.read(townSkillTreeServiceProvider),
       );
     });

@@ -7,7 +7,9 @@ class TownPotionSaleSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<TownPotionSaleView> views = ref.watch(townPotionSaleViewsProvider);
+    final List<TownPotionSaleView> views = ref.watch(
+      townPotionSaleViewsProvider,
+    );
 
     return SafeArea(
       child: Padding(
@@ -31,7 +33,7 @@ class TownPotionSaleSheet extends ConsumerWidget {
                             dense: true,
                             title: Text('${entry.stackKey} x${entry.quantity}'),
                             subtitle: Text(
-                              '품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}',
+                              '품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}\n판매가 ${entry.saleValue}',
                             ),
                             trailing: FilledButton.tonal(
                               onPressed: () {
