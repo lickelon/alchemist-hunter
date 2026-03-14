@@ -3,6 +3,8 @@ import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_s
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 
 class WorkshopCraftQueueUseCase {
   const WorkshopCraftQueueUseCase();
@@ -15,7 +17,16 @@ class WorkshopCraftQueueUseCase {
     required CraftQueueService queueService,
     required PotionCraftingService craftingService,
     required PotionCatalogRepository potionCatalogRepository,
+    required WorkshopSkillTreeRepository workshopSkillTreeRepository,
+    required WorkshopSkillTreeService workshopSkillTreeService,
   }) {
+    final int queueCapacity = workshopSkillTreeService.craftQueueCapacity(
+      state,
+      workshopSkillTreeRepository.nodes(),
+    );
+    if (state.workshop.queue.length >= queueCapacity) {
+      return state;
+    }
     final PotionBlueprint? blueprint = potionCatalogRepository.findPotionById(
       potionId,
     );
@@ -212,6 +223,7 @@ class WorkshopCraftQueueUseCase {
     }
     return state.copyWith(workshop: state.workshop.copyWith(queue: remaining));
   }
+
   List<CraftQueueJob> _markCraftBlocked(
     List<CraftQueueJob> jobs,
     String jobId,

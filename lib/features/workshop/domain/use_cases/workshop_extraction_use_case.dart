@@ -3,6 +3,8 @@ import 'package:alchemist_hunter/features/workshop/domain/services/alchemy_servi
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/material_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 
 class WorkshopExtractionUseCase {
   const WorkshopExtractionUseCase();
@@ -14,6 +16,8 @@ class WorkshopExtractionUseCase {
     required AlchemyService alchemyService,
     required MaterialCatalogRepository materialCatalogRepository,
     required ExtractionProfileRepository extractionProfileRepository,
+    required WorkshopSkillTreeRepository workshopSkillTreeRepository,
+    required WorkshopSkillTreeService workshopSkillTreeService,
     int quantity = 1,
     List<String>? selectedTraits,
   }) {
@@ -58,8 +62,15 @@ class WorkshopExtractionUseCase {
     final Map<String, double> inventory = <String, double>{
       ...state.workshop.extractedTraitInventory,
     };
+    final double yieldMultiplier =
+        1 +
+        workshopSkillTreeService.extractionYieldBonusRate(
+          state,
+          workshopSkillTreeRepository.nodes(),
+        );
     extractedTraits.forEach((String traitId, double amount) {
-      inventory[traitId] = (inventory[traitId] ?? 0) + (amount * quantity);
+      inventory[traitId] =
+          (inventory[traitId] ?? 0) + (amount * quantity * yieldMultiplier);
     });
 
     return state.copyWith(

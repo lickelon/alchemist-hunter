@@ -10,9 +10,10 @@ class EquipmentEnchantService {
     required EquipmentInstance equipment,
     required CraftedPotion potion,
     required PotionBlueprint blueprint,
+    double potencyBonusRate = 0,
   }) {
     final String dominantTraitId = _dominantTraitId(potion);
-    final int potency = _potency(potion);
+    final int potency = _potency(potion, potencyBonusRate);
 
     switch (equipment.slot) {
       case EquipmentSlot.weapon:
@@ -61,14 +62,15 @@ class EquipmentEnchantService {
     return sorted.first.key;
   }
 
-  int _potency(CraftedPotion potion) {
+  int _potency(CraftedPotion potion, double bonusRate) {
     final int qualityBonus = switch (potion.qualityGrade) {
       PotionQualityGrade.s => 4,
       PotionQualityGrade.a => 3,
       PotionQualityGrade.b => 2,
       PotionQualityGrade.c => 1,
     };
-    return (potion.qualityScore * 8).round() + qualityBonus;
+    final int basePotency = (potion.qualityScore * 8).round() + qualityBonus;
+    return max(1, (basePotency * (1 + bonusRate)).round());
   }
 
   int _attackAffinity(String traitId) {

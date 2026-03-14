@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'dart:math';
 
 class WorkshopSkillTreeService {
   const WorkshopSkillTreeService();
@@ -25,7 +26,8 @@ class WorkshopSkillTreeService {
           state.workshop.extractionCount,
         WorkshopSkillRequirementType.potionCraftCount =>
           state.workshop.potionCraftCount,
-        WorkshopSkillRequirementType.enchantCount => state.workshop.enchantCount,
+        WorkshopSkillRequirementType.enchantCount =>
+          state.workshop.enchantCount,
       };
       if (progress < requirement.threshold) {
         return false;
@@ -71,5 +73,87 @@ class WorkshopSkillTreeService {
       }
     }
     return unlocked;
+  }
+
+  double extractionYieldBonusRate(
+    SessionState state,
+    List<WorkshopSkillNode> nodes,
+  ) {
+    return _percentModifierTotal(
+      state,
+      nodes,
+      WorkshopSkillEffectType.extractionYield,
+    );
+  }
+
+  int craftQueueCapacity(
+    SessionState state,
+    List<WorkshopSkillNode> nodes, {
+    int baseCapacity = 4,
+  }) {
+    return max(
+      1,
+      baseCapacity +
+          _flatModifierTotal(
+            state,
+            nodes,
+            WorkshopSkillEffectType.craftQueueCapacity,
+          ),
+    );
+  }
+
+  double enchantPotencyBonusRate(
+    SessionState state,
+    List<WorkshopSkillNode> nodes,
+  ) {
+    return _percentModifierTotal(
+      state,
+      nodes,
+      WorkshopSkillEffectType.enchantPotency,
+    );
+  }
+
+  double _percentModifierTotal(
+    SessionState state,
+    List<WorkshopSkillNode> nodes,
+    WorkshopSkillEffectType effectType,
+  ) {
+    double total = 0;
+    for (final WorkshopSkillNode node in nodes) {
+      final int level = levelOf(state.workshop.skillTree, node.id);
+      if (level <= 0) {
+        continue;
+      }
+      for (final WorkshopSkillEffect effect in node.effects) {
+        if (effect.type != effectType ||
+            effect.modifierType != WorkshopSkillModifierType.percent) {
+          continue;
+        }
+        total += effect.value * level;
+      }
+    }
+    return total;
+  }
+
+  int _flatModifierTotal(
+    SessionState state,
+    List<WorkshopSkillNode> nodes,
+    WorkshopSkillEffectType effectType,
+  ) {
+    int total = 0;
+    for (final WorkshopSkillNode node in nodes) {
+      final int level = levelOf(state.workshop.skillTree, node.id);
+      if (level <= 0) {
+        continue;
+      }
+      for (final WorkshopSkillEffect effect in node.effects) {
+        if (effect.type != effectType ||
+            effect.modifierType != WorkshopSkillModifierType.flat) {
+          continue;
+        }
+        total += (effect.value * level).round();
+      }
+    }
+    return total;
   }
 }

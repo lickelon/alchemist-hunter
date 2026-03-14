@@ -3,7 +3,9 @@ import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/equipment_enchant_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 
 class WorkshopEnchantUseCase {
   const WorkshopEnchantUseCase();
@@ -14,6 +16,8 @@ class WorkshopEnchantUseCase {
     required String potionStackKey,
     required EquipmentEnchantService enchantService,
     required PotionCatalogRepository potionCatalogRepository,
+    required WorkshopSkillTreeRepository workshopSkillTreeRepository,
+    required WorkshopSkillTreeService workshopSkillTreeService,
   }) {
     final int owned = state.workshop.craftedPotionStacks[potionStackKey] ?? 0;
     final CraftedPotion? potion =
@@ -38,6 +42,10 @@ class WorkshopEnchantUseCase {
         equipment: storedItem,
         potion: potion,
         blueprint: blueprint,
+        potencyBonusRate: workshopSkillTreeService.enchantPotencyBonusRate(
+          state,
+          workshopSkillTreeRepository.nodes(),
+        ),
       );
       return _consumePotion(
         state.copyWith(
@@ -71,6 +79,10 @@ class WorkshopEnchantUseCase {
       equipment: equippedEntry.item,
       potion: potion,
       blueprint: blueprint,
+      potencyBonusRate: workshopSkillTreeService.enchantPotencyBonusRate(
+        state,
+        workshopSkillTreeRepository.nodes(),
+      ),
     );
     final CharacterProgress updatedCharacter = equippedEntry.character.copyWith(
       equipment: equippedEntry.character.equipment.equip(
