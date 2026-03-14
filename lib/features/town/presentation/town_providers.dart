@@ -1,7 +1,9 @@
 export 'viewmodels/controllers/equipment_craft_controller.dart';
 export 'viewmodels/controllers/mercenary_controller.dart';
 export 'viewmodels/controllers/shop_controller.dart';
+export 'viewmodels/controllers/town_skill_tree_controller.dart';
 export 'viewmodels/town_potion_sale_controller.dart';
 export 'viewmodels/town_potion_sale_selectors.dart';
 export 'viewmodels/town_service_providers.dart';
 export 'viewmodels/town_selectors.dart';
+export 'viewmodels/town_skill_tree_selectors.dart';

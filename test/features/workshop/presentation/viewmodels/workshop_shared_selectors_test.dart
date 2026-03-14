@@ -7,7 +7,7 @@ void main() {
     final ProviderContainer container = ProviderContainer();
     addTearDown(container.dispose);
 
-    expect(container.read(workshopArcaneDustProvider), 0);
+    expect(container.read(workshopArcaneDustProvider), 2);
     expect(container.read(workshopSkillNodeCountProvider), greaterThan(0));
     expect(container.read(workshopUnlockedSkillNodeCountProvider), 1);
   });

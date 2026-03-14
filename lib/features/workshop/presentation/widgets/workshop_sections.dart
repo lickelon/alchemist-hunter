@@ -10,4 +10,6 @@ export 'workshop_material_card.dart';
 export 'workshop_queue_card.dart';
 export 'workshop_queue_job_list.dart';
 export 'workshop_queue_sheet.dart';
+export 'workshop_skill_tree_card.dart';
+export 'workshop_skill_tree_sheet.dart';
 export 'workshop_trait_inventory_strip.dart';

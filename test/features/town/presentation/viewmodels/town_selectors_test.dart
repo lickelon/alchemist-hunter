@@ -7,7 +7,7 @@ void main() {
     final ProviderContainer container = ProviderContainer();
     addTearDown(container.dispose);
 
-    expect(container.read(townInsightProvider), 0);
+    expect(container.read(townInsightProvider), 2);
     expect(container.read(townSkillNodeCountProvider), greaterThan(0));
     expect(container.read(townUnlockedSkillNodeCountProvider), 1);
   });

@@ -52,6 +52,11 @@ class WorkshopScreen extends ConsumerWidget {
           extractedTraitTypeCount: extractedTraits.length,
         ),
         const SizedBox(height: 8),
+        WorkshopSkillTreeCard(
+          unlockedCount: unlockedSkillNodes,
+          totalCount: totalSkillNodes,
+        ),
+        const SizedBox(height: 8),
         WorkshopQueueCard(jobCount: queue.length),
         const SizedBox(height: 8),
         WorkshopMaterialCard(

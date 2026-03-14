@@ -56,6 +56,11 @@ class TownScreen extends ConsumerWidget {
           mercenaryCount: mercenaryCount,
         ),
         const SizedBox(height: 8),
+        TownSkillTreeCard(
+          unlockedCount: unlockedSkillNodes,
+          totalCount: totalSkillNodes,
+        ),
+        const SizedBox(height: 8),
         TownEquipmentCraftCard(equipmentCount: equipmentCount),
         const SizedBox(height: 8),
         TownPotionSellCard(stackCount: craftedPotionStacks.length),
