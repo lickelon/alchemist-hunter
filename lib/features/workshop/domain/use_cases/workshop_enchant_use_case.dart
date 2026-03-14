@@ -1,8 +1,8 @@
-import 'package:alchemist_hunter/core/session/state/session_state.dart';
-import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/data/catalogs/potion_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/equipment_enchant_service.dart';
 
 class WorkshopEnchantUseCase {
@@ -13,6 +13,7 @@ class WorkshopEnchantUseCase {
     required String equipmentId,
     required String potionStackKey,
     required EquipmentEnchantService enchantService,
+    required PotionCatalogRepository potionCatalogRepository,
   }) {
     final int owned = state.workshop.craftedPotionStacks[potionStackKey] ?? 0;
     final CraftedPotion? potion =
@@ -21,10 +22,12 @@ class WorkshopEnchantUseCase {
       return state;
     }
 
-    final PotionBlueprint blueprint = potionCatalog.firstWhere(
-      (PotionBlueprint entry) => entry.id == potion.typePotionId,
-      orElse: () => potionCatalog.first,
+    final PotionBlueprint? blueprint = potionCatalogRepository.findPotionById(
+      potion.typePotionId,
     );
+    if (blueprint == null) {
+      return state;
+    }
 
     final EquipmentInstance? storedItem = _findStoredItem(
       state.town.equipmentInventory,

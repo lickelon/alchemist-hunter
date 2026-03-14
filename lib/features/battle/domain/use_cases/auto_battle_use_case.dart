@@ -1,10 +1,10 @@
-import 'package:alchemist_hunter/features/battle/data/catalogs/battle_tables.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
-import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
+import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/services/character_progression_service.dart';
-import 'package:alchemist_hunter/core/session/session_providers.dart';
 
 class AutoBattleUseCase {
   const AutoBattleUseCase({
@@ -22,6 +22,7 @@ class AutoBattleUseCase {
     required SessionState state,
     required String stageId,
     required BattleService battleService,
+    required BattleCatalogRepository battleCatalogRepository,
   }) {
     final BattleResult result = battleService.runAutoBattle(
       config: AutoBattleConfig(
@@ -29,7 +30,7 @@ class AutoBattleUseCase {
         potionLoadout: const <String, int>{'p_1': 2, 'p_2': 1},
         stageId: stageId,
       ),
-      dropTable: stageDropTable(stageId),
+      dropTable: battleCatalogRepository.dropTable(stageId),
     );
 
     final Map<String, int> inventory = <String, int>{

@@ -1,5 +1,4 @@
-import 'package:alchemist_hunter/core/session/session_providers.dart';
-import 'package:alchemist_hunter/features/town/data/catalogs/equipment_blueprints.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -62,9 +61,6 @@ final Provider<ShopState> catalystShopStateProvider = Provider<ShopState>((
     ),
   );
 });
-
-final Provider<List<EquipmentBlueprint>> townEquipmentBlueprintsProvider =
-    Provider<List<EquipmentBlueprint>>((Ref ref) => townEquipmentBlueprints);
 
 final Provider<List<EquipmentInstance>> townEquipmentInventoryProvider =
     Provider<List<EquipmentInstance>>((Ref ref) {

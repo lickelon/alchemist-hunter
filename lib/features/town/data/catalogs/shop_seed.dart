@@ -1,32 +1,61 @@
 import 'package:alchemist_hunter/features/town/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/data/catalogs/material_catalog.dart';
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+
+const List<ShopItem> _generalShopSeedItems = <ShopItem>[
+  ShopItem(materialId: 'm_1', name: 'Emberroot', price: 50, quantity: 20),
+  ShopItem(materialId: 'm_2', name: 'Ironbloom Bark', price: 50, quantity: 20),
+  ShopItem(materialId: 'm_3', name: 'Mossbone', price: 50, quantity: 20),
+  ShopItem(materialId: 'm_4', name: 'Gale Petal', price: 50, quantity: 20),
+  ShopItem(materialId: 'm_5', name: 'Sunleaf', price: 50, quantity: 20),
+  ShopItem(materialId: 'm_6', name: 'Nightsap Resin', price: 50, quantity: 20),
+  ShopItem(materialId: 'm_7', name: 'Thornspike Vine', price: 50, quantity: 20),
+  ShopItem(materialId: 'm_8', name: 'Dewcap Mushroom', price: 50, quantity: 20),
+];
+
+const List<ShopItem> _catalystShopSeedItems = <ShopItem>[
+  ShopItem(materialId: 'm_25', name: 'Aether Bloom', price: 180, quantity: 8),
+  ShopItem(materialId: 'm_26', name: 'Void Thistle', price: 180, quantity: 8),
+  ShopItem(
+    materialId: 'm_27',
+    name: 'Starfire Pollen',
+    price: 180,
+    quantity: 8,
+  ),
+  ShopItem(materialId: 'm_28', name: 'Phantom Moss', price: 180, quantity: 8),
+  ShopItem(
+    materialId: 'm_29',
+    name: 'Dragonbone Shard',
+    price: 180,
+    quantity: 8,
+  ),
+  ShopItem(
+    materialId: 'm_30',
+    name: 'Moontear Crystal',
+    price: 180,
+    quantity: 8,
+  ),
+];
 
 List<ShopItem> buildGeneralShopSeedItems() {
-  return materialCatalog
-      .where((MaterialEntity material) => material.source == 'general_shop')
-      .take(8)
+  return _generalShopSeedItems
       .map(
-        (MaterialEntity material) => ShopItem(
-          materialId: material.id,
-          name: material.name,
-          price: 50,
-          quantity: 20,
+        (ShopItem item) => ShopItem(
+          materialId: item.materialId,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
         ),
       )
       .toList();
 }
 
 List<ShopItem> buildCatalystShopSeedItems() {
-  return materialCatalog
-      .skip(24)
-      .take(6)
+  return _catalystShopSeedItems
       .map(
-        (MaterialEntity material) => ShopItem(
-          materialId: material.id,
-          name: material.name,
-          price: 180,
-          quantity: 8,
+        (ShopItem item) => ShopItem(
+          materialId: item.materialId,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
         ),
       )
       .toList();

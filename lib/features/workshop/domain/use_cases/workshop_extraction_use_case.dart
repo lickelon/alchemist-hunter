@@ -1,8 +1,8 @@
-import 'package:alchemist_hunter/core/session/session_providers.dart';
-import 'package:alchemist_hunter/features/workshop/data/catalogs/extraction_profiles.dart';
-import 'package:alchemist_hunter/features/workshop/data/catalogs/material_catalog.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/alchemy_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/domain/repositories/extraction_profile_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/repositories/material_catalog_repository.dart';
 
 class WorkshopExtractionUseCase {
   const WorkshopExtractionUseCase();
@@ -12,6 +12,8 @@ class WorkshopExtractionUseCase {
     required String materialId,
     required String profileId,
     required AlchemyService alchemyService,
+    required MaterialCatalogRepository materialCatalogRepository,
+    required ExtractionProfileRepository extractionProfileRepository,
     int quantity = 1,
     List<String>? selectedTraits,
   }) {
@@ -20,15 +22,14 @@ class WorkshopExtractionUseCase {
       return state;
     }
 
-    final MaterialEntity material = materialCatalog.firstWhere(
-      (MaterialEntity entry) => entry.id == materialId,
-      orElse: () => throw ArgumentError('Material not found: $materialId'),
+    final MaterialEntity? material = materialCatalogRepository.findMaterialById(
+      materialId,
     );
-    final ExtractionProfile profile = extractionProfileCatalog.firstWhere(
-      (ExtractionProfile entry) => entry.id == profileId,
-      orElse: () =>
-          throw ArgumentError('ExtractionProfile not found: $profileId'),
-    );
+    final ExtractionProfile? profile = extractionProfileRepository
+        .findProfileById(profileId);
+    if (material == null || profile == null) {
+      return state;
+    }
     if (profile.mode == ExtractionMode.selective &&
         (selectedTraits == null || selectedTraits.isEmpty)) {
       return state;

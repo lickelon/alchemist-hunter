@@ -1,6 +1,6 @@
-import 'package:alchemist_hunter/core/session/session_providers.dart';
-import 'package:alchemist_hunter/features/town/data/catalogs/shop_seed.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 
 class TownUseCase {
@@ -56,13 +56,15 @@ class TownUseCase {
     required ShopType shopType,
     required DateTime now,
     required EconomyService economy,
+    required ShopCatalogRepository shopCatalogRepository,
   }) {
     final bool isGeneral = shopType == ShopType.general;
     final ShopState target = isGeneral
         ? state.town.generalShop
         : state.town.catalystShop;
-    final List<ShopItem> nextItems =
-        isGeneral ? buildGeneralShopSeedItems() : buildCatalystShopSeedItems();
+    final List<ShopItem> nextItems = isGeneral
+        ? shopCatalogRepository.generalSeedItems()
+        : shopCatalogRepository.catalystSeedItems();
 
     final ({ShopState shop, int costPaid}) refreshed = economy.forceRefresh(
       shop: target,
@@ -89,19 +91,20 @@ class TownUseCase {
     required SessionState state,
     required DateTime now,
     required EconomyService economy,
+    required ShopCatalogRepository shopCatalogRepository,
   }) {
     final ({ShopState shop, bool refreshed}) generalResult = economy
         .applyAutoRefresh(
           shop: state.town.generalShop,
           now: now,
-          nextItems: buildGeneralShopSeedItems(),
+          nextItems: shopCatalogRepository.generalSeedItems(),
           refreshInterval: const Duration(minutes: 15),
         );
     final ({ShopState shop, bool refreshed}) catalystResult = economy
         .applyAutoRefresh(
           shop: state.town.catalystShop,
           now: now,
-          nextItems: buildCatalystShopSeedItems(),
+          nextItems: shopCatalogRepository.catalystSeedItems(),
           refreshInterval: const Duration(minutes: 30),
         );
 

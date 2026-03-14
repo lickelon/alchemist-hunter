@@ -1,5 +1,14 @@
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 
+const Map<String, String> townEquipmentMaterialNames = <String, String>{
+  'm_1': 'Emberroot',
+  'm_2': 'Ironbloom Bark',
+  'm_3': 'Mossbone',
+  'm_4': 'Gale Petal',
+  'm_5': 'Sunleaf',
+  'm_6': 'Nightsap Resin',
+};
+
 const List<EquipmentBlueprint> townEquipmentBlueprints = <EquipmentBlueprint>[
   EquipmentBlueprint(
     id: 'eq_1',

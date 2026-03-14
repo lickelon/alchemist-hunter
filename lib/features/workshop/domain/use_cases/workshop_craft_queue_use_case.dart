@@ -1,8 +1,8 @@
-import 'package:alchemist_hunter/core/session/session_providers.dart';
-import 'package:alchemist_hunter/features/workshop/data/catalogs/potion_catalog.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
 
 class WorkshopCraftQueueUseCase {
   const WorkshopCraftQueueUseCase();
@@ -14,8 +14,14 @@ class WorkshopCraftQueueUseCase {
     required DateTime now,
     required CraftQueueService queueService,
     required PotionCraftingService craftingService,
+    required PotionCatalogRepository potionCatalogRepository,
   }) {
-    final PotionBlueprint blueprint = _findBlueprint(potionId);
+    final PotionBlueprint? blueprint = potionCatalogRepository.findPotionById(
+      potionId,
+    );
+    if (blueprint == null) {
+      return state;
+    }
     final bool canCraft = craftingService.canCraftRepeatCount(
       blueprint: blueprint,
       extractedInventory: state.workshop.extractedTraitInventory,
@@ -45,6 +51,7 @@ class WorkshopCraftQueueUseCase {
     required SessionState state,
     required CraftQueueService queueService,
     required PotionCraftingService craftingService,
+    required PotionCatalogRepository potionCatalogRepository,
   }) {
     CraftQueueJob? activeJob;
     for (final CraftQueueJob job in state.workshop.queue) {
@@ -55,9 +62,11 @@ class WorkshopCraftQueueUseCase {
       }
     }
     if (activeJob != null) {
-      final PotionBlueprint activeBlueprint = _findBlueprint(
-        activeJob.potionId,
-      );
+      final PotionBlueprint? activeBlueprint = potionCatalogRepository
+          .findPotionById(activeJob.potionId);
+      if (activeBlueprint == null) {
+        return state;
+      }
       final bool canPrepare =
           craftingService.prepareCraftFromExtractedInventory(
             blueprint: activeBlueprint,
@@ -103,7 +112,12 @@ class WorkshopCraftQueueUseCase {
         continue;
       }
 
-      final PotionBlueprint blueprint = _findBlueprint(job.potionId);
+      final PotionBlueprint? blueprint = potionCatalogRepository.findPotionById(
+        job.potionId,
+      );
+      if (blueprint == null) {
+        continue;
+      }
       for (int index = 0; index < producedDelta; index++) {
         final ({
           Map<String, double> nextExtractedInventory,
@@ -123,9 +137,9 @@ class WorkshopCraftQueueUseCase {
         final CraftedPotion crafted = craftingService.craftPotion(
           requestedBlueprint: blueprint,
           extractedTraits: prepared.extractedTraits,
-          recipeRules: potionRecipeCatalog,
-          branchRules: potionRecipeBranchCatalog,
-          qualityRule: potionQualityCatalog,
+          recipeRules: potionCatalogRepository.recipeRules(),
+          branchRules: potionCatalogRepository.recipeBranchRules(),
+          qualityRule: potionCatalogRepository.qualityRule(),
         );
         final String stackKey =
             '${crafted.typePotionId}|${crafted.qualityGrade.name}';
@@ -149,6 +163,7 @@ class WorkshopCraftQueueUseCase {
     required String jobId,
     required CraftQueueService queueService,
     required PotionCraftingService craftingService,
+    required PotionCatalogRepository potionCatalogRepository,
   }) {
     CraftQueueJob? blockedJob;
     for (final CraftQueueJob job in state.workshop.queue) {
@@ -163,7 +178,12 @@ class WorkshopCraftQueueUseCase {
 
     final int remainingCount =
         blockedJob.repeatCount - blockedJob.currentRepeat;
-    final PotionBlueprint blueprint = _findBlueprint(blockedJob.potionId);
+    final PotionBlueprint? blueprint = potionCatalogRepository.findPotionById(
+      blockedJob.potionId,
+    );
+    if (blueprint == null) {
+      return state;
+    }
     final bool canCraft = craftingService.canCraftRepeatCount(
       blueprint: blueprint,
       extractedInventory: state.workshop.extractedTraitInventory,
@@ -189,14 +209,6 @@ class WorkshopCraftQueueUseCase {
     }
     return state.copyWith(workshop: state.workshop.copyWith(queue: remaining));
   }
-
-  PotionBlueprint _findBlueprint(String potionId) {
-    return potionCatalog.firstWhere(
-      (PotionBlueprint potion) => potion.id == potionId,
-      orElse: () => potionCatalog.first,
-    );
-  }
-
   List<CraftQueueJob> _markCraftBlocked(
     List<CraftQueueJob> jobs,
     String jobId,

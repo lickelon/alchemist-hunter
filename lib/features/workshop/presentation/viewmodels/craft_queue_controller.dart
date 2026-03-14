@@ -1,10 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_craft_queue_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_catalog_providers.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
 class WorkshopCraftQueueController {
@@ -14,12 +16,15 @@ class WorkshopCraftQueueController {
     this._craftingService, {
     WorkshopCraftQueueUseCase craftQueueDomain =
         const WorkshopCraftQueueUseCase(),
-  }) : _craftQueueDomain = craftQueueDomain;
+    required PotionCatalogRepository potionCatalogRepository,
+  }) : _craftQueueDomain = craftQueueDomain,
+       _potionCatalogRepository = potionCatalogRepository;
 
   final SessionController _session;
   final CraftQueueService _queueService;
   final PotionCraftingService _craftingService;
   final WorkshopCraftQueueUseCase _craftQueueDomain;
+  final PotionCatalogRepository _potionCatalogRepository;
 
   void enqueuePotion(String potionId, int repeatCount) {
     final SessionState current = _session.snapshot();
@@ -30,6 +35,7 @@ class WorkshopCraftQueueController {
       now: _session.now(),
       queueService: _queueService,
       craftingService: _craftingService,
+      potionCatalogRepository: _potionCatalogRepository,
     );
     _apply(
       nextState,
@@ -45,6 +51,7 @@ class WorkshopCraftQueueController {
       state: current,
       queueService: _queueService,
       craftingService: _craftingService,
+      potionCatalogRepository: _potionCatalogRepository,
     );
     _apply(nextState, logMessage: _tickLogMessage(current, nextState));
   }
@@ -56,6 +63,7 @@ class WorkshopCraftQueueController {
       jobId: jobId,
       queueService: _queueService,
       craftingService: _craftingService,
+      potionCatalogRepository: _potionCatalogRepository,
     );
     _apply(
       nextState,
@@ -120,9 +128,10 @@ final Provider<WorkshopCraftQueueController>
 workshopCraftQueueControllerProvider = Provider<WorkshopCraftQueueController>((
   Ref ref,
 ) {
-  return WorkshopCraftQueueController(
-    ref.read(sessionControllerProvider.notifier),
-    ref.read(craftQueueServiceProvider),
-    ref.read(potionCraftingServiceProvider),
-  );
-});
+      return WorkshopCraftQueueController(
+        ref.read(sessionControllerProvider.notifier),
+        ref.read(craftQueueServiceProvider),
+        ref.read(potionCraftingServiceProvider),
+        potionCatalogRepository: ref.read(potionCatalogRepositoryProvider),
+      );
+    });

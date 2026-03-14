@@ -1,6 +1,7 @@
-import 'package:alchemist_hunter/core/session/session_providers.dart';
-import 'package:alchemist_hunter/features/workshop/data/catalogs/potion_catalog.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+
+typedef PotionBaseValueLookup = int? Function(String potionId);
 
 class SellCraftedPotionUseCase {
   const SellCraftedPotionUseCase();
@@ -9,6 +10,7 @@ class SellCraftedPotionUseCase {
     required SessionState state,
     required String stackKey,
     required int quantity,
+    required PotionBaseValueLookup potionBaseValueLookup,
   }) {
     final int owned = state.workshop.craftedPotionStacks[stackKey] ?? 0;
     if (quantity < 1 || owned < quantity) {
@@ -20,17 +22,17 @@ class SellCraftedPotionUseCase {
       return state;
     }
 
-    final PotionBlueprint blueprint = potionCatalog.firstWhere(
-      (PotionBlueprint potion) => potion.id == sample.typePotionId,
-      orElse: () => potionCatalog.first,
-    );
+    final int? potionBaseValue = potionBaseValueLookup(sample.typePotionId);
+    if (potionBaseValue == null) {
+      return state;
+    }
     final double multiplier = switch (sample.qualityGrade) {
       PotionQualityGrade.s => 1.6,
       PotionQualityGrade.a => 1.3,
       PotionQualityGrade.b => 1.0,
       PotionQualityGrade.c => 0.8,
     };
-    final int earned = (blueprint.baseValue * multiplier * quantity).round();
+    final int earned = (potionBaseValue * multiplier * quantity).round();
 
     final Map<String, int> stacks = <String, int>{
       ...state.workshop.craftedPotionStacks,
