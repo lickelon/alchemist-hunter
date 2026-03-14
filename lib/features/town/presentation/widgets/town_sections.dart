@@ -3,10 +3,9 @@ export 'town_mercenary_card.dart';
 
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/presentation/widgets/sheets/town_potion_sale_sheet.dart';
+import 'package:alchemist_hunter/features/town/presentation/widgets/sheets/town_shop_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 
 class TownShopCard extends StatelessWidget {
   const TownShopCard({
@@ -39,7 +38,7 @@ class TownShopCard extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return _TownShopSheet(title: title, shopType: shopType);
+        return TownShopSheet(title: title, shopType: shopType);
       },
     );
   }
@@ -65,133 +64,8 @@ class TownPotionSellCard extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return const _TownPotionSellSheet();
+        return const TownPotionSaleSheet();
       },
-    );
-  }
-}
-
-class _TownShopSheet extends ConsumerWidget {
-  const _TownShopSheet({required this.title, required this.shopType});
-
-  final String title;
-  final ShopType shopType;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ShopState shop = ref.watch(
-      shopType == ShopType.general
-          ? generalShopStateProvider
-          : catalystShopStateProvider,
-    );
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 8),
-              FilledButton.tonal(
-                onPressed: () {
-                  ref.read(townControllerProvider).forceRefresh(shopType);
-                },
-                child: Text('강제 갱신 (${shop.forcedRefreshCost})'),
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: shop.items.isEmpty
-                    ? const Center(child: Text('판매 아이템이 없습니다'))
-                    : ListView.builder(
-                        itemCount: shop.items.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final ShopItem item = shop.items[index];
-                          return ListTile(
-                            dense: true,
-                            title: Text('${item.name} (${item.quantity})'),
-                            subtitle: Text('가격 ${item.price}'),
-                            trailing: FilledButton.tonal(
-                              onPressed: () {
-                                if (shopType == ShopType.general) {
-                                  ref
-                                      .read(townControllerProvider)
-                                      .buyGeneralMaterial(item.materialId, 1);
-                                } else {
-                                  ref
-                                      .read(townControllerProvider)
-                                      .buyCatalystMaterial(item.materialId, 1);
-                                }
-                              },
-                              child: const Text('구매'),
-                            ),
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _TownPotionSellSheet extends ConsumerWidget {
-  const _TownPotionSellSheet();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final List<TownPotionSaleView> views = ref.watch(townPotionSaleViewsProvider);
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text(
-                '포션 판매',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: views.isEmpty
-                    ? const Center(child: Text('판매 가능한 포션이 없습니다'))
-                    : ListView(
-                        children: views.map((TownPotionSaleView entry) {
-                          return ListTile(
-                            dense: true,
-                            title: Text('${entry.stackKey} x${entry.quantity}'),
-                            subtitle: Text(
-                              '품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}',
-                            ),
-                            trailing: FilledButton.tonal(
-                              onPressed: () {
-                                ref
-                                    .read(townPotionSaleControllerProvider)
-                                    .sellCraftedPotion(entry.stackKey, 1);
-                              },
-                              child: const Text('판매'),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

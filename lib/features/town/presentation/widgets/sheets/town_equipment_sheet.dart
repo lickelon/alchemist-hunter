@@ -1,0 +1,109 @@
+import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/town/data/catalogs/equipment_blueprints.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class TownEquipmentSheet extends ConsumerWidget {
+  const TownEquipmentSheet({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<EquipmentBlueprint> blueprints = ref.watch(
+      townEquipmentBlueprintsProvider,
+    );
+    final List<TownEquipmentInventoryView> inventory = ref.watch(
+      townEquipmentInventoryViewsProvider,
+    );
+    final Map<String, int> materials = ref.watch(
+      sessionControllerProvider.select(
+        (SessionState state) => state.player.materialInventory,
+      ),
+    );
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.75,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Text(
+                '기본 장비 제작',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '제작 가능 장비',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 6),
+              Expanded(
+                child: ListView(
+                  children: blueprints.map((EquipmentBlueprint entry) {
+                    return ListTile(
+                      dense: true,
+                      title: Text(entry.name),
+                      subtitle: Text(
+                        '${entry.slot.name} / ATK ${entry.attack} / DEF ${entry.defense} / HP ${entry.health}\n${_formatMaterialCosts(entry)}',
+                      ),
+                      trailing: FilledButton.tonal(
+                        onPressed: _canCraft(entry, materials)
+                            ? () {
+                                ref
+                                    .read(equipmentCraftControllerProvider)
+                                    .craftEquipment(entry.id);
+                              }
+                            : null,
+                        child: const Text('제작'),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const Divider(),
+              const Text(
+                '보유 장비',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 6),
+              Expanded(
+                child: inventory.isEmpty
+                    ? const Center(child: Text('보유 장비가 없습니다'))
+                    : ListView(
+                        children: inventory.map((TownEquipmentInventoryView entry) {
+                          return ListTile(
+                            dense: true,
+                            title: Text(entry.name),
+                            subtitle: Text('${entry.slotLabel} / ${entry.statLabel}'),
+                          );
+                        }).toList(),
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  bool _canCraft(EquipmentBlueprint blueprint, Map<String, int> inventory) {
+    for (final MapEntry<String, int> entry in blueprint.materialCosts.entries) {
+      if ((inventory[entry.key] ?? 0) < entry.value) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  String _formatMaterialCosts(EquipmentBlueprint blueprint) {
+    return blueprint.materialCosts.entries
+        .map(
+          (MapEntry<String, int> entry) =>
+              '${townEquipmentMaterialNames[entry.key] ?? entry.key} x${entry.value}',
+        )
+        .join(', ');
+  }
+}
