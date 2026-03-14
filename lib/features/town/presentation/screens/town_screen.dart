@@ -10,6 +10,9 @@ class TownScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int gold = ref.watch(townGoldProvider);
+    final int townInsight = ref.watch(townInsightProvider);
+    final int unlockedSkillNodes = ref.watch(townUnlockedSkillNodeCountProvider);
+    final int totalSkillNodes = ref.watch(townSkillNodeCountProvider);
     final ShopState generalShop = ref.watch(generalShopStateProvider);
     final ShopState catalystShop = ref.watch(catalystShopStateProvider);
     final int equipmentCount = ref.watch(townEquipmentCountProvider);
@@ -28,7 +31,9 @@ class TownScreen extends ConsumerWidget {
           child: ListTile(
             leading: const Icon(Icons.account_balance_wallet_outlined),
             title: const Text('Town Economy'),
-            subtitle: Text('Gold: $gold / TownInsight: (준비중)'),
+            subtitle: Text(
+              'Gold: $gold / TownInsight: $townInsight / Skill Nodes: $unlockedSkillNodes/$totalSkillNodes',
+            ),
           ),
         ),
         const SizedBox(height: 8),

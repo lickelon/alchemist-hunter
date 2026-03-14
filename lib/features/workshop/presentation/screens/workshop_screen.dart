@@ -10,6 +10,11 @@ class WorkshopScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int essence = ref.watch(workshopEssenceProvider);
+    final int arcaneDust = ref.watch(workshopArcaneDustProvider);
+    final int unlockedSkillNodes = ref.watch(
+      workshopUnlockedSkillNodeCountProvider,
+    );
+    final int totalSkillNodes = ref.watch(workshopSkillNodeCountProvider);
     final List<ExtractedTraitInventoryView> extractedTraits = ref.watch(
       extractedTraitViewsProvider,
     );
@@ -37,7 +42,7 @@ class WorkshopScreen extends ConsumerWidget {
             leading: const Icon(Icons.science_outlined),
             title: const Text('Workshop Resources'),
             subtitle: Text(
-              'Essence: $essence / Extracted Traits: ${extractedTraits.length}종',
+              'Essence: $essence / ArcaneDust: $arcaneDust / Skill Nodes: $unlockedSkillNodes/$totalSkillNodes',
             ),
           ),
         ),

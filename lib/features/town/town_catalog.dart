@@ -2,10 +2,12 @@ import 'package:alchemist_hunter/features/town/data/catalogs/equipment_blueprint
 import 'package:alchemist_hunter/features/town/data/repositories/static_equipment_blueprint_repository.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_mercenary_template_repository.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_shop_catalog_repository.dart';
+import 'package:alchemist_hunter/features/town/data/repositories/static_town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/equipment_blueprint_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/mercenary_template_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
+import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final Provider<ShopCatalogRepository> shopCatalogRepositoryProvider =
@@ -23,6 +25,11 @@ mercenaryTemplateRepositoryProvider = Provider<MercenaryTemplateRepository>(
   (Ref ref) => const StaticMercenaryTemplateRepository(),
 );
 
+final Provider<TownSkillTreeRepository> townSkillTreeRepositoryProvider =
+    Provider<TownSkillTreeRepository>(
+      (Ref ref) => const StaticTownSkillTreeRepository(),
+    );
+
 final Provider<List<EquipmentBlueprint>> townEquipmentBlueprintsProvider =
     Provider<List<EquipmentBlueprint>>((Ref ref) {
       return ref.watch(equipmentBlueprintRepositoryProvider).blueprints();
@@ -30,3 +37,8 @@ final Provider<List<EquipmentBlueprint>> townEquipmentBlueprintsProvider =
 
 final Provider<Map<String, String>> townEquipmentMaterialNamesProvider =
     Provider<Map<String, String>>((Ref ref) => townEquipmentMaterialNames);
+
+final Provider<List<TownSkillNode>> townSkillNodesProvider =
+    Provider<List<TownSkillNode>>((Ref ref) {
+      return ref.watch(townSkillTreeRepositoryProvider).nodes();
+    });

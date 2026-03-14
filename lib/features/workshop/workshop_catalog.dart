@@ -1,10 +1,12 @@
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final Provider<MaterialCatalogRepository> materialCatalogRepositoryProvider =
@@ -21,6 +23,11 @@ final Provider<ExtractionProfileRepository>
 extractionProfileRepositoryProvider = Provider<ExtractionProfileRepository>(
   (Ref ref) => const StaticExtractionProfileRepository(),
 );
+
+final Provider<WorkshopSkillTreeRepository> workshopSkillTreeRepositoryProvider =
+    Provider<WorkshopSkillTreeRepository>(
+      (Ref ref) => const StaticWorkshopSkillTreeRepository(),
+    );
 
 final Provider<List<MaterialEntity>> materialsProvider =
     Provider<List<MaterialEntity>>((Ref ref) {
@@ -41,4 +48,9 @@ final Provider<List<TraitUnit>> traitsProvider = Provider<List<TraitUnit>>((
 final Provider<List<ExtractionProfile>> extractionProfilesProvider =
     Provider<List<ExtractionProfile>>((Ref ref) {
       return ref.watch(extractionProfileRepositoryProvider).profiles();
+    });
+
+final Provider<List<WorkshopSkillNode>> workshopSkillNodesProvider =
+    Provider<List<WorkshopSkillNode>>((Ref ref) {
+      return ref.watch(workshopSkillTreeRepositoryProvider).nodes();
     });
