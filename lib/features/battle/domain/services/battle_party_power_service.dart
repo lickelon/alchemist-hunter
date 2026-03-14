@@ -1,5 +1,5 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
-import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
+import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 
 class BattlePartyPowerService {

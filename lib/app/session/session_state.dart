@@ -1,9 +1,9 @@
-import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
+import 'package:alchemist_hunter/features/battle/domain/models/battle_state.dart';
+import 'package:alchemist_hunter/features/characters/domain/models/characters_state.dart';
+import 'package:alchemist_hunter/features/town/domain/models/town_state.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models/workshop_state.dart';
 
-import 'battle_state.dart';
 import 'player_state.dart';
-import 'town_state.dart';
-import 'workshop_state.dart';
 
 class SessionState {
   const SessionState({

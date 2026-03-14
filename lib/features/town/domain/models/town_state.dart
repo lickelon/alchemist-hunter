@@ -1,4 +1,6 @@
-import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'equipment_models.dart';
+import 'mercenary_models.dart';
+import 'shop_models.dart';
 
 class TownState {
   const TownState({

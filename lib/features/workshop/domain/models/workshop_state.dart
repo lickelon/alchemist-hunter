@@ -1,4 +1,5 @@
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'craft_queue_models.dart';
+import 'potion_models.dart';
 
 class WorkshopState {
   const WorkshopState({

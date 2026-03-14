@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

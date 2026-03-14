@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 
 final Provider<int> workshopEssenceProvider = Provider<int>((Ref ref) {
   return ref.watch(

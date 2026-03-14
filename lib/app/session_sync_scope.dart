@@ -16,13 +16,13 @@ class SessionSyncScope extends ConsumerStatefulWidget {
 class _SessionSyncScopeState extends ConsumerState<SessionSyncScope> {
   Timer? _timer;
 
-  TownController get _townController => ref.read(townControllerProvider);
+  ShopController get _shopController => ref.read(shopControllerProvider);
 
   @override
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 5), (_) {
-      _townController.syncShopAutoRefresh();
+      _shopController.syncShopAutoRefresh();
     });
   }
 

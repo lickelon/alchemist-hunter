@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
+import 'package:alchemist_hunter/features/characters/domain/models.dart';
 
 class CharacterProgressionService {
   const CharacterProgressionService();

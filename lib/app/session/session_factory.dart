@@ -1,15 +1,14 @@
-import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
-import 'package:alchemist_hunter/features/town/domain/services/mercenary_recruitment_service.dart';
-import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
+import 'package:alchemist_hunter/features/characters/domain/models/characters_state.dart';
+import 'package:alchemist_hunter/features/town/data/repositories/static_mercenary_template_repository.dart';
 import 'package:alchemist_hunter/features/town/data/catalogs/shop_seed.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/domain/services/mercenary_recruitment_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
-import 'state/battle_state.dart';
-import 'state/player_state.dart';
-import 'state/session_state.dart';
-import 'state/town_state.dart';
-import 'state/workshop_state.dart';
+import 'player_state.dart';
+import 'session_state.dart';
 
 SessionState createInitialSessionState(DateTime now) {
   return SessionState(
@@ -25,6 +24,7 @@ SessionState createInitialSessionState(DateTime now) {
       equipmentInventory: const <EquipmentInstance>[],
       mercenaryCandidates: const MercenaryRecruitmentService().buildCandidates(
         refreshIndex: 0,
+        templateRepository: const StaticMercenaryTemplateRepository(),
       ),
       mercenaryRefreshCount: 0,
     ),

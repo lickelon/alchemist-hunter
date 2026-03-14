@@ -1,36 +1,32 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'session_factory.dart';
-import 'state/session_state.dart';
+typedef SessionLogAppender<TState> = TState Function(
+  TState state,
+  String message,
+);
 
-class SessionController extends StateNotifier<SessionState> {
-  SessionController({DateTime Function()? clock})
-    : _clock = clock ?? DateTime.now,
-      super(createInitialSessionState((clock ?? DateTime.now)()));
+class SessionController<TState> extends StateNotifier<TState> {
+  SessionController({
+    required TState initialState,
+    DateTime Function()? clock,
+    SessionLogAppender<TState>? logAppender,
+  }) : _clock = clock ?? DateTime.now,
+       _logAppender = logAppender,
+       super(initialState);
 
   final DateTime Function() _clock;
+  final SessionLogAppender<TState>? _logAppender;
 
   DateTime now() => _clock();
 
-  SessionState snapshot() => state;
+  TState snapshot() => state;
 
-  void applyState(SessionState nextState) => state = nextState;
+  void applyState(TState nextState) => state = nextState;
 
   void appendLog(String message) {
-    if (state.workshop.logs.isNotEmpty &&
-        state.workshop.logs.first == message) {
+    if (_logAppender == null) {
       return;
     }
-    state = state.copyWith(
-      workshop: state.workshop.copyWith(
-        logs: <String>[message, ...state.workshop.logs].take(20).toList(),
-      ),
-    );
+    state = _logAppender(state, message);
   }
 }
-
-final StateNotifierProvider<SessionController, SessionState>
-sessionControllerProvider =
-    StateNotifierProvider<SessionController, SessionState>((Ref ref) {
-      return SessionController();
-    });
