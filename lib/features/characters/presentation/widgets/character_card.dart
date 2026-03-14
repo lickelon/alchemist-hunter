@@ -41,6 +41,20 @@ class CharacterCard extends StatelessWidget {
             Text(
               'XP ${character.xp}/${character.xpToNextLevel} / MaxLv ${character.maxLevelForRank}',
             ),
+            if (item.detailLines.isNotEmpty) ...<Widget>[
+              const SizedBox(height: 8),
+              ...item.detailLines.map((String line) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Text(
+                    line,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.black87),
+                  ),
+                );
+              }),
+            ],
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,

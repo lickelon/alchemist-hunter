@@ -10,6 +10,8 @@ class HomunculusHatchRecipeView {
     required this.name,
     required this.description,
     required this.resultName,
+    required this.roleLabel,
+    required this.supportEffectLabel,
     required this.costLabel,
     required this.canHatch,
   });
@@ -18,6 +20,8 @@ class HomunculusHatchRecipeView {
   final String name;
   final String description;
   final String resultName;
+  final String roleLabel;
+  final String supportEffectLabel;
   final String costLabel;
   final bool canHatch;
 }
@@ -74,6 +78,8 @@ final Provider<List<HomunculusHatchRecipeView>> homunculusHatchRecipeViewsProvid
           name: recipe.name,
           description: recipe.description,
           resultName: recipe.resultName,
+          roleLabel: recipe.roleLabel,
+          supportEffectLabel: recipe.supportEffectLabel,
           costLabel:
               'Essence ${recipe.essenceCost} / ArcaneDust ${recipe.arcaneDustCost}${materialCostLabel.isEmpty ? "" : " / $materialCostLabel"}${traitCostLabel.isEmpty ? "" : " / $traitCostLabel"}',
           canHatch: enoughEssence && enoughDust && enoughMaterials && enoughTraits,

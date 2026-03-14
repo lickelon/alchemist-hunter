@@ -51,4 +51,35 @@ void main() {
     expect(view.equipmentSlots.first.slotLabel, '무기');
     expect(view.equipmentSlots.first.availableItems, hasLength(1));
   });
+
+  test('homunculus selector exposes origin role and support labels', () {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final SessionController session = container.read(
+      sessionControllerProvider.notifier,
+    );
+    final CharacterProgress target = session.state.characters.homunculi.first;
+    session.state = session.state.copyWith(
+      characters: session.state.characters.copyWith(
+        homunculi: <CharacterProgress>[
+          target.copyWith(
+            homunculusOrigin: 'Vital Seed Flask',
+            homunculusRole: '지원',
+            homunculusSupportEffect: '파티 생존력 보조',
+          ),
+        ],
+      ),
+    );
+
+    final CharacterListItemView view = container
+        .read(homunculusListItemViewsProvider)
+        .first;
+
+    expect(view.detailLines, <String>[
+      '출처 Vital Seed Flask',
+      '역할 지원',
+      '보조효과 파티 생존력 보조',
+    ]);
+  });
 }

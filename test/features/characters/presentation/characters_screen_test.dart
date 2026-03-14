@@ -67,4 +67,44 @@ void main() {
 
     expect(find.text('무기: Bronze Sword'), findsOneWidget);
   });
+
+  testWidgets('homunculus tab shows origin role and support details', (
+    WidgetTester tester,
+  ) async {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final SessionController session = container.read(
+      sessionControllerProvider.notifier,
+    );
+    final CharacterProgress target = session.state.characters.homunculi.first;
+    session.state = session.state.copyWith(
+      characters: session.state.characters.copyWith(
+        homunculi: <CharacterProgress>[
+          target.copyWith(
+            name: 'Vital Nigredo',
+            homunculusOrigin: 'Vital Seed Flask',
+            homunculusRole: '지원',
+            homunculusSupportEffect: '파티 생존력 보조',
+          ),
+        ],
+      ),
+    );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(home: Scaffold(body: CharactersScreen())),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Homunculus'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Vital Nigredo'), findsOneWidget);
+    expect(find.text('출처 Vital Seed Flask'), findsOneWidget);
+    expect(find.text('역할 지원'), findsOneWidget);
+    expect(find.text('보조효과 파티 생존력 보조'), findsOneWidget);
+  });
 }

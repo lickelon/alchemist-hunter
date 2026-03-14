@@ -41,7 +41,7 @@ class WorkshopHatchSheet extends ConsumerWidget {
                             dense: true,
                             title: Text(recipe.name),
                             subtitle: Text(
-                              '${recipe.description}\n결과 ${recipe.resultName}\n${recipe.costLabel}',
+                              '${recipe.description}\n결과 ${recipe.resultName}\n역할 ${recipe.roleLabel}\n보조효과 ${recipe.supportEffectLabel}\n${recipe.costLabel}',
                             ),
                             trailing: FilledButton.tonal(
                               onPressed: recipe.canHatch

@@ -42,12 +42,15 @@ void main() {
 
     expect(find.text('호문쿨루스 부화'), findsOneWidget);
     expect(find.text('Vital Seed Flask'), findsOneWidget);
+    expect(find.textContaining('역할 지원'), findsOneWidget);
+    expect(find.textContaining('보조효과 파티 생존력 보조'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(FilledButton, '부화').first);
     await tester.pumpAndSettle();
 
     expect(session.state.characters.homunculi, hasLength(2));
     expect(session.state.characters.homunculi.last.name, 'Vital Nigredo');
+    expect(session.state.characters.homunculi.last.homunculusOrigin, 'Vital Seed Flask');
     expect(session.state.player.essence, 80);
     expect(session.state.workshop.logs.first, 'Hatched Vital Nigredo');
   });
