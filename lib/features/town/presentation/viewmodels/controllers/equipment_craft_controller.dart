@@ -1,14 +1,13 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/equipment_blueprint_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/craft_equipment_use_case.dart';
-import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_catalog_providers.dart';
+import 'package:alchemist_hunter/features/town/town_catalog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EquipmentCraftController {
   EquipmentCraftController(
     this._session, {
-    CraftEquipmentUseCase craftEquipmentUseCase =
-        const CraftEquipmentUseCase(),
+    CraftEquipmentUseCase craftEquipmentUseCase = const CraftEquipmentUseCase(),
     required EquipmentBlueprintRepository equipmentBlueprintRepository,
   }) : _craftEquipmentUseCase = craftEquipmentUseCase,
        _equipmentBlueprintRepository = equipmentBlueprintRepository;

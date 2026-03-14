@@ -5,7 +5,7 @@ import 'package:alchemist_hunter/features/workshop/domain/repositories/extractio
 import 'package:alchemist_hunter/features/workshop/domain/repositories/material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_extraction_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/alchemy_service.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_catalog_providers.dart';
+import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
 class WorkshopExtractionController {

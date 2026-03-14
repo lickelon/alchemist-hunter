@@ -1,4 +1,3 @@
-export 'viewmodels/town_catalog_providers.dart';
 export 'viewmodels/controllers/equipment_craft_controller.dart';
 export 'viewmodels/controllers/mercenary_controller.dart';
 export 'viewmodels/controllers/shop_controller.dart';

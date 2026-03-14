@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_catalog_providers.dart';
+import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 
 class EnchantPotionView {
   const EnchantPotionView({
@@ -33,9 +33,13 @@ enchantPotionViewsProvider = Provider<List<EnchantPotionView>>((Ref ref) {
     ),
   );
   final potionCatalogRepository = ref.watch(potionCatalogRepositoryProvider);
-  final materialCatalogRepository = ref.watch(materialCatalogRepositoryProvider);
+  final materialCatalogRepository = ref.watch(
+    materialCatalogRepositoryProvider,
+  );
 
-  final List<EnchantPotionView> views = stacks.entries.map((MapEntry<String, int> entry) {
+  final List<EnchantPotionView> views = stacks.entries.map((
+    MapEntry<String, int> entry,
+  ) {
     final CraftedPotion? detail = details[entry.key];
     final PotionBlueprint? potion = detail == null
         ? null

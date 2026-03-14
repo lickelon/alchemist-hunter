@@ -4,7 +4,7 @@ import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/craft_queue/craft_queue_labels.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/craft_queue/craft_queue_option_selectors.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_catalog_providers.dart';
+import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
 class EnqueueQuantityView {
@@ -53,7 +53,9 @@ final workshopEnqueueQuantityViewsProvider =
             );
         return EnqueueQuantityView(
           quantity: quantity,
-          label: quantity == option.maxCraftableCount ? '최대 등록' : '$quantity회 등록',
+          label: quantity == option.maxCraftableCount
+              ? '최대 등록'
+              : '$quantity회 등록',
           requirementText: formatTraitRequirements(requirements, traitNames),
         );
       }).toList();

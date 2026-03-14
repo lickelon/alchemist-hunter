@@ -1,5 +1,5 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/town/data/catalogs/equipment_blueprints.dart';
+import 'package:alchemist_hunter/features/town/town_catalog.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +20,9 @@ class TownEquipmentSheet extends ConsumerWidget {
       sessionControllerProvider.select(
         (SessionState state) => state.player.materialInventory,
       ),
+    );
+    final Map<String, String> materialNames = ref.watch(
+      townEquipmentMaterialNamesProvider,
     );
 
     return SafeArea(
@@ -47,7 +50,7 @@ class TownEquipmentSheet extends ConsumerWidget {
                       dense: true,
                       title: Text(entry.name),
                       subtitle: Text(
-                        '${entry.slot.name} / ATK ${entry.attack} / DEF ${entry.defense} / HP ${entry.health}\n${_formatMaterialCosts(entry)}',
+                        '${entry.slot.name} / ATK ${entry.attack} / DEF ${entry.defense} / HP ${entry.health}\n${_formatMaterialCosts(entry, materialNames)}',
                       ),
                       trailing: FilledButton.tonal(
                         onPressed: _canCraft(entry, materials)
@@ -73,11 +76,15 @@ class TownEquipmentSheet extends ConsumerWidget {
                 child: inventory.isEmpty
                     ? const Center(child: Text('보유 장비가 없습니다'))
                     : ListView(
-                        children: inventory.map((TownEquipmentInventoryView entry) {
+                        children: inventory.map((
+                          TownEquipmentInventoryView entry,
+                        ) {
                           return ListTile(
                             dense: true,
                             title: Text(entry.name),
-                            subtitle: Text('${entry.slotLabel} / ${entry.statLabel}'),
+                            subtitle: Text(
+                              '${entry.slotLabel} / ${entry.statLabel}',
+                            ),
                           );
                         }).toList(),
                       ),
@@ -98,11 +105,14 @@ class TownEquipmentSheet extends ConsumerWidget {
     return true;
   }
 
-  String _formatMaterialCosts(EquipmentBlueprint blueprint) {
+  String _formatMaterialCosts(
+    EquipmentBlueprint blueprint,
+    Map<String, String> materialNames,
+  ) {
     return blueprint.materialCosts.entries
         .map(
           (MapEntry<String, int> entry) =>
-              '${townEquipmentMaterialNames[entry.key] ?? entry.key} x${entry.value}',
+              '${materialNames[entry.key] ?? entry.key} x${entry.value}',
         )
         .join(', ');
   }

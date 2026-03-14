@@ -3,7 +3,7 @@ import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.dart';
-import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_catalog_providers.dart';
+import 'package:alchemist_hunter/features/town/town_catalog.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -85,7 +85,9 @@ class ShopController {
     );
     _apply(
       nextState,
-      logMessage: identical(nextState, current) ? null : 'Auto refresh executed',
+      logMessage: identical(nextState, current)
+          ? null
+          : 'Auto refresh executed',
     );
   }
 

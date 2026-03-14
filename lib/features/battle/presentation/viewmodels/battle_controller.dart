@@ -4,7 +4,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/use_cases/auto_battle_use_case.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
-import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_catalog_providers.dart';
+import 'package:alchemist_hunter/features/battle/battle_catalog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final Provider<BattleService> battleServiceProvider = Provider<BattleService>(

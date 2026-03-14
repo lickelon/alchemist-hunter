@@ -6,7 +6,7 @@ import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_s
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_catalog_providers.dart';
+import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
 class WorkshopCraftQueueController {
@@ -128,10 +128,10 @@ final Provider<WorkshopCraftQueueController>
 workshopCraftQueueControllerProvider = Provider<WorkshopCraftQueueController>((
   Ref ref,
 ) {
-      return WorkshopCraftQueueController(
-        ref.read(sessionControllerProvider.notifier),
-        ref.read(craftQueueServiceProvider),
-        ref.read(potionCraftingServiceProvider),
-        potionCatalogRepository: ref.read(potionCatalogRepositoryProvider),
-      );
-    });
+  return WorkshopCraftQueueController(
+    ref.read(sessionControllerProvider.notifier),
+    ref.read(craftQueueServiceProvider),
+    ref.read(potionCraftingServiceProvider),
+    potionCatalogRepository: ref.read(potionCatalogRepositoryProvider),
+  );
+});

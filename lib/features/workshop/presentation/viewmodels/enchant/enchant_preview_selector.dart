@@ -4,7 +4,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/enchant/enchant_equipment_lookup.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_catalog_providers.dart';
+import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
 class EnchantPreviewView {
@@ -28,10 +28,10 @@ class EnchantPreviewView {
 }
 
 final enchantPreviewProvider =
-    Provider.family<EnchantPreviewView?, ({String? potionStackKey, String? equipmentId})>((
-      Ref ref,
-      ({String? potionStackKey, String? equipmentId}) args,
-    ) {
+    Provider.family<
+      EnchantPreviewView?,
+      ({String? potionStackKey, String? equipmentId})
+    >((Ref ref, ({String? potionStackKey, String? equipmentId}) args) {
       final String? potionStackKey = args.potionStackKey;
       final String? equipmentId = args.equipmentId;
       if (potionStackKey == null || equipmentId == null) {
@@ -39,7 +39,8 @@ final enchantPreviewProvider =
       }
 
       final SessionState state = ref.watch(sessionControllerProvider);
-      final CraftedPotion? potion = state.workshop.craftedPotionDetails[potionStackKey];
+      final CraftedPotion? potion =
+          state.workshop.craftedPotionDetails[potionStackKey];
       if (potion == null) {
         return null;
       }

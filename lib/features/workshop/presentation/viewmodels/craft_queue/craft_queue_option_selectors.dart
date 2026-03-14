@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_catalog_providers.dart';
+import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
 class PotionQueueOptionView {
@@ -76,7 +76,9 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
     return int.tryParse(numericSuffix) ?? 999999;
   }
 
-  final List<PotionQueueOptionView> views = catalog.map((PotionBlueprint potion) {
+  final List<PotionQueueOptionView> views = catalog.map((
+    PotionBlueprint potion,
+  ) {
     final bool unlocked = isUnlocked(potion);
     final int maxCraftableCount = craftingService.maxCraftableRepeatCount(
       blueprint: potion,

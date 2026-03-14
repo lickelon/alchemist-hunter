@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_catalog_providers.dart';
+import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 
 class MaterialInventoryView {
   const MaterialInventoryView({
@@ -162,13 +162,12 @@ final materialExtractionDetailViewProvider =
       return MaterialExtractionDetailView(
         materialId: material.id,
         materialName: material.name,
-        ownedQuantity:
-            ref.watch(
-              sessionControllerProvider.select(
-                (SessionState state) =>
-                    state.player.materialInventory[material.id] ?? 0,
-              ),
-            ),
+        ownedQuantity: ref.watch(
+          sessionControllerProvider.select(
+            (SessionState state) =>
+                state.player.materialInventory[material.id] ?? 0,
+          ),
+        ),
         traits: material.traits
             .map(
               (TraitUnit trait) => ExtractionTraitOptionView(
