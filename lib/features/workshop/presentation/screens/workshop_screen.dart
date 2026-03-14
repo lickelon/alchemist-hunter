@@ -20,6 +20,9 @@ class WorkshopScreen extends ConsumerWidget {
     final Map<String, int> craftedPotionStacks = ref.watch(
       craftedPotionStacksProvider,
     );
+    final List<EnchantEquipmentView> enchantEquipmentViews = ref.watch(
+      enchantEquipmentViewsProvider,
+    );
     final List<String> logs = ref.watch(recentLogsProvider);
     final int materialTotalCount = materials.fold<int>(
       0,
@@ -52,6 +55,11 @@ class WorkshopScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 8),
         WorkshopCraftedPotionCard(stackCount: craftedPotionStacks.length),
+        const SizedBox(height: 8),
+        WorkshopEnchantCard(
+          potionStackCount: craftedPotionStacks.length,
+          equipmentCount: enchantEquipmentViews.length,
+        ),
         const SizedBox(height: 8),
         WorkshopLogCard(logCount: logs.length),
       ],

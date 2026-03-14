@@ -1,5 +1,7 @@
 import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_enchant_card.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_extraction_card.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_material_card.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_queue_card.dart';
@@ -191,4 +193,71 @@ void main() {
       expect(find.text('최대'), findsOneWidget);
     },
   );
+
+  testWidgets('workshop enchant sheet consumes potion and applies enchant', (
+    WidgetTester tester,
+  ) async {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final SessionController session = container.read(
+      sessionControllerProvider.notifier,
+    );
+    session.state = session.state.copyWith(
+      town: session.state.town.copyWith(
+        equipmentInventory: <EquipmentInstance>[
+          EquipmentInstance(
+            id: 'eq_instance_1',
+            blueprintId: 'eq_1',
+            name: 'Bronze Sword',
+            slot: EquipmentSlot.weapon,
+            attack: 12,
+            defense: 0,
+            health: 0,
+            createdAt: DateTime(2026, 1, 1, 10),
+          ),
+        ],
+      ),
+      workshop: session.state.workshop.copyWith(
+        craftedPotionStacks: const <String, int>{'p_1|a': 1},
+        craftedPotionDetails: <String, CraftedPotion>{
+          'p_1|a': CraftedPotion(
+            id: 'cp_1',
+            typePotionId: 'p_1',
+            qualityGrade: PotionQualityGrade.a,
+            qualityScore: 0.84,
+            traits: const <String, double>{'t_atk': 0.7, 't_hp': 0.3},
+            createdAt: DateTime(2026, 1, 1, 10),
+          ),
+        },
+      ),
+    );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: Scaffold(
+            body: WorkshopEnchantCard(potionStackCount: 1, equipmentCount: 1),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Enchant'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(RadioListTile<String>).at(0));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(RadioListTile<String>).at(1));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('인챈트 실행'));
+    await tester.pumpAndSettle();
+
+    expect(session.state.workshop.craftedPotionStacks, isEmpty);
+    expect(
+      session.state.town.equipmentInventory.first.enchant?.label,
+      'Potion 1 A',
+    );
+  });
 }

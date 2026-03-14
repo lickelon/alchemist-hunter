@@ -32,7 +32,13 @@ class CharacterEquipmentSlotView {
     if (item == null) {
       return '장착 가능한 장비 ${availableItems.length}개';
     }
-    return 'ATK ${item.attack} / DEF ${item.defense} / HP ${item.health}';
+    final String baseLabel =
+        'ATK ${item.totalAttack} / DEF ${item.totalDefense} / HP ${item.totalHealth}';
+    final String? enchantLabel = item.enchant?.label;
+    if (enchantLabel == null) {
+      return baseLabel;
+    }
+    return '$baseLabel / $enchantLabel';
   }
 }
 

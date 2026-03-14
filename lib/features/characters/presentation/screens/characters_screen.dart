@@ -269,7 +269,9 @@ class _CharacterList extends ConsumerWidget {
                                 contentPadding: EdgeInsets.zero,
                                 title: Text(item.name),
                                 subtitle: Text(
-                                  'ATK ${item.attack} / DEF ${item.defense} / HP ${item.health}',
+                                  item.enchant == null
+                                      ? 'ATK ${item.totalAttack} / DEF ${item.totalDefense} / HP ${item.totalHealth}'
+                                      : 'ATK ${item.totalAttack} / DEF ${item.totalDefense} / HP ${item.totalHealth}\n${item.enchant!.label}',
                                 ),
                                 trailing: FilledButton.tonal(
                                   onPressed: () {

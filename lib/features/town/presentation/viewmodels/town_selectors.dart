@@ -63,17 +63,23 @@ final Provider<int> townEquipmentCountProvider = Provider<int>((Ref ref) {
   );
 });
 
-final Provider<List<TownEquipmentInventoryView>> townEquipmentInventoryViewsProvider =
-    Provider<List<TownEquipmentInventoryView>>((Ref ref) {
-      final List<EquipmentInstance> inventory = ref.watch(
-        townEquipmentInventoryProvider,
-      );
-      return inventory.map((EquipmentInstance entry) {
-        return TownEquipmentInventoryView(
-          id: entry.id,
-          name: entry.name,
-          slotLabel: entry.slot.name,
-          statLabel: 'ATK ${entry.attack} / DEF ${entry.defense} / HP ${entry.health}',
-        );
-      }).toList();
-    });
+final Provider<List<TownEquipmentInventoryView>>
+townEquipmentInventoryViewsProvider = Provider<List<TownEquipmentInventoryView>>((
+  Ref ref,
+) {
+  final List<EquipmentInstance> inventory = ref.watch(
+    townEquipmentInventoryProvider,
+  );
+  return inventory.map((EquipmentInstance entry) {
+    final String baseLabel =
+        'ATK ${entry.totalAttack} / DEF ${entry.totalDefense} / HP ${entry.totalHealth}';
+    return TownEquipmentInventoryView(
+      id: entry.id,
+      name: entry.name,
+      slotLabel: entry.slot.name,
+      statLabel: entry.enchant == null
+          ? baseLabel
+          : '$baseLabel / ${entry.enchant!.label}',
+    );
+  }).toList();
+});

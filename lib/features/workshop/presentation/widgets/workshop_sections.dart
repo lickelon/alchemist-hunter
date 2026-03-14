@@ -1,4 +1,5 @@
 export 'workshop_crafted_potion_card.dart';
+export 'workshop_enchant_card.dart';
 export 'workshop_enqueue_options_sheet.dart';
 export 'workshop_extraction_profile_list.dart';
 export 'workshop_extraction_card.dart';
