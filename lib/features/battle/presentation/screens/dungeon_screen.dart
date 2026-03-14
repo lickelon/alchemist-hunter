@@ -12,6 +12,7 @@ class DungeonScreen extends ConsumerWidget {
     final ProgressState progress = ref.watch(battleProgressProvider);
     final int gold = ref.watch(battleGoldProvider);
     final int essence = ref.watch(battleEssenceProvider);
+    final int partyPower = ref.watch(battlePartyPowerProvider);
 
     return ListView.builder(
       itemCount: stages.length,
@@ -28,7 +29,7 @@ class DungeonScreen extends ConsumerWidget {
             title: Text(stageLabel),
             subtitle: Text(
               unlocked
-                  ? 'Auto battle / Gold: $gold / Essence: $essence'
+                  ? 'Auto battle / Party: $partyPower / Gold: $gold / Essence: $essence'
                   : _lockedReason(stage),
             ),
             trailing: FilledButton(

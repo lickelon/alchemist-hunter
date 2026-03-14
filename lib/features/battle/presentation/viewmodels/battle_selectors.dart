@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/core/session/session_providers.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_catalog_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,6 +30,16 @@ final Provider<ProgressState> battleProgressProvider = Provider<ProgressState>((
   return ref.watch(
     sessionControllerProvider.select(
       (SessionState state) => state.battle.progress,
+    ),
+  );
+});
+
+final Provider<int> battlePartyPowerProvider = Provider<int>((Ref ref) {
+  return const BattlePartyPowerService().totalPower(
+    ref.watch(
+      sessionControllerProvider.select(
+        (SessionState state) => state.characters,
+      ),
     ),
   );
 });
