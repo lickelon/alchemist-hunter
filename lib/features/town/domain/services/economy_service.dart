@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 class EconomyService {

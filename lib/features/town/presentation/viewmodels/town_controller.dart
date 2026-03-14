@@ -1,7 +1,7 @@
-import 'package:alchemist_hunter/features/session/application/session_providers.dart';
-import 'package:alchemist_hunter/features/town/application/services/economy_service.dart';
-import 'package:alchemist_hunter/features/town/application/town_domain.dart';
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
+import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final Provider<EconomyService> economyServiceProvider =
@@ -11,12 +11,12 @@ class TownController {
   TownController(
     this._session,
     this._economy, {
-    TownDomain townDomain = const TownDomain(),
+    TownUseCase townDomain = const TownUseCase(),
   }) : _townDomain = townDomain;
 
   final SessionController _session;
   final EconomyService _economy;
-  final TownDomain _townDomain;
+  final TownUseCase _townDomain;
 
   void buyGeneralMaterial(String materialId, int quantity) {
     _syncShops();

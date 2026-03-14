@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:alchemist_hunter/features/battle/application/battle_controller.dart';
-import 'package:alchemist_hunter/features/battle/application/services/battle_service.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_controller.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
-import 'package:alchemist_hunter/features/session/application/session_providers.dart';
+import 'package:alchemist_hunter/core/session/session_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

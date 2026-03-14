@@ -1,5 +1,5 @@
-import 'package:alchemist_hunter/features/battle/application/battle_providers.dart';
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

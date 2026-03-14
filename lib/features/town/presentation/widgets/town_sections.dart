@@ -1,10 +1,9 @@
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/application/workshop_providers.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:alchemist_hunter/features/town/application/town_providers.dart';
+import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 
 class TownShopCard extends StatelessWidget {
   const TownShopCard({
@@ -148,9 +147,7 @@ class _TownPotionSellSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<CraftedPotionStackView> views = ref.watch(
-      craftedPotionStackViewsProvider,
-    );
+    final List<TownPotionSaleView> views = ref.watch(townPotionSaleViewsProvider);
 
     return SafeArea(
       child: Padding(
@@ -169,7 +166,7 @@ class _TownPotionSellSheet extends ConsumerWidget {
                 child: views.isEmpty
                     ? const Center(child: Text('판매 가능한 포션이 없습니다'))
                     : ListView(
-                        children: views.map((CraftedPotionStackView entry) {
+                        children: views.map((TownPotionSaleView entry) {
                           return ListTile(
                             dense: true,
                             title: Text('${entry.stackKey} x${entry.quantity}'),
@@ -179,9 +176,7 @@ class _TownPotionSellSheet extends ConsumerWidget {
                             trailing: FilledButton.tonal(
                               onPressed: () {
                                 ref
-                                    .read(
-                                      workshopCraftedInventoryControllerProvider,
-                                    )
+                                    .read(townPotionSaleControllerProvider)
                                     .sellCraftedPotion(entry.stackKey, 1);
                               },
                               child: const Text('판매'),

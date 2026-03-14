@@ -1,5 +1,5 @@
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/town/application/services/economy_service.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

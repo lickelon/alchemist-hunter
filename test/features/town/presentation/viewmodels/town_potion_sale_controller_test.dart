@@ -1,5 +1,5 @@
-import 'package:alchemist_hunter/features/session/application/session_providers.dart';
-import 'package:alchemist_hunter/features/workshop/application/crafted_inventory/crafted_inventory_controller.dart';
+import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_potion_sale_controller.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -10,8 +10,9 @@ void main() {
 
   test('sellCraftedPotion removes stack and adds gold', () {
     final SessionController session = buildSession();
-    final WorkshopCraftedInventoryController controller =
-        WorkshopCraftedInventoryController(session);
+    final TownPotionSaleController controller = TownPotionSaleController(
+      session,
+    );
     const String stackKey = 'p_1|a';
     final CraftedPotion sample = CraftedPotion(
       id: 'crafted_1',

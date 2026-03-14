@@ -1,12 +1,12 @@
-import 'package:alchemist_hunter/features/battle/application/services/battle_service.dart';
-import 'package:alchemist_hunter/features/characters/application/character_progression_service.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/battle_tables.dart';
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
+import 'package:alchemist_hunter/features/characters/domain/services/character_progression_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
-import 'package:alchemist_hunter/features/session/application/session_providers.dart';
-import 'package:alchemist_hunter/features/workshop/data/dummy_data.dart';
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/core/session/session_providers.dart';
 
-class BattleDomain {
-  const BattleDomain({
+class AutoBattleUseCase {
+  const AutoBattleUseCase({
     CharacterProgressionService characterProgressionService =
         const CharacterProgressionService(),
   }) : _characterProgressionService = characterProgressionService;
@@ -27,7 +27,7 @@ class BattleDomain {
         potionLoadout: const <String, int>{'p_1': 2, 'p_2': 1},
         stageId: stageId,
       ),
-      dropTable: DummyData.dropTable(stageId),
+      dropTable: stageDropTable(stageId),
     );
 
     final Map<String, int> inventory = <String, int>{

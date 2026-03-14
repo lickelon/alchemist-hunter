@@ -1,0 +1,133 @@
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+
+final List<TraitUnit> traitCatalog = <TraitUnit>[
+  const TraitUnit(
+    id: 't_hp',
+    name: 'Vital',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 't_atk',
+    name: 'Aggro',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 't_def',
+    name: 'Guard',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 't_spd',
+    name: 'Swift',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 't_crit',
+    name: 'Ruthless',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 't_life',
+    name: 'Leech',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 't_focus',
+    name: 'Focus',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 't_drop',
+    name: 'Fortune',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 't_dark',
+    name: 'Light',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 't_pure',
+    name: 'Purity',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 't_mana',
+    name: 'Mana',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 't_regen',
+    name: 'Regen',
+    type: TraitType.single,
+    potency: 1,
+  ),
+  const TraitUnit(
+    id: 'c_vigor',
+    name: 'Vigor Blend',
+    type: TraitType.compound,
+    potency: 2,
+    components: <String, double>{'t_hp': 0.6, 't_regen': 0.4},
+  ),
+  const TraitUnit(
+    id: 'c_hunter',
+    name: 'Hunter Blend',
+    type: TraitType.compound,
+    potency: 2,
+    components: <String, double>{'t_atk': 0.5, 't_focus': 0.5},
+  ),
+  const TraitUnit(
+    id: 'c_guardian',
+    name: 'Guardian Blend',
+    type: TraitType.compound,
+    potency: 2,
+    components: <String, double>{'t_def': 0.7, 't_hp': 0.3},
+  ),
+  const TraitUnit(
+    id: 'c_luck',
+    name: 'Lucky Blend',
+    type: TraitType.compound,
+    potency: 2,
+    components: <String, double>{'t_drop': 0.6, 't_crit': 0.4},
+  ),
+  const TraitUnit(
+    id: 'c_twilight',
+    name: 'Twilight Blend',
+    type: TraitType.compound,
+    potency: 2,
+    components: <String, double>{'t_dark': 0.5, 't_mana': 0.5},
+  ),
+  const TraitUnit(
+    id: 'c_alch',
+    name: 'Alchemist Blend',
+    type: TraitType.compound,
+    potency: 2,
+    components: <String, double>{'t_pure': 0.5, 't_focus': 0.5},
+  ),
+];
+
+final List<MaterialEntity> materialCatalog = List<MaterialEntity>.generate(
+  30,
+  (int i) => MaterialEntity(
+    id: 'm_${i + 1}',
+    name: 'Material ${i + 1}',
+    rarity: i < 24 ? MaterialRarity.common : MaterialRarity.rare,
+    traits: <TraitUnit>[
+      traitCatalog[i % traitCatalog.length],
+      traitCatalog[(i + 3) % traitCatalog.length],
+    ],
+    analyzable: true,
+    source: i < 18 ? 'general_shop' : 'battle',
+  ),
+);

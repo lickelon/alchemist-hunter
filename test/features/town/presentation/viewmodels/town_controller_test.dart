@@ -1,7 +1,7 @@
-import 'package:alchemist_hunter/features/session/application/session_providers.dart';
-import 'package:alchemist_hunter/features/town/application/services/economy_service.dart';
-import 'package:alchemist_hunter/features/town/application/town_controller.dart';
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:alchemist_hunter/features/battle/application/battle_domain.dart';
-import 'package:alchemist_hunter/features/battle/application/services/battle_service.dart';
-import 'package:alchemist_hunter/features/session/application/session_providers.dart';
+import 'package:alchemist_hunter/features/battle/domain/use_cases/auto_battle_use_case.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
+import 'package:alchemist_hunter/core/session/session_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final Provider<BattleService> battleServiceProvider = Provider<BattleService>(
@@ -13,12 +13,12 @@ class BattleController {
   BattleController(
     this._session,
     this._battleService, {
-    BattleDomain battleDomain = const BattleDomain(),
+    AutoBattleUseCase battleDomain = const AutoBattleUseCase(),
   }) : _battleDomain = battleDomain;
 
   final SessionController _session;
   final BattleService _battleService;
-  final BattleDomain _battleDomain;
+  final AutoBattleUseCase _battleDomain;
 
   void runAutoBattle(String stageId) {
     final SessionState current = _session.snapshot();

@@ -1,10 +1,10 @@
-import 'package:alchemist_hunter/features/session/application/session_providers.dart';
-import 'package:alchemist_hunter/features/town/application/services/economy_service.dart';
-import 'package:alchemist_hunter/features/workshop/data/dummy_data.dart';
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/features/town/data/catalogs/shop_seed.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 
-class TownDomain {
-  const TownDomain();
+class TownUseCase {
+  const TownUseCase();
 
   SessionState buyMaterial({
     required SessionState state,
@@ -61,9 +61,8 @@ class TownDomain {
     final ShopState target = isGeneral
         ? state.town.generalShop
         : state.town.catalystShop;
-    final List<ShopItem> nextItems = isGeneral
-        ? DummyData.buildGeneralShopItems()
-        : DummyData.buildCatalystShopItems();
+    final List<ShopItem> nextItems =
+        isGeneral ? buildGeneralShopSeedItems() : buildCatalystShopSeedItems();
 
     final ({ShopState shop, int costPaid}) refreshed = economy.forceRefresh(
       shop: target,
@@ -95,14 +94,14 @@ class TownDomain {
         .applyAutoRefresh(
           shop: state.town.generalShop,
           now: now,
-          nextItems: DummyData.buildGeneralShopItems(),
+          nextItems: buildGeneralShopSeedItems(),
           refreshInterval: const Duration(minutes: 15),
         );
     final ({ShopState shop, bool refreshed}) catalystResult = economy
         .applyAutoRefresh(
           shop: state.town.catalystShop,
           now: now,
-          nextItems: DummyData.buildCatalystShopItems(),
+          nextItems: buildCatalystShopSeedItems(),
           refreshInterval: const Duration(minutes: 30),
         );
 
