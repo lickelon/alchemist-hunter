@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:alchemist_hunter/features/characters/domain/models/characters_state.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_mercenary_template_repository.dart';
+import 'package:alchemist_hunter/features/town/data/repositories/static_town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/data/catalogs/shop_seed.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/services/mercenary_recruitment_service.dart';
@@ -15,6 +16,8 @@ SessionState createInitialSessionState(DateTime now) {
     player: const PlayerState(
       gold: 1500,
       essence: 120,
+      townInsight: 0,
+      arcaneDust: 0,
       diamonds: 100,
       materialInventory: <String, int>{},
     ),
@@ -27,6 +30,14 @@ SessionState createInitialSessionState(DateTime now) {
         templateRepository: const StaticMercenaryTemplateRepository(),
       ),
       mercenaryRefreshCount: 0,
+      skillTree: TownSkillTreeState(
+        unlockedNodes: <String>{
+          const StaticTownSkillTreeRepository().nodes().first.id,
+        },
+        nodeLevels: const <String, int>{},
+        availablePoints: 0,
+        spentPoints: 0,
+      ),
     ),
     workshop: const WorkshopState(
       queue: <CraftQueueJob>[],
@@ -34,6 +45,14 @@ SessionState createInitialSessionState(DateTime now) {
       craftedPotionStacks: <String, int>{},
       craftedPotionDetails: <String, CraftedPotion>{},
       logs: <String>['Game initialized'],
+      skillTree: WorkshopSkillTreeState(
+        unlockedNodes: <String>{
+          'workshop_alembic',
+        },
+        nodeLevels: <String, int>{},
+        availablePoints: 0,
+        spentPoints: 0,
+      ),
     ),
     battle: const BattleState(
       progress: ProgressState(

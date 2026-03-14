@@ -1,6 +1,7 @@
 import 'equipment_models.dart';
 import 'mercenary_models.dart';
 import 'shop_models.dart';
+import 'town_skill_tree_models.dart';
 
 class TownState {
   const TownState({
@@ -9,6 +10,7 @@ class TownState {
     required this.equipmentInventory,
     required this.mercenaryCandidates,
     required this.mercenaryRefreshCount,
+    required this.skillTree,
   });
 
   final ShopState generalShop;
@@ -16,6 +18,7 @@ class TownState {
   final List<EquipmentInstance> equipmentInventory;
   final List<MercenaryCandidate> mercenaryCandidates;
   final int mercenaryRefreshCount;
+  final TownSkillTreeState skillTree;
 
   TownState copyWith({
     ShopState? generalShop,
@@ -23,6 +26,7 @@ class TownState {
     List<EquipmentInstance>? equipmentInventory,
     List<MercenaryCandidate>? mercenaryCandidates,
     int? mercenaryRefreshCount,
+    TownSkillTreeState? skillTree,
   }) {
     return TownState(
       generalShop: generalShop ?? this.generalShop,
@@ -30,6 +34,7 @@ class TownState {
       equipmentInventory: equipmentInventory ?? this.equipmentInventory,
       mercenaryCandidates: mercenaryCandidates ?? this.mercenaryCandidates,
       mercenaryRefreshCount: mercenaryRefreshCount ?? this.mercenaryRefreshCount,
+      skillTree: skillTree ?? this.skillTree,
     );
   }
 }
