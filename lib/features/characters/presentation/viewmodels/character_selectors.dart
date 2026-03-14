@@ -1,17 +1,53 @@
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class CharacterEquipmentSlotView {
+  const CharacterEquipmentSlotView({
+    required this.slot,
+    required this.equippedItem,
+    required this.availableItems,
+  });
+
+  final EquipmentSlot slot;
+  final EquipmentInstance? equippedItem;
+  final List<EquipmentInstance> availableItems;
+
+  String get slotLabel {
+    switch (slot) {
+      case EquipmentSlot.weapon:
+        return '무기';
+      case EquipmentSlot.armor:
+        return '방어구';
+      case EquipmentSlot.accessory:
+        return '장신구';
+    }
+  }
+
+  String get currentLabel => equippedItem?.name ?? '미장착';
+
+  String get statLabel {
+    final EquipmentInstance? item = equippedItem;
+    if (item == null) {
+      return '장착 가능한 장비 ${availableItems.length}개';
+    }
+    return 'ATK ${item.attack} / DEF ${item.defense} / HP ${item.health}';
+  }
+}
 
 class CharacterListItemView {
   const CharacterListItemView({
     required this.character,
     required this.rankHint,
     required this.tierHint,
+    required this.equipmentSlots,
   });
 
   final CharacterProgress character;
   final String rankHint;
   final String tierHint;
+  final List<CharacterEquipmentSlotView> equipmentSlots;
 }
 
 final Provider<List<CharacterProgress>> mercenaryListProvider =
@@ -32,6 +68,11 @@ final Provider<List<CharacterListItemView>> mercenaryListItemViewsProvider =
             (SessionState state) => state.player.materialInventory,
           ),
         ),
+        equipmentInventory: ref.watch(
+          sessionControllerProvider.select(
+            (SessionState state) => state.town.equipmentInventory,
+          ),
+        ),
       );
     });
 
@@ -44,18 +85,35 @@ final Provider<List<CharacterListItemView>> homunculusListItemViewsProvider =
             (SessionState state) => state.player.materialInventory,
           ),
         ),
+        equipmentInventory: ref.watch(
+          sessionControllerProvider.select(
+            (SessionState state) => state.town.equipmentInventory,
+          ),
+        ),
       );
     });
 
 List<CharacterListItemView> _buildCharacterViews({
   required List<CharacterProgress> characters,
   required Map<String, int> inventory,
+  required List<EquipmentInstance> equipmentInventory,
 }) {
   return characters.map((CharacterProgress character) {
     return CharacterListItemView(
       character: character,
       rankHint: _rankUpHint(character),
       tierHint: _tierUpHint(character, inventory),
+      equipmentSlots: EquipmentSlot.values
+          .map((EquipmentSlot slot) {
+            return CharacterEquipmentSlotView(
+              slot: slot,
+              equippedItem: character.equipment.itemForSlot(slot),
+              availableItems: equipmentInventory
+                  .where((EquipmentInstance item) => item.slot == slot)
+                  .toList(growable: false),
+            );
+          })
+          .toList(growable: false),
     );
   }).toList();
 }
