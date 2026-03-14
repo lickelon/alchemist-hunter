@@ -81,11 +81,16 @@ void main() {
   test('craftEquipment consumes gold and stores equipment instance', () {
     final SessionController session = buildSession();
     final TownController controller = buildController(session);
-    final int previousGold = session.state.player.gold;
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: const <String, int>{'m_1': 2, 'm_2': 1},
+      ),
+    );
 
     controller.craftEquipment('eq_1');
 
-    expect(session.state.player.gold, previousGold - 180);
+    expect(session.state.player.gold, 1500);
+    expect(session.state.player.materialInventory, isEmpty);
     expect(session.state.town.equipmentInventory, hasLength(1));
     expect(session.state.town.equipmentInventory.first.blueprintId, 'eq_1');
     expect(session.state.workshop.logs.first, 'Crafted Bronze Sword');

@@ -83,7 +83,7 @@ void main() {
     await tester.tap(find.text('Items'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Material 1'), findsOneWidget);
+    expect(find.text('Emberroot'), findsOneWidget);
     expect(find.text('common / Vital / Swift'), findsOneWidget);
     expect(find.text('x2'), findsOneWidget);
   });

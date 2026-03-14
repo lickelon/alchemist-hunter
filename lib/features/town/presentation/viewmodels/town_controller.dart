@@ -102,7 +102,7 @@ class TownController {
     _apply(
       nextState,
       logMessage: identical(nextState, current)
-          ? 'Not enough gold for ${blueprint.name}'
+          ? 'Missing materials for ${blueprint.name}'
           : 'Crafted ${blueprint.name}',
     );
   }

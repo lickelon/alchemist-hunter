@@ -103,9 +103,9 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
       return '';
     }
     if (index < 13) {
-      return '특수 재료 m_27 드롭 필요';
+      return '특수 재료 Starfire Pollen 드롭 필요';
     }
-    return '특수 재료 m_30 드롭 필요';
+    return '특수 재료 Moontear Crystal 드롭 필요';
   }
 
   int potionOrder(String id) {

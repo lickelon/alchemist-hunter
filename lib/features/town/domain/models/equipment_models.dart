@@ -8,7 +8,7 @@ class EquipmentBlueprint {
     required this.id,
     required this.name,
     required this.slot,
-    required this.goldCost,
+    required this.materialCosts,
     required this.attack,
     required this.defense,
     required this.health,
@@ -17,7 +17,7 @@ class EquipmentBlueprint {
   final String id;
   final String name;
   final EquipmentSlot slot;
-  final int goldCost;
+  final Map<String, int> materialCosts;
   final int attack;
   final int defense;
   final int health;

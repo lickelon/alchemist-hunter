@@ -47,7 +47,7 @@ class DungeonScreen extends ConsumerWidget {
 
   String _lockedReason(String stageId) {
     return switch (stageId) {
-      'stage_2' => '잠금 조건: 특수 재료 m_30 1개 이상 획득',
+      'stage_2' => '잠금 조건: 특수 재료 Moontear Crystal 1개 이상 획득',
       'stage_3' => '잠금 조건: Stage 2 개방 이후 추가 해금 예정',
       'stage_4' => '잠금 조건: Stage 3 개방 이후 추가 해금 예정',
       'stage_5' => '잠금 조건: Stage 4 개방 이후 추가 해금 예정',

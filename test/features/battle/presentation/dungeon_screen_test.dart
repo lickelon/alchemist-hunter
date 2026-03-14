@@ -19,7 +19,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Stage 2'), findsOneWidget);
-    expect(find.text('잠금 조건: 특수 재료 m_30 1개 이상 획득'), findsOneWidget);
+    expect(
+      find.text('잠금 조건: 특수 재료 Moontear Crystal 1개 이상 획득'),
+      findsOneWidget,
+    );
     expect(find.text('Locked'), findsWidgets);
   });
 }

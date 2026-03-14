@@ -117,11 +117,44 @@ final List<TraitUnit> traitCatalog = <TraitUnit>[
   ),
 ];
 
+const List<String> materialNames = <String>[
+  'Emberroot',
+  'Ironbloom Bark',
+  'Mossbone',
+  'Gale Petal',
+  'Sunleaf',
+  'Nightsap Resin',
+  'Thornspike Vine',
+  'Dewcap Mushroom',
+  'Silver Pollen',
+  'Ashen Herb',
+  'Mist Seed',
+  'Grave Mint',
+  'Copper Fern',
+  'Wolfbane Stem',
+  'Lunar Clover',
+  'Crystal Lichen',
+  'Storm Reed',
+  'Hollow Bark',
+  'Bloodcap Fungus',
+  'Deepwater Kelp',
+  'Frostbud',
+  'Echo Pebble',
+  'Glowdust',
+  'Verdant Husk',
+  'Aether Bloom',
+  'Void Thistle',
+  'Starfire Pollen',
+  'Phantom Moss',
+  'Dragonbone Shard',
+  'Moontear Crystal',
+];
+
 final List<MaterialEntity> materialCatalog = List<MaterialEntity>.generate(
   30,
   (int i) => MaterialEntity(
     id: 'm_${i + 1}',
-    name: 'Material ${i + 1}',
+    name: materialNames[i],
     rarity: i < 24 ? MaterialRarity.common : MaterialRarity.rare,
     traits: <TraitUnit>[
       traitCatalog[i % traitCatalog.length],
