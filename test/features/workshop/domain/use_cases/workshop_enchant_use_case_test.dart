@@ -2,8 +2,10 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/equipment_enchant_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_enchant_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -54,6 +56,8 @@ void main() {
         potionStackKey: 'p_1|a',
         enchantService: const EquipmentEnchantService(),
         potionCatalogRepository: const StaticPotionCatalogRepository(),
+        workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+        workshopSkillTreeService: const WorkshopSkillTreeService(),
       );
 
       expect(
@@ -95,6 +99,8 @@ void main() {
         potionStackKey: 'p_1|a',
         enchantService: const EquipmentEnchantService(),
         potionCatalogRepository: const StaticPotionCatalogRepository(),
+        workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+        workshopSkillTreeService: const WorkshopSkillTreeService(),
       );
 
       expect(
@@ -108,4 +114,50 @@ void main() {
       expect(nextState.workshop.craftedPotionStacks, isEmpty);
     },
   );
+
+  test('enchantEquipment applies sigil press potency bonus', () {
+    final WorkshopEnchantUseCase useCase = WorkshopEnchantUseCase();
+    final SessionState state = buildState().copyWith(
+      workshop: buildState().workshop.copyWith(
+        craftedPotionStacks: const <String, int>{'p_1|a': 1},
+        craftedPotionDetails: buildState().workshop.craftedPotionDetails,
+        skillTree: buildState().workshop.skillTree.copyWith(
+          nodeLevels: const <String, int>{
+            'workshop_alembic': 1,
+            'workshop_sigil_press': 1,
+          },
+          unlockedNodes: const <String>{
+            'workshop_alembic',
+            'workshop_sigil_press',
+          },
+        ),
+      ),
+      town: buildState().town.copyWith(
+        equipmentInventory: <EquipmentInstance>[
+          EquipmentInstance(
+            id: 'eq_instance_1',
+            blueprintId: 'eq_1',
+            name: 'Bronze Sword',
+            slot: EquipmentSlot.weapon,
+            attack: 12,
+            defense: 0,
+            health: 0,
+            createdAt: DateTime(2026, 1, 1, 10),
+          ),
+        ],
+      ),
+    );
+
+    final SessionState nextState = useCase.enchantEquipment(
+      state: state,
+      equipmentId: 'eq_instance_1',
+      potionStackKey: 'p_1|a',
+      enchantService: const EquipmentEnchantService(),
+      potionCatalogRepository: const StaticPotionCatalogRepository(),
+      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+      workshopSkillTreeService: const WorkshopSkillTreeService(),
+    );
+
+    expect(nextState.town.equipmentInventory.first.totalAttack, 26);
+  });
 }

@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
-import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_shared_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
+import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 
 class PotionQueueOptionView {
   const PotionQueueOptionView({
@@ -15,6 +16,7 @@ class PotionQueueOptionView {
     required this.craftableNow,
     required this.maxCraftableCount,
     required this.materialHint,
+    required this.queueFull,
   });
 
   final String potionId;
@@ -24,6 +26,7 @@ class PotionQueueOptionView {
   final bool craftableNow;
   final int maxCraftableCount;
   final String materialHint;
+  final bool queueFull;
 }
 
 final Provider<List<PotionQueueOptionView>>
@@ -41,9 +44,16 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
       (SessionState state) => state.workshop.extractedTraitInventory,
     ),
   );
+  final int queueLength = ref.watch(
+    sessionControllerProvider.select(
+      (SessionState state) => state.workshop.queue.length,
+    ),
+  );
+  final int queueCapacity = ref.watch(workshopQueueCapacityProvider);
   final PotionCraftingService craftingService = ref.watch(
     potionCraftingServiceProvider,
   );
+  final bool queueFull = queueLength >= queueCapacity;
 
   bool isUnlocked(PotionBlueprint potion) {
     final int index = catalog.indexWhere(
@@ -90,11 +100,14 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
       title: potion.name,
       unlocked: unlocked,
       lockReason: unlocked ? '' : lockReason(potion),
-      craftableNow: unlocked && craftableNow,
+      craftableNow: unlocked && craftableNow && !queueFull,
       maxCraftableCount: unlocked ? maxCraftableCount : 0,
-      materialHint: unlocked
-          ? (craftableNow ? '최대 $maxCraftableCount회 제작 가능' : '추출 특성 부족')
-          : lockReason(potion),
+      materialHint: !unlocked
+          ? lockReason(potion)
+          : queueFull
+          ? '큐 가득 참 ($queueLength/$queueCapacity)'
+          : (craftableNow ? '최대 $maxCraftableCount회 제작 가능' : '추출 특성 부족'),
+      queueFull: queueFull,
     );
   }).toList();
 

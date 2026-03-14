@@ -18,6 +18,7 @@ class WorkshopQueueSheet extends ConsumerWidget {
     final WorkshopCraftQueueController controller = ref.read(
       workshopCraftQueueControllerProvider,
     );
+    final int queueCapacity = ref.watch(workshopQueueCapacityProvider);
     final int completedCount = jobs
         .where((CraftQueueJobView job) => job.isCompleted)
         .length;
@@ -34,6 +35,8 @@ class WorkshopQueueSheet extends ConsumerWidget {
                 '제작 큐',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
+              const SizedBox(height: 8),
+              Text('슬롯 ${jobs.length}/$queueCapacity'),
               const SizedBox(height: 8),
               Row(
                 children: <Widget>[

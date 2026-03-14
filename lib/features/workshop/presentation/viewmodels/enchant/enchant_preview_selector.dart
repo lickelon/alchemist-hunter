@@ -62,6 +62,12 @@ final enchantPreviewProvider =
             equipment: equipment,
             potion: potion,
             blueprint: blueprint,
+            potencyBonusRate: ref
+                .watch(workshopSkillTreeServiceProvider)
+                .enchantPotencyBonusRate(
+                  state,
+                  ref.watch(workshopSkillNodesProvider),
+                ),
           );
       final EquipmentInstance previewEquipment = equipment.copyWith(
         enchant: nextEnchant,
