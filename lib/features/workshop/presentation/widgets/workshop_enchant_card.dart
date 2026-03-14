@@ -47,6 +47,48 @@ class _WorkshopEnchantSheetState extends ConsumerState<_WorkshopEnchantSheet> {
   String? _selectedPotionStackKey;
   String? _selectedEquipmentId;
 
+  Future<void> _submitEnchant(EnchantPreviewView preview) async {
+    if (preview.replaceRequired) {
+      final bool? confirmed = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('기존 인챈트 교체'),
+            content: Text(
+              '${preview.equipmentName}\n'
+              '현재 ${preview.currentEnchantLabel}\n'
+              '변경 ${preview.nextEnchantLabel}\n'
+              '${preview.currentStatLabel}\n'
+              '${preview.nextStatLabel}\n'
+              '${preview.deltaStatLabel}',
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('취소'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('교체'),
+              ),
+            ],
+          );
+        },
+      );
+      if (confirmed != true) {
+        return;
+      }
+    }
+
+    ref.read(workshopEnchantControllerProvider).enchantEquipment(
+      _selectedEquipmentId!,
+      _selectedPotionStackKey!,
+    );
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<EnchantPotionView> potions = ref.watch(
@@ -54,6 +96,14 @@ class _WorkshopEnchantSheetState extends ConsumerState<_WorkshopEnchantSheet> {
     );
     final List<EnchantEquipmentView> equipments = ref.watch(
       enchantEquipmentViewsProvider,
+    );
+    final EnchantPreviewView? preview = ref.watch(
+      enchantPreviewProvider(
+        (
+          potionStackKey: _selectedPotionStackKey,
+          equipmentId: _selectedEquipmentId,
+        ),
+      ),
     );
 
     return SafeArea(
@@ -74,7 +124,7 @@ class _WorkshopEnchantSheetState extends ConsumerState<_WorkshopEnchantSheet> {
                 style: TextStyle(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 8),
-              Expanded(
+              Flexible(
                 child: RadioGroup<String>(
                   groupValue: _selectedPotionStackKey,
                   onChanged: (String? value) {
@@ -101,7 +151,7 @@ class _WorkshopEnchantSheetState extends ConsumerState<_WorkshopEnchantSheet> {
                 style: TextStyle(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 8),
-              Expanded(
+              Flexible(
                 child: RadioGroup<String>(
                   groupValue: _selectedEquipmentId,
                   onChanged: (String? value) {
@@ -122,24 +172,54 @@ class _WorkshopEnchantSheetState extends ConsumerState<_WorkshopEnchantSheet> {
                         ),
                 ),
               ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '예상 결과',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: preview == null
+                    ? const Text('포션과 장비를 선택하면 인챈트 결과를 미리 볼 수 있습니다')
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            preview.equipmentName,
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 6),
+                          Text('현재 ${preview.currentEnchantLabel}'),
+                          Text('예상 ${preview.nextEnchantLabel}'),
+                          const SizedBox(height: 6),
+                          Text(preview.currentStatLabel),
+                          Text(preview.nextStatLabel),
+                          Text(preview.deltaStatLabel),
+                          if (preview.replaceRequired) ...<Widget>[
+                            const SizedBox(height: 6),
+                            const Text('기존 인챈트가 교체됩니다'),
+                          ],
+                        ],
+                      ),
+              ),
               const SizedBox(height: 8),
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed:
-                      _selectedPotionStackKey != null &&
-                          _selectedEquipmentId != null
-                      ? () {
-                          ref
-                              .read(workshopEnchantControllerProvider)
-                              .enchantEquipment(
-                                _selectedEquipmentId!,
-                                _selectedPotionStackKey!,
-                              );
-                          Navigator.of(context).pop();
-                        }
-                      : null,
-                  child: const Text('인챈트 실행'),
+                  onPressed: preview == null ? null : () => _submitEnchant(preview),
+                  child: Text(preview?.replaceRequired == true ? '인챈트 교체' : '인챈트 실행'),
                 ),
               ),
             ],

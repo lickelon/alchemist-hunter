@@ -6,6 +6,7 @@ import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/data/catalogs/material_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/data/catalogs/potion_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
 class EnchantPotionView {
   const EnchantPotionView({
@@ -39,6 +40,26 @@ class EnchantEquipmentView {
   final String locationLabel;
   final String statLabel;
   final String enchantLabel;
+}
+
+class EnchantPreviewView {
+  const EnchantPreviewView({
+    required this.equipmentName,
+    required this.currentEnchantLabel,
+    required this.nextEnchantLabel,
+    required this.currentStatLabel,
+    required this.nextStatLabel,
+    required this.deltaStatLabel,
+    required this.replaceRequired,
+  });
+
+  final String equipmentName;
+  final String currentEnchantLabel;
+  final String nextEnchantLabel;
+  final String currentStatLabel;
+  final String nextStatLabel;
+  final String deltaStatLabel;
+  final bool replaceRequired;
 }
 
 final Provider<List<EnchantPotionView>>
@@ -125,6 +146,58 @@ enchantEquipmentViewsProvider = Provider<List<EnchantEquipmentView>>((Ref ref) {
   return views;
 });
 
+final enchantPreviewProvider =
+    Provider.family<EnchantPreviewView?, ({String? potionStackKey, String? equipmentId})>((
+      Ref ref,
+      ({String? potionStackKey, String? equipmentId}) args,
+    ) {
+      final String? potionStackKey = args.potionStackKey;
+      final String? equipmentId = args.equipmentId;
+      if (potionStackKey == null || equipmentId == null) {
+        return null;
+      }
+
+      final SessionState state = ref.watch(sessionControllerProvider);
+      final CraftedPotion? potion = state.workshop.craftedPotionDetails[potionStackKey];
+      if (potion == null) {
+        return null;
+      }
+
+      final PotionBlueprint? blueprint = potionCatalog
+          .where((PotionBlueprint entry) => entry.id == potion.typePotionId)
+          .firstOrNull;
+      final EquipmentInstance? equipment = _findEquipmentById(state, equipmentId);
+      if (blueprint == null || equipment == null) {
+        return null;
+      }
+
+      final EquipmentEnchant nextEnchant = ref
+          .watch(equipmentEnchantServiceProvider)
+          .buildEnchant(
+            equipment: equipment,
+            potion: potion,
+            blueprint: blueprint,
+          );
+      final EquipmentInstance previewEquipment = equipment.copyWith(
+        enchant: nextEnchant,
+      );
+
+      return EnchantPreviewView(
+        equipmentName: equipment.name,
+        currentEnchantLabel: equipment.enchant?.label ?? '인챈트 없음',
+        nextEnchantLabel: nextEnchant.label,
+        currentStatLabel:
+            'ATK ${equipment.totalAttack} / DEF ${equipment.totalDefense} / HP ${equipment.totalHealth}',
+        nextStatLabel:
+            'ATK ${previewEquipment.totalAttack} / DEF ${previewEquipment.totalDefense} / HP ${previewEquipment.totalHealth}',
+        deltaStatLabel:
+            '변화 ${_signedDelta(previewEquipment.totalAttack - equipment.totalAttack, "ATK")} / '
+            '${_signedDelta(previewEquipment.totalDefense - equipment.totalDefense, "DEF")} / '
+            '${_signedDelta(previewEquipment.totalHealth - equipment.totalHealth, "HP")}',
+        replaceRequired: equipment.enchant != null,
+      );
+    });
+
 List<EnchantEquipmentView> _characterEquipmentViews(
   List<CharacterProgress> characters,
   String groupLabel,
@@ -166,4 +239,37 @@ String _slotLabel(EquipmentSlot slot) {
     case EquipmentSlot.accessory:
       return '장신구';
   }
+}
+
+EquipmentInstance? _findEquipmentById(SessionState state, String equipmentId) {
+  for (final EquipmentInstance item in state.town.equipmentInventory) {
+    if (item.id == equipmentId) {
+      return item;
+    }
+  }
+
+  for (final CharacterProgress character in state.characters.mercenaries) {
+    for (final EquipmentSlot slot in EquipmentSlot.values) {
+      final EquipmentInstance? item = character.equipment.itemForSlot(slot);
+      if (item?.id == equipmentId) {
+        return item;
+      }
+    }
+  }
+
+  for (final CharacterProgress character in state.characters.homunculi) {
+    for (final EquipmentSlot slot in EquipmentSlot.values) {
+      final EquipmentInstance? item = character.equipment.itemForSlot(slot);
+      if (item?.id == equipmentId) {
+        return item;
+      }
+    }
+  }
+
+  return null;
+}
+
+String _signedDelta(int value, String label) {
+  final String sign = value >= 0 ? '+' : '';
+  return '$label $sign$value';
 }
