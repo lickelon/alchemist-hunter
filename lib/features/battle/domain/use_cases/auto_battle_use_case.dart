@@ -1,17 +1,22 @@
 import 'package:alchemist_hunter/features/battle/data/catalogs/battle_tables.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
-import 'package:alchemist_hunter/features/characters/domain/services/character_progression_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
+import 'package:alchemist_hunter/features/characters/domain/services/character_progression_service.dart';
 import 'package:alchemist_hunter/core/session/session_providers.dart';
 
 class AutoBattleUseCase {
   const AutoBattleUseCase({
     CharacterProgressionService characterProgressionService =
         const CharacterProgressionService(),
-  }) : _characterProgressionService = characterProgressionService;
+    BattlePartyPowerService battlePartyPowerService =
+        const BattlePartyPowerService(),
+  }) : _characterProgressionService = characterProgressionService,
+       _battlePartyPowerService = battlePartyPowerService;
 
   final CharacterProgressionService _characterProgressionService;
+  final BattlePartyPowerService _battlePartyPowerService;
 
   SessionState runAutoBattle({
     required SessionState state,
@@ -20,10 +25,7 @@ class AutoBattleUseCase {
   }) {
     final BattleResult result = battleService.runAutoBattle(
       config: AutoBattleConfig(
-        party: const <HeroProfile>[
-          HeroProfile(id: 'h1', name: 'Alchemist', power: 120),
-          HeroProfile(id: 'h2', name: 'Hunter', power: 110),
-        ],
+        party: _battlePartyPowerService.buildParty(state.characters),
         potionLoadout: const <String, int>{'p_1': 2, 'p_2': 1},
         stageId: stageId,
       ),

@@ -4,6 +4,7 @@ import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -77,5 +78,40 @@ void main() {
     );
     expect(session.state.characters.mercenaries.first.xp, 0);
     expect(session.state.characters.homunculi.first.xp, 0);
+  });
+
+  test('equipped stats raise battle power and secure stage_5 clear', () {
+    final SessionController session = buildSession();
+    final BattleController controller = buildController(session, battleSeed: 1);
+    final CharacterProgress merc = session.state.characters.mercenaries.first;
+
+    session.state = session.state.copyWith(
+      characters: session.state.characters.copyWith(
+        mercenaries: <CharacterProgress>[
+          merc.copyWith(
+            equipment: CharacterEquipmentLoadout(
+              weapon: EquipmentInstance(
+                id: 'eq_instance_1',
+                blueprintId: 'eq_1',
+                name: 'Bronze Sword',
+                slot: EquipmentSlot.weapon,
+                attack: 12,
+                defense: 0,
+                health: 0,
+                createdAt: DateTime(2026, 1, 1, 10),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    controller.runAutoBattle('stage_5');
+
+    expect(
+      session.state.workshop.logs.first,
+      contains('Battle win on stage_5'),
+    );
+    expect(session.state.player.essence, 126);
   });
 }
