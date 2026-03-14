@@ -3,14 +3,15 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('core does not depend on features and domain does not depend on data', () {
+  test('core, domain, presentation import boundaries stay isolated', () {
     final List<String> violations = <String>[];
     final RegExp importPattern = RegExp(
       r"import 'package:alchemist_hunter/([^']+)';",
     );
 
-    for (final FileSystemEntity entity
-        in Directory('lib').listSync(recursive: true)) {
+    for (final FileSystemEntity entity in Directory(
+      'lib',
+    ).listSync(recursive: true)) {
       if (entity is! File || !entity.path.endsWith('.dart')) {
         continue;
       }
@@ -29,6 +30,15 @@ void main() {
       }
 
       if (relativePath.contains('/domain/')) {
+        for (final RegExpMatch match in imports) {
+          final String target = match.group(1)!;
+          if (target.contains('/data/')) {
+            violations.add('$relativePath -> $target');
+          }
+        }
+      }
+
+      if (relativePath.contains('/presentation/')) {
         for (final RegExpMatch match in imports) {
           final String target = match.group(1)!;
           if (target.contains('/data/')) {
