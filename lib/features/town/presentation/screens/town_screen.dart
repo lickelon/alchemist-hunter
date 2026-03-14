@@ -13,6 +13,10 @@ class TownScreen extends ConsumerWidget {
     final ShopState generalShop = ref.watch(generalShopStateProvider);
     final ShopState catalystShop = ref.watch(catalystShopStateProvider);
     final int equipmentCount = ref.watch(townEquipmentCountProvider);
+    final int mercenaryCandidateCount = ref.watch(
+      townMercenaryCandidateCountProvider,
+    );
+    final int mercenaryCount = ref.watch(townMercenaryCountProvider);
     final List<TownPotionSaleView> craftedPotionStacks = ref.watch(
       townPotionSaleViewsProvider,
     );
@@ -40,6 +44,11 @@ class TownScreen extends ConsumerWidget {
           shopType: ShopType.catalyst,
           itemCount: catalystShop.items.length,
           refreshCost: catalystShop.forcedRefreshCost,
+        ),
+        const SizedBox(height: 8),
+        TownMercenaryHireCard(
+          candidateCount: mercenaryCandidateCount,
+          mercenaryCount: mercenaryCount,
         ),
         const SizedBox(height: 8),
         TownEquipmentCraftCard(equipmentCount: equipmentCount),

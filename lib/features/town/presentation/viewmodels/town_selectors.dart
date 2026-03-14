@@ -17,6 +17,26 @@ class TownEquipmentInventoryView {
   final String statLabel;
 }
 
+class TownMercenaryCandidateView {
+  const TownMercenaryCandidateView({
+    required this.id,
+    required this.name,
+    required this.roleLabel,
+    required this.tierLabel,
+    required this.hireCost,
+    required this.canHire,
+  });
+
+  final String id;
+  final String name;
+  final String roleLabel;
+  final String tierLabel;
+  final int hireCost;
+  final bool canHire;
+
+  String get hireHint => canHire ? '' : ' / 골드 부족';
+}
+
 final Provider<int> townGoldProvider = Provider<int>((Ref ref) {
   return ref.watch(
     sessionControllerProvider.select((SessionState state) => state.player.gold),
@@ -63,6 +83,24 @@ final Provider<int> townEquipmentCountProvider = Provider<int>((Ref ref) {
   );
 });
 
+final Provider<int> townMercenaryCandidateCountProvider = Provider<int>((
+  Ref ref,
+) {
+  return ref.watch(
+    sessionControllerProvider.select(
+      (SessionState state) => state.town.mercenaryCandidates.length,
+    ),
+  );
+});
+
+final Provider<int> townMercenaryCountProvider = Provider<int>((Ref ref) {
+  return ref.watch(
+    sessionControllerProvider.select(
+      (SessionState state) => state.characters.mercenaries.length,
+    ),
+  );
+});
+
 final Provider<List<TownEquipmentInventoryView>>
 townEquipmentInventoryViewsProvider = Provider<List<TownEquipmentInventoryView>>((
   Ref ref,
@@ -83,3 +121,19 @@ townEquipmentInventoryViewsProvider = Provider<List<TownEquipmentInventoryView>>
     );
   }).toList();
 });
+
+final Provider<List<TownMercenaryCandidateView>>
+townMercenaryCandidateViewsProvider =
+    Provider<List<TownMercenaryCandidateView>>((Ref ref) {
+      final SessionState state = ref.watch(sessionControllerProvider);
+      return state.town.mercenaryCandidates.map((MercenaryCandidate entry) {
+        return TownMercenaryCandidateView(
+          id: entry.id,
+          name: entry.name,
+          roleLabel: entry.roleLabel,
+          tierLabel: entry.tierLabel,
+          hireCost: entry.hireCost,
+          canHire: state.player.gold >= entry.hireCost,
+        );
+      }).toList(growable: false);
+    });
