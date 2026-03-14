@@ -36,5 +36,11 @@ void main() {
     expect(nextState.workshop.extractedTraitInventory, isEmpty);
     expect(nextState.characters.homunculi, hasLength(2));
     expect(nextState.characters.homunculi.last.name, 'Vital Nigredo');
+    expect(nextState.characters.homunculi.last.homunculusOrigin, 'Vital Seed Flask');
+    expect(nextState.characters.homunculi.last.homunculusRole, '지원');
+    expect(
+      nextState.characters.homunculi.last.homunculusSupportEffect,
+      '파티 생존력 보조',
+    );
   });
 }

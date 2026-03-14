@@ -7,6 +7,8 @@ class HomunculusHatchRecipe {
     required this.name,
     required this.description,
     required this.resultName,
+    required this.roleLabel,
+    required this.supportEffectLabel,
     required this.essenceCost,
     required this.arcaneDustCost,
     required this.materialCosts,
@@ -17,6 +19,8 @@ class HomunculusHatchRecipe {
   final String name;
   final String description;
   final String resultName;
+  final String roleLabel;
+  final String supportEffectLabel;
   final int essenceCost;
   final int arcaneDustCost;
   final Map<String, int> materialCosts;

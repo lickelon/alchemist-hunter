@@ -72,6 +72,9 @@ class CharacterProgress {
     required this.xp,
     this.mercenaryTier,
     this.homunculusTier,
+    this.homunculusOrigin,
+    this.homunculusRole,
+    this.homunculusSupportEffect,
     this.equipment = const CharacterEquipmentLoadout(),
   });
 
@@ -83,6 +86,9 @@ class CharacterProgress {
   final int xp;
   final MercenaryTier? mercenaryTier;
   final HomunculusTier? homunculusTier;
+  final String? homunculusOrigin;
+  final String? homunculusRole;
+  final String? homunculusSupportEffect;
   final CharacterEquipmentLoadout equipment;
 
   int get maxLevelForRank => rank * 5;
@@ -113,22 +119,30 @@ class CharacterProgress {
   bool get canTierUp => rank >= maxRankForCurrentTier && tierIndex < maxTier;
 
   CharacterProgress copyWith({
+    String? name,
     int? level,
     int? rank,
     int? xp,
     MercenaryTier? mercenaryTier,
     HomunculusTier? homunculusTier,
+    String? homunculusOrigin,
+    String? homunculusRole,
+    String? homunculusSupportEffect,
     CharacterEquipmentLoadout? equipment,
   }) {
     return CharacterProgress(
       id: id,
-      name: name,
+      name: name ?? this.name,
       type: type,
       level: level ?? this.level,
       rank: rank ?? this.rank,
       xp: xp ?? this.xp,
       mercenaryTier: mercenaryTier ?? this.mercenaryTier,
       homunculusTier: homunculusTier ?? this.homunculusTier,
+      homunculusOrigin: homunculusOrigin ?? this.homunculusOrigin,
+      homunculusRole: homunculusRole ?? this.homunculusRole,
+      homunculusSupportEffect:
+          homunculusSupportEffect ?? this.homunculusSupportEffect,
       equipment: equipment ?? this.equipment,
     );
   }

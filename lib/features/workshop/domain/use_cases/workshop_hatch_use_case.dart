@@ -59,6 +59,9 @@ class WorkshopHatchUseCase {
       rank: 1,
       xp: 0,
       homunculusTier: HomunculusTier.nigredo,
+      homunculusOrigin: recipe.name,
+      homunculusRole: recipe.roleLabel,
+      homunculusSupportEffect: recipe.supportEffectLabel,
     );
 
     return state.copyWith(
