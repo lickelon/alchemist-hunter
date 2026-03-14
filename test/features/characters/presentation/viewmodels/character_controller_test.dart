@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -69,5 +70,41 @@ void main() {
     );
 
     expect(maxed.xpToNextLevel, 0);
+  });
+
+  test('equip and unequip moves equipment between storage and slot', () {
+    final SessionController session = buildSession();
+    final CharacterController controller = CharacterController(session);
+
+    session.state = session.state.copyWith(
+      town: session.state.town.copyWith(
+        equipmentInventory: <EquipmentInstance>[
+          EquipmentInstance(
+            id: 'eq_instance_1',
+            blueprintId: 'eq_1',
+            name: 'Bronze Sword',
+            slot: EquipmentSlot.weapon,
+            attack: 12,
+            defense: 0,
+            health: 0,
+            createdAt: DateTime(2026, 1, 1, 10),
+          ),
+        ],
+      ),
+    );
+
+    controller.equip(CharacterType.mercenary, 'merc_1', 'eq_instance_1');
+
+    expect(
+      session.state.characters.mercenaries.first.equipment.weapon?.name,
+      'Bronze Sword',
+    );
+    expect(session.state.town.equipmentInventory, isEmpty);
+
+    controller.unequip(CharacterType.mercenary, 'merc_1', EquipmentSlot.weapon);
+
+    expect(session.state.characters.mercenaries.first.equipment.weapon, isNull);
+    expect(session.state.town.equipmentInventory, hasLength(1));
+    expect(session.state.town.equipmentInventory.first.name, 'Bronze Sword');
   });
 }
