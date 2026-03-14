@@ -15,8 +15,12 @@ class WorkshopScreen extends ConsumerWidget {
       workshopUnlockedSkillNodeCountProvider,
     );
     final int totalSkillNodes = ref.watch(workshopSkillNodeCountProvider);
+    final int homunculusCount = ref.watch(workshopHomunculusCountProvider);
     final List<ExtractedTraitInventoryView> extractedTraits = ref.watch(
       extractedTraitViewsProvider,
+    );
+    final List<HomunculusHatchRecipeView> hatchRecipes = ref.watch(
+      homunculusHatchRecipeViewsProvider,
     );
     final List<CraftQueueJob> queue = ref.watch(craftQueueProvider);
     final List<MapEntry<String, int>> materials = ref.watch(
@@ -69,6 +73,11 @@ class WorkshopScreen extends ConsumerWidget {
         WorkshopEnchantCard(
           potionStackCount: craftedPotionStacks.length,
           equipmentCount: enchantEquipmentViews.length,
+        ),
+        const SizedBox(height: 8),
+        WorkshopHatchCard(
+          recipeCount: hatchRecipes.length,
+          homunculusCount: homunculusCount,
         ),
         const SizedBox(height: 8),
         WorkshopLogCard(logCount: logs.length),

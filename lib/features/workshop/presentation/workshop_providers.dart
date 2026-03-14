@@ -3,6 +3,8 @@ export 'viewmodels/crafted_inventory_selectors.dart';
 export 'viewmodels/enchant_controller.dart';
 export 'viewmodels/extraction_controller.dart';
 export 'viewmodels/extraction_selectors.dart';
+export 'viewmodels/hatch_controller.dart';
+export 'viewmodels/hatch_selectors.dart';
 export 'viewmodels/workshop_skill_tree_controller.dart';
 export 'viewmodels/workshop_skill_tree_selectors.dart';
 export 'viewmodels/workshop_service_providers.dart';
