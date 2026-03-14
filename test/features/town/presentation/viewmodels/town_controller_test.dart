@@ -95,4 +95,37 @@ void main() {
     expect(session.state.town.equipmentInventory.first.blueprintId, 'eq_1');
     expect(session.state.workshop.logs.first, 'Crafted Bronze Sword');
   });
+
+  test('hireMercenary consumes gold and appends mercenary', () {
+    final SessionController session = buildSession();
+    final TownController controller = buildController(session);
+    final MercenaryCandidate candidate = session.state.town.mercenaryCandidates.first;
+
+    controller.hireMercenary(candidate.id);
+
+    expect(session.state.player.gold, 1500 - candidate.hireCost);
+    expect(session.state.characters.mercenaries, hasLength(2));
+    expect(session.state.characters.mercenaries.last.name, candidate.name);
+    expect(session.state.town.mercenaryCandidates, hasLength(2));
+    expect(session.state.workshop.logs.first, 'Hired ${candidate.name}');
+  });
+
+  test('refreshMercenaryCandidates rotates candidate list', () {
+    final SessionController session = buildSession();
+    final TownController controller = buildController(session);
+    final List<String> previousIds = session.state.town.mercenaryCandidates
+        .map((MercenaryCandidate entry) => entry.id)
+        .toList(growable: false);
+
+    controller.refreshMercenaryCandidates();
+
+    expect(session.state.town.mercenaryRefreshCount, 1);
+    expect(
+      session.state.town.mercenaryCandidates
+          .map((MercenaryCandidate entry) => entry.id)
+          .toList(growable: false),
+      isNot(previousIds),
+    );
+    expect(session.state.workshop.logs.first, 'Refreshed mercenary candidates');
+  });
 }

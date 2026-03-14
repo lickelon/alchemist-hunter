@@ -2,12 +2,20 @@ import 'package:alchemist_hunter/core/session/session_providers.dart';
 import 'package:alchemist_hunter/features/town/data/catalogs/equipment_blueprints.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
+import 'package:alchemist_hunter/features/town/domain/services/mercenary_recruitment_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/craft_equipment_use_case.dart';
+import 'package:alchemist_hunter/features/town/domain/use_cases/hire_mercenary_use_case.dart';
+import 'package:alchemist_hunter/features/town/domain/use_cases/refresh_mercenary_candidates_use_case.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final Provider<EconomyService> economyServiceProvider =
     Provider<EconomyService>((Ref ref) => EconomyService());
+
+final Provider<MercenaryRecruitmentService> mercenaryRecruitmentServiceProvider =
+    Provider<MercenaryRecruitmentService>(
+      (Ref ref) => const MercenaryRecruitmentService(),
+    );
 
 class TownController {
   TownController(
@@ -15,13 +23,24 @@ class TownController {
     this._economy, {
     TownUseCase townDomain = const TownUseCase(),
     CraftEquipmentUseCase craftEquipmentUseCase = const CraftEquipmentUseCase(),
+    MercenaryRecruitmentService recruitmentService =
+        const MercenaryRecruitmentService(),
+    RefreshMercenaryCandidatesUseCase refreshMercenaryCandidatesUseCase =
+        const RefreshMercenaryCandidatesUseCase(),
+    HireMercenaryUseCase hireMercenaryUseCase = const HireMercenaryUseCase(),
   }) : _townDomain = townDomain,
-       _craftEquipmentUseCase = craftEquipmentUseCase;
+       _craftEquipmentUseCase = craftEquipmentUseCase,
+       _recruitmentService = recruitmentService,
+       _refreshMercenaryCandidatesUseCase = refreshMercenaryCandidatesUseCase,
+       _hireMercenaryUseCase = hireMercenaryUseCase;
 
   final SessionController _session;
   final EconomyService _economy;
   final TownUseCase _townDomain;
   final CraftEquipmentUseCase _craftEquipmentUseCase;
+  final MercenaryRecruitmentService _recruitmentService;
+  final RefreshMercenaryCandidatesUseCase _refreshMercenaryCandidatesUseCase;
+  final HireMercenaryUseCase _hireMercenaryUseCase;
 
   void buyGeneralMaterial(String materialId, int quantity) {
     _syncShops();
@@ -107,6 +126,42 @@ class TownController {
     );
   }
 
+  void refreshMercenaryCandidates() {
+    final SessionState current = _session.snapshot();
+    final SessionState nextState =
+        _refreshMercenaryCandidatesUseCase.refreshCandidates(
+          state: current,
+          recruitmentService: _recruitmentService,
+        );
+    _apply(nextState, logMessage: 'Refreshed mercenary candidates');
+  }
+
+  void hireMercenary(String candidateId) {
+    final SessionState current = _session.snapshot();
+    MercenaryCandidate? candidate;
+    for (final MercenaryCandidate entry in current.town.mercenaryCandidates) {
+      if (entry.id == candidateId) {
+        candidate = entry;
+        break;
+      }
+    }
+    if (candidate == null) {
+      _session.appendLog('Mercenary candidate missing: $candidateId');
+      return;
+    }
+
+    final SessionState nextState = _hireMercenaryUseCase.hireCandidate(
+      state: current,
+      candidateId: candidateId,
+    );
+    _apply(
+      nextState,
+      logMessage: identical(nextState, current)
+          ? 'Not enough gold for ${candidate.name}'
+          : 'Hired ${candidate.name}',
+    );
+  }
+
   void _syncShops() {
     final SessionState current = _session.snapshot();
     final SessionState nextState = _townDomain.syncShops(
@@ -135,5 +190,6 @@ final Provider<TownController> townControllerProvider =
       return TownController(
         ref.read(sessionControllerProvider.notifier),
         ref.read(economyServiceProvider),
+        recruitmentService: ref.read(mercenaryRecruitmentServiceProvider),
       );
     });

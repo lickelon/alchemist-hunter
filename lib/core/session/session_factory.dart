@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/town/domain/services/mercenary_recruitment_service.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/data/catalogs/shop_seed.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
@@ -22,6 +23,10 @@ SessionState createInitialSessionState(DateTime now) {
       generalShop: buildGeneralShopState(now),
       catalystShop: buildCatalystShopState(now),
       equipmentInventory: const <EquipmentInstance>[],
+      mercenaryCandidates: const MercenaryRecruitmentService().buildCandidates(
+        refreshIndex: 0,
+      ),
+      mercenaryRefreshCount: 0,
     ),
     workshop: const WorkshopState(
       queue: <CraftQueueJob>[],
