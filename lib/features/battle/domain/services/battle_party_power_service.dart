@@ -45,6 +45,8 @@ class BattlePartyPowerService {
     if (item == null) {
       return 0;
     }
-    return (item.attack * 2) + (item.defense * 2) + (item.health ~/ 4);
+    return (item.totalAttack * 2) +
+        (item.totalDefense * 2) +
+        (item.totalHealth ~/ 4);
   }
 }

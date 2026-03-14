@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/features/workshop/domain/services/alchemy_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/equipment_enchant_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
 
 final Provider<CraftQueueService> craftQueueServiceProvider =
@@ -16,3 +17,8 @@ final Provider<PotionCraftingService> potionCraftingServiceProvider =
 
 final Provider<AlchemyService> alchemyServiceProvider =
     Provider<AlchemyService>((Ref ref) => AlchemyService());
+
+final Provider<EquipmentEnchantService> equipmentEnchantServiceProvider =
+    Provider<EquipmentEnchantService>(
+      (Ref ref) => const EquipmentEnchantService(),
+    );
