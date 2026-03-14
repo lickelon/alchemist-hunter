@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/features/workshop/application/workshop_providers.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

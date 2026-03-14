@@ -1,0 +1,211 @@
+import 'package:alchemist_hunter/core/session/session_providers.dart';
+import 'package:alchemist_hunter/features/workshop/data/catalogs/potion_catalog.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+
+class WorkshopCraftQueueUseCase {
+  const WorkshopCraftQueueUseCase();
+
+  SessionState enqueuePotion({
+    required SessionState state,
+    required String potionId,
+    required int repeatCount,
+    required DateTime now,
+    required CraftQueueService queueService,
+    required PotionCraftingService craftingService,
+  }) {
+    final PotionBlueprint blueprint = _findBlueprint(potionId);
+    final bool canCraft = craftingService.canCraftRepeatCount(
+      blueprint: blueprint,
+      extractedInventory: state.workshop.extractedTraitInventory,
+      repeatCount: repeatCount,
+    );
+    if (!canCraft) {
+      return state;
+    }
+
+    final CraftQueueJob job = CraftQueueJob(
+      id: 'job_${now.millisecondsSinceEpoch}',
+      potionId: potionId,
+      repeatCount: repeatCount,
+      retryPolicy: const CraftRetryPolicy(maxRetries: 2),
+      status: QueueJobStatus.queued,
+      eta: const Duration(seconds: 15),
+    );
+
+    return state.copyWith(
+      workshop: state.workshop.copyWith(
+        queue: queueService.enqueue(state.workshop.queue, job),
+      ),
+    );
+  }
+
+  SessionState tickCraftQueue({
+    required SessionState state,
+    required CraftQueueService queueService,
+    required PotionCraftingService craftingService,
+  }) {
+    CraftQueueJob? activeJob;
+    for (final CraftQueueJob job in state.workshop.queue) {
+      if (job.status == QueueJobStatus.queued ||
+          job.status == QueueJobStatus.processing) {
+        activeJob = job;
+        break;
+      }
+    }
+    if (activeJob != null) {
+      final PotionBlueprint activeBlueprint = _findBlueprint(
+        activeJob.potionId,
+      );
+      final bool canPrepare =
+          craftingService.prepareCraftFromExtractedInventory(
+            blueprint: activeBlueprint,
+            extractedInventory: state.workshop.extractedTraitInventory,
+          ) !=
+          null;
+      if (!canPrepare) {
+        return state.copyWith(
+          workshop: state.workshop.copyWith(
+            queue: _markCraftBlocked(state.workshop.queue, activeJob.id),
+          ),
+        );
+      }
+    }
+
+    final List<CraftQueueJob> previousQueue = state.workshop.queue;
+    final List<CraftQueueJob> nextQueue = queueService.processTick(
+      state.workshop.queue,
+      const Duration(seconds: 15),
+    );
+
+    final Map<String, int> stacks = <String, int>{
+      ...state.workshop.craftedPotionStacks,
+    };
+    final Map<String, CraftedPotion> details = <String, CraftedPotion>{
+      ...state.workshop.craftedPotionDetails,
+    };
+    final Map<String, double> extractedInventory = <String, double>{
+      ...state.workshop.extractedTraitInventory,
+    };
+
+    List<CraftQueueJob> resolvedQueue = nextQueue;
+    for (final CraftQueueJob job in nextQueue) {
+      final CraftQueueJob? previousJob = previousQueue
+          .where((CraftQueueJob candidate) => candidate.id == job.id)
+          .firstOrNull;
+      if (previousJob == null) {
+        continue;
+      }
+
+      final int producedDelta = job.currentRepeat - previousJob.currentRepeat;
+      if (producedDelta <= 0) {
+        continue;
+      }
+
+      final PotionBlueprint blueprint = _findBlueprint(job.potionId);
+      for (int index = 0; index < producedDelta; index++) {
+        final ({
+          Map<String, double> nextExtractedInventory,
+          Map<String, double> extractedTraits,
+        })?
+        prepared = craftingService.prepareCraftFromExtractedInventory(
+          blueprint: blueprint,
+          extractedInventory: extractedInventory,
+        );
+        if (prepared == null) {
+          resolvedQueue = _markCraftBlocked(resolvedQueue, job.id);
+          break;
+        }
+        extractedInventory
+          ..clear()
+          ..addAll(prepared.nextExtractedInventory);
+        final CraftedPotion crafted = craftingService.craftPotion(
+          requestedBlueprint: blueprint,
+          extractedTraits: prepared.extractedTraits,
+          recipeRules: potionRecipeCatalog,
+          branchRules: potionRecipeBranchCatalog,
+          qualityRule: potionQualityCatalog,
+        );
+        final String stackKey =
+            '${crafted.typePotionId}|${crafted.qualityGrade.name}';
+        stacks[stackKey] = (stacks[stackKey] ?? 0) + 1;
+        details.putIfAbsent(stackKey, () => crafted);
+      }
+    }
+
+    return state.copyWith(
+      workshop: state.workshop.copyWith(
+        extractedTraitInventory: extractedInventory,
+        queue: resolvedQueue,
+        craftedPotionStacks: stacks,
+        craftedPotionDetails: details,
+      ),
+    );
+  }
+
+  SessionState resumeBlockedJob({
+    required SessionState state,
+    required String jobId,
+    required CraftQueueService queueService,
+    required PotionCraftingService craftingService,
+  }) {
+    CraftQueueJob? blockedJob;
+    for (final CraftQueueJob job in state.workshop.queue) {
+      if (job.id == jobId && job.status == QueueJobStatus.blocked) {
+        blockedJob = job;
+        break;
+      }
+    }
+    if (blockedJob == null) {
+      return state;
+    }
+
+    final int remainingCount =
+        blockedJob.repeatCount - blockedJob.currentRepeat;
+    final PotionBlueprint blueprint = _findBlueprint(blockedJob.potionId);
+    final bool canCraft = craftingService.canCraftRepeatCount(
+      blueprint: blueprint,
+      extractedInventory: state.workshop.extractedTraitInventory,
+      repeatCount: remainingCount,
+    );
+    if (!canCraft) {
+      return state;
+    }
+
+    return state.copyWith(
+      workshop: state.workshop.copyWith(
+        queue: queueService.resumeBlocked(state.workshop.queue, jobId),
+      ),
+    );
+  }
+
+  SessionState clearCompletedJobs({required SessionState state}) {
+    final List<CraftQueueJob> remaining = state.workshop.queue
+        .where((CraftQueueJob job) => job.status != QueueJobStatus.completed)
+        .toList();
+    if (remaining.length == state.workshop.queue.length) {
+      return state;
+    }
+    return state.copyWith(workshop: state.workshop.copyWith(queue: remaining));
+  }
+
+  PotionBlueprint _findBlueprint(String potionId) {
+    return potionCatalog.firstWhere(
+      (PotionBlueprint potion) => potion.id == potionId,
+      orElse: () => potionCatalog.first,
+    );
+  }
+
+  List<CraftQueueJob> _markCraftBlocked(
+    List<CraftQueueJob> jobs,
+    String jobId,
+  ) {
+    return jobs.map((CraftQueueJob job) {
+      if (job.id != jobId) {
+        return job;
+      }
+      return job.copyWith(status: QueueJobStatus.blocked, eta: Duration.zero);
+    }).toList();
+  }
+}

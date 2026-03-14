@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/features/session/application/session_providers.dart';
+import 'package:alchemist_hunter/core/session/session_providers.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_extraction_card.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_material_card.dart';

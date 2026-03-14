@@ -1,9 +1,11 @@
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/data/catalog/battle_tables.dart';
-import 'package:alchemist_hunter/features/workshop/data/catalog/extraction_profiles.dart';
-import 'package:alchemist_hunter/features/workshop/data/catalog/material_catalog.dart';
-import 'package:alchemist_hunter/features/workshop/data/catalog/potion_catalog.dart';
-import 'package:alchemist_hunter/features/workshop/data/catalog/shop_seed.dart';
+import 'package:alchemist_hunter/features/workshop/data/catalogs/extraction_profiles.dart';
+import 'package:alchemist_hunter/features/workshop/data/catalogs/material_catalog.dart';
+import 'package:alchemist_hunter/features/workshop/data/catalogs/potion_catalog.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/battle_tables.dart';
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/town/data/catalogs/shop_seed.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
 
 class DummyData {
   static final List<TraitUnit> traits = traitCatalog;

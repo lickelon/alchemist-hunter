@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:alchemist_hunter/features/workshop/application/workshop_providers.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 
 import 'workshop_enqueue_options_sheet.dart';
 import 'workshop_queue_job_list.dart';

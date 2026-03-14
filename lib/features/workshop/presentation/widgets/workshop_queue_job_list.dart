@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:alchemist_hunter/features/workshop/application/workshop_providers.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 
 class WorkshopQueueJobList extends ConsumerWidget {
   const WorkshopQueueJobList({super.key, required this.jobs});

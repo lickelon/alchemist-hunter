@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:alchemist_hunter/features/workshop/application/workshop_providers.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 
 class WorkshopTraitInventoryStrip extends StatelessWidget {
   const WorkshopTraitInventoryStrip({super.key, required this.traits});

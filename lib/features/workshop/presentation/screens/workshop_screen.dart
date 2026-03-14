@@ -1,5 +1,5 @@
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/application/workshop_providers.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_sections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

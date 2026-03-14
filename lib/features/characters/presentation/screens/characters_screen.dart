@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/features/characters/application/character_providers.dart';
+import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
