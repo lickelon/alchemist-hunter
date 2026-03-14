@@ -45,6 +45,7 @@ class CraftEquipmentUseCase {
           instance,
           ...state.town.equipmentInventory,
         ],
+        equipmentCraftCount: state.town.equipmentCraftCount + 1,
       ),
     );
   }

@@ -63,8 +63,14 @@ class WorkshopExtractionUseCase {
     });
 
     return state.copyWith(
-      player: state.player.copyWith(materialInventory: materials),
-      workshop: state.workshop.copyWith(extractedTraitInventory: inventory),
+      player: state.player.copyWith(
+        materialInventory: materials,
+        arcaneDust: state.player.arcaneDust + quantity,
+      ),
+      workshop: state.workshop.copyWith(
+        extractedTraitInventory: inventory,
+        extractionCount: state.workshop.extractionCount + quantity,
+      ),
     );
   }
 }

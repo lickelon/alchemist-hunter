@@ -154,6 +154,9 @@ class WorkshopCraftQueueUseCase {
         queue: resolvedQueue,
         craftedPotionStacks: stacks,
         craftedPotionDetails: details,
+        potionCraftCount:
+            state.workshop.potionCraftCount +
+            _totalProducedCount(previousQueue, resolvedQueue),
       ),
     );
   }
@@ -219,5 +222,25 @@ class WorkshopCraftQueueUseCase {
       }
       return job.copyWith(status: QueueJobStatus.blocked, eta: Duration.zero);
     }).toList();
+  }
+
+  int _totalProducedCount(
+    List<CraftQueueJob> previousQueue,
+    List<CraftQueueJob> nextQueue,
+  ) {
+    int total = 0;
+    for (final CraftQueueJob job in nextQueue) {
+      final CraftQueueJob? previousJob = previousQueue
+          .where((CraftQueueJob candidate) => candidate.id == job.id)
+          .firstOrNull;
+      if (previousJob == null) {
+        continue;
+      }
+      final int producedDelta = job.currentRepeat - previousJob.currentRepeat;
+      if (producedDelta > 0) {
+        total += producedDelta;
+      }
+    }
+    return total;
   }
 }

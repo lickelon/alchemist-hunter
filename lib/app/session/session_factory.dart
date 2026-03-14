@@ -16,8 +16,8 @@ SessionState createInitialSessionState(DateTime now) {
     player: const PlayerState(
       gold: 1500,
       essence: 120,
-      townInsight: 0,
-      arcaneDust: 0,
+      townInsight: 2,
+      arcaneDust: 2,
       diamonds: 100,
       materialInventory: <String, int>{},
     ),
@@ -38,6 +38,8 @@ SessionState createInitialSessionState(DateTime now) {
         availablePoints: 0,
         spentPoints: 0,
       ),
+      potionSalesTotal: 0,
+      equipmentCraftCount: 0,
     ),
     workshop: const WorkshopState(
       queue: <CraftQueueJob>[],
@@ -53,6 +55,9 @@ SessionState createInitialSessionState(DateTime now) {
         availablePoints: 0,
         spentPoints: 0,
       ),
+      extractionCount: 0,
+      potionCraftCount: 0,
+      enchantCount: 0,
     ),
     battle: const BattleState(
       progress: ProgressState(

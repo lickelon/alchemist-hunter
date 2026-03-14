@@ -11,6 +11,8 @@ class TownState {
     required this.mercenaryCandidates,
     required this.mercenaryRefreshCount,
     required this.skillTree,
+    required this.potionSalesTotal,
+    required this.equipmentCraftCount,
   });
 
   final ShopState generalShop;
@@ -19,6 +21,8 @@ class TownState {
   final List<MercenaryCandidate> mercenaryCandidates;
   final int mercenaryRefreshCount;
   final TownSkillTreeState skillTree;
+  final int potionSalesTotal;
+  final int equipmentCraftCount;
 
   TownState copyWith({
     ShopState? generalShop,
@@ -27,6 +31,8 @@ class TownState {
     List<MercenaryCandidate>? mercenaryCandidates,
     int? mercenaryRefreshCount,
     TownSkillTreeState? skillTree,
+    int? potionSalesTotal,
+    int? equipmentCraftCount,
   }) {
     return TownState(
       generalShop: generalShop ?? this.generalShop,
@@ -35,6 +41,8 @@ class TownState {
       mercenaryCandidates: mercenaryCandidates ?? this.mercenaryCandidates,
       mercenaryRefreshCount: mercenaryRefreshCount ?? this.mercenaryRefreshCount,
       skillTree: skillTree ?? this.skillTree,
+      potionSalesTotal: potionSalesTotal ?? this.potionSalesTotal,
+      equipmentCraftCount: equipmentCraftCount ?? this.equipmentCraftCount,
     );
   }
 }

@@ -166,6 +166,7 @@ class WorkshopEnchantUseCase {
       workshop: state.workshop.copyWith(
         craftedPotionStacks: stacks,
         craftedPotionDetails: details,
+        enchantCount: state.workshop.enchantCount + 1,
       ),
     );
   }

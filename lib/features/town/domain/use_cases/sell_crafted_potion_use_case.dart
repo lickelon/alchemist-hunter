@@ -50,7 +50,13 @@ class SellCraftedPotionUseCase {
     }
 
     return state.copyWith(
-      player: state.player.copyWith(gold: state.player.gold + earned),
+      player: state.player.copyWith(
+        gold: state.player.gold + earned,
+        townInsight: state.player.townInsight + quantity,
+      ),
+      town: state.town.copyWith(
+        potionSalesTotal: state.town.potionSalesTotal + earned,
+      ),
       workshop: state.workshop.copyWith(
         craftedPotionStacks: stacks,
         craftedPotionDetails: details,

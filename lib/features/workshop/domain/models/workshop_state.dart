@@ -10,6 +10,9 @@ class WorkshopState {
     required this.craftedPotionDetails,
     required this.logs,
     required this.skillTree,
+    required this.extractionCount,
+    required this.potionCraftCount,
+    required this.enchantCount,
   });
 
   final List<CraftQueueJob> queue;
@@ -18,6 +21,9 @@ class WorkshopState {
   final Map<String, CraftedPotion> craftedPotionDetails;
   final List<String> logs;
   final WorkshopSkillTreeState skillTree;
+  final int extractionCount;
+  final int potionCraftCount;
+  final int enchantCount;
 
   WorkshopState copyWith({
     List<CraftQueueJob>? queue,
@@ -26,6 +32,9 @@ class WorkshopState {
     Map<String, CraftedPotion>? craftedPotionDetails,
     List<String>? logs,
     WorkshopSkillTreeState? skillTree,
+    int? extractionCount,
+    int? potionCraftCount,
+    int? enchantCount,
   }) {
     return WorkshopState(
       queue: queue ?? this.queue,
@@ -35,6 +44,9 @@ class WorkshopState {
       craftedPotionDetails: craftedPotionDetails ?? this.craftedPotionDetails,
       logs: logs ?? this.logs,
       skillTree: skillTree ?? this.skillTree,
+      extractionCount: extractionCount ?? this.extractionCount,
+      potionCraftCount: potionCraftCount ?? this.potionCraftCount,
+      enchantCount: enchantCount ?? this.enchantCount,
     );
   }
 }
