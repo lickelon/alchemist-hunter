@@ -1,4 +1,6 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 typedef PotionBaseValueLookup = int? Function(String potionId);
@@ -11,6 +13,8 @@ class SellCraftedPotionUseCase {
     required String stackKey,
     required int quantity,
     required PotionBaseValueLookup potionBaseValueLookup,
+    required TownSkillTreeRepository townSkillTreeRepository,
+    required TownSkillTreeService townSkillTreeService,
   }) {
     final int owned = state.workshop.craftedPotionStacks[stackKey] ?? 0;
     if (quantity < 1 || owned < quantity) {
@@ -32,7 +36,12 @@ class SellCraftedPotionUseCase {
       PotionQualityGrade.b => 1.0,
       PotionQualityGrade.c => 0.8,
     };
-    final int earned = (potionBaseValue * multiplier * quantity).round();
+    final double saleBonus = townSkillTreeService.potionSaleBonusRate(
+      state,
+      townSkillTreeRepository.nodes(),
+    );
+    final int earned =
+        (potionBaseValue * multiplier * (1 + saleBonus) * quantity).round();
 
     final Map<String, int> stacks = <String, int>{
       ...state.workshop.craftedPotionStacks,

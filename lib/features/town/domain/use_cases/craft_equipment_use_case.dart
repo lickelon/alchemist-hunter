@@ -1,5 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 
 class CraftEquipmentUseCase {
   const CraftEquipmentUseCase();
@@ -8,11 +10,21 @@ class CraftEquipmentUseCase {
     required SessionState state,
     required EquipmentBlueprint blueprint,
     required DateTime now,
+    required TownSkillTreeRepository townSkillTreeRepository,
+    required TownSkillTreeService townSkillTreeService,
   }) {
+    final Map<String, int> effectiveMaterialCosts = townSkillTreeService
+        .adjustedMaterialCosts(
+          baseCosts: blueprint.materialCosts,
+          efficiencyRate: townSkillTreeService.equipmentCraftEfficiencyRate(
+            state,
+            townSkillTreeRepository.nodes(),
+          ),
+        );
     final Map<String, int> inventory = <String, int>{
       ...state.player.materialInventory,
     };
-    for (final MapEntry<String, int> entry in blueprint.materialCosts.entries) {
+    for (final MapEntry<String, int> entry in effectiveMaterialCosts.entries) {
       if ((inventory[entry.key] ?? 0) < entry.value) {
         return state;
       }
@@ -29,7 +41,7 @@ class CraftEquipmentUseCase {
       createdAt: now,
     );
 
-    for (final MapEntry<String, int> entry in blueprint.materialCosts.entries) {
+    for (final MapEntry<String, int> entry in effectiveMaterialCosts.entries) {
       final int nextValue = (inventory[entry.key] ?? 0) - entry.value;
       if (nextValue <= 0) {
         inventory.remove(entry.key);

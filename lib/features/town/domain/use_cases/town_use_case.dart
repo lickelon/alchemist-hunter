@@ -1,7 +1,9 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
+import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
+import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 
 class TownUseCase {
   const TownUseCase();
@@ -57,6 +59,8 @@ class TownUseCase {
     required DateTime now,
     required EconomyService economy,
     required ShopCatalogRepository shopCatalogRepository,
+    required TownSkillTreeRepository townSkillTreeRepository,
+    required TownSkillTreeService townSkillTreeService,
   }) {
     final bool isGeneral = shopType == ShopType.general;
     final ShopState target = isGeneral
@@ -72,14 +76,20 @@ class TownUseCase {
       nextItems: nextItems,
     );
 
-    if (state.player.gold < refreshed.costPaid) {
+    final int effectiveCost = townSkillTreeService.discountedGoldCost(
+      baseCost: refreshed.costPaid,
+      discountRate: townSkillTreeService.shopRefreshDiscountRate(
+        state,
+        townSkillTreeRepository.nodes(),
+      ),
+    );
+
+    if (state.player.gold < effectiveCost) {
       return state;
     }
 
     return state.copyWith(
-      player: state.player.copyWith(
-        gold: state.player.gold - refreshed.costPaid,
-      ),
+      player: state.player.copyWith(gold: state.player.gold - effectiveCost),
       town: state.town.copyWith(
         generalShop: isGeneral ? refreshed.shop : state.town.generalShop,
         catalystShop: isGeneral ? state.town.catalystShop : refreshed.shop,
