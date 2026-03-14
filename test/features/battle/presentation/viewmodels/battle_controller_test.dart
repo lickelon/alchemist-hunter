@@ -61,6 +61,12 @@ void main() {
     final CharacterProgress homo = session.state.characters.homunculi.first;
 
     session.state = session.state.copyWith(
+      battle: session.state.battle.copyWith(
+        stageAssignments: <String, List<String>>{
+          ...session.state.battle.stageAssignments,
+          'stage_5': <String>[merc.id, homo.id],
+        },
+      ),
       characters: session.state.characters.copyWith(
         mercenaries: <CharacterProgress>[
           merc.copyWith(level: merc.maxLevelForRank, xp: 999),
@@ -91,6 +97,12 @@ void main() {
     final CharacterProgress merc = session.state.characters.mercenaries.first;
 
     session.state = session.state.copyWith(
+      battle: session.state.battle.copyWith(
+        stageAssignments: <String, List<String>>{
+          ...session.state.battle.stageAssignments,
+          'stage_5': <String>[merc.id],
+        },
+      ),
       characters: session.state.characters.copyWith(
         mercenaries: <CharacterProgress>[
           merc.copyWith(
@@ -118,5 +130,18 @@ void main() {
       contains('Battle win on stage_5'),
     );
     expect(session.state.player.essence, 126);
+  });
+
+  test('toggleStageAssignment stores assignment per stage', () {
+    final SessionController session = buildSession();
+    final BattleController controller = buildController(session);
+
+    controller.toggleStageAssignment('stage_2', 'merc_1');
+
+    expect(session.state.battle.stageAssignments['stage_2'], <String>['merc_1']);
+    expect(
+      session.state.workshop.logs.first,
+      contains('Assigned Rookie Swordsman to stage_2'),
+    );
   });
 }

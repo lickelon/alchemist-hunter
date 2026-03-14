@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,7 +13,6 @@ class DungeonScreen extends ConsumerWidget {
     final ProgressState progress = ref.watch(battleProgressProvider);
     final int gold = ref.watch(battleGoldProvider);
     final int essence = ref.watch(battleEssenceProvider);
-    final int partyPower = ref.watch(battlePartyPowerProvider);
 
     return ListView.builder(
       itemCount: stages.length,
@@ -21,19 +21,27 @@ class DungeonScreen extends ConsumerWidget {
         final bool unlocked =
             index == 0 || progress.unlockFlags.contains(stage);
         final String stageLabel = stage.replaceFirst('stage_', 'Stage ');
+        final int assignedCount = ref.watch(
+          battleStageAssignmentProvider(stage),
+        ).length;
+        final int partyPower = ref.watch(battleStagePartyPowerProvider(stage));
+        final String summary =
+            '편성 $assignedCount명 / 전투력 $partyPower / Gold: $gold / Essence: $essence';
 
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: ListTile(
+            onTap: () => _showAssignmentSheet(context, stage),
+            isThreeLine: !unlocked,
             leading: const Icon(Icons.shield),
             title: Text(stageLabel),
             subtitle: Text(
               unlocked
-                  ? 'Auto battle / Party: $partyPower / Gold: $gold / Essence: $essence'
-                  : _lockedReason(stage),
+                  ? 'Auto battle / $summary'
+                  : '$summary\n${_lockedReason(stage)}',
             ),
             trailing: FilledButton(
-              onPressed: unlocked
+              onPressed: unlocked && assignedCount > 0
                   ? () {
                       ref.read(battleControllerProvider).runAutoBattle(stage);
                     }
@@ -42,6 +50,16 @@ class DungeonScreen extends ConsumerWidget {
             ),
           ),
         );
+      },
+    );
+  }
+
+  void _showAssignmentSheet(BuildContext context, String stageId) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return BattleAssignmentSheet(stageId: stageId);
       },
     );
   }

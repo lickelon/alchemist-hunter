@@ -46,8 +46,17 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Stage 2'), findsOneWidget);
-    expect(find.textContaining('Party: 254'), findsOneWidget);
-    expect(find.text('잠금 조건: 특수 재료 Moontear Crystal 1개 이상 획득'), findsOneWidget);
+    expect(find.textContaining('편성 2명 / 전투력 254'), findsOneWidget);
+    expect(
+      find.textContaining('잠금 조건: 특수 재료 Moontear Crystal 1개 이상 획득'),
+      findsOneWidget,
+    );
     expect(find.text('Locked'), findsWidgets);
+
+    await tester.tap(find.text('Stage 1'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Stage 1 편성'), findsOneWidget);
+    expect(find.text('배치 2/3명 / 전투력 254'), findsOneWidget);
   });
 }
