@@ -1,3 +1,5 @@
+export 'town_equipment_card.dart';
+
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter/material.dart';
