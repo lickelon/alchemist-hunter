@@ -65,6 +65,9 @@ SessionState createInitialSessionState(DateTime now) {
         automationTier: 1,
         sessionPhase: SessionPhase.early,
       ),
+      stageAssignments: <String, List<String>>{
+        'stage_1': <String>['merc_1', 'homo_1'],
+      },
     ),
     characters: const CharactersState(
       mercenaries: <CharacterProgress>[

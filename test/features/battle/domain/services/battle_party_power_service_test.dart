@@ -53,5 +53,12 @@ void main() {
 
     expect(basePower, 230);
     expect(service.totalPower(equippedState), 254);
+    expect(
+      service.totalPower(
+        equippedState,
+        assignedCharacterIds: const <String>['merc_1'],
+      ),
+      144,
+    );
   });
 }

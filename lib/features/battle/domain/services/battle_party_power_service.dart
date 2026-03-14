@@ -5,16 +5,34 @@ import 'package:alchemist_hunter/features/town/domain/models.dart';
 class BattlePartyPowerService {
   const BattlePartyPowerService();
 
-  List<HeroProfile> buildParty(CharactersState state) {
+  List<HeroProfile> buildParty(
+    CharactersState state, {
+    List<String>? assignedCharacterIds,
+  }) {
+    final Set<String>? assignedSet = assignedCharacterIds?.toSet();
     return <HeroProfile>[
-      ...state.mercenaries.map(_buildHeroProfile),
-      ...state.homunculi.map(_buildHeroProfile),
+      ...state.mercenaries
+          .where(
+            (CharacterProgress character) =>
+                assignedSet == null || assignedSet.contains(character.id),
+          )
+          .map(_buildHeroProfile),
+      ...state.homunculi
+          .where(
+            (CharacterProgress character) =>
+                assignedSet == null || assignedSet.contains(character.id),
+          )
+          .map(_buildHeroProfile),
     ];
   }
 
-  int totalPower(CharactersState state) {
+  int totalPower(
+    CharactersState state, {
+    List<String>? assignedCharacterIds,
+  }) {
     return buildParty(
       state,
+      assignedCharacterIds: assignedCharacterIds,
     ).fold<int>(0, (int sum, HeroProfile hero) => sum + hero.power);
   }
 

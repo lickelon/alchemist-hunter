@@ -24,9 +24,18 @@ class AutoBattleUseCase {
     required BattleService battleService,
     required BattleCatalogRepository battleCatalogRepository,
   }) {
+    final List<String> assignedCharacterIds = state.battle.stageAssignments[stageId] ??
+        const <String>[];
+    if (assignedCharacterIds.isEmpty) {
+      return state;
+    }
+
     final BattleResult result = battleService.runAutoBattle(
       config: AutoBattleConfig(
-        party: _battlePartyPowerService.buildParty(state.characters),
+        party: _battlePartyPowerService.buildParty(
+          state.characters,
+          assignedCharacterIds: assignedCharacterIds,
+        ),
         potionLoadout: const <String, int>{'p_1': 2, 'p_2': 1},
         stageId: stageId,
       ),
@@ -57,7 +66,11 @@ class AutoBattleUseCase {
       success: result.success,
     );
     final CharactersState nextCharacters = _characterProgressionService
-        .grantBattleXp(state: state.characters, xpGain: xpGain);
+        .grantBattleXp(
+          state: state.characters,
+          xpGain: xpGain,
+          participantIds: assignedCharacterIds,
+        );
 
     return state.copyWith(
       player: state.player.copyWith(

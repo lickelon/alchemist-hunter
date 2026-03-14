@@ -6,18 +6,32 @@ class CharacterProgressionService {
   CharactersState grantBattleXp({
     required CharactersState state,
     required int xpGain,
+    List<String>? participantIds,
   }) {
+    final Set<String>? participantSet = participantIds?.toSet();
     return state.copyWith(
-      mercenaries: _grantXpList(state.mercenaries, xpGain),
-      homunculi: _grantXpList(state.homunculi, xpGain),
+      mercenaries: _grantXpList(
+        state.mercenaries,
+        xpGain,
+        participantSet: participantSet,
+      ),
+      homunculi: _grantXpList(
+        state.homunculi,
+        xpGain,
+        participantSet: participantSet,
+      ),
     );
   }
 
   List<CharacterProgress> _grantXpList(
     List<CharacterProgress> source,
     int xpGain,
+    {Set<String>? participantSet}
   ) {
     return source.map((CharacterProgress character) {
+      if (participantSet != null && !participantSet.contains(character.id)) {
+        return character;
+      }
       int level = character.level;
       int xp = character.xp + xpGain;
       final int maxLevel = character.maxLevelForRank;
