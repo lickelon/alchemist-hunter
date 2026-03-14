@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
 
 class BattleState {
   const BattleState({required this.progress});

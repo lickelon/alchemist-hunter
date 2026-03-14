@@ -1,4 +1,3 @@
-export 'session_catalog_providers.dart';
 export 'session_controller.dart';
 export 'session_factory.dart';
 export 'state/battle_state.dart';

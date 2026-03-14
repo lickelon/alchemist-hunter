@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
-import 'package:alchemist_hunter/features/workshop/data/dummy_data.dart';
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/town/data/catalogs/shop_seed.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 import 'state/battle_state.dart';
@@ -17,8 +18,8 @@ SessionState createInitialSessionState(DateTime now) {
       materialInventory: <String, int>{},
     ),
     town: TownState(
-      generalShop: DummyData.generalShopState(now),
-      catalystShop: DummyData.catalystShopState(now),
+      generalShop: buildGeneralShopState(now),
+      catalystShop: buildCatalystShopState(now),
     ),
     workshop: const WorkshopState(
       queue: <CraftQueueJob>[],

@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
 
 class TownState {
   const TownState({required this.generalShop, required this.catalystShop});

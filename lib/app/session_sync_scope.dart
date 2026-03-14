@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:alchemist_hunter/features/town/application/town_providers.dart';
+import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,11 +16,13 @@ class SessionSyncScope extends ConsumerStatefulWidget {
 class _SessionSyncScopeState extends ConsumerState<SessionSyncScope> {
   Timer? _timer;
 
+  TownController get _townController => ref.read(townControllerProvider);
+
   @override
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 5), (_) {
-      ref.read(townControllerProvider).syncShopAutoRefresh();
+      _townController.syncShopAutoRefresh();
     });
   }
 

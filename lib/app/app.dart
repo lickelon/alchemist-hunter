@@ -1,6 +1,6 @@
 import 'package:alchemist_hunter/features/battle/presentation/screens/dungeon_screen.dart';
 import 'package:alchemist_hunter/features/characters/presentation/screens/characters_screen.dart';
-import 'package:alchemist_hunter/features/session/application/session_sync_scope.dart';
+import 'package:alchemist_hunter/app/session_sync_scope.dart';
 import 'package:alchemist_hunter/features/town/presentation/screens/town_screen.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/screens/workshop_screen.dart';
 import 'package:flutter/material.dart';
