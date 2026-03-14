@@ -48,6 +48,7 @@ void main() {
 
     expect(view.rankHint, '현재 티어 최대 랭크 도달');
     expect(view.tierHint, '티어업 가능');
+    expect(view.assignmentLabel, '배치 상태: Stage 1');
     expect(view.equipmentSlots.first.slotLabel, '무기');
     expect(view.equipmentSlots.first.availableItems, hasLength(1));
   });
@@ -61,6 +62,7 @@ void main() {
     );
     final CharacterProgress target = session.state.characters.homunculi.first;
     session.state = session.state.copyWith(
+      battle: session.state.battle.copyWith(stageAssignments: const <String, List<String>>{}),
       characters: session.state.characters.copyWith(
         homunculi: <CharacterProgress>[
           target.copyWith(
@@ -81,5 +83,6 @@ void main() {
       '역할 지원',
       '보조효과 파티 생존력 보조',
     ]);
+    expect(view.assignmentLabel, '배치 상태: 대기');
   });
 }

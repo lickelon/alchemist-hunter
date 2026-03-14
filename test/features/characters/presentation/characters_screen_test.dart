@@ -55,6 +55,7 @@ void main() {
 
     expect(find.text('현재 티어 최대 랭크 도달'), findsOneWidget);
     expect(find.text('티어업 가능'), findsOneWidget);
+    expect(find.text('배치 상태: Stage 1'), findsOneWidget);
     expect(find.text('무기: 미장착'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(FilledButton, '장착').first);
@@ -106,5 +107,6 @@ void main() {
     expect(find.text('출처 Vital Seed Flask'), findsOneWidget);
     expect(find.text('역할 지원'), findsOneWidget);
     expect(find.text('보조효과 파티 생존력 보조'), findsOneWidget);
+    expect(find.text('배치 상태: Stage 1'), findsOneWidget);
   });
 }

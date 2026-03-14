@@ -49,6 +49,7 @@ class CharacterListItemView {
     required this.tierHint,
     required this.equipmentSlots,
     required this.detailLines,
+    required this.assignmentLabel,
   });
 
   final CharacterProgress character;
@@ -56,6 +57,7 @@ class CharacterListItemView {
   final String tierHint;
   final List<CharacterEquipmentSlotView> equipmentSlots;
   final List<String> detailLines;
+  final String assignmentLabel;
 }
 
 final Provider<List<CharacterProgress>> mercenaryListProvider =
@@ -81,6 +83,11 @@ final Provider<List<CharacterListItemView>> mercenaryListItemViewsProvider =
             (SessionState state) => state.town.equipmentInventory,
           ),
         ),
+        stageAssignments: ref.watch(
+          sessionControllerProvider.select(
+            (SessionState state) => state.battle.stageAssignments,
+          ),
+        ),
       );
     });
 
@@ -98,6 +105,11 @@ final Provider<List<CharacterListItemView>> homunculusListItemViewsProvider =
             (SessionState state) => state.town.equipmentInventory,
           ),
         ),
+        stageAssignments: ref.watch(
+          sessionControllerProvider.select(
+            (SessionState state) => state.battle.stageAssignments,
+          ),
+        ),
       );
     });
 
@@ -105,6 +117,7 @@ List<CharacterListItemView> _buildCharacterViews({
   required List<CharacterProgress> characters,
   required Map<String, int> inventory,
   required List<EquipmentInstance> equipmentInventory,
+  required Map<String, List<String>> stageAssignments,
 }) {
   return characters.map((CharacterProgress character) {
     return CharacterListItemView(
@@ -112,6 +125,7 @@ List<CharacterListItemView> _buildCharacterViews({
       rankHint: _rankUpHint(character),
       tierHint: _tierUpHint(character, inventory),
       detailLines: _detailLines(character),
+      assignmentLabel: _assignmentLabel(character.id, stageAssignments),
       equipmentSlots: EquipmentSlot.values
           .map((EquipmentSlot slot) {
             return CharacterEquipmentSlotView(
@@ -155,6 +169,25 @@ String _tierUpHint(CharacterProgress character, Map<String, int> inventory) {
   }
 
   return '티어업 조건: Rank ${character.maxRankForCurrentTier} 도달 필요';
+}
+
+String _assignmentLabel(
+  String characterId,
+  Map<String, List<String>> stageAssignments,
+) {
+  final List<String> assignedStages = stageAssignments.entries
+      .where((MapEntry<String, List<String>> entry) {
+        return entry.value.contains(characterId);
+      })
+      .map((MapEntry<String, List<String>> entry) {
+        return entry.key.replaceFirst('stage_', 'Stage ');
+      })
+      .toList(growable: false);
+
+  if (assignedStages.isEmpty) {
+    return '배치 상태: 대기';
+  }
+  return '배치 상태: ${assignedStages.join(", ")}';
 }
 
 List<String> _detailLines(CharacterProgress character) {

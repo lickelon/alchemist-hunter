@@ -83,6 +83,13 @@ class CharacterCard extends StatelessWidget {
                 context,
               ).textTheme.bodySmall?.copyWith(color: Colors.black54),
             ),
+            const SizedBox(height: 4),
+            Text(
+              item.assignmentLabel,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.black54),
+            ),
             const SizedBox(height: 12),
             const Text(
               '장비 슬롯',
