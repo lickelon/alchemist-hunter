@@ -49,16 +49,18 @@
 ### 2.2 feature-based 폴더 구조 규칙 (확정)
 - [ ] `lib/features` 아래는 반드시 기능 단위로 분리
 - [ ] 공통 `game` 단일 폴더 확장은 지양하고, 각 기능이 독립 구조를 가짐
+- [x] 세부 구조 기준은 `docs/project_structure_principles.md`를 우선 참조
 - 권장 구조:
-  - `lib/features/town/{domain,data,application,presentation}`
-  - `lib/features/workshop/{domain,data,application,presentation}`
-  - `lib/features/characters/{domain,data,application,presentation}`
-  - `lib/features/battle/{domain,data,application,presentation}`
+  - `lib/features/town/{domain,data,presentation}`
+  - `lib/features/workshop/{domain,data,presentation}`
+  - `lib/features/characters/{domain,data,presentation}`
+  - `lib/features/battle/{domain,data,presentation}`
+  - 전역 상태 저장소는 `lib/core/session/*`
 - 규칙:
   - `domain`: 엔티티/값객체/도메인 규칙
   - `data`: 저장소/DTO/더미/로컬DB 구현
-  - `application`: 서비스/유스케이스/상태관리(provider/notifier)
-  - `presentation`: 화면/widget/controller
+  - `presentation`: 화면/widget/controller/viewmodel
+  - 상태 변경 흐름은 `domain/use_cases`, 순수 계산은 `domain/services`
 
 ### 2.3 완료 정의(공통)
 - 코드 작성 + 최소 단위 테스트 추가 + 분석/테스트 통과 시 완료로 본다.
@@ -66,8 +68,8 @@
 
 ### 2.4 아키텍처/폴더 정리 실행안 (신규)
 - [ ] 레이어 경계 강제
-  - `presentation` -> `application`만 참조
-  - `application` -> `domain`, `data(interface)` 참조
+  - `presentation` -> `domain/use_cases`, `presentation/viewmodels`만 참조
+  - `domain/use_cases` -> `domain/services`, `data(interface)` 참조
   - `data` -> `domain` 참조 가능, `presentation` 참조 금지
 - [ ] 공통 모듈 최소화
   - `lib/core`: 라우팅, 공통 에러, 공통 유틸, 테마
@@ -81,7 +83,7 @@
   - 화면: `*_screen.dart`, 컴포넌트: `*_widget.dart`
 - [ ] 의존성 역전 규칙
   - repository는 `domain`에 interface, 구현은 `data`에 배치
-  - `application`은 interface에만 의존
+  - use case는 interface에만 의존
 
 ### 2.5 폴더 마이그레이션 매핑 (신규)
 - [x] 기존 `lib/features/game/*` 분해 이전
@@ -141,13 +143,13 @@
   - 파일: `lib/features/workshop/domain/models.dart`
   - 검증: 복합 trait의 components 구조 확인
 - [x] 복합 -> 단일 분해 로직
-  - 파일: `lib/features/workshop/application/services/alchemy_service.dart`
-  - 테스트: `test/services/alchemy_service_test.dart`
+  - 파일: `lib/features/workshop/domain/services/alchemy_service.dart`
+  - 테스트: `test/features/workshop/domain/services/alchemy_service_test.dart`
 - [x] 단일 -> 복합 합성 로직
-  - 파일: `lib/features/workshop/application/services/alchemy_service.dart`
-  - 테스트: `test/services/alchemy_service_test.dart`
+  - 파일: `lib/features/workshop/domain/services/alchemy_service.dart`
+  - 테스트: `test/features/workshop/domain/services/alchemy_service_test.dart`
 - [x] 추출 프로필(전체/선택) 계산
-  - 파일: `lib/features/workshop/application/services/alchemy_service.dart`
+  - 파일: `lib/features/workshop/domain/services/alchemy_service.dart`
 - [x] 추출 결과를 포션 제조 입력 재고와 연결
   - `WorkshopState.extractedTraitInventory` 도입
   - 제조 큐는 원재료가 아니라 추출 trait 재고를 소비
@@ -181,8 +183,8 @@
 - [x] 큐 데이터 모델(반복, 재시도, eta, 상태)
   - 파일: `lib/features/workshop/domain/models.dart`
 - [x] 큐 처리 tick 로직
-  - 파일: `lib/features/workshop/application/services/craft_queue_service.dart`
-  - 테스트: `test/services/craft_queue_service_test.dart`
+  - 파일: `lib/features/workshop/domain/services/craft_queue_service.dart`
+  - 테스트: `test/features/workshop/domain/services/craft_queue_service_test.dart`
 - [x] UI 연결(큐 등록/틱 처리/상태 표시)
   - 파일: `lib/features/workshop/presentation/screens/workshop_screen.dart`
 - [x] 큐 처리 결과물(포션 완제품) 인벤토리 반영
@@ -202,10 +204,10 @@
 
 #### 3.3.1 상점
 - [x] 2상점 구조(일반/촉매)
-  - 파일: `lib/features/workshop/data/dummy_data.dart`, `lib/features/town/application/town_providers.dart`
+  - 파일: `lib/features/town/data/catalogs/shop_seed.dart`, `lib/core/session/state/town_state.dart`
 - [x] 강제 갱신 누적 비용/주기초기화
-  - 파일: `lib/features/town/application/services/economy_service.dart`
-  - 테스트: `test/services/economy_service_test.dart`
+  - 파일: `lib/features/town/domain/services/economy_service.dart`
+  - 테스트: `test/features/town/domain/services/economy_service_test.dart`
 - [x] UI 강제 갱신 버튼 연결
   - 파일: `lib/features/town/presentation/screens/town_screen.dart`
 - [x] 상점 기능을 마을 화면으로 이전(구매/판매 통합)
@@ -214,9 +216,9 @@
 
 #### 3.3.2 전투 드롭
 - [x] normal/special drop 분리 테이블
-  - 파일: `lib/features/workshop/domain/models.dart`, `lib/features/workshop/data/dummy_data.dart`
+  - 파일: `lib/features/battle/domain/models/battle_models.dart`, `lib/features/battle/data/catalogs/battle_tables.dart`
 - [x] 자동전투 결과 loot 반영
-  - 파일: `lib/features/battle/application/services/battle_service.dart`, `lib/features/battle/application/battle_providers.dart`
+  - 파일: `lib/features/battle/domain/services/battle_service.dart`, `lib/features/battle/domain/use_cases/auto_battle_use_case.dart`
 - [-] 특수 재료 기반 해금 연결
   - 필요 작업:
     - [x] `unlockFlags` 업데이트 조건 추가
@@ -224,8 +226,12 @@
 
 ### 3.4 전투 시스템
 - [x] 완전 자동 전투 진입/결과 반영 흐름
-  - 파일: `lib/features/battle/presentation/screens/dungeon_screen.dart`, `lib/features/battle/application/battle_providers.dart`
+  - 파일: `lib/features/battle/presentation/screens/dungeon_screen.dart`, `lib/features/battle/domain/use_cases/auto_battle_use_case.dart`
 - [x] 실패 경미 페널티(골드 감소) 적용
+- [x] 장착 장비/인챈트 스탯 기반 파티 전투력 반영
+- [-] 전투 화면 파티 전투력 표시
+  - 현재: `Party` 수치 노출
+  - 미완료: 권장 전투력 대비 비교/승률 안내
 - [ ] 스테이지별 적 세트/권장 전투력/승률 곡선 반영
 - [ ] 포션 loadout 소모 규칙 반영
 - [ ] 전투 로그 상세(턴, 치명, 회피, 드롭 근거) 출력
@@ -240,21 +246,22 @@
   - 상한 시간(8~12h) 정책 적용
 
 ### 3.6 장비 제작/인챈트 시스템 (신규)
-- [ ] 장비 도메인 모델 추가
+- [x] 장비 도메인 모델 추가
   - `EquipmentBase`: 기본 스탯, 등급, 슬롯
   - `EquipmentEnchant`: 주입 포션 ID, 강화 배율, 추가 효과
   - `EquipmentInstance`: 실제 보유 장비(기본+인챈트 상태)
-- [ ] 마을 제작 서비스
-  - 입력: 장비 블루프린트, 재료/골드
+- [x] 마을 제작 서비스
+  - 입력: 장비 블루프린트, 재료
   - 출력: 인챈트 전 장비 인스턴스
-- [ ] 작업실 인챈트 서비스
+- [x] 작업실 인챈트 서비스
   - 입력: 장비 인스턴스, 포션
   - 처리: 포션 품질/trait 매칭으로 강화 수치 계산
   - 출력: 인챈트 적용 장비
-- [ ] 인챈트 규칙
-  - 기본 스탯 증폭(공격/방어/체력 등)
-  - 조건부 부가효과 부여(예: 치명 확률, 재생, 드롭률 보정)
-  - 실패 시 경미 페널티(포션 소모, 장비 보존)
+- [-] 인챈트 규칙
+  - [x] 기본 스탯 증폭(공격/방어/체력 등)
+  - [x] dominant trait + 품질 기반 강화량 계산
+  - [ ] 조건부 부가효과 부여(예: 치명 확률, 재생, 드롭률 보정)
+  - [ ] 강화 결과 미리보기 / 교체 확인 UX
 
 ### 3.7 용병 고용 시스템 (신규)
 - [ ] 용병 도메인 모델
@@ -269,7 +276,7 @@
   - 용병 상태(대기/배치/전투중) 관리
 
 ### 3.8 캐릭터 체계: 용병 + 호문쿨루스 (신규 확정)
-- [ ] 캐릭터 타입을 2종으로 고정
+- [x] 캐릭터 타입을 2종으로 고정
   - `Mercenary`: 마을에서 고용하는 인력
   - `Homunculus`: 제조/인챈트/전투 시너지용 성장체
 - [ ] 공통 캐릭터 인터페이스
@@ -277,29 +284,29 @@
   - 타입별 추가 필드:
     - `Mercenary`: hireCost, role, contractState
     - `Homunculus`: growthStage, affinityTraits, synthesisHistory
-- [ ] 공통 성장 축(레벨/랭크/티어) 도입
+- [x] 공통 성장 축(레벨/랭크/티어) 도입
   - `Level`: 경험치 획득 시 자동 상승
   - `Rank`: 수동 승급, 승급 시 레벨 1로 초기화
   - `Tier`: 해당 티어 최대 랭크 달성 시 승급 가능
-- [ ] 랭크별 최대 레벨 규칙
+- [x] 랭크별 최대 레벨 규칙
   - Rank 1 max level = 5
   - Rank 2 max level = 10
   - 일반식: `Rank N max level = N * 5`
-- [ ] 랭크업 규칙
+- [x] 랭크업 규칙
   - 현재 랭크 최대 레벨 도달 시에만 수동 랭크업 버튼 활성화
   - 랭크업 시 레벨은 1로 변경, 랭크 보정 스탯/보너스 적용
-- [ ] 티어업 규칙
+- [x] 티어업 규칙
   - 현재 티어의 최대 랭크 달성 시 수동 티어업 가능
   - 티어업 시 랭크/레벨 초기화 여부는 타입별 정책으로 분리(초기 MVP는 둘 다 초기화)
   - 티어업 시 타입/티어별 승급 재료 필요(용병/호문쿨루스 재료 풀 분리)
   - 예: `MercenaryTierMaterial[Tier]`, `HomunculusTierMaterial[Tier]`
-- [ ] 용병 티어 정의(5단계 고정)
+- [x] 용병 티어 정의(5단계 고정)
   - 1: `Rookie`
   - 2: `Veteran`
   - 3: `Elite`
   - 4: `Champion`
   - 5: `Legend`
-- [ ] 호문쿨루스 티어 정의(4단계 고정)
+- [x] 호문쿨루스 티어 정의(4단계 고정)
   - 1: `Nigredo (흑화)`
   - 2: `Albedo (백화)`
   - 3: `Citrinitas (황화)`
@@ -307,7 +314,7 @@
 - [ ] 편성 규칙
   - 전투 파티에 용병/호문쿨루스 혼합 편성 가능
   - 작업실 보조 슬롯은 호문쿨루스 우선 배치(보너스 계수)
-- [ ] 성장 규칙
+- [x] 성장 규칙
   - 용병: 전투 경험치 기반 레벨 성장 + 랭크/티어 승급
   - 호문쿨루스: 전투 경험치 기반 레벨 성장 + 랭크/티어 승급
   - 레벨 경험치 획득 소스는 전투 결과로 통일(작업실 활동은 레벨 XP 미지급)
@@ -392,7 +399,7 @@
 ### 4.3 마을(Town) 화면 책임 (신규)
 - [x] 상점 구매(일반/촉매)
 - [x] 포션 판매(묶음 판매 + 예상 수익)
-- [ ] 기본 장비 제작
+- [x] 기본 장비 제작
 - [ ] 용병 고용/해고
 - [ ] 보유 용병 목록 및 대기열 표시
 - [ ] 호문쿨루스 관리 진입(생성/강화 화면 링크)
@@ -414,7 +421,9 @@
 
 ### 4.5 캐릭터(Character) 화면 책임 (신규)
 - [x] 탭을 `용병 / 호문쿨루스` 서브탭으로 분리
-- [ ] 용병 목록: 역할, 장비, 배치 상태, 계약 상태 표시
+- [-] 용병 목록: 역할, 장비, 배치 상태, 계약 상태 표시
+  - [x] 장비 슬롯/장착 상태 표시
+  - [ ] 역할/배치 상태/계약 상태 표시
 - [ ] 호문쿨루스 목록: 성장 단계, 친화 특성, 보조 효과 표시
 - [ ] 캐릭터 상세에서 전투/작업실 배치 전환 가능
 - [-] 성장 패널
@@ -439,15 +448,16 @@
   - [ ] 상세 뷰에서 개별 인스턴스 정보 표시: 품질, 인챈트, 옵션 롤, 획득 시각
   - [ ] 보유 특성(단일/복합) 목록, potency, 출처 표시
   - [ ] 정렬(수량/희귀도/최근 획득) 및 검색 지원
-- [ ] 추출 패널
 - [x] 추출 패널
   - 재료 선택 -> 분석 결과 -> 추출 프로필 선택 -> 추출 실행
   - 현재 보유 추출 trait 재고 표시
 - [x] 제조 패널
   - 포션 선택 -> 목표 trait 비율 확인 -> 큐 등록(반복/차단 시 재개)
   - 특수 포션 잠금 시 조건 문구 표시(`m_27`, `m_30` 드롭 필요)
-- [ ] 인챈트 패널
-  - 장비 선택 -> 포션 선택 -> 강화 결과 미리보기 -> 적용
+- [-] 인챈트 패널
+  - [x] 장비 선택 -> 포션 선택 -> 적용
+  - [x] 보관 장비/장착 장비 모두 선택 가능
+  - [ ] 강화 결과 미리보기 -> 적용
 - [ ] 부화 패널(호문쿨루스)
   - 부화식 선택 -> 재료 투입 -> 시간 진행 -> 결과 수령
 - [ ] 공통 완료 기준
@@ -484,6 +494,9 @@
 - [x] 추출 로직 테스트(복합 trait 평탄화)
 - [x] 추출 패널 위젯 테스트(추출 trait 재고/분석 진입)
 - [x] 전투/캐릭터 조건 문구 프레젠테이션 테스트
+- [x] 캐릭터 장비 장착/해제 use case/controller/screen 테스트
+- [x] 전투 파티 전투력 계산/장비 반영 테스트
+- [x] 인챈트 서비스/use case/작업실 시트 테스트
 
 ### 6.2 추가 필요 테스트
 - [ ] 품질 점수 계산 경계값 테스트
@@ -533,6 +546,11 @@
 - [x] 용병/호문쿨루스 공통 성장축(Level/Rank/Tier) 적용
 - [x] 전투 기반 XP 성장 + 랭크업/티어업 플로우
 - [x] 티어 승급 재료(타입/티어별) 소모 규칙 적용
+- [x] 장비 장착/해제 + 캐릭터 슬롯 UI 연결
+- [x] 장착 장비/인챈트 기반 전투력 반영
+- [-] 작업실 인챈트 골격
+  - [x] 포션 소모 -> 장비 강화 -> 전투력 반영
+  - [ ] 강화 결과 미리보기/교체 정책
 - [-] 특수 재료 기반 콘텐츠 해금 UI(잠김/조건 표시)
   - [x] 작업실 포션 등록 UI 잠금/조건 표시
   - [x] 전투 스테이지 잠금 조건 문구 확장
@@ -560,8 +578,8 @@
 - [ ] 편의성 과금 훅(슬롯 확장/가속) 최소 연동
 
 ## 8) 즉시 다음 작업(실행 순서)
-1. `M3 진행: 특수 재료 기반 해금 UI(잠금/조건 표기) 완성`
-2. `M3 진행: 캐릭터 성장 수치 밸런스(경험치 곡선/랭크 캡) 조정`
+1. `M3 진행: 인챈트 결과 미리보기/교체 확인 UX 정리`
+2. `M3 진행: 용병 고용 골격(마을 확보 -> 캐릭터 목록 연결)`
 3. `M4 준비: 마을/작업실 스킬트리 노드 데이터 스키마 확정`
 4. `M4 착수: 이원화 스킬트리 + 복합 비용 결제`
 5. `M5 준비: 로컬 저장소 스키마/마이그레이션 설계`
