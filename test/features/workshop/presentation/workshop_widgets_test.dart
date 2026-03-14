@@ -182,6 +182,13 @@ void main() {
       expect(find.text('보유 추출 특성'), findsOneWidget);
       expect(find.textContaining('Vital 0.85'), findsOneWidget);
       expect(find.text('분석/추출'), findsOneWidget);
+
+      await tester.tap(find.text('분석/추출'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('보유 2개'), findsOneWidget);
+      expect(find.text('추출 수량'), findsOneWidget);
+      expect(find.text('최대'), findsOneWidget);
     },
   );
 }

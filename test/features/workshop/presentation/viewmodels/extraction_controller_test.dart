@@ -24,6 +24,31 @@ void main() {
     expect(session.state.player.materialInventory.containsKey('m_1'), false);
     expect(session.state.workshop.extractedTraitInventory['t_hp'], isNotNull);
     expect(session.state.workshop.extractedTraitInventory['t_spd'], isNotNull);
-    expect(session.state.workshop.logs.first, 'Extracted m_1 with full_basic');
+    expect(session.state.workshop.logs.first, 'Extracted m_1 x1 with full_basic');
+  });
+
+  test('extractMaterial supports bulk quantity', () {
+    final SessionController session = buildSession();
+    final WorkshopExtractionController controller =
+        WorkshopExtractionController(session, AlchemyService());
+
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: const <String, int>{'m_1': 3},
+      ),
+    );
+
+    controller.extractMaterial('m_1', 'full_basic', quantity: 2);
+
+    expect(session.state.player.materialInventory['m_1'], 1);
+    expect(
+      session.state.workshop.extractedTraitInventory['t_hp'],
+      closeTo(1.7, 0.0001),
+    );
+    expect(
+      session.state.workshop.extractedTraitInventory['t_spd'],
+      closeTo(1.7, 0.0001),
+    );
+    expect(session.state.workshop.logs.first, 'Extracted m_1 x2 with full_basic');
   });
 }

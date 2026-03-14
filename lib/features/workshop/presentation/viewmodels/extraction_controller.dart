@@ -20,6 +20,7 @@ class WorkshopExtractionController {
   void extractMaterial(
     String materialId,
     String profileId, {
+    int quantity = 1,
     List<String>? selectedTraits,
   }) {
     final SessionState current = _session.snapshot();
@@ -28,13 +29,14 @@ class WorkshopExtractionController {
       materialId: materialId,
       profileId: profileId,
       alchemyService: _alchemyService,
+      quantity: quantity,
       selectedTraits: selectedTraits,
     );
     _session.applyState(nextState);
     _session.appendLog(
       identical(nextState, current)
-          ? 'Cannot extract $materialId / unavailable'
-          : 'Extracted $materialId with $profileId',
+          ? 'Cannot extract $materialId x$quantity / unavailable'
+          : 'Extracted $materialId x$quantity with $profileId',
     );
   }
 }

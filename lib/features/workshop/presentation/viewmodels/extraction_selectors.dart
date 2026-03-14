@@ -62,12 +62,14 @@ class MaterialExtractionDetailView {
   const MaterialExtractionDetailView({
     required this.materialId,
     required this.materialName,
+    required this.ownedQuantity,
     required this.traits,
     required this.profiles,
   });
 
   final String materialId;
   final String materialName;
+  final int ownedQuantity;
   final List<ExtractionTraitOptionView> traits;
   final List<ExtractionProfileOptionView> profiles;
 }
@@ -160,6 +162,13 @@ final materialExtractionDetailViewProvider =
       return MaterialExtractionDetailView(
         materialId: material.id,
         materialName: material.name,
+        ownedQuantity:
+            ref.watch(
+              sessionControllerProvider.select(
+                (SessionState state) =>
+                    state.player.materialInventory[material.id] ?? 0,
+              ),
+            ),
         traits: material.traits
             .map(
               (TraitUnit trait) => ExtractionTraitOptionView(

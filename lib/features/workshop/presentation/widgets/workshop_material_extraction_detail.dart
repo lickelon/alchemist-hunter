@@ -18,6 +18,7 @@ class WorkshopMaterialExtractionDetail extends ConsumerStatefulWidget {
 class _WorkshopMaterialExtractionDetailState
     extends ConsumerState<WorkshopMaterialExtractionDetail> {
   final Set<String> _selectedTraits = <String>{};
+  int _quantity = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +31,15 @@ class _WorkshopMaterialExtractionDetailState
     if (detail == null) {
       return const SizedBox.shrink();
     }
+    final int selectedQuantity = _quantity > detail.ownedQuantity
+        ? detail.ownedQuantity
+        : _quantity;
+    final List<int> quantityOptions = <int>{
+      1,
+      if (detail.ownedQuantity >= 5) 5,
+      if (detail.ownedQuantity >= 10) 10,
+      detail.ownedQuantity,
+    }.where((int value) => value > 0).toList()..sort();
 
     return SafeArea(
       child: Padding(
@@ -43,6 +53,30 @@ class _WorkshopMaterialExtractionDetailState
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 8),
+            Text('보유 ${detail.ownedQuantity}개'),
+            const SizedBox(height: 8),
+            const Text('추출 수량', style: TextStyle(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: quantityOptions.map((int quantity) {
+                final bool selected = quantity == selectedQuantity;
+                final String label = quantity == detail.ownedQuantity
+                    ? '최대'
+                    : 'x$quantity';
+                return ChoiceChip(
+                  label: Text(label),
+                  selected: selected,
+                  onSelected: (_) {
+                    setState(() {
+                      _quantity = quantity;
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 12),
             const Text('분석 결과', style: TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: 6),
             Wrap(
@@ -77,6 +111,7 @@ class _WorkshopMaterialExtractionDetailState
                 controller.extractMaterial(
                   detail.materialId,
                   profileId,
+                  quantity: selectedQuantity,
                   selectedTraits: _selectedTraits.isEmpty
                       ? null
                       : _selectedTraits.toList(),

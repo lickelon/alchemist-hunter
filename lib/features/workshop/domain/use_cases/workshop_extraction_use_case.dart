@@ -12,10 +12,11 @@ class WorkshopExtractionUseCase {
     required String materialId,
     required String profileId,
     required AlchemyService alchemyService,
+    int quantity = 1,
     List<String>? selectedTraits,
   }) {
     final int owned = state.player.materialInventory[materialId] ?? 0;
-    if (owned <= 0) {
+    if (owned <= 0 || quantity <= 0 || owned < quantity) {
       return state;
     }
 
@@ -46,7 +47,7 @@ class WorkshopExtractionUseCase {
     final Map<String, int> materials = <String, int>{
       ...state.player.materialInventory,
     };
-    final int nextCount = owned - 1;
+    final int nextCount = owned - quantity;
     if (nextCount <= 0) {
       materials.remove(materialId);
     } else {
@@ -57,7 +58,7 @@ class WorkshopExtractionUseCase {
       ...state.workshop.extractedTraitInventory,
     };
     extractedTraits.forEach((String traitId, double amount) {
-      inventory[traitId] = (inventory[traitId] ?? 0) + amount;
+      inventory[traitId] = (inventory[traitId] ?? 0) + (amount * quantity);
     });
 
     return state.copyWith(
