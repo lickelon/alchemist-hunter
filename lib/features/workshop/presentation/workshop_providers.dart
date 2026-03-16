@@ -7,6 +7,8 @@ export 'viewmodels/hatch_controller.dart';
 export 'viewmodels/hatch_selectors.dart';
 export 'viewmodels/workshop_skill_tree_controller.dart';
 export 'viewmodels/workshop_skill_tree_selectors.dart';
+export 'viewmodels/workshop_support_controller.dart';
+export 'viewmodels/workshop_support_selectors.dart';
 export 'viewmodels/workshop_service_providers.dart';
 export 'viewmodels/workshop_shared_selectors.dart';
 export 'viewmodels/craft_queue/craft_queue_job_selectors.dart';

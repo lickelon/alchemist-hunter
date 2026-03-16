@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_shared_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/enchant/enchant_equipment_lookup.dart';
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
@@ -62,12 +63,7 @@ final enchantPreviewProvider =
             equipment: equipment,
             potion: potion,
             blueprint: blueprint,
-            potencyBonusRate: ref
-                .watch(workshopSkillTreeServiceProvider)
-                .enchantPotencyBonusRate(
-                  state,
-                  ref.watch(workshopSkillNodesProvider),
-                ),
+            potencyBonusRate: ref.watch(workshopEnchantPotencyBonusRateProvider),
           );
       final EquipmentInstance previewEquipment = equipment.copyWith(
         enchant: nextEnchant,

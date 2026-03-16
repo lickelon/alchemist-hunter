@@ -16,6 +16,11 @@ class WorkshopScreen extends ConsumerWidget {
     );
     final int totalSkillNodes = ref.watch(workshopSkillNodeCountProvider);
     final int homunculusCount = ref.watch(workshopHomunculusCountProvider);
+    final int supportAssignedCount = ref.watch(
+      workshopSupportAssignedCountProvider,
+    );
+    final int supportSlotLimit = ref.watch(workshopSupportSlotLimitProvider);
+    final String supportSummary = ref.watch(workshopSupportSummaryProvider);
     final List<ExtractedTraitInventoryView> extractedTraits = ref.watch(
       extractedTraitViewsProvider,
     );
@@ -46,7 +51,7 @@ class WorkshopScreen extends ConsumerWidget {
             leading: const Icon(Icons.science_outlined),
             title: const Text('Workshop Resources'),
             subtitle: Text(
-              'Essence: $essence / ArcaneDust: $arcaneDust / Skill Nodes: $unlockedSkillNodes/$totalSkillNodes',
+              'Essence: $essence / ArcaneDust: $arcaneDust / Skill Nodes: $unlockedSkillNodes/$totalSkillNodes / Support: $supportAssignedCount/$supportSlotLimit',
             ),
           ),
         ),
@@ -59,6 +64,12 @@ class WorkshopScreen extends ConsumerWidget {
         WorkshopSkillTreeCard(
           unlockedCount: unlockedSkillNodes,
           totalCount: totalSkillNodes,
+        ),
+        const SizedBox(height: 8),
+        WorkshopSupportCard(
+          assignedCount: supportAssignedCount,
+          slotLimit: supportSlotLimit,
+          summary: supportSummary,
         ),
         const SizedBox(height: 8),
         WorkshopQueueCard(jobCount: queue.length),

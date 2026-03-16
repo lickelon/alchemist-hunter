@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_shared_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
 class MaterialInventoryView {
   const MaterialInventoryView({
@@ -185,7 +185,7 @@ final materialExtractionDetailViewProvider =
                 id: profile.id,
                 title: profile.mode == ExtractionMode.full ? '전체 추출' : '선택 추출',
                 subtitle:
-                    '수율 ${(profile.yieldRate * (1 + ref.watch(workshopSkillTreeServiceProvider).extractionYieldBonusRate(ref.watch(sessionControllerProvider), ref.watch(workshopSkillNodesProvider)))).toStringAsFixed(2)} / 순도 ${profile.purityRate.toStringAsFixed(2)}',
+                    '수율 ${(profile.yieldRate * (1 + ref.watch(workshopExtractionYieldBonusRateProvider))).toStringAsFixed(2)} / 순도 ${profile.purityRate.toStringAsFixed(2)}',
                 requiresSelection: profile.mode == ExtractionMode.selective,
               ),
             )

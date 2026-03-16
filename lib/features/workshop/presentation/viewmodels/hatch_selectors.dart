@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 
 class HomunculusHatchRecipeView {
@@ -48,8 +49,14 @@ final Provider<List<HomunculusHatchRecipeView>> homunculusHatchRecipeViewsProvid
       return ref.watch(homunculusHatchRecipesProvider).map((
         HomunculusHatchRecipe recipe,
       ) {
+        final int arcaneDustCost = (recipe.arcaneDustCost -
+                ref.watch(workshopSupportServiceProvider).hatchArcaneDustDiscount(
+                      state,
+                    ))
+            .clamp(0, recipe.arcaneDustCost)
+            .toInt();
         final bool enoughEssence = state.player.essence >= recipe.essenceCost;
-        final bool enoughDust = state.player.arcaneDust >= recipe.arcaneDustCost;
+        final bool enoughDust = state.player.arcaneDust >= arcaneDustCost;
         final bool enoughMaterials = recipe.materialCosts.entries.every(
           (MapEntry<String, int> entry) =>
               (state.player.materialInventory[entry.key] ?? 0) >= entry.value,
@@ -81,7 +88,7 @@ final Provider<List<HomunculusHatchRecipeView>> homunculusHatchRecipeViewsProvid
           roleLabel: recipe.roleLabel,
           supportEffectLabel: recipe.supportEffectLabel,
           costLabel:
-              'Essence ${recipe.essenceCost} / ArcaneDust ${recipe.arcaneDustCost}${materialCostLabel.isEmpty ? "" : " / $materialCostLabel"}${traitCostLabel.isEmpty ? "" : " / $traitCostLabel"}',
+              'Essence ${recipe.essenceCost} / ArcaneDust $arcaneDustCost${materialCostLabel.isEmpty ? "" : " / $materialCostLabel"}${traitCostLabel.isEmpty ? "" : " / $traitCostLabel"}',
           canHatch: enoughEssence && enoughDust && enoughMaterials && enoughTraits,
         );
       }).toList(growable: false);
