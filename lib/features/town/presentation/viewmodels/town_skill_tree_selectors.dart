@@ -10,9 +10,12 @@ class TownSkillNodeView {
     required this.id,
     required this.name,
     required this.description,
+    required this.depth,
     required this.levelLabel,
     required this.costLabel,
-    required this.effectLabel,
+    required this.currentEffectLabel,
+    required this.nextEffectLabel,
+    required this.prerequisiteLabel,
     required this.statusLabel,
     required this.upgradeable,
   });
@@ -20,9 +23,12 @@ class TownSkillNodeView {
   final String id;
   final String name;
   final String description;
+  final int depth;
   final String levelLabel;
   final String costLabel;
-  final String effectLabel;
+  final String currentEffectLabel;
+  final String nextEffectLabel;
+  final String prerequisiteLabel;
   final String statusLabel;
   final bool upgradeable;
 }
@@ -59,6 +65,7 @@ final Provider<List<TownSkillNodeView>> townSkillNodeViewsProvider =
           id: node.id,
           name: node.name,
           description: node.description,
+          depth: _depthForNode(node, nodes),
           levelLabel: 'Lv $level/${node.maxLevel}',
           costLabel: costs.isEmpty
               ? '비용 없음'
@@ -69,9 +76,62 @@ final Provider<List<TownSkillNodeView>> townSkillNodeViewsProvider =
                   };
                   return '$label ${cost.amount}';
                 }).join(' / '),
-          effectLabel: node.effects.map((TownSkillEffect e) => e.label).join(', '),
+          currentEffectLabel: _effectPreview(node.effects, level),
+          nextEffectLabel: _effectPreview(
+            node.effects,
+            level < node.maxLevel ? level + 1 : level,
+          ),
+          prerequisiteLabel: node.prerequisiteNodeIds.isEmpty
+              ? '루트 노드'
+              : '선행 ${node.prerequisiteNodeIds.join(", ")}',
           statusLabel: statusLabel,
           upgradeable: upgradeable,
         );
       }).toList(growable: false);
     });
+
+int _depthForNode(TownSkillNode node, List<TownSkillNode> nodes) {
+  if (node.prerequisiteNodeIds.isEmpty) {
+    return 0;
+  }
+  final Map<String, TownSkillNode> nodeMap = <String, TownSkillNode>{
+    for (final TownSkillNode item in nodes) item.id: item,
+  };
+  int maxDepth = 0;
+  for (final String prerequisiteId in node.prerequisiteNodeIds) {
+    final TownSkillNode? prerequisite = nodeMap[prerequisiteId];
+    if (prerequisite == null) {
+      continue;
+    }
+    final int prerequisiteDepth = _depthForNode(prerequisite, nodes) + 1;
+    if (prerequisiteDepth > maxDepth) {
+      maxDepth = prerequisiteDepth;
+    }
+  }
+  return maxDepth;
+}
+
+String _effectPreview(List<TownSkillEffect> effects, int level) {
+  if (level <= 0) {
+    return '효과 없음';
+  }
+  return effects.map((TownSkillEffect effect) {
+    final double amount = effect.value * level;
+    final String valueLabel = switch (effect.modifierType) {
+      TownSkillModifierType.percent => '${(amount * 100).round()}%',
+      TownSkillModifierType.flat => amount.round().toString(),
+    };
+    final String typeLabel = switch (effect.type) {
+      TownSkillEffectType.shopRefreshDiscount => '강제 갱신 비용',
+      TownSkillEffectType.potionSaleBonus => '포션 판매가',
+      TownSkillEffectType.equipmentCraftEfficiency => '장비 제작 효율',
+      TownSkillEffectType.mercenaryHireDiscount => '용병 고용 비용',
+    };
+    final String sign = effect.modifierType == TownSkillModifierType.percent &&
+            effect.type == TownSkillEffectType.shopRefreshDiscount ||
+        effect.type == TownSkillEffectType.mercenaryHireDiscount
+        ? '-'
+        : '+';
+    return '$typeLabel $sign$valueLabel';
+  }).join(' / ');
+}

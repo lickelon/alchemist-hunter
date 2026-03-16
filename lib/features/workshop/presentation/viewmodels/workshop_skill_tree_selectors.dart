@@ -10,9 +10,12 @@ class WorkshopSkillNodeView {
     required this.id,
     required this.name,
     required this.description,
+    required this.depth,
     required this.levelLabel,
     required this.costLabel,
-    required this.effectLabel,
+    required this.currentEffectLabel,
+    required this.nextEffectLabel,
+    required this.prerequisiteLabel,
     required this.statusLabel,
     required this.upgradeable,
   });
@@ -20,9 +23,12 @@ class WorkshopSkillNodeView {
   final String id;
   final String name;
   final String description;
+  final int depth;
   final String levelLabel;
   final String costLabel;
-  final String effectLabel;
+  final String currentEffectLabel;
+  final String nextEffectLabel;
+  final String prerequisiteLabel;
   final String statusLabel;
   final bool upgradeable;
 }
@@ -59,6 +65,7 @@ final Provider<List<WorkshopSkillNodeView>> workshopSkillNodeViewsProvider =
           id: node.id,
           name: node.name,
           description: node.description,
+          depth: _depthForNode(node, nodes),
           levelLabel: 'Lv $level/${node.maxLevel}',
           costLabel: costs.isEmpty
               ? '비용 없음'
@@ -70,11 +77,57 @@ final Provider<List<WorkshopSkillNodeView>> workshopSkillNodeViewsProvider =
                       '${cost.elementId ?? "Element"} ${cost.amount}',
                   };
                 }).join(' / '),
-          effectLabel: node.effects
-              .map((WorkshopSkillEffect e) => e.label)
-              .join(', '),
+          currentEffectLabel: _effectPreview(node.effects, level),
+          nextEffectLabel: _effectPreview(
+            node.effects,
+            level < node.maxLevel ? level + 1 : level,
+          ),
+          prerequisiteLabel: node.prerequisiteNodeIds.isEmpty
+              ? '루트 노드'
+              : '선행 ${node.prerequisiteNodeIds.join(", ")}',
           statusLabel: statusLabel,
           upgradeable: upgradeable,
         );
       }).toList(growable: false);
     });
+
+int _depthForNode(WorkshopSkillNode node, List<WorkshopSkillNode> nodes) {
+  if (node.prerequisiteNodeIds.isEmpty) {
+    return 0;
+  }
+  final Map<String, WorkshopSkillNode> nodeMap = <String, WorkshopSkillNode>{
+    for (final WorkshopSkillNode item in nodes) item.id: item,
+  };
+  int maxDepth = 0;
+  for (final String prerequisiteId in node.prerequisiteNodeIds) {
+    final WorkshopSkillNode? prerequisite = nodeMap[prerequisiteId];
+    if (prerequisite == null) {
+      continue;
+    }
+    final int prerequisiteDepth = _depthForNode(prerequisite, nodes) + 1;
+    if (prerequisiteDepth > maxDepth) {
+      maxDepth = prerequisiteDepth;
+    }
+  }
+  return maxDepth;
+}
+
+String _effectPreview(List<WorkshopSkillEffect> effects, int level) {
+  if (level <= 0) {
+    return '효과 없음';
+  }
+  return effects.map((WorkshopSkillEffect effect) {
+    final double amount = effect.value * level;
+    final String valueLabel = switch (effect.modifierType) {
+      WorkshopSkillModifierType.percent => '${(amount * 100).round()}%',
+      WorkshopSkillModifierType.flat => amount.round().toString(),
+    };
+    final String typeLabel = switch (effect.type) {
+      WorkshopSkillEffectType.extractionYield => '추출 수율',
+      WorkshopSkillEffectType.craftQueueCapacity => '제작 큐 용량',
+      WorkshopSkillEffectType.enchantPotency => '인챈트 강화량',
+      WorkshopSkillEffectType.hatchAcceleration => '부화 속도',
+    };
+    return '$typeLabel +$valueLabel';
+  }).join(' / ');
+}
