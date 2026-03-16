@@ -25,28 +25,90 @@ class DungeonScreen extends ConsumerWidget {
           battleStageAssignmentProvider(stage),
         ).length;
         final int partyPower = ref.watch(battleStagePartyPowerProvider(stage));
+        final BattleExpeditionState expedition = ref.watch(
+          battleStageExpeditionStateProvider(stage),
+        );
+        final String statusLabel = ref.watch(
+          battleStageStatusLabelProvider(stage),
+        );
+        final String pendingLabel = ref.watch(
+          battleStagePendingClaimLabelProvider(stage),
+        );
+        final bool canStart =
+            unlocked &&
+            assignedCount > 0 &&
+            expedition.status != BattleExpeditionStatus.running;
+        final bool canStop = expedition.status == BattleExpeditionStatus.running;
+        final bool canClaim = unlocked && !expedition.pendingClaim.isEmpty;
         final String summary =
-            '편성 $assignedCount명 / 전투력 $partyPower / Gold: $gold / Essence: $essence';
+            '편성 $assignedCount명 / 전투력 $partyPower / $statusLabel / Gold: $gold / Essence: $essence';
 
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          child: ListTile(
+          child: InkWell(
             onTap: () => _showAssignmentSheet(context, stage),
-            isThreeLine: !unlocked,
-            leading: const Icon(Icons.shield),
-            title: Text(stageLabel),
-            subtitle: Text(
-              unlocked
-                  ? 'Auto battle / $summary'
-                  : '$summary\n${_lockedReason(stage)}',
-            ),
-            trailing: FilledButton(
-              onPressed: unlocked && assignedCount > 0
-                  ? () {
-                      ref.read(battleControllerProvider).runAutoBattle(stage);
-                    }
-                  : null,
-              child: Text(unlocked ? 'Run' : 'Locked'),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      const Icon(Icons.shield),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          stageLabel,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    unlocked
+                        ? '$summary\n$pendingLabel${expedition.lastSummary.isEmpty ? "" : "\n최근 ${expedition.lastSummary}"}'
+                        : '$summary\n${_lockedReason(stage)}',
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: !unlocked
+                              ? null
+                              : canStop
+                              ? () {
+                                  ref.read(battleControllerProvider).stopExpedition(stage);
+                                }
+                              : canStart
+                              ? () {
+                                  ref.read(battleControllerProvider).startExpedition(stage);
+                                }
+                              : null,
+                          child: Text(
+                            !unlocked ? '잠김' : canStop ? '정지' : '원정 시작',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: FilledButton.tonal(
+                          onPressed: canClaim
+                              ? () {
+                                  ref.read(battleControllerProvider).claimStageRewards(stage);
+                                }
+                              : null,
+                          child: const Text('수령'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

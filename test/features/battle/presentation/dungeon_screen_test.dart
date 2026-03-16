@@ -51,7 +51,7 @@ void main() {
       find.textContaining('잠금 조건: 특수 재료 Moontear Crystal 1개 이상 획득'),
       findsOneWidget,
     );
-    expect(find.text('Locked'), findsWidgets);
+    expect(find.text('잠김'), findsWidgets);
 
     await tester.tap(find.text('Stage 1'));
     await tester.pumpAndSettle();

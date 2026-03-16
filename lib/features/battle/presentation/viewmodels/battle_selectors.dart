@@ -65,6 +65,21 @@ final battleStageAssignmentProvider =
       );
     });
 
+final battleStageExpeditionStateProvider =
+    Provider.family<BattleExpeditionState, String>((Ref ref, String stageId) {
+      return ref.watch(
+        sessionControllerProvider.select(
+          (SessionState state) =>
+              state.battle.stageExpeditions[stageId] ??
+              const BattleExpeditionState(
+                status: BattleExpeditionStatus.idle,
+                lastResolvedAt: null,
+                cycleProgress: Duration.zero,
+              ),
+        ),
+      );
+    });
+
 final battleStagePartyPowerProvider =
     Provider.family<int, String>((Ref ref, String stageId) {
       final List<String> assignedIds = ref.watch(
@@ -78,6 +93,33 @@ final battleStagePartyPowerProvider =
         ),
         assignedCharacterIds: assignedIds,
       );
+    });
+
+final battleStageStatusLabelProvider =
+    Provider.family<String, String>((Ref ref, String stageId) {
+      final BattleExpeditionState expedition = ref.watch(
+        battleStageExpeditionStateProvider(stageId),
+      );
+      return switch (expedition.status) {
+        BattleExpeditionStatus.idle => '대기',
+        BattleExpeditionStatus.running =>
+          '원정 중 / ${expedition.cycleProgress.inSeconds}s 진행',
+        BattleExpeditionStatus.paused =>
+          '정지 / ${expedition.cycleProgress.inSeconds}s 진행',
+      };
+    });
+
+final battleStagePendingClaimLabelProvider =
+    Provider.family<String, String>((Ref ref, String stageId) {
+      final BattleExpeditionState expedition = ref.watch(
+        battleStageExpeditionStateProvider(stageId),
+      );
+      final BattlePendingClaim claim = expedition.pendingClaim;
+      final int materialKinds = claim.materials.length;
+      if (claim.isEmpty) {
+        return '수령 대기 보상 없음';
+      }
+      return 'Gold ${claim.gold >= 0 ? '+' : ''}${claim.gold} / Essence +${claim.essence} / 재료 $materialKinds종 / XP ${claim.characterXp.values.fold<int>(0, (int total, int value) => total + value)}';
     });
 
 final battleStageAssignmentCharacterViewsProvider =

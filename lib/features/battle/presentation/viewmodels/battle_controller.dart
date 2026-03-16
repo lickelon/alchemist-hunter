@@ -1,11 +1,13 @@
 import 'dart:math';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/battle/domain/use_cases/configure_battle_assignment_use_case.dart';
-import 'package:alchemist_hunter/features/battle/domain/use_cases/auto_battle_use_case.dart';
-import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/features/battle/battle_catalog.dart';
+import 'package:alchemist_hunter/features/battle/domain/use_cases/configure_battle_assignment_use_case.dart';
+import 'package:alchemist_hunter/features/battle/domain/use_cases/battle_expedition_use_case.dart';
+import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_resolver.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,41 +17,115 @@ final Provider<BattleService> battleServiceProvider = Provider<BattleService>(
 
 class BattleController {
   BattleController(
-    this._session,
-    this._battleService, {
-    AutoBattleUseCase battleDomain = const AutoBattleUseCase(),
+    this._session, {
+    BattleService? battleService,
+    BattleExpeditionUseCase battleExpeditionUseCase =
+        const BattleExpeditionUseCase(),
     ConfigureBattleAssignmentUseCase configureBattleAssignmentUseCase =
         const ConfigureBattleAssignmentUseCase(),
-    required BattleCatalogRepository battleCatalogRepository,
-  }) : _battleDomain = battleDomain,
+    BattleCatalogRepository? battleCatalogRepository,
+  }) : _battleExpeditionUseCase = battleExpeditionUseCase,
        _configureBattleAssignmentUseCase = configureBattleAssignmentUseCase,
-       _battleCatalogRepository = battleCatalogRepository;
+       _battleService = battleService,
+       _battleCatalogRepository =
+           battleCatalogRepository ?? const _MissingBattleCatalogRepository();
 
   final SessionController _session;
-  final BattleService _battleService;
-  final AutoBattleUseCase _battleDomain;
+  final BattleExpeditionUseCase _battleExpeditionUseCase;
   final ConfigureBattleAssignmentUseCase _configureBattleAssignmentUseCase;
+  final BattleService? _battleService;
   final BattleCatalogRepository _battleCatalogRepository;
 
   void runAutoBattle(String stageId) {
     final SessionState current = _session.snapshot();
-    final List<String> assigned = current.battle.stageAssignments[stageId] ??
-        const <String>[];
-    if (assigned.isEmpty) {
+    final BattleService battleService =
+        _battleService ?? BattleService(random: Random(11));
+    final BattleCatalogRepository battleCatalogRepository =
+        _battleCatalogRepository;
+    final SessionState started = _battleExpeditionUseCase.startExpedition(
+      state: current,
+      stageId: stageId,
+      now: _session.now(),
+    );
+    if (identical(started, current)) {
       _session.appendLog('Battle assignment missing for $stageId');
       return;
     }
-    final SessionState nextState = _battleDomain.runAutoBattle(
+
+    final BattleCycleResolution resolution = DefaultBattleExpeditionResolver(
+      battleService: battleService,
+    ).resolveCycle(
+      state: started,
+      stageId: stageId,
+      battleCatalogRepository: battleCatalogRepository,
+    );
+    final BattleExpeditionState expedition =
+        started.battle.stageExpeditions[stageId]!;
+    final Map<String, BattleExpeditionState> nextExpeditions =
+        <String, BattleExpeditionState>{...started.battle.stageExpeditions};
+    nextExpeditions[stageId] = expedition.copyWith(
+      pendingClaim: resolution.pendingClaim,
+      lastSummary: resolution.summary,
+    );
+    final SessionState pendingState = started.copyWith(
+      battle: started.battle.copyWith(stageExpeditions: nextExpeditions),
+    );
+    final SessionState claimedState = _battleExpeditionUseCase.claimStageRewards(
+      state: pendingState,
+      stageId: stageId,
+    );
+    _session.applyState(claimedState);
+    _session.appendLog('Battle ${resolution.summary} on $stageId');
+  }
+
+  void startExpedition(String stageId) {
+    final SessionState current = _session.snapshot();
+    final List<String> assigned = current.battle.stageAssignments[stageId] ??
+        const <String>[];
+    if (assigned.isEmpty) {
+      _session.appendLog('원정 시작 실패 / 편성 없음');
+      return;
+    }
+
+    final SessionState nextState = _battleExpeditionUseCase.startExpedition(
       state: current,
       stageId: stageId,
-      battleService: _battleService,
-      battleCatalogRepository: _battleCatalogRepository,
+      now: _session.now(),
     );
-    final int essenceGain = nextState.player.essence - current.player.essence;
-    final bool success = essenceGain >= 6;
     _session.applyState(nextState);
     _session.appendLog(
-      'Battle ${success ? 'win' : 'fail'} on $stageId / essence+$essenceGain / xp+${_xpGainForStage(stageId, success)}',
+      identical(nextState, current)
+          ? '이미 원정 중 / $stageId'
+          : '${stageId.replaceFirst('stage_', 'Stage ')} 원정 시작',
+    );
+  }
+
+  void stopExpedition(String stageId) {
+    final SessionState current = _session.snapshot();
+    final SessionState nextState = _battleExpeditionUseCase.stopExpedition(
+      state: current,
+      stageId: stageId,
+      now: _session.now(),
+    );
+    _session.applyState(nextState);
+    _session.appendLog(
+      identical(nextState, current)
+          ? '중지할 원정 없음 / $stageId'
+          : '${stageId.replaceFirst('stage_', 'Stage ')} 원정 정지',
+    );
+  }
+
+  void claimStageRewards(String stageId) {
+    final SessionState current = _session.snapshot();
+    final SessionState nextState = _battleExpeditionUseCase.claimStageRewards(
+      state: current,
+      stageId: stageId,
+    );
+    _session.applyState(nextState);
+    _session.appendLog(
+      identical(nextState, current)
+          ? '수령할 원정 보상 없음'
+          : '${stageId.replaceFirst('stage_', 'Stage ')} 보상 수령',
     );
   }
 
@@ -102,15 +178,6 @@ class BattleController {
     );
   }
 
-  int _xpGainForStage(String stageId, bool success) {
-    final int stageNumber =
-        int.tryParse(stageId.replaceFirst('stage_', '')) ?? 1;
-    if (success) {
-      return 16 + (stageNumber * 4);
-    }
-    return 6 + (stageNumber * 2);
-  }
-
   CharacterProgress? _findCharacter(SessionState state, String characterId) {
     for (final CharacterProgress character in state.characters.mercenaries) {
       if (character.id == characterId) {
@@ -126,11 +193,25 @@ class BattleController {
   }
 }
 
+class _MissingBattleCatalogRepository implements BattleCatalogRepository {
+  const _MissingBattleCatalogRepository();
+
+  @override
+  BattleDropTable dropTable(String stageId) {
+    throw StateError('BattleCatalogRepository is required');
+  }
+
+  @override
+  List<String> stageCatalog() {
+    throw StateError('BattleCatalogRepository is required');
+  }
+}
+
 final Provider<BattleController> battleControllerProvider =
     Provider<BattleController>((Ref ref) {
       return BattleController(
         ref.read(sessionControllerProvider.notifier),
-        ref.read(battleServiceProvider),
+        battleService: ref.read(battleServiceProvider),
         battleCatalogRepository: ref.read(battleCatalogRepositoryProvider),
       );
     });

@@ -19,7 +19,7 @@ void main() {
   }) {
     return BattleController(
       session,
-      BattleService(random: Random(battleSeed)),
+      battleService: BattleService(random: Random(battleSeed)),
       battleCatalogRepository: const StaticBattleCatalogRepository(),
     );
   }
@@ -127,7 +127,7 @@ void main() {
 
     expect(
       session.state.workshop.logs.first,
-      contains('Battle win on stage_5'),
+      contains('Battle 성공'),
     );
     expect(session.state.player.essence, 126);
   });
