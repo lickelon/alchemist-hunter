@@ -10,6 +10,7 @@ class TownEquipmentSheet extends ConsumerWidget {
     final List<TownEquipmentBlueprintView> blueprints = ref.watch(
       townEquipmentBlueprintViewsProvider,
     );
+    final List<TownForgeJobView> forgeJobs = ref.watch(townForgeJobViewsProvider);
     final List<TownEquipmentInventoryView> inventory = ref.watch(
       townEquipmentInventoryViewsProvider,
     );
@@ -23,12 +24,12 @@ class TownEquipmentSheet extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const Text(
-                '기본 장비 제작',
+                '대장간',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 8),
               const Text(
-                '제작 가능 장비',
+                '장비 등록',
                 style: TextStyle(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 6),
@@ -39,7 +40,7 @@ class TownEquipmentSheet extends ConsumerWidget {
                       dense: true,
                       title: Text(entry.name),
                       subtitle: Text(
-                        '${entry.slotLabel} / ${entry.statLabel}\n${entry.materialCostLabel}',
+                        '${entry.slotLabel} / ${entry.statLabel}\n${entry.materialCostLabel}\n제작 시간 ${entry.durationLabel}',
                       ),
                       trailing: FilledButton.tonal(
                         onPressed: entry.canCraft
@@ -49,11 +50,42 @@ class TownEquipmentSheet extends ConsumerWidget {
                                     .craftEquipment(entry.id);
                               }
                             : null,
-                        child: const Text('제작'),
+                        child: const Text('등록'),
                       ),
                     );
                   }).toList(),
                 ),
+              ),
+              const Divider(),
+              const Text(
+                '대장간 진행',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 6),
+              Expanded(
+                child: forgeJobs.isEmpty
+                    ? const Center(child: Text('등록된 대장간 작업이 없습니다'))
+                    : ListView(
+                        children: forgeJobs.map((TownForgeJobView entry) {
+                          return ListTile(
+                            dense: true,
+                            title: Text(entry.name),
+                            subtitle: Text(
+                              '${entry.statusLabel} / ${entry.remainingLabel}',
+                            ),
+                            trailing: FilledButton.tonal(
+                              onPressed: entry.canClaim
+                                  ? () {
+                                      ref
+                                          .read(equipmentCraftControllerProvider)
+                                          .claimCompleted(entry.id);
+                                    }
+                                  : null,
+                              child: const Text('수령'),
+                            ),
+                          );
+                        }).toList(),
+                      ),
               ),
               const Divider(),
               const Text(

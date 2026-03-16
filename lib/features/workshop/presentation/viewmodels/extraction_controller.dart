@@ -45,10 +45,17 @@ class WorkshopExtractionController {
     List<String>? selectedTraits,
   }) {
     final SessionState current = _session.snapshot();
+    final int queueCapacity = _workshopSkillTreeService.craftQueueCapacity(
+          current,
+          _workshopSkillTreeRepository.nodes(),
+        ) +
+        _workshopSupportService.craftQueueCapacityBonus(current);
     final SessionState nextState = _extractionDomain.extractMaterial(
       state: current,
       materialId: materialId,
       profileId: profileId,
+      now: _session.now(),
+      queueCapacity: queueCapacity,
       alchemyService: _alchemyService,
       materialCatalogRepository: _materialCatalogRepository,
       extractionProfileRepository: _extractionProfileRepository,
@@ -61,8 +68,8 @@ class WorkshopExtractionController {
     _session.applyState(nextState);
     _session.appendLog(
       identical(nextState, current)
-          ? 'Cannot extract $materialId x$quantity / unavailable'
-          : 'Extracted $materialId x$quantity with $profileId',
+          ? '추출 등록 실패 / $materialId x$quantity'
+          : '추출 등록 / $materialId x$quantity',
     );
   }
 }

@@ -12,6 +12,9 @@ class WorkshopQueueSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final List<CraftQueueJobView> jobs = ref.watch(craftQueueJobViewsProvider);
+    final WorkshopPendingClaimView pendingClaim = ref.watch(
+      workshopPendingClaimViewProvider,
+    );
     final List<PotionQueueOptionView> options = ref.watch(
       workshopPotionQueueOptionViewsProvider,
     );
@@ -19,9 +22,6 @@ class WorkshopQueueSheet extends ConsumerWidget {
       workshopCraftQueueControllerProvider,
     );
     final int queueCapacity = ref.watch(workshopQueueCapacityProvider);
-    final int completedCount = jobs
-        .where((CraftQueueJobView job) => job.isCompleted)
-        .length;
 
     return SafeArea(
       child: Padding(
@@ -38,20 +38,31 @@ class WorkshopQueueSheet extends ConsumerWidget {
               const SizedBox(height: 8),
               Text('슬롯 ${jobs.length}/$queueCapacity'),
               const SizedBox(height: 8),
-              Row(
-                children: <Widget>[
-                  FilledButton(
-                    onPressed: controller.tickCraftQueue,
-                    child: const Text('틱 처리'),
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton.tonal(
-                    onPressed: completedCount > 0
-                        ? controller.clearCompleted
-                        : null,
-                    child: Text('완료 정리 ($completedCount)'),
-                  ),
-                ],
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Text(
+                      '작업실 보상 수령',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(pendingClaim.summary),
+                    const SizedBox(height: 8),
+                    FilledButton.tonal(
+                      onPressed: pendingClaim.canClaim
+                          ? controller.claimPending
+                          : null,
+                      child: const Text('통합 수령'),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 8),
               const Text(

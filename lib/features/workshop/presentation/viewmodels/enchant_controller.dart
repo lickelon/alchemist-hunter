@@ -35,10 +35,17 @@ class WorkshopEnchantController {
 
   void enchantEquipment(String equipmentId, String potionStackKey) {
     final SessionState current = _session.snapshot();
+    final int queueCapacity = _workshopSkillTreeService.craftQueueCapacity(
+          current,
+          _workshopSkillTreeRepository.nodes(),
+        ) +
+        _workshopSupportService.craftQueueCapacityBonus(current);
     final SessionState nextState = _enchantUseCase.enchantEquipment(
       state: current,
       equipmentId: equipmentId,
       potionStackKey: potionStackKey,
+      now: _session.now(),
+      queueCapacity: queueCapacity,
       enchantService: _enchantService,
       potionCatalogRepository: _potionCatalogRepository,
       workshopSkillTreeRepository: _workshopSkillTreeRepository,
@@ -48,8 +55,8 @@ class WorkshopEnchantController {
     _session.applyState(nextState);
     _session.appendLog(
       identical(nextState, current)
-          ? 'Cannot enchant $equipmentId with $potionStackKey'
-          : 'Enchanted $equipmentId with $potionStackKey',
+          ? '인챈트 등록 실패 / $equipmentId'
+          : '인챈트 등록 / $equipmentId',
     );
   }
 }

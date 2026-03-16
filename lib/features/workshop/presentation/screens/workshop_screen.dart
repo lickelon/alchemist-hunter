@@ -28,6 +28,9 @@ class WorkshopScreen extends ConsumerWidget {
       homunculusHatchRecipeViewsProvider,
     );
     final List<CraftQueueJob> queue = ref.watch(craftQueueProvider);
+    final WorkshopPendingClaimView pendingClaim = ref.watch(
+      workshopPendingClaimViewProvider,
+    );
     final List<MapEntry<String, int>> materials = ref.watch(
       sortedMaterialInventoryProvider,
     );
@@ -72,7 +75,10 @@ class WorkshopScreen extends ConsumerWidget {
           summary: supportSummary,
         ),
         const SizedBox(height: 8),
-        WorkshopQueueCard(jobCount: queue.length),
+        WorkshopQueueCard(
+          jobCount: queue.length,
+          claimSummary: pendingClaim.summary,
+        ),
         const SizedBox(height: 8),
         WorkshopMaterialCard(
           materialTypeCount: materials.length,

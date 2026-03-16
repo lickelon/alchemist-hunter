@@ -51,7 +51,7 @@ class WorkshopHatchSheet extends ConsumerWidget {
                                           .hatch(recipe.id);
                                     }
                                   : null,
-                              child: const Text('부화'),
+                              child: const Text('등록'),
                             ),
                           );
                         }).toList(growable: false),

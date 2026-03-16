@@ -11,6 +11,7 @@ class TownEquipmentBlueprintView {
     required this.slotLabel,
     required this.statLabel,
     required this.materialCostLabel,
+    required this.durationLabel,
     required this.canCraft,
   });
 
@@ -19,6 +20,7 @@ class TownEquipmentBlueprintView {
   final String slotLabel;
   final String statLabel;
   final String materialCostLabel;
+  final String durationLabel;
   final bool canCraft;
 }
 
@@ -34,6 +36,22 @@ class TownEquipmentInventoryView {
   final String name;
   final String slotLabel;
   final String statLabel;
+}
+
+class TownForgeJobView {
+  const TownForgeJobView({
+    required this.id,
+    required this.name,
+    required this.statusLabel,
+    required this.remainingLabel,
+    required this.canClaim,
+  });
+
+  final String id;
+  final String name;
+  final String statusLabel;
+  final String remainingLabel;
+  final bool canClaim;
 }
 
 class TownMercenaryCandidateView {
@@ -135,6 +153,35 @@ final Provider<int> townEquipmentCountProvider = Provider<int>((Ref ref) {
   );
 });
 
+final Provider<List<TownForgeJob>> townForgeQueueProvider =
+    Provider<List<TownForgeJob>>((Ref ref) {
+      return ref.watch(
+        sessionControllerProvider.select(
+          (SessionState state) => state.town.forgeQueue,
+        ),
+      );
+    });
+
+final Provider<int> townForgeInProgressCountProvider = Provider<int>((Ref ref) {
+  return ref.watch(
+    townForgeQueueProvider.select(
+      (List<TownForgeJob> jobs) => jobs
+          .where((TownForgeJob job) => job.status != TownForgeJobStatus.completed)
+          .length,
+    ),
+  );
+});
+
+final Provider<int> townForgeCompletedCountProvider = Provider<int>((Ref ref) {
+  return ref.watch(
+    townForgeQueueProvider.select(
+      (List<TownForgeJob> jobs) => jobs
+          .where((TownForgeJob job) => job.status == TownForgeJobStatus.completed)
+          .length,
+    ),
+  );
+});
+
 final Provider<List<TownEquipmentBlueprintView>>
 townEquipmentBlueprintViewsProvider = Provider<List<TownEquipmentBlueprintView>>((
   Ref ref,
@@ -172,6 +219,7 @@ townEquipmentBlueprintViewsProvider = Provider<List<TownEquipmentBlueprintView>>
                     '${materialNames[entry.key] ?? entry.key} x${entry.value}',
               )
               .join(', '),
+          durationLabel: '${blueprint.craftDuration.inSeconds}s',
           canCraft: canCraft,
         );
       })
@@ -216,6 +264,34 @@ townEquipmentInventoryViewsProvider = Provider<List<TownEquipmentInventoryView>>
     );
   }).toList();
 });
+
+final Provider<List<TownForgeJobView>> townForgeJobViewsProvider =
+    Provider<List<TownForgeJobView>>((Ref ref) {
+      final List<TownForgeJob> jobs = ref.watch(townForgeQueueProvider);
+      final List<TownForgeJob> sorted = <TownForgeJob>[...jobs]
+        ..sort((TownForgeJob left, TownForgeJob right) {
+          if (left.status == right.status) {
+            return left.queuedAt.compareTo(right.queuedAt);
+          }
+          return left.status == TownForgeJobStatus.completed ? 1 : -1;
+        });
+      return sorted.map((TownForgeJob job) {
+        final bool completed = job.status == TownForgeJobStatus.completed;
+        return TownForgeJobView(
+          id: job.id,
+          name: job.name,
+          statusLabel: completed
+              ? '완료'
+              : job.status == TownForgeJobStatus.processing
+              ? '제작 중'
+              : '대기 중',
+          remainingLabel: completed
+              ? '수령 대기'
+              : '남은 시간 ${job.remaining.inSeconds}s',
+          canClaim: completed,
+        );
+      }).toList(growable: false);
+    });
 
 final Provider<List<TownMercenaryCandidateView>>
 townMercenaryCandidateViewsProvider =

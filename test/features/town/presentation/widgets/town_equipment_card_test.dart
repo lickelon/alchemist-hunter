@@ -31,14 +31,15 @@ void main() {
     await tester.tap(find.text('Equipment Craft'));
     await tester.pumpAndSettle();
 
-    expect(find.text('기본 장비 제작'), findsOneWidget);
+    expect(find.text('대장간'), findsOneWidget);
     expect(find.text('Bronze Sword'), findsOneWidget);
     expect(find.textContaining('Emberroot x2'), findsOneWidget);
     expect(find.text('Iron Buckler'), findsOneWidget);
+    expect(find.textContaining('제작 시간 30s'), findsAtLeastNWidgets(1));
     expect(find.text('보유 장비가 없습니다'), findsOneWidget);
   });
 
-  testWidgets('crafting from equipment sheet updates inventory', (
+  testWidgets('crafting from equipment sheet enqueues forge job', (
     WidgetTester tester,
   ) async {
     final ProviderContainer container = ProviderContainer();
@@ -64,11 +65,12 @@ void main() {
 
     await tester.tap(find.text('Equipment Craft'));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(FilledButton, '제작').first);
+    await tester.tap(find.widgetWithText(FilledButton, '등록').first);
     await tester.pumpAndSettle();
 
     expect(session.state.player.gold, 1500);
     expect(session.state.player.materialInventory, isEmpty);
-    expect(session.state.town.equipmentInventory.first.name, 'Bronze Sword');
+    expect(session.state.town.equipmentInventory, isEmpty);
+    expect(session.state.town.forgeQueue.first.name, 'Bronze Sword');
   });
 }

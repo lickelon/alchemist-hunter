@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_workshop_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/extraction_controller.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/alchemy_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
@@ -35,12 +36,17 @@ void main() {
     controller.extractMaterial('m_1', 'full_basic');
 
     expect(session.state.player.materialInventory.containsKey('m_1'), false);
-    expect(session.state.workshop.extractedTraitInventory['t_hp'], isNotNull);
-    expect(session.state.workshop.extractedTraitInventory['t_spd'], isNotNull);
+    expect(session.state.workshop.queue, hasLength(1));
+    expect(session.state.workshop.queue.first.type, WorkshopJobType.extraction);
     expect(
-      session.state.workshop.logs.first,
-      'Extracted m_1 x1 with full_basic',
+      session.state.workshop.queue.first.completedExtractedTraits['t_hp'],
+      isNotNull,
     );
+    expect(
+      session.state.workshop.queue.first.completedExtractedTraits['t_spd'],
+      isNotNull,
+    );
+    expect(session.state.workshop.logs.first, '추출 등록 / m_1 x1');
   });
 
   test('extractMaterial supports bulk quantity', () {
@@ -66,17 +72,14 @@ void main() {
 
     expect(session.state.player.materialInventory['m_1'], 1);
     expect(
-      session.state.workshop.extractedTraitInventory['t_hp'],
+      session.state.workshop.queue.first.completedExtractedTraits['t_hp'],
       closeTo(1.7, 0.0001),
     );
     expect(
-      session.state.workshop.extractedTraitInventory['t_spd'],
+      session.state.workshop.queue.first.completedExtractedTraits['t_spd'],
       closeTo(1.7, 0.0001),
     );
-    expect(
-      session.state.workshop.logs.first,
-      'Extracted m_1 x2 with full_basic',
-    );
+    expect(session.state.workshop.logs.first, '추출 등록 / m_1 x2');
   });
 
   test('extractMaterial applies alembic yield bonus', () {
@@ -107,7 +110,7 @@ void main() {
     controller.extractMaterial('m_1', 'full_basic');
 
     expect(
-      session.state.workshop.extractedTraitInventory['t_hp'],
+      session.state.workshop.queue.first.completedExtractedTraits['t_hp'],
       closeTo(0.918, 0.0001),
     );
   });
@@ -139,7 +142,7 @@ void main() {
     controller.extractMaterial('m_1', 'full_basic');
 
     expect(
-      session.state.workshop.extractedTraitInventory['t_hp'],
+      session.state.workshop.queue.first.completedExtractedTraits['t_hp'],
       closeTo(0.8925, 0.0001),
     );
   });

@@ -20,6 +20,8 @@ class TownScreen extends ConsumerWidget {
     final int generalRefreshCost = ref.watch(generalShopRefreshCostProvider);
     final int catalystRefreshCost = ref.watch(catalystShopRefreshCostProvider);
     final int equipmentCount = ref.watch(townEquipmentCountProvider);
+    final int forgeQueueCount = ref.watch(townForgeInProgressCountProvider);
+    final int forgeCompletedCount = ref.watch(townForgeCompletedCountProvider);
     final int mercenaryCandidateCount = ref.watch(
       townMercenaryCandidateCountProvider,
     );
@@ -65,7 +67,11 @@ class TownScreen extends ConsumerWidget {
           totalCount: totalSkillNodes,
         ),
         const SizedBox(height: 8),
-        TownEquipmentCraftCard(equipmentCount: equipmentCount),
+        TownEquipmentCraftCard(
+          equipmentCount: equipmentCount,
+          forgeQueueCount: forgeQueueCount,
+          completedCount: forgeCompletedCount,
+        ),
         const SizedBox(height: 8),
         TownPotionSellCard(stackCount: craftedPotionStacks.length),
       ],

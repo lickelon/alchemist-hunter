@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('workshop enchant sheet consumes potion and applies enchant', (
+  testWidgets('workshop enchant sheet enqueues enchant job', (
     WidgetTester tester,
   ) async {
     final ProviderContainer container = ProviderContainer();
@@ -73,12 +73,15 @@ void main() {
     expect(find.text('현재 인챈트 없음'), findsOneWidget);
     expect(find.text('예상 Potion 1 A'), findsOneWidget);
     expect(find.textContaining('변화 ATK +13'), findsOneWidget);
-    await tester.tap(find.text('인챈트 실행'));
+    await tester.tap(find.text('인챈트 등록'));
     await tester.pumpAndSettle();
 
     expect(session.state.workshop.craftedPotionStacks, isEmpty);
+    expect(session.state.town.equipmentInventory, isEmpty);
+    expect(session.state.workshop.queue, hasLength(1));
+    expect(session.state.workshop.queue.first.type, WorkshopJobType.enchant);
     expect(
-      session.state.town.equipmentInventory.first.enchant?.label,
+      session.state.workshop.queue.first.completedEquipment?.enchant?.label,
       'Potion 1 A',
     );
   });
@@ -153,9 +156,9 @@ void main() {
     expect(find.text('기존 인챈트가 교체됩니다'), findsOneWidget);
     expect(find.text('현재 Old Brew B'), findsOneWidget);
     expect(find.text('예상 Potion 1 A'), findsOneWidget);
-    expect(find.text('인챈트 교체'), findsOneWidget);
+    expect(find.text('인챈트 교체 등록'), findsOneWidget);
 
-    await tester.tap(find.text('인챈트 교체'));
+    await tester.tap(find.text('인챈트 교체 등록'));
     await tester.pumpAndSettle();
 
     expect(find.text('기존 인챈트 교체'), findsOneWidget);
@@ -169,14 +172,16 @@ void main() {
       'Old Brew B',
     );
 
-    await tester.tap(find.text('인챈트 교체'));
+    await tester.tap(find.text('인챈트 교체 등록'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('교체'));
     await tester.pumpAndSettle();
 
     expect(session.state.workshop.craftedPotionStacks, isEmpty);
+    expect(session.state.town.equipmentInventory, isEmpty);
+    expect(session.state.workshop.queue, hasLength(1));
     expect(
-      session.state.town.equipmentInventory.first.enchant?.label,
+      session.state.workshop.queue.first.completedEquipment?.enchant?.label,
       'Potion 1 A',
     );
   });

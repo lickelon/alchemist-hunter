@@ -126,7 +126,7 @@ void main() {
     expect(session.state.workshop.logs.first, 'Auto refresh executed');
   });
 
-  test('craftEquipment consumes gold and stores equipment instance', () {
+  test('craftEquipment reserves materials and enqueues forge job', () {
     final SessionController session = buildSession();
     final EquipmentCraftController controller = buildEquipmentCraftController(
       session,
@@ -141,9 +141,10 @@ void main() {
 
     expect(session.state.player.gold, 1500);
     expect(session.state.player.materialInventory, isEmpty);
-    expect(session.state.town.equipmentInventory, hasLength(1));
-    expect(session.state.town.equipmentInventory.first.blueprintId, 'eq_1');
-    expect(session.state.workshop.logs.first, 'Crafted Bronze Sword');
+    expect(session.state.town.equipmentInventory, isEmpty);
+    expect(session.state.town.forgeQueue, hasLength(1));
+    expect(session.state.town.forgeQueue.first.blueprintId, 'eq_1');
+    expect(session.state.workshop.logs.first, '대장간 등록 / Bronze Sword');
   });
 
   test('craftEquipment applies forge rack material reduction', () {
@@ -169,7 +170,7 @@ void main() {
     controller.craftEquipment('eq_1');
 
     expect(session.state.player.materialInventory, isEmpty);
-    expect(session.state.town.equipmentInventory.first.name, 'Bronze Sword');
+    expect(session.state.town.forgeQueue.first.name, 'Bronze Sword');
   });
 
   test('hireMercenary consumes gold and appends mercenary', () {

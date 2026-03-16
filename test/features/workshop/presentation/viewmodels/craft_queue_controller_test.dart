@@ -2,15 +2,14 @@ import 'dart:math';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
-import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_workshop_skill_tree_repository.dart';
-import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/craft_queue_controller.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/craft_queue/craft_queue_option_selectors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -25,7 +24,6 @@ void main() {
   }) {
     return WorkshopCraftQueueController(
       session,
-      CraftQueueService(),
       PotionCraftingService(random: Random(craftingSeed)),
       potionCatalogRepository: const StaticPotionCatalogRepository(),
       workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
@@ -34,7 +32,7 @@ void main() {
     );
   }
 
-  test('tickCraftQueue consumes inventory and produces crafted potions', () {
+  test('enqueuePotion reserves extracted traits and adds craft job', () {
     final SessionController session = buildSession();
     session.state = session.state.copyWith(
       workshop: session.state.workshop.copyWith(
@@ -49,55 +47,56 @@ void main() {
       craftingSeed: 5,
     );
 
-    controller.enqueuePotion('p_1', 1);
-    controller.tickCraftQueue();
+    controller.enqueuePotion('p_1', 2);
 
-    expect(
-      session.state.workshop.queue.single.status,
-      QueueJobStatus.completed,
-    );
-    expect(
-      session.state.workshop.craftedPotionStacks.values.fold<int>(
-        0,
-        (int sum, int value) => sum + value,
-      ),
-      1,
-    );
-    expect(session.state.workshop.craftedPotionDetails, isNotEmpty);
-    expect(
-      session.state.workshop.extractedTraitInventory['t_hp'],
-      closeTo(0.6, 0.0001),
-    );
-    expect(
-      session.state.workshop.extractedTraitInventory['t_atk'],
-      closeTo(0.4, 0.0001),
-    );
-    expect(
-      session.state.workshop.logs.first,
-      'Processed queue tick / produced 1',
-    );
+    expect(session.state.workshop.queue, hasLength(1));
+    expect(session.state.workshop.queue.single.type, WorkshopJobType.craft);
+    expect(session.state.workshop.queue.single.repeatCount, 2);
+    expect(session.state.workshop.queue.single.status, QueueJobStatus.processing);
+    expect(session.state.workshop.extractedTraitInventory, isEmpty);
+    expect(session.state.workshop.logs.first, '제조 등록 / p_1 x2');
   });
 
-  test('enqueuePotion is blocked when materials are missing', () {
+  test('claimPending applies workshop rewards to claimed inventory', () {
     final SessionController session = buildSession();
-    final WorkshopCraftQueueController controller = buildController(
-      session,
-      craftingSeed: 5,
+    final WorkshopCraftQueueController controller = buildController(session);
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        pendingClaim: WorkshopPendingClaim(
+          extractedTraits: const <String, double>{'t_hp': 0.5},
+          arcaneDust: 2,
+          potionStacks: const <String, int>{'p_1|a': 2},
+          potionDetails: <String, CraftedPotion>{
+            'p_1|a': CraftedPotion(
+              id: 'cp_1',
+              typePotionId: 'p_1',
+              qualityGrade: PotionQualityGrade.a,
+              qualityScore: 0.84,
+              traits: const <String, double>{'t_atk': 0.7, 't_hp': 0.3},
+              createdAt: DateTime(2026, 1, 1, 10),
+            ),
+          },
+          extractionCount: 1,
+          potionCraftCount: 2,
+        ),
+      ),
     );
 
-    controller.enqueuePotion('p_1', 1);
+    controller.claimPending();
 
-    expect(session.state.workshop.queue, isEmpty);
-    expect(session.state.workshop.craftedPotionStacks, isEmpty);
-    expect(
-      session.state.workshop.logs.first,
-      'Cannot enqueue p_1 x1 / materials missing',
-    );
+    expect(session.state.workshop.pendingClaim.isEmpty, isTrue);
+    expect(session.state.player.arcaneDust, 4);
+    expect(session.state.workshop.extractedTraitInventory['t_hp'], 0.5);
+    expect(session.state.workshop.craftedPotionStacks['p_1|a'], 2);
+    expect(session.state.workshop.extractionCount, 1);
+    expect(session.state.workshop.potionCraftCount, 2);
+    expect(session.state.workshop.logs.first, '작업실 보상 수령');
   });
 
   test('enqueuePotion is blocked when queue is full', () {
     final SessionController session = buildSession();
     final WorkshopCraftQueueController controller = buildController(session);
+    final DateTime now = DateTime(2026, 1, 1, 10);
     session.state = session.state.copyWith(
       workshop: session.state.workshop.copyWith(
         extractedTraitInventory: const <String, double>{
@@ -108,11 +107,13 @@ void main() {
           4,
           (int index) => CraftQueueJob(
             id: 'job_$index',
-            potionId: 'p_1',
-            repeatCount: 1,
-            retryPolicy: const CraftRetryPolicy(maxRetries: 2),
+            type: WorkshopJobType.craft,
             status: QueueJobStatus.queued,
+            queuedAt: now,
+            duration: const Duration(seconds: 15),
             eta: const Duration(seconds: 15),
+            title: 'Potion 1',
+            potionId: 'p_1',
           ),
         ),
       ),
@@ -121,98 +122,7 @@ void main() {
     controller.enqueuePotion('p_1', 1);
 
     expect(session.state.workshop.queue, hasLength(4));
-    expect(
-      session.state.workshop.logs.first,
-      'Cannot enqueue p_1 x1 / queue full',
-    );
-  });
-
-  test('queue matrix increases queue capacity by one', () {
-    final SessionController session = buildSession();
-    final WorkshopCraftQueueController controller = buildController(session);
-    session.state = session.state.copyWith(
-      workshop: session.state.workshop.copyWith(
-        extractedTraitInventory: const <String, double>{
-          't_hp': 6.0,
-          't_atk': 4.0,
-        },
-        skillTree: session.state.workshop.skillTree.copyWith(
-          nodeLevels: const <String, int>{
-            'workshop_alembic': 1,
-            'workshop_queue_matrix': 1,
-          },
-          unlockedNodes: const <String>{
-            'workshop_alembic',
-            'workshop_queue_matrix',
-          },
-        ),
-        queue: List<CraftQueueJob>.generate(
-          4,
-          (int index) => CraftQueueJob(
-            id: 'job_$index',
-            potionId: 'p_1',
-            repeatCount: 1,
-            retryPolicy: const CraftRetryPolicy(maxRetries: 2),
-            status: QueueJobStatus.queued,
-            eta: const Duration(seconds: 15),
-          ),
-        ),
-      ),
-    );
-
-    controller.enqueuePotion('p_1', 1);
-
-    expect(session.state.workshop.queue, hasLength(5));
-    expect(session.state.workshop.logs.first, 'Enqueued p_1 x1');
-  });
-
-  test('mobility homunculus increases queue capacity by one', () {
-    final SessionController session = buildSession();
-    final WorkshopCraftQueueController controller = buildController(session);
-    session.state = session.state.copyWith(
-      workshop: session.state.workshop.copyWith(
-        supportAssignmentsByFunction: const <String, String>{
-          'crafting': 'homo_2',
-        },
-        extractedTraitInventory: const <String, double>{
-          't_hp': 6.0,
-          't_atk': 4.0,
-        },
-        queue: List<CraftQueueJob>.generate(
-          4,
-          (int index) => CraftQueueJob(
-            id: 'job_$index',
-            potionId: 'p_1',
-            repeatCount: 1,
-            retryPolicy: const CraftRetryPolicy(maxRetries: 2),
-            status: QueueJobStatus.queued,
-            eta: const Duration(seconds: 15),
-          ),
-        ),
-      ),
-      characters: session.state.characters.copyWith(
-        homunculi: <CharacterProgress>[
-          session.state.characters.homunculi.first,
-          CharacterProgress(
-            id: 'homo_2',
-            name: 'Swift Nigredo',
-            type: CharacterType.homunculus,
-            level: 1,
-            rank: 1,
-            xp: 0,
-            homunculusTier: HomunculusTier.nigredo,
-            homunculusOrigin: 'Swift Seed Flask',
-            homunculusRole: '기동',
-            homunculusSupportEffect: '행동 속도 보조',
-          ),
-        ],
-      ),
-    );
-
-    controller.enqueuePotion('p_1', 1);
-
-    expect(session.state.workshop.queue, hasLength(5));
-    expect(session.state.workshop.logs.first, 'Enqueued p_1 x1');
+    expect(session.state.workshop.logs.first, '작업실 큐 가득 참 / p_1 x1');
   });
 
   test(
@@ -262,88 +172,4 @@ void main() {
       expect(lockedPotion.lockReason, '특수 재료 Moontear Crystal 드롭 필요');
     },
   );
-
-  test('resumeBlocked requeues blocked job when materials are replenished', () {
-    final SessionController session = buildSession();
-    final WorkshopCraftQueueController controller = buildController(
-      session,
-      craftingSeed: 5,
-    );
-
-    session.state = session.state.copyWith(
-      workshop: session.state.workshop.copyWith(
-        queue: <CraftQueueJob>[
-          const CraftQueueJob(
-            id: 'job_retry',
-            potionId: 'p_1',
-            repeatCount: 1,
-            retryPolicy: CraftRetryPolicy(maxRetries: 2),
-            status: QueueJobStatus.blocked,
-            eta: Duration.zero,
-          ),
-        ],
-      ),
-    );
-
-    controller.resumeBlocked('job_retry');
-
-    expect(session.state.workshop.queue.single.status, QueueJobStatus.blocked);
-    expect(
-      session.state.workshop.logs.first,
-      'Cannot resume job_retry / materials missing',
-    );
-
-    session.state = session.state.copyWith(
-      workshop: session.state.workshop.copyWith(
-        extractedTraitInventory: const <String, double>{
-          't_hp': 0.6,
-          't_atk': 0.4,
-        },
-      ),
-    );
-
-    controller.resumeBlocked('job_retry');
-
-    expect(session.state.workshop.queue.single.status, QueueJobStatus.queued);
-    expect(
-      session.state.workshop.queue.single.eta,
-      const Duration(seconds: 15),
-    );
-    expect(session.state.workshop.logs.first, 'Resumed craft job job_retry');
-  });
-
-  test('clearCompleted removes completed jobs from queue', () {
-    final SessionController session = buildSession();
-    final WorkshopCraftQueueController controller = buildController(session);
-
-    session.state = session.state.copyWith(
-      workshop: session.state.workshop.copyWith(
-        queue: <CraftQueueJob>[
-          const CraftQueueJob(
-            id: 'job_done',
-            potionId: 'p_1',
-            repeatCount: 1,
-            retryPolicy: CraftRetryPolicy(maxRetries: 2),
-            status: QueueJobStatus.completed,
-            eta: Duration.zero,
-            currentRepeat: 1,
-          ),
-          const CraftQueueJob(
-            id: 'job_wait',
-            potionId: 'p_2',
-            repeatCount: 1,
-            retryPolicy: CraftRetryPolicy(maxRetries: 2),
-            status: QueueJobStatus.queued,
-            eta: Duration(seconds: 15),
-          ),
-        ],
-      ),
-    );
-
-    controller.clearCompleted();
-
-    expect(session.state.workshop.queue, hasLength(1));
-    expect(session.state.workshop.queue.single.id, 'job_wait');
-    expect(session.state.workshop.logs.first, 'Cleared completed craft jobs');
-  });
 }

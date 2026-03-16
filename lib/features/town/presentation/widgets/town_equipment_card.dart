@@ -3,17 +3,23 @@ import 'package:alchemist_hunter/features/town/presentation/widgets/sheets/town_
 import 'package:flutter/material.dart';
 
 class TownEquipmentCraftCard extends StatelessWidget {
-  const TownEquipmentCraftCard({super.key, required this.equipmentCount});
+  const TownEquipmentCraftCard({
+    super.key,
+    required this.equipmentCount,
+    this.forgeQueueCount = 0,
+    this.completedCount = 0,
+  });
 
   final int equipmentCount;
+  final int forgeQueueCount;
+  final int completedCount;
 
   @override
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Equipment Craft',
-      description: equipmentCount == 0
-          ? '제작 장비 없음'
-          : '보유 장비 $equipmentCount개',
+      description:
+          '보유 장비 $equipmentCount개 / 대장간 진행 $forgeQueueCount건 / 완료 $completedCount건',
       icon: Icons.construction_outlined,
       onTap: () => _showEquipmentSheet(context),
     );

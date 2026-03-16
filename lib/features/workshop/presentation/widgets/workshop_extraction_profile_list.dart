@@ -25,7 +25,7 @@ class WorkshopExtractionProfileList extends StatelessWidget {
           subtitle: Text(profile.subtitle),
           trailing: FilledButton.tonal(
             onPressed: selectable ? () => onExtract(profile.id) : null,
-            child: const Text('추출'),
+            child: const Text('등록'),
           ),
         );
       }).toList(),

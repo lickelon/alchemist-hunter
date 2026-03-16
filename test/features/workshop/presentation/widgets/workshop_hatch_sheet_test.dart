@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_hatch_card.dart';
 
 void main() {
-  testWidgets('workshop hatch sheet hatches homunculus from recipe', (
+  testWidgets('workshop hatch sheet enqueues homunculus hatch job', (
     WidgetTester tester,
   ) async {
     final ProviderContainer container = ProviderContainer();
@@ -45,13 +46,14 @@ void main() {
     expect(find.textContaining('역할 지원'), findsOneWidget);
     expect(find.textContaining('보조효과 파티 생존력 보조'), findsOneWidget);
 
-    await tester.tap(find.widgetWithText(FilledButton, '부화').first);
+    await tester.tap(find.widgetWithText(FilledButton, '등록').first);
     await tester.pumpAndSettle();
 
-    expect(session.state.characters.homunculi, hasLength(2));
-    expect(session.state.characters.homunculi.last.name, 'Vital Nigredo');
-    expect(session.state.characters.homunculi.last.homunculusOrigin, 'Vital Seed Flask');
+    expect(session.state.characters.homunculi, hasLength(1));
+    expect(session.state.workshop.queue, hasLength(1));
+    expect(session.state.workshop.queue.first.type, WorkshopJobType.hatch);
+    expect(session.state.workshop.queue.first.completedHomunculus?.name, 'Vital Nigredo');
     expect(session.state.player.essence, 80);
-    expect(session.state.workshop.logs.first, 'Hatched Vital Nigredo');
+    expect(session.state.workshop.logs.first, '부화 등록 / Vital Nigredo');
   });
 }

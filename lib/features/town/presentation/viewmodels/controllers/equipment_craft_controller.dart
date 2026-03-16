@@ -2,7 +2,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/equipment_blueprint_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
-import 'package:alchemist_hunter/features/town/domain/use_cases/craft_equipment_use_case.dart';
+import 'package:alchemist_hunter/features/town/domain/use_cases/forge_queue_use_case.dart';
 import 'package:alchemist_hunter/features/town/town_catalog.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,17 +10,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class EquipmentCraftController {
   EquipmentCraftController(
     this._session, {
-    CraftEquipmentUseCase craftEquipmentUseCase = const CraftEquipmentUseCase(),
+    ForgeQueueUseCase forgeQueueUseCase = const ForgeQueueUseCase(),
     required EquipmentBlueprintRepository equipmentBlueprintRepository,
     required TownSkillTreeRepository townSkillTreeRepository,
     required TownSkillTreeService townSkillTreeService,
-  }) : _craftEquipmentUseCase = craftEquipmentUseCase,
+  }) : _forgeQueueUseCase = forgeQueueUseCase,
        _equipmentBlueprintRepository = equipmentBlueprintRepository,
        _townSkillTreeRepository = townSkillTreeRepository,
        _townSkillTreeService = townSkillTreeService;
 
   final SessionController _session;
-  final CraftEquipmentUseCase _craftEquipmentUseCase;
+  final ForgeQueueUseCase _forgeQueueUseCase;
   final EquipmentBlueprintRepository _equipmentBlueprintRepository;
   final TownSkillTreeRepository _townSkillTreeRepository;
   final TownSkillTreeService _townSkillTreeService;
@@ -33,7 +33,7 @@ class EquipmentCraftController {
       return;
     }
 
-    final SessionState nextState = _craftEquipmentUseCase.craftEquipment(
+    final SessionState nextState = _forgeQueueUseCase.enqueueCraft(
       state: current,
       blueprint: blueprint,
       now: _session.now(),
@@ -44,7 +44,19 @@ class EquipmentCraftController {
     _session.appendLog(
       identical(nextState, current)
           ? 'Missing materials for ${blueprint.name}'
-          : 'Crafted ${blueprint.name}',
+          : '대장간 등록 / ${blueprint.name}',
+    );
+  }
+
+  void claimCompleted(String jobId) {
+    final SessionState current = _session.snapshot();
+    final SessionState nextState = _forgeQueueUseCase.claimCompleted(
+      state: current,
+      jobId: jobId,
+    );
+    _session.applyState(nextState);
+    _session.appendLog(
+      identical(nextState, current) ? '수령 가능한 장비 없음' : '대장간 장비 수령',
     );
   }
 }

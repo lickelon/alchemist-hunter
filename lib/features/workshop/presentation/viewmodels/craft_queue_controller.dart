@@ -2,9 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_craft_queue_use_case.dart';
-import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
@@ -15,7 +13,6 @@ import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/works
 class WorkshopCraftQueueController {
   WorkshopCraftQueueController(
     this._session,
-    this._queueService,
     this._craftingService, {
     WorkshopCraftQueueUseCase craftQueueDomain =
         const WorkshopCraftQueueUseCase(),
@@ -30,7 +27,6 @@ class WorkshopCraftQueueController {
        _workshopSupportService = workshopSupportService;
 
   final SessionController _session;
-  final CraftQueueService _queueService;
   final PotionCraftingService _craftingService;
   final WorkshopCraftQueueUseCase _craftQueueDomain;
   final PotionCatalogRepository _potionCatalogRepository;
@@ -50,7 +46,6 @@ class WorkshopCraftQueueController {
       potionId: potionId,
       repeatCount: repeatCount,
       now: _session.now(),
-      queueService: _queueService,
       craftingService: _craftingService,
       potionCatalogRepository: _potionCatalogRepository,
       workshopSkillTreeRepository: _workshopSkillTreeRepository,
@@ -61,81 +56,21 @@ class WorkshopCraftQueueController {
       nextState,
       logMessage: identical(nextState, current)
           ? current.workshop.queue.length >= queueCapacity
-                ? 'Cannot enqueue $potionId x$repeatCount / queue full'
-                : 'Cannot enqueue $potionId x$repeatCount / materials missing'
-          : 'Enqueued $potionId x$repeatCount',
+                ? '작업실 큐 가득 참 / $potionId x$repeatCount'
+                : '제조 등록 실패 / $potionId x$repeatCount'
+          : '제조 등록 / $potionId x$repeatCount',
     );
   }
 
-  void tickCraftQueue() {
+  void claimPending() {
     final SessionState current = _session.snapshot();
-    final SessionState nextState = _craftQueueDomain.tickCraftQueue(
-      state: current,
-      queueService: _queueService,
-      craftingService: _craftingService,
-      potionCatalogRepository: _potionCatalogRepository,
-    );
-    _apply(nextState, logMessage: _tickLogMessage(current, nextState));
-  }
-
-  void resumeBlocked(String jobId) {
-    final SessionState current = _session.snapshot();
-    final SessionState nextState = _craftQueueDomain.resumeBlockedJob(
-      state: current,
-      jobId: jobId,
-      queueService: _queueService,
-      craftingService: _craftingService,
-      potionCatalogRepository: _potionCatalogRepository,
-    );
+    final SessionState nextState = _craftQueueDomain.claimPending(state: current);
     _apply(
       nextState,
       logMessage: identical(nextState, current)
-          ? 'Cannot resume $jobId / materials missing'
-          : 'Resumed craft job $jobId',
+          ? '수령 가능한 작업실 보상 없음'
+          : '작업실 보상 수령',
     );
-  }
-
-  void clearCompleted() {
-    final SessionState current = _session.snapshot();
-    final SessionState nextState = _craftQueueDomain.clearCompletedJobs(
-      state: current,
-    );
-    _apply(
-      nextState,
-      logMessage: identical(nextState, current)
-          ? null
-          : 'Cleared completed craft jobs',
-    );
-  }
-
-  String? _tickLogMessage(SessionState current, SessionState nextState) {
-    CraftQueueJob? activeJob;
-    for (final CraftQueueJob job in current.workshop.queue) {
-      if (job.status == QueueJobStatus.queued ||
-          job.status == QueueJobStatus.processing) {
-        activeJob = job;
-        break;
-      }
-    }
-    if (activeJob != null) {
-      for (final CraftQueueJob job in nextState.workshop.queue) {
-        if (job.id == activeJob.id && job.status == QueueJobStatus.blocked) {
-          return 'Craft paused for ${activeJob.potionId} / materials missing';
-        }
-      }
-    }
-
-    final int producedCount =
-        _stackTotal(nextState.workshop.craftedPotionStacks) -
-        _stackTotal(current.workshop.craftedPotionStacks);
-    if (producedCount > 0) {
-      return 'Processed queue tick / produced $producedCount';
-    }
-    return null;
-  }
-
-  int _stackTotal(Map<String, int> stacks) {
-    return stacks.values.fold<int>(0, (int total, int value) => total + value);
   }
 
   void _apply(SessionState nextState, {String? logMessage}) {
@@ -152,7 +87,6 @@ workshopCraftQueueControllerProvider = Provider<WorkshopCraftQueueController>((
 ) {
   return WorkshopCraftQueueController(
     ref.read(sessionControllerProvider.notifier),
-    ref.read(craftQueueServiceProvider),
     ref.read(potionCraftingServiceProvider),
     potionCatalogRepository: ref.read(potionCatalogRepositoryProvider),
     workshopSkillTreeRepository: ref.read(workshopSkillTreeRepositoryProvider),

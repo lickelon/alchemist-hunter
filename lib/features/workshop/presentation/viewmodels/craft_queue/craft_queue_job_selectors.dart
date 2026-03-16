@@ -2,25 +2,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/craft_queue/craft_queue_labels.dart';
-import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
 class CraftQueueJobView {
   const CraftQueueJobView({
     required this.id,
     required this.title,
+    required this.typeLabel,
     required this.statusText,
-    required this.canResume,
-    required this.isCompleted,
   });
 
   final String id;
   final String title;
+  final String typeLabel;
   final String statusText;
-  final bool canResume;
-  final bool isCompleted;
+}
+
+class WorkshopPendingClaimView {
+  const WorkshopPendingClaimView({
+    required this.canClaim,
+    required this.summary,
+  });
+
+  final bool canClaim;
+  final String summary;
 }
 
 final Provider<List<CraftQueueJob>> craftQueueProvider =
@@ -35,19 +40,6 @@ final Provider<List<CraftQueueJob>> craftQueueProvider =
 final Provider<List<CraftQueueJobView>> craftQueueJobViewsProvider =
     Provider<List<CraftQueueJobView>>((Ref ref) {
       final List<CraftQueueJob> queue = ref.watch(craftQueueProvider);
-      final List<PotionBlueprint> catalog = ref.watch(potionsProvider);
-      final PotionCraftingService craftingService = ref.watch(
-        potionCraftingServiceProvider,
-      );
-      final Map<String, double> extractedInventory = ref.watch(
-        sessionControllerProvider.select(
-          (SessionState state) => state.workshop.extractedTraitInventory,
-        ),
-      );
-      final List<TraitUnit> traits = ref.watch(traitsProvider);
-      final Map<String, String> traitNames = <String, String>{
-        for (final TraitUnit trait in traits) trait.id: trait.name,
-      };
       final List<CraftQueueJob> sortedQueue = <CraftQueueJob>[...queue]
         ..sort((CraftQueueJob left, CraftQueueJob right) {
           final int leftRank = statusRank(left.status);
@@ -55,48 +47,46 @@ final Provider<List<CraftQueueJobView>> craftQueueJobViewsProvider =
           if (leftRank != rightRank) {
             return leftRank.compareTo(rightRank);
           }
-          return left.id.compareTo(right.id);
+          return left.queuedAt.compareTo(right.queuedAt);
         });
       return sortedQueue.take(20).map((CraftQueueJob job) {
-        final PotionBlueprint blueprint = catalog.firstWhere(
-          (PotionBlueprint potion) => potion.id == job.potionId,
-          orElse: () => PotionBlueprint(
-            id: job.potionId,
-            name: job.potionId,
-            targetTraits: const <String, double>{},
-            baseValue: 0,
-            useType: PotionUseType.sell,
-          ),
-        );
-        final int remainingCount = job.repeatCount - job.currentRepeat;
-        final Map<String, double>? requirements = remainingCount > 0
-            ? craftingService.requiredTraitsForRepeatCount(
-                blueprint: blueprint,
-                repeatCount: remainingCount,
-              )
-            : null;
-        final bool canResume =
-            job.status == QueueJobStatus.blocked &&
-            remainingCount > 0 &&
-            craftingService.canCraftRepeatCount(
-              blueprint: blueprint,
-              extractedInventory: extractedInventory,
-              repeatCount: remainingCount,
-            );
+        final String title = switch (job.type) {
+          WorkshopJobType.extraction => '${job.title} x${job.quantity}',
+          WorkshopJobType.craft => '${job.title} x${job.repeatCount}',
+          WorkshopJobType.enchant => job.title,
+          WorkshopJobType.hatch => job.title,
+        };
         return CraftQueueJobView(
           id: job.id,
-          title: '${blueprint.name} ${job.currentRepeat}/${job.repeatCount}',
-          statusText: queueStatusText(
-            job: job,
-            canResume: canResume,
-            lackingTraits: formatMissingTraits(
-              requirements: requirements,
-              extractedInventory: extractedInventory,
-              traitNames: traitNames,
-            ),
-          ),
-          canResume: canResume,
-          isCompleted: job.status == QueueJobStatus.completed,
+          title: title,
+          typeLabel: jobTypeLabel(job.type),
+          statusText: queueStatusText(job),
         );
       }).toList();
+    });
+
+final Provider<WorkshopPendingClaimView> workshopPendingClaimViewProvider =
+    Provider<WorkshopPendingClaimView>((Ref ref) {
+      final WorkshopPendingClaim claim = ref.watch(
+        sessionControllerProvider.select(
+          (SessionState state) => state.workshop.pendingClaim,
+        ),
+      );
+      if (claim.isEmpty) {
+        return const WorkshopPendingClaimView(
+          canClaim: false,
+          summary: '수령 가능한 작업실 보상 없음',
+        );
+      }
+
+      final int traitTypes = claim.extractedTraits.length;
+      final int potionStacks = claim.potionStacks.values.fold<int>(
+        0,
+        (int total, int value) => total + value,
+      );
+      return WorkshopPendingClaimView(
+        canClaim: true,
+        summary:
+            '추출 특성 $traitTypes종 / ArcaneDust +${claim.arcaneDust} / 포션 $potionStacks개 / 장비 ${claim.equipmentClaims.length}개 / 호문쿨루스 ${claim.homunculi.length}체',
+      );
     });

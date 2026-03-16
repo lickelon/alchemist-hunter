@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('workshop queue sheet shows blocked state and resume action', (
+  testWidgets('workshop queue sheet shows generic queued jobs and claim panel', (
     WidgetTester tester,
   ) async {
     final ProviderContainer container = ProviderContainer();
@@ -17,20 +17,35 @@ void main() {
     );
     session.state = session.state.copyWith(
       workshop: session.state.workshop.copyWith(
-        extractedTraitInventory: const <String, double>{
-          't_hp': 0.6,
-          't_atk': 0.4,
-        },
         queue: <CraftQueueJob>[
-          const CraftQueueJob(
-            id: 'job_1',
+          CraftQueueJob(
+            id: 'job_extract',
+            type: WorkshopJobType.extraction,
+            status: QueueJobStatus.processing,
+            queuedAt: DateTime(2026, 1, 1, 10),
+            startedAt: DateTime(2026, 1, 1, 10),
+            duration: const Duration(seconds: 20),
+            eta: const Duration(seconds: 12),
+            title: 'Emberroot',
+            materialId: 'm_1',
+            quantity: 2,
+          ),
+          CraftQueueJob(
+            id: 'job_craft',
+            type: WorkshopJobType.craft,
+            status: QueueJobStatus.queued,
+            queuedAt: DateTime(2026, 1, 1, 10),
+            duration: const Duration(seconds: 30),
+            eta: const Duration(seconds: 30),
+            title: 'Potion 1',
             potionId: 'p_1',
-            repeatCount: 1,
-            retryPolicy: CraftRetryPolicy(maxRetries: 2),
-            status: QueueJobStatus.blocked,
-            eta: Duration.zero,
+            repeatCount: 2,
           ),
         ],
+        pendingClaim: WorkshopPendingClaim(
+          arcaneDust: 1,
+          potionStacks: const <String, int>{'p_1|a': 1},
+        ),
       ),
     );
 
@@ -38,7 +53,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(body: WorkshopQueueCard(jobCount: 1)),
+          home: Scaffold(body: WorkshopQueueCard(jobCount: 2)),
         ),
       ),
     );
@@ -46,64 +61,17 @@ void main() {
     await tester.tap(find.text('Craft Queue'));
     await tester.pumpAndSettle();
 
-    expect(find.text('재개'), findsOneWidget);
-    expect(find.text('Potion 1 0/1'), findsOneWidget);
-    expect(find.text('상태 진행 불가, 추출 특성 보충 후 재개 가능'), findsOneWidget);
+    expect(find.text('작업실 보상 수령'), findsOneWidget);
+    expect(find.text('통합 수령'), findsOneWidget);
+    expect(find.text('Emberroot x2'), findsOneWidget);
+    expect(find.text('추출 / 진행 중 / 남은 시간 12s'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Potion 1 x2'),
+      120,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Potion 1 x2'), findsOneWidget);
+    expect(find.text('제조 / 대기 중 / 예상 30s'), findsOneWidget);
   });
-
-  testWidgets(
-    'workshop queue sheet shows clear completed button and missing materials',
-    (WidgetTester tester) async {
-      final ProviderContainer container = ProviderContainer();
-      addTearDown(container.dispose);
-
-      final SessionController session = container.read(
-        sessionControllerProvider.notifier,
-      );
-      session.state = session.state.copyWith(
-        player: session.state.player.copyWith(
-          materialInventory: const <String, int>{'m_1': 1},
-        ),
-        workshop: session.state.workshop.copyWith(
-          extractedTraitInventory: const <String, double>{'t_hp': 0.2},
-          queue: <CraftQueueJob>[
-            const CraftQueueJob(
-              id: 'job_done',
-              potionId: 'p_1',
-              repeatCount: 1,
-              retryPolicy: CraftRetryPolicy(maxRetries: 2),
-              status: QueueJobStatus.completed,
-              eta: Duration.zero,
-              currentRepeat: 1,
-            ),
-            const CraftQueueJob(
-              id: 'job_blocked',
-              potionId: 'p_1',
-              repeatCount: 1,
-              retryPolicy: CraftRetryPolicy(maxRetries: 2),
-              status: QueueJobStatus.blocked,
-              eta: Duration.zero,
-            ),
-          ],
-        ),
-      );
-
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: const MaterialApp(
-            home: Scaffold(body: WorkshopQueueCard(jobCount: 2)),
-          ),
-        ),
-      );
-
-      await tester.tap(find.text('Craft Queue'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('완료 정리 (1)'), findsOneWidget);
-      expect(find.textContaining('부족 특성:'), findsOneWidget);
-      expect(find.text('Potion 1 0/1'), findsOneWidget);
-      expect(find.text('Potion 1 1/1'), findsOneWidget);
-    },
-  );
 }
