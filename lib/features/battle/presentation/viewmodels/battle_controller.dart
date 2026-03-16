@@ -58,6 +58,22 @@ class BattleController {
     final List<String> before = current.battle.stageAssignments[stageId] ??
         const <String>[];
     final CharacterProgress? character = _findCharacter(current, characterId);
+    final bool workshopAssigned = current.workshop.supportAssignmentsByFunction
+        .values
+        .contains(characterId);
+    final bool assignedToOtherStage = current.battle.stageAssignments.entries.any((
+      MapEntry<String, List<String>> entry,
+    ) {
+      return entry.key != stageId && entry.value.contains(characterId);
+    });
+    if (workshopAssigned && !before.contains(characterId)) {
+      _session.appendLog('Character assigned to workshop');
+      return;
+    }
+    if (assignedToOtherStage && !before.contains(characterId)) {
+      _session.appendLog('Character assigned to another stage');
+      return;
+    }
     final SessionState nextState = _configureBattleAssignmentUseCase
         .toggleCharacter(
           state: current,

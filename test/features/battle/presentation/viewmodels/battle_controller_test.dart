@@ -135,6 +135,11 @@ void main() {
   test('toggleStageAssignment stores assignment per stage', () {
     final SessionController session = buildSession();
     final BattleController controller = buildController(session);
+    session.state = session.state.copyWith(
+      battle: session.state.battle.copyWith(
+        stageAssignments: const <String, List<String>>{},
+      ),
+    );
 
     controller.toggleStageAssignment('stage_2', 'merc_1');
 
@@ -143,5 +148,24 @@ void main() {
       session.state.workshop.logs.first,
       contains('Assigned Rookie Swordsman to stage_2'),
     );
+  });
+
+  test('toggleStageAssignment blocks workshop-assigned homunculus', () {
+    final SessionController session = buildSession();
+    final BattleController controller = buildController(session);
+
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        supportAssignmentsByFunction: const <String, String>{
+          'extraction': 'homo_1',
+        },
+      ),
+      battle: session.state.battle.copyWith(stageAssignments: const <String, List<String>>{}),
+    );
+
+    controller.toggleStageAssignment('stage_2', 'homo_1');
+
+    expect(session.state.battle.stageAssignments.containsKey('stage_2'), isFalse);
+    expect(session.state.workshop.logs.first, 'Character assigned to workshop');
   });
 }

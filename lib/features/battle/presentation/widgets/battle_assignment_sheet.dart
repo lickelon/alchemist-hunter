@@ -47,7 +47,7 @@ class BattleAssignmentSheet extends ConsumerWidget {
                           : null,
                       title: Text(character.name),
                       subtitle: Text(
-                        '${character.typeLabel} / 전투력 ${character.power}${character.assignable ? "" : " / 파티가 가득 참"}',
+                        '${character.typeLabel} / 전투력 ${character.power}${character.assignmentHint.isNotEmpty ? " / ${character.assignmentHint}" : character.assignable ? "" : " / 파티가 가득 참"}',
                       ),
                       controlAffinity: ListTileControlAffinity.trailing,
                     );

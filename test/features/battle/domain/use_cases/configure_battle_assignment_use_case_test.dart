@@ -5,7 +5,11 @@ import 'package:alchemist_hunter/features/battle/domain/use_cases/configure_batt
 
 void main() {
   test('toggleCharacter adds and removes stage assignment', () {
-    final state = createInitialSessionState(DateTime(2026, 1, 1, 10));
+    final state = createInitialSessionState(DateTime(2026, 1, 1, 10)).copyWith(
+      battle: createInitialSessionState(
+        DateTime(2026, 1, 1, 10),
+      ).battle.copyWith(stageAssignments: const <String, List<String>>{}),
+    );
     const ConfigureBattleAssignmentUseCase useCase =
         ConfigureBattleAssignmentUseCase();
 

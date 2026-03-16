@@ -15,6 +15,11 @@ void main() {
     final SessionController session = container.read(
       sessionControllerProvider.notifier,
     );
+    session.state = session.state.copyWith(
+      battle: session.state.battle.copyWith(
+        stageAssignments: const <String, List<String>>{},
+      ),
+    );
 
     await tester.pumpWidget(
       UncontrolledProviderScope(

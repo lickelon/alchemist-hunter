@@ -88,6 +88,11 @@ final Provider<List<CharacterListItemView>> mercenaryListItemViewsProvider =
             (SessionState state) => state.battle.stageAssignments,
           ),
         ),
+        workshopSupportAssignments: ref.watch(
+          sessionControllerProvider.select(
+            (SessionState state) => state.workshop.supportAssignmentsByFunction,
+          ),
+        ),
       );
     });
 
@@ -110,6 +115,11 @@ final Provider<List<CharacterListItemView>> homunculusListItemViewsProvider =
             (SessionState state) => state.battle.stageAssignments,
           ),
         ),
+        workshopSupportAssignments: ref.watch(
+          sessionControllerProvider.select(
+            (SessionState state) => state.workshop.supportAssignmentsByFunction,
+          ),
+        ),
       );
     });
 
@@ -118,6 +128,7 @@ List<CharacterListItemView> _buildCharacterViews({
   required Map<String, int> inventory,
   required List<EquipmentInstance> equipmentInventory,
   required Map<String, List<String>> stageAssignments,
+  required Map<String, String> workshopSupportAssignments,
 }) {
   return characters.map((CharacterProgress character) {
     return CharacterListItemView(
@@ -125,7 +136,11 @@ List<CharacterListItemView> _buildCharacterViews({
       rankHint: _rankUpHint(character),
       tierHint: _tierUpHint(character, inventory),
       detailLines: _detailLines(character),
-      assignmentLabel: _assignmentLabel(character.id, stageAssignments),
+      assignmentLabel: _assignmentLabel(
+        character.id,
+        stageAssignments,
+        workshopSupportAssignments,
+      ),
       equipmentSlots: EquipmentSlot.values
           .map((EquipmentSlot slot) {
             return CharacterEquipmentSlotView(
@@ -174,20 +189,51 @@ String _tierUpHint(CharacterProgress character, Map<String, int> inventory) {
 String _assignmentLabel(
   String characterId,
   Map<String, List<String>> stageAssignments,
+  Map<String, String> workshopSupportAssignments,
 ) {
-  final List<String> assignedStages = stageAssignments.entries
+  final List<String> assignments = stageAssignments.entries
       .where((MapEntry<String, List<String>> entry) {
         return entry.value.contains(characterId);
       })
       .map((MapEntry<String, List<String>> entry) {
         return entry.key.replaceFirst('stage_', 'Stage ');
       })
-      .toList(growable: false);
+      .toList();
 
-  if (assignedStages.isEmpty) {
+  final String? workshopSlot = _workshopSlotLabel(
+    characterId,
+    workshopSupportAssignments,
+  );
+  if (workshopSlot != null) {
+    assignments.add('작업실($workshopSlot)');
+  }
+
+  if (assignments.isEmpty) {
     return '배치 상태: 대기';
   }
-  return '배치 상태: ${assignedStages.join(", ")}';
+  return '배치 상태: ${assignments.join(", ")}';
+}
+
+String? _workshopSlotLabel(
+  String characterId,
+  Map<String, String> workshopSupportAssignments,
+) {
+  for (final MapEntry<String, String> entry in workshopSupportAssignments.entries) {
+    if (entry.value != characterId) {
+      continue;
+    }
+    switch (entry.key) {
+      case 'extraction':
+        return '추출';
+      case 'crafting':
+        return '제조';
+      case 'enchant':
+        return '인챈트';
+      case 'hatch':
+        return '부화';
+    }
+  }
+  return null;
 }
 
 List<String> _detailLines(CharacterProgress character) {

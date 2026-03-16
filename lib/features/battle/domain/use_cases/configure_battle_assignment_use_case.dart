@@ -22,6 +22,22 @@ class ConfigureBattleAssignmentUseCase {
     if (assigned) {
       currentAssignment.remove(characterId);
     } else {
+      final bool assignedToOtherStage = state.battle.stageAssignments.entries.any((
+        MapEntry<String, List<String>> entry,
+      ) {
+        return entry.key != stageId && entry.value.contains(characterId);
+      });
+      if (assignedToOtherStage) {
+        return state;
+      }
+      final bool assignedToWorkshop = state
+          .workshop
+          .supportAssignmentsByFunction
+          .values
+          .contains(characterId);
+      if (assignedToWorkshop) {
+        return state;
+      }
       if (currentAssignment.length >= maxPartySize) {
         return state;
       }

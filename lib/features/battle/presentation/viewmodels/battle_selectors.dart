@@ -13,6 +13,7 @@ class BattleAssignmentCharacterView {
     required this.power,
     required this.assigned,
     required this.assignable,
+    required this.assignmentHint,
   });
 
   final String id;
@@ -21,6 +22,7 @@ class BattleAssignmentCharacterView {
   final int power;
   final bool assigned;
   final bool assignable;
+  final String assignmentHint;
 }
 
 final Provider<List<String>> unlockedStageListProvider = Provider<List<String>>(
@@ -87,6 +89,12 @@ final battleStageAssignmentCharacterViewsProvider =
       final List<String> assignedIds = ref.watch(
         battleStageAssignmentProvider(stageId),
       );
+      final Set<String> workshopAssignedIds = ref.watch(
+        sessionControllerProvider.select(
+          (SessionState state) =>
+              state.workshop.supportAssignmentsByFunction.values.toSet(),
+        ),
+      );
       final int assignedCount = assignedIds.length;
       final BattlePartyPowerService powerService = const BattlePartyPowerService();
       final List<CharacterProgress> characters = <CharacterProgress>[
@@ -96,13 +104,30 @@ final battleStageAssignmentCharacterViewsProvider =
 
       return characters.map((CharacterProgress character) {
         final bool assigned = assignedIds.contains(character.id);
+        final String? assignedOtherStage = state.battle.stageAssignments.entries
+            .where((MapEntry<String, List<String>> entry) {
+              return entry.key != stageId && entry.value.contains(character.id);
+            })
+            .map((MapEntry<String, List<String>> entry) {
+              return entry.key.replaceFirst('stage_', 'Stage ');
+            })
+            .firstOrNull;
+        final bool workshopAssigned = workshopAssignedIds.contains(character.id);
+        final bool assignable =
+            assigned ||
+            (!workshopAssigned && assignedOtherStage == null && assignedCount < 3);
         return BattleAssignmentCharacterView(
           id: character.id,
           name: character.name,
           typeLabel: character.type == CharacterType.mercenary ? '용병' : '호문쿨루스',
           power: powerService.powerForCharacter(character),
           assigned: assigned,
-          assignable: assigned || assignedCount < 3,
+          assignable: assignable,
+          assignmentHint: workshopAssigned && !assigned
+              ? '작업실 배치 중'
+              : assignedOtherStage != null && !assigned
+              ? '$assignedOtherStage 배치 중'
+              : '',
         );
       }).toList(growable: false);
     });

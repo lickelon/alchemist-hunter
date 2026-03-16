@@ -63,6 +63,11 @@ void main() {
     final CharacterProgress target = session.state.characters.homunculi.first;
     session.state = session.state.copyWith(
       battle: session.state.battle.copyWith(stageAssignments: const <String, List<String>>{}),
+      workshop: session.state.workshop.copyWith(
+        supportAssignmentsByFunction: const <String, String>{
+          'extraction': 'homo_1',
+        },
+      ),
       characters: session.state.characters.copyWith(
         homunculi: <CharacterProgress>[
           target.copyWith(
@@ -83,6 +88,6 @@ void main() {
       '역할 지원',
       '보조효과 파티 생존력 보조',
     ]);
-    expect(view.assignmentLabel, '배치 상태: 대기');
+    expect(view.assignmentLabel, '배치 상태: 작업실(추출)');
   });
 }
