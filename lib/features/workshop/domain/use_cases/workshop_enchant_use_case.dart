@@ -15,12 +15,18 @@ class WorkshopEnchantUseCase {
     required SessionState state,
     required String equipmentId,
     required String potionStackKey,
+    DateTime? now,
+    int queueCapacity = 99,
     required EquipmentEnchantService enchantService,
     required PotionCatalogRepository potionCatalogRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
     required WorkshopSupportService workshopSupportService,
   }) {
+    if (state.workshop.queue.length >= queueCapacity) {
+      return state;
+    }
+
     final int owned = state.workshop.craftedPotionStacks[potionStackKey] ?? 0;
     final CraftedPotion? potion =
         state.workshop.craftedPotionDetails[potionStackKey];
@@ -39,75 +45,71 @@ class WorkshopEnchantUseCase {
       state.town.equipmentInventory,
       equipmentId,
     );
-    if (storedItem != null) {
-      final EquipmentEnchant enchant = enchantService.buildEnchant(
-        equipment: storedItem,
-        potion: potion,
-        blueprint: blueprint,
-        potencyBonusRate: workshopSkillTreeService.enchantPotencyBonusRate(
-              state,
-              workshopSkillTreeRepository.nodes(),
-            ) +
-            workshopSupportService.enchantPotencyBonusRate(state),
-      );
-      return _consumePotion(
-        state.copyWith(
-          town: state.town.copyWith(
-            equipmentInventory: state.town.equipmentInventory.map((
-              EquipmentInstance item,
-            ) {
-              if (item.id != equipmentId) {
-                return item;
-              }
-              return item.copyWith(enchant: enchant);
-            }).toList(),
-          ),
-        ),
-        potionStackKey,
-      );
-    }
-
     final ({
       CharacterType type,
       int index,
       CharacterProgress character,
       EquipmentInstance item,
     })?
-    equippedEntry = _findEquippedItem(state.characters, equipmentId);
-    if (equippedEntry == null) {
+    equippedEntry = storedItem == null
+        ? _findEquippedItem(state.characters, equipmentId)
+        : null;
+    if (storedItem == null && equippedEntry == null) {
       return state;
     }
 
+    final double potencyBonusRate =
+        workshopSkillTreeService.enchantPotencyBonusRate(
+          state,
+          workshopSkillTreeRepository.nodes(),
+        ) +
+        workshopSupportService.enchantPotencyBonusRate(state);
+    final EquipmentInstance sourceItem = storedItem ?? equippedEntry!.item;
     final EquipmentEnchant enchant = enchantService.buildEnchant(
-      equipment: equippedEntry.item,
+      equipment: sourceItem,
       potion: potion,
       blueprint: blueprint,
-      potencyBonusRate: workshopSkillTreeService.enchantPotencyBonusRate(
-            state,
-            workshopSkillTreeRepository.nodes(),
-          ) +
-          workshopSupportService.enchantPotencyBonusRate(state),
+      potencyBonusRate: potencyBonusRate,
     );
-    final CharacterProgress updatedCharacter = equippedEntry.character.copyWith(
-      equipment: equippedEntry.character.equipment.equip(
-        equippedEntry.item.copyWith(enchant: enchant),
-      ),
+    final EquipmentInstance completedEquipment = sourceItem.copyWith(
+      enchant: enchant,
     );
 
-    final List<CharacterProgress> source =
-        equippedEntry.type == CharacterType.mercenary
-        ? state.characters.mercenaries
-        : state.characters.homunculi;
-    final List<CharacterProgress> nextList = <CharacterProgress>[...source];
-    nextList[equippedEntry.index] = updatedCharacter;
-
-    return _consumePotion(
-      state.copyWith(
-        characters: equippedEntry.type == CharacterType.mercenary
-            ? state.characters.copyWith(mercenaries: nextList)
-            : state.characters.copyWith(homunculi: nextList),
+    final SessionState reservedState = _consumePotion(
+      _reserveEquipment(
+        state,
+        storedItem: storedItem,
+        equippedEntry: equippedEntry,
       ),
       potionStackKey,
+    );
+    final bool hasActiveJob = reservedState.workshop.queue.any(
+      (CraftQueueJob job) => job.status != QueueJobStatus.completed,
+    );
+    final Duration duration = const Duration(seconds: 20);
+    final DateTime queuedAt = now ?? DateTime.now();
+    final CraftQueueJob job = CraftQueueJob(
+      id: 'job_${queuedAt.microsecondsSinceEpoch}_enchant_$equipmentId',
+      type: WorkshopJobType.enchant,
+      status: hasActiveJob ? QueueJobStatus.queued : QueueJobStatus.processing,
+      queuedAt: queuedAt,
+      startedAt: hasActiveJob ? null : queuedAt,
+      duration: duration,
+      eta: duration,
+      title: sourceItem.name,
+      potionStackKey: potionStackKey,
+      equipmentId: equipmentId,
+      equipmentOwnerId: equippedEntry?.character.id,
+      equipmentOwnerType: equippedEntry?.type,
+      reservedPotion: potion,
+      reservedEquipment: sourceItem,
+      completedEquipment: completedEquipment,
+    );
+
+    return reservedState.copyWith(
+      workshop: reservedState.workshop.copyWith(
+        queue: <CraftQueueJob>[...reservedState.workshop.queue, job],
+      ),
     );
   }
 
@@ -162,6 +164,47 @@ class WorkshopEnchantUseCase {
     return null;
   }
 
+  SessionState _reserveEquipment(
+    SessionState state, {
+    required EquipmentInstance? storedItem,
+    required ({
+      CharacterType type,
+      int index,
+      CharacterProgress character,
+      EquipmentInstance item,
+    })?
+    equippedEntry,
+  }) {
+    if (storedItem != null) {
+      return state.copyWith(
+        town: state.town.copyWith(
+          equipmentInventory: state.town.equipmentInventory
+              .where((EquipmentInstance item) => item.id != storedItem.id)
+              .toList(),
+        ),
+      );
+    }
+    if (equippedEntry == null) {
+      return state;
+    }
+
+    final CharacterProgress updatedCharacter = equippedEntry.character.copyWith(
+      equipment: equippedEntry.character.equipment.clearSlot(equippedEntry.item.slot),
+    );
+    final List<CharacterProgress> source =
+        equippedEntry.type == CharacterType.mercenary
+        ? state.characters.mercenaries
+        : state.characters.homunculi;
+    final List<CharacterProgress> nextList = <CharacterProgress>[...source];
+    nextList[equippedEntry.index] = updatedCharacter;
+
+    return state.copyWith(
+      characters: equippedEntry.type == CharacterType.mercenary
+          ? state.characters.copyWith(mercenaries: nextList)
+          : state.characters.copyWith(homunculi: nextList),
+    );
+  }
+
   SessionState _consumePotion(SessionState state, String potionStackKey) {
     final Map<String, int> stacks = <String, int>{
       ...state.workshop.craftedPotionStacks,
@@ -182,7 +225,6 @@ class WorkshopEnchantUseCase {
       workshop: state.workshop.copyWith(
         craftedPotionStacks: stacks,
         craftedPotionDetails: details,
-        enchantCount: state.workshop.enchantCount + 1,
       ),
     );
   }

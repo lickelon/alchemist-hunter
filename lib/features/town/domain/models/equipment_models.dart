@@ -35,6 +35,7 @@ class EquipmentBlueprint {
     required this.name,
     required this.slot,
     required this.materialCosts,
+    this.craftDuration = const Duration(seconds: 30),
     required this.attack,
     required this.defense,
     required this.health,
@@ -44,6 +45,7 @@ class EquipmentBlueprint {
   final String name;
   final EquipmentSlot slot;
   final Map<String, int> materialCosts;
+  final Duration craftDuration;
   final int attack;
   final int defense;
   final int health;

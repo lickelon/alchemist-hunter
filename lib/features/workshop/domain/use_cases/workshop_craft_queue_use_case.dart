@@ -1,9 +1,10 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_service.dart';
-import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
+import 'package:alchemist_hunter/features/characters/domain/models.dart';
+import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 
@@ -15,7 +16,6 @@ class WorkshopCraftQueueUseCase {
     required String potionId,
     required int repeatCount,
     required DateTime now,
-    required CraftQueueService queueService,
     required PotionCraftingService craftingService,
     required PotionCatalogRepository potionCatalogRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
@@ -27,235 +27,198 @@ class WorkshopCraftQueueUseCase {
           workshopSkillTreeRepository.nodes(),
         ) +
         workshopSupportService.craftQueueCapacityBonus(state);
-    if (state.workshop.queue.length >= queueCapacity) {
+    if (repeatCount <= 0 || state.workshop.queue.length >= queueCapacity) {
       return state;
     }
+
     final PotionBlueprint? blueprint = potionCatalogRepository.findPotionById(
       potionId,
     );
     if (blueprint == null) {
       return state;
     }
-    final bool canCraft = craftingService.canCraftRepeatCount(
-      blueprint: blueprint,
-      extractedInventory: state.workshop.extractedTraitInventory,
-      repeatCount: repeatCount,
-    );
-    if (!canCraft) {
+
+    final Map<String, double>? requiredTraits = craftingService
+        .requiredTraitsForRepeatCount(
+          blueprint: blueprint,
+          repeatCount: repeatCount,
+        );
+    if (requiredTraits == null ||
+        !craftingService.canCraftRepeatCount(
+          blueprint: blueprint,
+          extractedInventory: state.workshop.extractedTraitInventory,
+          repeatCount: repeatCount,
+        )) {
       return state;
     }
 
-    final CraftQueueJob job = CraftQueueJob(
-      id: 'job_${now.millisecondsSinceEpoch}',
-      potionId: potionId,
-      repeatCount: repeatCount,
-      retryPolicy: const CraftRetryPolicy(maxRetries: 2),
-      status: QueueJobStatus.queued,
-      eta: const Duration(seconds: 15),
-    );
-
-    return state.copyWith(
-      workshop: state.workshop.copyWith(
-        queue: queueService.enqueue(state.workshop.queue, job),
-      ),
-    );
-  }
-
-  SessionState tickCraftQueue({
-    required SessionState state,
-    required CraftQueueService queueService,
-    required PotionCraftingService craftingService,
-    required PotionCatalogRepository potionCatalogRepository,
-  }) {
-    CraftQueueJob? activeJob;
-    for (final CraftQueueJob job in state.workshop.queue) {
-      if (job.status == QueueJobStatus.queued ||
-          job.status == QueueJobStatus.processing) {
-        activeJob = job;
-        break;
-      }
-    }
-    if (activeJob != null) {
-      final PotionBlueprint? activeBlueprint = potionCatalogRepository
-          .findPotionById(activeJob.potionId);
-      if (activeBlueprint == null) {
-        return state;
-      }
-      final bool canPrepare =
-          craftingService.prepareCraftFromExtractedInventory(
-            blueprint: activeBlueprint,
-            extractedInventory: state.workshop.extractedTraitInventory,
-          ) !=
-          null;
-      if (!canPrepare) {
-        return state.copyWith(
-          workshop: state.workshop.copyWith(
-            queue: _markCraftBlocked(state.workshop.queue, activeJob.id),
-          ),
-        );
-      }
-    }
-
-    final List<CraftQueueJob> previousQueue = state.workshop.queue;
-    final List<CraftQueueJob> nextQueue = queueService.processTick(
-      state.workshop.queue,
-      const Duration(seconds: 15),
-    );
-
-    final Map<String, int> stacks = <String, int>{
-      ...state.workshop.craftedPotionStacks,
-    };
-    final Map<String, CraftedPotion> details = <String, CraftedPotion>{
-      ...state.workshop.craftedPotionDetails,
-    };
-    final Map<String, double> extractedInventory = <String, double>{
+    final Map<String, double> nextExtractedInventory = <String, double>{
       ...state.workshop.extractedTraitInventory,
     };
+    requiredTraits.forEach((String key, double value) {
+      final double nextValue = (nextExtractedInventory[key] ?? 0) - value;
+      if (nextValue <= 0.0001) {
+        nextExtractedInventory.remove(key);
+      } else {
+        nextExtractedInventory[key] = nextValue;
+      }
+    });
 
-    List<CraftQueueJob> resolvedQueue = nextQueue;
-    for (final CraftQueueJob job in nextQueue) {
-      final CraftQueueJob? previousJob = previousQueue
-          .where((CraftQueueJob candidate) => candidate.id == job.id)
-          .firstOrNull;
-      if (previousJob == null) {
+    final CraftedPotion craftedPotion = craftingService.craftPotion(
+      requestedBlueprint: blueprint,
+      extractedTraits: blueprint.targetTraits,
+      recipeRules: potionCatalogRepository.recipeRules(),
+      branchRules: potionCatalogRepository.recipeBranchRules(),
+      qualityRule: potionCatalogRepository.qualityRule(),
+    );
+    final String stackKey =
+        '${craftedPotion.typePotionId}|${craftedPotion.qualityGrade.name}';
+    final Duration duration = Duration(seconds: 15 * repeatCount);
+    final bool hasActiveJob = _hasActiveJob(state.workshop.queue);
+    final CraftQueueJob job = CraftQueueJob(
+      id: 'job_${now.microsecondsSinceEpoch}_craft_${blueprint.id}',
+      type: WorkshopJobType.craft,
+      status: hasActiveJob ? QueueJobStatus.queued : QueueJobStatus.processing,
+      queuedAt: now,
+      startedAt: hasActiveJob ? null : now,
+      duration: duration,
+      eta: duration,
+      title: blueprint.name,
+      potionId: potionId,
+      repeatCount: repeatCount,
+      reservedTraits: requiredTraits,
+      completedPotionStackKey: stackKey,
+      completedPotion: craftedPotion,
+    );
+
+    return state.copyWith(
+      workshop: state.workshop.copyWith(
+        extractedTraitInventory: nextExtractedInventory,
+        queue: <CraftQueueJob>[...state.workshop.queue, job],
+      ),
+    );
+  }
+
+  SessionState claimPending({required SessionState state}) {
+    final WorkshopPendingClaim pending = state.workshop.pendingClaim;
+    if (pending.isEmpty) {
+      return state;
+    }
+
+    final Map<String, double> extractedTraits = <String, double>{
+      ...state.workshop.extractedTraitInventory,
+    };
+    pending.extractedTraits.forEach((String key, double value) {
+      extractedTraits[key] = (extractedTraits[key] ?? 0) + value;
+    });
+
+    final Map<String, int> potionStacks = <String, int>{
+      ...state.workshop.craftedPotionStacks,
+    };
+    pending.potionStacks.forEach((String key, int value) {
+      potionStacks[key] = (potionStacks[key] ?? 0) + value;
+    });
+    final Map<String, CraftedPotion> potionDetails = <String, CraftedPotion>{
+      ...state.workshop.craftedPotionDetails,
+      ...pending.potionDetails,
+    };
+
+    List<EquipmentInstance> townInventory = <EquipmentInstance>[
+      ...state.town.equipmentInventory,
+    ];
+    List<CharacterProgress> mercenaries = <CharacterProgress>[
+      ...state.characters.mercenaries,
+    ];
+    List<CharacterProgress> homunculi = <CharacterProgress>[
+      ...state.characters.homunculi,
+      ...pending.homunculi,
+    ];
+
+    for (final WorkshopEquipmentClaim claim in pending.equipmentClaims) {
+      final CharacterType? ownerType = claim.ownerType;
+      final String? ownerCharacterId = claim.ownerCharacterId;
+      if (ownerType == null || ownerCharacterId == null) {
+        townInventory = <EquipmentInstance>[claim.equipment, ...townInventory];
         continue;
       }
 
-      final int producedDelta = job.currentRepeat - previousJob.currentRepeat;
-      if (producedDelta <= 0) {
-        continue;
-      }
-
-      final PotionBlueprint? blueprint = potionCatalogRepository.findPotionById(
-        job.potionId,
-      );
-      if (blueprint == null) {
-        continue;
-      }
-      for (int index = 0; index < producedDelta; index++) {
-        final ({
-          Map<String, double> nextExtractedInventory,
-          Map<String, double> extractedTraits,
-        })?
-        prepared = craftingService.prepareCraftFromExtractedInventory(
-          blueprint: blueprint,
-          extractedInventory: extractedInventory,
+      if (ownerType == CharacterType.mercenary) {
+        final ({List<CharacterProgress> characters, bool equipped})
+        result = _applyEquipmentClaimToList(
+          characters: mercenaries,
+          ownerCharacterId: ownerCharacterId,
+          equipment: claim.equipment,
         );
-        if (prepared == null) {
-          resolvedQueue = _markCraftBlocked(resolvedQueue, job.id);
-          break;
+        mercenaries = result.characters;
+        if (!result.equipped) {
+          townInventory = <EquipmentInstance>[claim.equipment, ...townInventory];
         }
-        extractedInventory
-          ..clear()
-          ..addAll(prepared.nextExtractedInventory);
-        final CraftedPotion crafted = craftingService.craftPotion(
-          requestedBlueprint: blueprint,
-          extractedTraits: prepared.extractedTraits,
-          recipeRules: potionCatalogRepository.recipeRules(),
-          branchRules: potionCatalogRepository.recipeBranchRules(),
-          qualityRule: potionCatalogRepository.qualityRule(),
-        );
-        final String stackKey =
-            '${crafted.typePotionId}|${crafted.qualityGrade.name}';
-        stacks[stackKey] = (stacks[stackKey] ?? 0) + 1;
-        details.putIfAbsent(stackKey, () => crafted);
-      }
-    }
-
-    return state.copyWith(
-      workshop: state.workshop.copyWith(
-        extractedTraitInventory: extractedInventory,
-        queue: resolvedQueue,
-        craftedPotionStacks: stacks,
-        craftedPotionDetails: details,
-        potionCraftCount:
-            state.workshop.potionCraftCount +
-            _totalProducedCount(previousQueue, resolvedQueue),
-      ),
-    );
-  }
-
-  SessionState resumeBlockedJob({
-    required SessionState state,
-    required String jobId,
-    required CraftQueueService queueService,
-    required PotionCraftingService craftingService,
-    required PotionCatalogRepository potionCatalogRepository,
-  }) {
-    CraftQueueJob? blockedJob;
-    for (final CraftQueueJob job in state.workshop.queue) {
-      if (job.id == jobId && job.status == QueueJobStatus.blocked) {
-        blockedJob = job;
-        break;
-      }
-    }
-    if (blockedJob == null) {
-      return state;
-    }
-
-    final int remainingCount =
-        blockedJob.repeatCount - blockedJob.currentRepeat;
-    final PotionBlueprint? blueprint = potionCatalogRepository.findPotionById(
-      blockedJob.potionId,
-    );
-    if (blueprint == null) {
-      return state;
-    }
-    final bool canCraft = craftingService.canCraftRepeatCount(
-      blueprint: blueprint,
-      extractedInventory: state.workshop.extractedTraitInventory,
-      repeatCount: remainingCount,
-    );
-    if (!canCraft) {
-      return state;
-    }
-
-    return state.copyWith(
-      workshop: state.workshop.copyWith(
-        queue: queueService.resumeBlocked(state.workshop.queue, jobId),
-      ),
-    );
-  }
-
-  SessionState clearCompletedJobs({required SessionState state}) {
-    final List<CraftQueueJob> remaining = state.workshop.queue
-        .where((CraftQueueJob job) => job.status != QueueJobStatus.completed)
-        .toList();
-    if (remaining.length == state.workshop.queue.length) {
-      return state;
-    }
-    return state.copyWith(workshop: state.workshop.copyWith(queue: remaining));
-  }
-
-  List<CraftQueueJob> _markCraftBlocked(
-    List<CraftQueueJob> jobs,
-    String jobId,
-  ) {
-    return jobs.map((CraftQueueJob job) {
-      if (job.id != jobId) {
-        return job;
-      }
-      return job.copyWith(status: QueueJobStatus.blocked, eta: Duration.zero);
-    }).toList();
-  }
-
-  int _totalProducedCount(
-    List<CraftQueueJob> previousQueue,
-    List<CraftQueueJob> nextQueue,
-  ) {
-    int total = 0;
-    for (final CraftQueueJob job in nextQueue) {
-      final CraftQueueJob? previousJob = previousQueue
-          .where((CraftQueueJob candidate) => candidate.id == job.id)
-          .firstOrNull;
-      if (previousJob == null) {
         continue;
       }
-      final int producedDelta = job.currentRepeat - previousJob.currentRepeat;
-      if (producedDelta > 0) {
-        total += producedDelta;
+
+      final ({List<CharacterProgress> characters, bool equipped})
+      result = _applyEquipmentClaimToList(
+        characters: homunculi,
+        ownerCharacterId: ownerCharacterId,
+        equipment: claim.equipment,
+      );
+      homunculi = result.characters;
+      if (!result.equipped) {
+        townInventory = <EquipmentInstance>[claim.equipment, ...townInventory];
       }
     }
-    return total;
+
+    return state.copyWith(
+      player: state.player.copyWith(
+        arcaneDust: state.player.arcaneDust + pending.arcaneDust,
+      ),
+      town: state.town.copyWith(equipmentInventory: townInventory),
+      workshop: state.workshop.copyWith(
+        pendingClaim: const WorkshopPendingClaim(),
+        extractedTraitInventory: extractedTraits,
+        craftedPotionStacks: potionStacks,
+        craftedPotionDetails: potionDetails,
+        extractionCount:
+            state.workshop.extractionCount + pending.extractionCount,
+        potionCraftCount:
+            state.workshop.potionCraftCount + pending.potionCraftCount,
+        enchantCount: state.workshop.enchantCount + pending.enchantCount,
+      ),
+      characters: state.characters.copyWith(
+        mercenaries: mercenaries,
+        homunculi: homunculi,
+      ),
+    );
+  }
+
+  bool _hasActiveJob(List<CraftQueueJob> jobs) {
+    return jobs.any((CraftQueueJob job) => job.status != QueueJobStatus.completed);
+  }
+
+  ({List<CharacterProgress> characters, bool equipped}) _applyEquipmentClaimToList({
+    required List<CharacterProgress> characters,
+    required String ownerCharacterId,
+    required EquipmentInstance equipment,
+  }) {
+    final List<CharacterProgress> nextCharacters = <CharacterProgress>[
+      ...characters,
+    ];
+    for (int index = 0; index < nextCharacters.length; index++) {
+      final CharacterProgress character = nextCharacters[index];
+      if (character.id != ownerCharacterId) {
+        continue;
+      }
+      final EquipmentInstance? current = character.equipment.itemForSlot(
+        equipment.slot,
+      );
+      if (current != null) {
+        return (characters: nextCharacters, equipped: false);
+      }
+      nextCharacters[index] = character.copyWith(
+        equipment: character.equipment.equip(equipment),
+      );
+      return (characters: nextCharacters, equipped: true);
+    }
+    return (characters: nextCharacters, equipped: false);
   }
 }

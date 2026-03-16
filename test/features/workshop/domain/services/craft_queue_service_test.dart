@@ -7,6 +7,9 @@ void main() {
     final CraftQueueService service = CraftQueueService();
     final CraftQueueJob job = CraftQueueJob(
       id: 'j1',
+      type: WorkshopJobType.craft,
+      queuedAt: DateTime(2026, 1, 1, 10),
+      duration: const Duration(seconds: 5),
       potionId: 'p1',
       repeatCount: 1,
       retryPolicy: const CraftRetryPolicy(maxRetries: 0),

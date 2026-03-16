@@ -5,6 +5,7 @@ import 'workshop_skill_tree_models.dart';
 class WorkshopState {
   const WorkshopState({
     required this.queue,
+    this.pendingClaim = const WorkshopPendingClaim(),
     required this.supportAssignmentsByFunction,
     required this.extractedTraitInventory,
     required this.craftedPotionStacks,
@@ -17,6 +18,7 @@ class WorkshopState {
   });
 
   final List<CraftQueueJob> queue;
+  final WorkshopPendingClaim pendingClaim;
   final Map<String, String> supportAssignmentsByFunction;
   final Map<String, double> extractedTraitInventory;
   final Map<String, int> craftedPotionStacks;
@@ -29,6 +31,7 @@ class WorkshopState {
 
   WorkshopState copyWith({
     List<CraftQueueJob>? queue,
+    WorkshopPendingClaim? pendingClaim,
     Map<String, String>? supportAssignmentsByFunction,
     Map<String, double>? extractedTraitInventory,
     Map<String, int>? craftedPotionStacks,
@@ -41,6 +44,7 @@ class WorkshopState {
   }) {
     return WorkshopState(
       queue: queue ?? this.queue,
+      pendingClaim: pendingClaim ?? this.pendingClaim,
       supportAssignmentsByFunction:
           supportAssignmentsByFunction ?? this.supportAssignmentsByFunction,
       extractedTraitInventory:

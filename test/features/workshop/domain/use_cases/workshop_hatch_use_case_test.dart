@@ -2,11 +2,12 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_homunculus_hatch_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_hatch_use_case.dart';
 
 void main() {
-  test('hatchHomunculus consumes resources and appends homunculus', () {
+  test('hatchHomunculus reserves resources and enqueues homunculus job', () {
     final state = createInitialSessionState(DateTime(2026, 1, 1, 10)).copyWith(
       player: createInitialSessionState(
         DateTime(2026, 1, 1, 10),
@@ -36,12 +37,20 @@ void main() {
     expect(nextState.player.arcaneDust, 0);
     expect(nextState.player.materialInventory, isEmpty);
     expect(nextState.workshop.extractedTraitInventory, isEmpty);
-    expect(nextState.characters.homunculi, hasLength(2));
-    expect(nextState.characters.homunculi.last.name, 'Vital Nigredo');
-    expect(nextState.characters.homunculi.last.homunculusOrigin, 'Vital Seed Flask');
-    expect(nextState.characters.homunculi.last.homunculusRole, '지원');
+    expect(nextState.characters.homunculi, hasLength(1));
+    expect(nextState.workshop.queue, hasLength(1));
+    expect(nextState.workshop.queue.first.type, WorkshopJobType.hatch);
+    expect(nextState.workshop.queue.first.completedHomunculus?.name, 'Vital Nigredo');
     expect(
-      nextState.characters.homunculi.last.homunculusSupportEffect,
+      nextState.workshop.queue.first.completedHomunculus?.homunculusOrigin,
+      'Vital Seed Flask',
+    );
+    expect(
+      nextState.workshop.queue.first.completedHomunculus?.homunculusRole,
+      '지원',
+    );
+    expect(
+      nextState.workshop.queue.first.completedHomunculus?.homunculusSupportEffect,
       '파티 생존력 보조',
     );
   });
@@ -77,6 +86,7 @@ void main() {
     );
 
     expect(nextState.player.arcaneDust, 0);
-    expect(nextState.characters.homunculi, hasLength(2));
+    expect(nextState.characters.homunculi, hasLength(1));
+    expect(nextState.workshop.queue, hasLength(1));
   });
 }

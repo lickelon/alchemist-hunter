@@ -10,8 +10,13 @@ class WorkshopHatchUseCase {
     required SessionState state,
     required HomunculusHatchRecipe recipe,
     required DateTime now,
+    int queueCapacity = 99,
     required WorkshopSupportService workshopSupportService,
   }) {
+    if (state.workshop.queue.length >= queueCapacity) {
+      return state;
+    }
+
     final int arcaneDustCost = (recipe.arcaneDustCost -
             workshopSupportService.hatchArcaneDustDiscount(state))
         .clamp(0, recipe.arcaneDustCost)
@@ -70,18 +75,33 @@ class WorkshopHatchUseCase {
       homunculusSupportEffect: recipe.supportEffectLabel,
     );
 
+    final bool hasActiveJob = state.workshop.queue.any(
+      (CraftQueueJob job) => job.status != QueueJobStatus.completed,
+    );
+    final CraftQueueJob job = CraftQueueJob(
+      id: 'job_${now.microsecondsSinceEpoch}_hatch_${recipe.id}',
+      type: WorkshopJobType.hatch,
+      status: hasActiveJob ? QueueJobStatus.queued : QueueJobStatus.processing,
+      queuedAt: now,
+      startedAt: hasActiveJob ? null : now,
+      duration: recipe.duration,
+      eta: recipe.duration,
+      title: recipe.resultName,
+      recipeId: recipe.id,
+      reservedMaterials: recipe.materialCosts,
+      reservedTraits: recipe.traitCosts,
+      completedHomunculus: homunculus,
+    );
+
     return state.copyWith(
       player: state.player.copyWith(
         essence: state.player.essence - recipe.essenceCost,
         arcaneDust: state.player.arcaneDust - arcaneDustCost,
         materialInventory: materialInventory,
       ),
-      workshop: state.workshop.copyWith(extractedTraitInventory: traitInventory),
-      characters: state.characters.copyWith(
-        homunculi: <CharacterProgress>[
-          ...state.characters.homunculi,
-          homunculus,
-        ],
+      workshop: state.workshop.copyWith(
+        extractedTraitInventory: traitInventory,
+        queue: <CraftQueueJob>[...state.workshop.queue, job],
       ),
     );
   }

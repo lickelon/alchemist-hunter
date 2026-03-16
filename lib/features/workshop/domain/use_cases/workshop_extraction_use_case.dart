@@ -1,9 +1,9 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/workshop/domain/services/alchemy_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/alchemy_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 
@@ -14,6 +14,8 @@ class WorkshopExtractionUseCase {
     required SessionState state,
     required String materialId,
     required String profileId,
+    required DateTime now,
+    required int queueCapacity,
     required AlchemyService alchemyService,
     required MaterialCatalogRepository materialCatalogRepository,
     required ExtractionProfileRepository extractionProfileRepository,
@@ -24,7 +26,10 @@ class WorkshopExtractionUseCase {
     List<String>? selectedTraits,
   }) {
     final int owned = state.player.materialInventory[materialId] ?? 0;
-    if (owned <= 0 || quantity <= 0 || owned < quantity) {
+    if (state.workshop.queue.length >= queueCapacity ||
+        owned <= 0 ||
+        quantity <= 0 ||
+        owned < quantity) {
       return state;
     }
 
@@ -51,6 +56,18 @@ class WorkshopExtractionUseCase {
       return state;
     }
 
+    final double yieldMultiplier =
+        1 +
+        workshopSkillTreeService.extractionYieldBonusRate(
+          state,
+          workshopSkillTreeRepository.nodes(),
+        ) +
+        workshopSupportService.extractionYieldBonusRate(state);
+    final Map<String, double> completedTraits = <String, double>{};
+    extractedTraits.forEach((String traitId, double amount) {
+      completedTraits[traitId] = amount * quantity * yieldMultiplier;
+    });
+
     final Map<String, int> materials = <String, int>{
       ...state.player.materialInventory,
     };
@@ -61,29 +78,34 @@ class WorkshopExtractionUseCase {
       materials[materialId] = nextCount;
     }
 
-    final Map<String, double> inventory = <String, double>{
-      ...state.workshop.extractedTraitInventory,
-    };
-    final double yieldMultiplier =
-        1 +
-        workshopSkillTreeService.extractionYieldBonusRate(
-          state,
-          workshopSkillTreeRepository.nodes(),
-        ) +
-        workshopSupportService.extractionYieldBonusRate(state);
-    extractedTraits.forEach((String traitId, double amount) {
-      inventory[traitId] =
-          (inventory[traitId] ?? 0) + (amount * quantity * yieldMultiplier);
-    });
+    final bool hasActiveJob = state.workshop.queue.any(
+      (CraftQueueJob job) => job.status != QueueJobStatus.completed,
+    );
+    final Duration duration = Duration(
+      milliseconds: profile.timeCost.inMilliseconds * quantity,
+    );
+    final CraftQueueJob job = CraftQueueJob(
+      id: 'job_${now.microsecondsSinceEpoch}_extract_${material.id}',
+      type: WorkshopJobType.extraction,
+      status: hasActiveJob ? QueueJobStatus.queued : QueueJobStatus.processing,
+      queuedAt: now,
+      startedAt: hasActiveJob ? null : now,
+      duration: duration,
+      eta: duration,
+      title: material.name,
+      materialId: materialId,
+      profileId: profileId,
+      quantity: quantity,
+      selectedTraits: selectedTraits ?? const <String>[],
+      reservedMaterials: <String, int>{materialId: quantity},
+      completedExtractedTraits: completedTraits,
+      completedArcaneDust: quantity,
+    );
 
     return state.copyWith(
-      player: state.player.copyWith(
-        materialInventory: materials,
-        arcaneDust: state.player.arcaneDust + quantity,
-      ),
+      player: state.player.copyWith(materialInventory: materials),
       workshop: state.workshop.copyWith(
-        extractedTraitInventory: inventory,
-        extractionCount: state.workshop.extractionCount + quantity,
+        queue: <CraftQueueJob>[...state.workshop.queue, job],
       ),
     );
   }

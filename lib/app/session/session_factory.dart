@@ -13,18 +13,21 @@ import 'session_state.dart';
 
 SessionState createInitialSessionState(DateTime now) {
   return SessionState(
+    lastSyncAt: now,
     player: const PlayerState(
       gold: 1500,
       essence: 120,
       townInsight: 2,
       arcaneDust: 2,
       diamonds: 100,
+      timeAcceleration: 1,
       materialInventory: <String, int>{},
     ),
     town: TownState(
       generalShop: buildGeneralShopState(now),
       catalystShop: buildCatalystShopState(now),
       equipmentInventory: const <EquipmentInstance>[],
+      forgeQueue: const <TownForgeJob>[],
       mercenaryCandidates: const MercenaryRecruitmentService().buildCandidates(
         refreshIndex: 0,
         templateRepository: const StaticMercenaryTemplateRepository(),
@@ -43,6 +46,7 @@ SessionState createInitialSessionState(DateTime now) {
     ),
     workshop: const WorkshopState(
       queue: <CraftQueueJob>[],
+      pendingClaim: WorkshopPendingClaim(),
       supportAssignmentsByFunction: <String, String>{},
       extractedTraitInventory: <String, double>{},
       craftedPotionStacks: <String, int>{},
@@ -69,6 +73,7 @@ SessionState createInitialSessionState(DateTime now) {
       stageAssignments: <String, List<String>>{
         'stage_1': <String>['merc_1', 'homo_1'],
       },
+      stageExpeditions: <String, BattleExpeditionState>{},
     ),
     characters: const CharactersState(
       mercenaries: <CharacterProgress>[

@@ -31,7 +31,7 @@ void main() {
   }
 
   test(
-    'enchantEquipment applies enchant to stored equipment and consumes potion',
+    'enchantEquipment reserves stored equipment and enqueues enchant job',
     () {
       final WorkshopEnchantUseCase useCase = WorkshopEnchantUseCase();
       final SessionState state = buildState().copyWith(
@@ -62,17 +62,20 @@ void main() {
         workshopSupportService: const WorkshopSupportService(),
       );
 
+      expect(nextState.town.equipmentInventory, isEmpty);
+      expect(nextState.workshop.craftedPotionStacks, isEmpty);
+      expect(nextState.workshop.queue, hasLength(1));
+      expect(nextState.workshop.queue.first.type, WorkshopJobType.enchant);
       expect(
-        nextState.town.equipmentInventory.first.enchant?.label,
+        nextState.workshop.queue.first.completedEquipment?.enchant?.label,
         'Potion 1 A',
       );
-      expect(nextState.town.equipmentInventory.first.totalAttack, 25);
-      expect(nextState.workshop.craftedPotionStacks, isEmpty);
+      expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 25);
     },
   );
 
   test(
-    'enchantEquipment applies enchant to equipped item and consumes potion',
+    'enchantEquipment reserves equipped item and enqueues enchant job',
     () {
       final WorkshopEnchantUseCase useCase = WorkshopEnchantUseCase();
       final EquipmentInstance sword = EquipmentInstance(
@@ -106,15 +109,15 @@ void main() {
         workshopSupportService: const WorkshopSupportService(),
       );
 
+      expect(nextState.characters.mercenaries.first.equipment.weapon, isNull);
+      expect(nextState.workshop.craftedPotionStacks, isEmpty);
+      expect(nextState.workshop.queue, hasLength(1));
+      expect(nextState.workshop.queue.first.equipmentOwnerId, 'merc_1');
       expect(
-        nextState.characters.mercenaries.first.equipment.weapon?.enchant?.label,
+        nextState.workshop.queue.first.completedEquipment?.enchant?.label,
         'Potion 1 A',
       );
-      expect(
-        nextState.characters.mercenaries.first.equipment.weapon?.totalAttack,
-        25,
-      );
-      expect(nextState.workshop.craftedPotionStacks, isEmpty);
+      expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 25);
     },
   );
 
@@ -162,7 +165,9 @@ void main() {
       workshopSupportService: const WorkshopSupportService(),
     );
 
-    expect(nextState.town.equipmentInventory.first.totalAttack, 26);
+    expect(nextState.town.equipmentInventory, isEmpty);
+    expect(nextState.workshop.queue, hasLength(1));
+    expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 26);
   });
 
   test('enchantEquipment applies workshop support potency bonus', () {
@@ -218,6 +223,8 @@ void main() {
       workshopSupportService: const WorkshopSupportService(),
     );
 
-    expect(nextState.town.equipmentInventory.first.totalAttack, 26);
+    expect(nextState.town.equipmentInventory, isEmpty);
+    expect(nextState.workshop.queue, hasLength(1));
+    expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 26);
   });
 }

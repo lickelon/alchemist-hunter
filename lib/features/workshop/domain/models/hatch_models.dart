@@ -13,6 +13,7 @@ class HomunculusHatchRecipe {
     required this.arcaneDustCost,
     required this.materialCosts,
     required this.traitCosts,
+    this.duration = const Duration(seconds: 45),
   });
 
   final String id;
@@ -25,4 +26,5 @@ class HomunculusHatchRecipe {
   final int arcaneDustCost;
   final Map<String, int> materialCosts;
   final Map<String, double> traitCosts;
+  final Duration duration;
 }
