@@ -32,6 +32,9 @@ void main() {
 
     expect(find.text('마을 스킬트리'), findsOneWidget);
     expect(find.textContaining('Trade Ledger'), findsOneWidget);
+    expect(find.textContaining('현재 효과 효과 없음'), findsWidgets);
+    expect(find.textContaining('다음 효과 포션 판매가 +5%'), findsOneWidget);
+    expect(find.textContaining('↳ Hiring Board'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(FilledButton, '강화').first);
     await tester.pumpAndSettle();

@@ -31,21 +31,32 @@ class WorkshopSkillTreeSheet extends ConsumerWidget {
               Expanded(
                 child: ListView(
                   children: nodes.map((WorkshopSkillNodeView node) {
-                    return ListTile(
-                      dense: true,
-                      title: Text('${node.name} (${node.levelLabel})'),
-                      subtitle: Text(
-                        '${node.description}\n${node.effectLabel}\n비용 ${node.costLabel}\n${node.statusLabel}',
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        left: node.depth * 20,
+                        bottom: 8,
                       ),
-                      trailing: FilledButton.tonal(
-                        onPressed: node.upgradeable
-                            ? () {
-                                ref
-                                    .read(workshopSkillTreeControllerProvider)
-                                    .upgradeNode(node.id);
-                              }
-                            : null,
-                        child: const Text('강화'),
+                      child: Card(
+                        margin: EdgeInsets.zero,
+                        child: ListTile(
+                          dense: true,
+                          title: Text(
+                            '${node.depth == 0 ? "●" : "↳"} ${node.name} (${node.levelLabel})',
+                          ),
+                          subtitle: Text(
+                            '${node.description}\n현재 효과 ${node.currentEffectLabel}\n다음 효과 ${node.nextEffectLabel}\n${node.prerequisiteLabel}\n비용 ${node.costLabel}\n${node.statusLabel}',
+                          ),
+                          trailing: FilledButton.tonal(
+                            onPressed: node.upgradeable
+                                ? () {
+                                    ref
+                                        .read(workshopSkillTreeControllerProvider)
+                                        .upgradeNode(node.id);
+                                  }
+                                : null,
+                            child: const Text('강화'),
+                          ),
+                        ),
                       ),
                     );
                   }).toList(),
