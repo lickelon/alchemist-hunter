@@ -5,6 +5,7 @@ import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/equipment_enchant_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 
 class WorkshopEnchantUseCase {
@@ -18,6 +19,7 @@ class WorkshopEnchantUseCase {
     required PotionCatalogRepository potionCatalogRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
+    required WorkshopSupportService workshopSupportService,
   }) {
     final int owned = state.workshop.craftedPotionStacks[potionStackKey] ?? 0;
     final CraftedPotion? potion =
@@ -43,9 +45,10 @@ class WorkshopEnchantUseCase {
         potion: potion,
         blueprint: blueprint,
         potencyBonusRate: workshopSkillTreeService.enchantPotencyBonusRate(
-          state,
-          workshopSkillTreeRepository.nodes(),
-        ),
+              state,
+              workshopSkillTreeRepository.nodes(),
+            ) +
+            workshopSupportService.enchantPotencyBonusRate(state),
       );
       return _consumePotion(
         state.copyWith(
@@ -80,9 +83,10 @@ class WorkshopEnchantUseCase {
       potion: potion,
       blueprint: blueprint,
       potencyBonusRate: workshopSkillTreeService.enchantPotencyBonusRate(
-        state,
-        workshopSkillTreeRepository.nodes(),
-      ),
+            state,
+            workshopSkillTreeRepository.nodes(),
+          ) +
+          workshopSupportService.enchantPotencyBonusRate(state),
     );
     final CharacterProgress updatedCharacter = equippedEntry.character.copyWith(
       equipment: equippedEntry.character.equipment.equip(

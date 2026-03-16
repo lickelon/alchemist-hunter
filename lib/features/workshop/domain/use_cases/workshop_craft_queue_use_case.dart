@@ -4,6 +4,7 @@ import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafti
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 
 class WorkshopCraftQueueUseCase {
@@ -19,11 +20,13 @@ class WorkshopCraftQueueUseCase {
     required PotionCatalogRepository potionCatalogRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
+    required WorkshopSupportService workshopSupportService,
   }) {
     final int queueCapacity = workshopSkillTreeService.craftQueueCapacity(
-      state,
-      workshopSkillTreeRepository.nodes(),
-    );
+          state,
+          workshopSkillTreeRepository.nodes(),
+        ) +
+        workshopSupportService.craftQueueCapacityBonus(state);
     if (state.workshop.queue.length >= queueCapacity) {
       return state;
     }

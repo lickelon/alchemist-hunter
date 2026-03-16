@@ -4,6 +4,7 @@ import 'package:alchemist_hunter/features/workshop/data/repositories/static_mate
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/extraction_controller.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/alchemy_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -22,6 +23,7 @@ void main() {
       extractionProfileRepository: const StaticExtractionProfileRepository(),
       workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
       workshopSkillTreeService: const WorkshopSkillTreeService(),
+      workshopSupportService: const WorkshopSupportService(),
     );
 
     session.state = session.state.copyWith(
@@ -51,6 +53,7 @@ void main() {
       extractionProfileRepository: const StaticExtractionProfileRepository(),
       workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
       workshopSkillTreeService: const WorkshopSkillTreeService(),
+      workshopSupportService: const WorkshopSupportService(),
     );
 
     session.state = session.state.copyWith(
@@ -86,6 +89,7 @@ void main() {
       extractionProfileRepository: const StaticExtractionProfileRepository(),
       workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
       workshopSkillTreeService: const WorkshopSkillTreeService(),
+      workshopSupportService: const WorkshopSupportService(),
     );
 
     session.state = session.state.copyWith(
@@ -105,6 +109,38 @@ void main() {
     expect(
       session.state.workshop.extractedTraitInventory['t_hp'],
       closeTo(0.918, 0.0001),
+    );
+  });
+
+  test('extractMaterial applies workshop support yield bonus', () {
+    final SessionController session = buildSession();
+    final WorkshopExtractionController
+    controller = WorkshopExtractionController(
+      session,
+      AlchemyService(),
+      materialCatalogRepository: const StaticMaterialCatalogRepository(),
+      extractionProfileRepository: const StaticExtractionProfileRepository(),
+      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+      workshopSkillTreeService: const WorkshopSkillTreeService(),
+      workshopSupportService: const WorkshopSupportService(),
+    );
+
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: const <String, int>{'m_1': 1},
+      ),
+      workshop: session.state.workshop.copyWith(
+        supportAssignmentsByFunction: const <String, String>{
+          'extraction': 'homo_1',
+        },
+      ),
+    );
+
+    controller.extractMaterial('m_1', 'full_basic');
+
+    expect(
+      session.state.workshop.extractedTraitInventory['t_hp'],
+      closeTo(0.8925, 0.0001),
     );
   });
 }

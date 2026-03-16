@@ -4,6 +4,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/equipment_enchant_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_enchant_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
@@ -17,10 +18,12 @@ class WorkshopEnchantController {
     required PotionCatalogRepository potionCatalogRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
+    required WorkshopSupportService workshopSupportService,
   }) : _enchantUseCase = enchantUseCase,
        _potionCatalogRepository = potionCatalogRepository,
        _workshopSkillTreeRepository = workshopSkillTreeRepository,
-       _workshopSkillTreeService = workshopSkillTreeService;
+       _workshopSkillTreeService = workshopSkillTreeService,
+       _workshopSupportService = workshopSupportService;
 
   final SessionController _session;
   final EquipmentEnchantService _enchantService;
@@ -28,6 +31,7 @@ class WorkshopEnchantController {
   final PotionCatalogRepository _potionCatalogRepository;
   final WorkshopSkillTreeRepository _workshopSkillTreeRepository;
   final WorkshopSkillTreeService _workshopSkillTreeService;
+  final WorkshopSupportService _workshopSupportService;
 
   void enchantEquipment(String equipmentId, String potionStackKey) {
     final SessionState current = _session.snapshot();
@@ -39,6 +43,7 @@ class WorkshopEnchantController {
       potionCatalogRepository: _potionCatalogRepository,
       workshopSkillTreeRepository: _workshopSkillTreeRepository,
       workshopSkillTreeService: _workshopSkillTreeService,
+      workshopSupportService: _workshopSupportService,
     );
     _session.applyState(nextState);
     _session.appendLog(
@@ -59,5 +64,6 @@ final Provider<WorkshopEnchantController> workshopEnchantControllerProvider =
           workshopSkillTreeRepositoryProvider,
         ),
         workshopSkillTreeService: ref.read(workshopSkillTreeServiceProvider),
+        workshopSupportService: ref.read(workshopSupportServiceProvider),
       );
     });

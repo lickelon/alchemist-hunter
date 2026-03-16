@@ -43,6 +43,7 @@ SessionState createInitialSessionState(DateTime now) {
     ),
     workshop: const WorkshopState(
       queue: <CraftQueueJob>[],
+      supportAssignmentsByFunction: <String, String>{},
       extractedTraitInventory: <String, double>{},
       craftedPotionStacks: <String, int>{},
       craftedPotionDetails: <String, CraftedPotion>{},

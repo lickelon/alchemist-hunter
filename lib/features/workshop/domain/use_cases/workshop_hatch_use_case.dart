@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 
 class WorkshopHatchUseCase {
   const WorkshopHatchUseCase();
@@ -9,9 +10,14 @@ class WorkshopHatchUseCase {
     required SessionState state,
     required HomunculusHatchRecipe recipe,
     required DateTime now,
+    required WorkshopSupportService workshopSupportService,
   }) {
+    final int arcaneDustCost = (recipe.arcaneDustCost -
+            workshopSupportService.hatchArcaneDustDiscount(state))
+        .clamp(0, recipe.arcaneDustCost)
+        .toInt();
     if (state.player.essence < recipe.essenceCost ||
-        state.player.arcaneDust < recipe.arcaneDustCost) {
+        state.player.arcaneDust < arcaneDustCost) {
       return state;
     }
 
@@ -67,7 +73,7 @@ class WorkshopHatchUseCase {
     return state.copyWith(
       player: state.player.copyWith(
         essence: state.player.essence - recipe.essenceCost,
-        arcaneDust: state.player.arcaneDust - recipe.arcaneDustCost,
+        arcaneDust: state.player.arcaneDust - arcaneDustCost,
         materialInventory: materialInventory,
       ),
       workshop: state.workshop.copyWith(extractedTraitInventory: traitInventory),

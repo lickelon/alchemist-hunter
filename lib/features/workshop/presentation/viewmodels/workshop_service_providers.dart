@@ -6,6 +6,7 @@ import 'package:alchemist_hunter/features/workshop/domain/services/alchemy_servi
 import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/equipment_enchant_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 
 final Provider<CraftQueueService> craftQueueServiceProvider =
@@ -27,4 +28,9 @@ final Provider<EquipmentEnchantService> equipmentEnchantServiceProvider =
 final Provider<WorkshopSkillTreeService> workshopSkillTreeServiceProvider =
     Provider<WorkshopSkillTreeService>(
       (Ref ref) => const WorkshopSkillTreeService(),
+    );
+
+final Provider<WorkshopSupportService> workshopSupportServiceProvider =
+    Provider<WorkshopSupportService>(
+      (Ref ref) => const WorkshopSupportService(),
     );

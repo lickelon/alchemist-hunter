@@ -7,6 +7,7 @@ import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafti
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
@@ -21,10 +22,12 @@ class WorkshopCraftQueueController {
     required PotionCatalogRepository potionCatalogRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
+    required WorkshopSupportService workshopSupportService,
   }) : _craftQueueDomain = craftQueueDomain,
        _potionCatalogRepository = potionCatalogRepository,
        _workshopSkillTreeRepository = workshopSkillTreeRepository,
-       _workshopSkillTreeService = workshopSkillTreeService;
+       _workshopSkillTreeService = workshopSkillTreeService,
+       _workshopSupportService = workshopSupportService;
 
   final SessionController _session;
   final CraftQueueService _queueService;
@@ -33,13 +36,15 @@ class WorkshopCraftQueueController {
   final PotionCatalogRepository _potionCatalogRepository;
   final WorkshopSkillTreeRepository _workshopSkillTreeRepository;
   final WorkshopSkillTreeService _workshopSkillTreeService;
+  final WorkshopSupportService _workshopSupportService;
 
   void enqueuePotion(String potionId, int repeatCount) {
     final SessionState current = _session.snapshot();
     final int queueCapacity = _workshopSkillTreeService.craftQueueCapacity(
-      current,
-      _workshopSkillTreeRepository.nodes(),
-    );
+          current,
+          _workshopSkillTreeRepository.nodes(),
+        ) +
+        _workshopSupportService.craftQueueCapacityBonus(current);
     final SessionState nextState = _craftQueueDomain.enqueuePotion(
       state: current,
       potionId: potionId,
@@ -50,6 +55,7 @@ class WorkshopCraftQueueController {
       potionCatalogRepository: _potionCatalogRepository,
       workshopSkillTreeRepository: _workshopSkillTreeRepository,
       workshopSkillTreeService: _workshopSkillTreeService,
+      workshopSupportService: _workshopSupportService,
     );
     _apply(
       nextState,
@@ -151,5 +157,6 @@ workshopCraftQueueControllerProvider = Provider<WorkshopCraftQueueController>((
     potionCatalogRepository: ref.read(potionCatalogRepositoryProvider),
     workshopSkillTreeRepository: ref.read(workshopSkillTreeRepositoryProvider),
     workshopSkillTreeService: ref.read(workshopSkillTreeServiceProvider),
+    workshopSupportService: ref.read(workshopSupportServiceProvider),
   );
 });

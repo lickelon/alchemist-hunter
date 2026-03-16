@@ -6,6 +6,7 @@ import 'package:alchemist_hunter/features/workshop/domain/repositories/material_
 import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_extraction_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/alchemy_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
@@ -20,11 +21,13 @@ class WorkshopExtractionController {
     required ExtractionProfileRepository extractionProfileRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
+    required WorkshopSupportService workshopSupportService,
   }) : _extractionDomain = extractionDomain,
        _materialCatalogRepository = materialCatalogRepository,
        _extractionProfileRepository = extractionProfileRepository,
        _workshopSkillTreeRepository = workshopSkillTreeRepository,
-       _workshopSkillTreeService = workshopSkillTreeService;
+       _workshopSkillTreeService = workshopSkillTreeService,
+       _workshopSupportService = workshopSupportService;
 
   final SessionController _session;
   final AlchemyService _alchemyService;
@@ -33,6 +36,7 @@ class WorkshopExtractionController {
   final ExtractionProfileRepository _extractionProfileRepository;
   final WorkshopSkillTreeRepository _workshopSkillTreeRepository;
   final WorkshopSkillTreeService _workshopSkillTreeService;
+  final WorkshopSupportService _workshopSupportService;
 
   void extractMaterial(
     String materialId,
@@ -50,6 +54,7 @@ class WorkshopExtractionController {
       extractionProfileRepository: _extractionProfileRepository,
       workshopSkillTreeRepository: _workshopSkillTreeRepository,
       workshopSkillTreeService: _workshopSkillTreeService,
+      workshopSupportService: _workshopSupportService,
       quantity: quantity,
       selectedTraits: selectedTraits,
     );
@@ -73,5 +78,6 @@ workshopExtractionControllerProvider = Provider<WorkshopExtractionController>((
     extractionProfileRepository: ref.read(extractionProfileRepositoryProvider),
     workshopSkillTreeRepository: ref.read(workshopSkillTreeRepositoryProvider),
     workshopSkillTreeService: ref.read(workshopSkillTreeServiceProvider),
+    workshopSupportService: ref.read(workshopSupportServiceProvider),
   );
 });

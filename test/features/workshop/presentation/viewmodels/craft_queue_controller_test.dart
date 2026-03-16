@@ -2,10 +2,12 @@ import 'dart:math';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/craft_queue_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
@@ -28,6 +30,7 @@ void main() {
       potionCatalogRepository: const StaticPotionCatalogRepository(),
       workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
       workshopSkillTreeService: const WorkshopSkillTreeService(),
+      workshopSupportService: const WorkshopSupportService(),
     );
   }
 
@@ -154,6 +157,55 @@ void main() {
             eta: const Duration(seconds: 15),
           ),
         ),
+      ),
+    );
+
+    controller.enqueuePotion('p_1', 1);
+
+    expect(session.state.workshop.queue, hasLength(5));
+    expect(session.state.workshop.logs.first, 'Enqueued p_1 x1');
+  });
+
+  test('mobility homunculus increases queue capacity by one', () {
+    final SessionController session = buildSession();
+    final WorkshopCraftQueueController controller = buildController(session);
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        supportAssignmentsByFunction: const <String, String>{
+          'crafting': 'homo_2',
+        },
+        extractedTraitInventory: const <String, double>{
+          't_hp': 6.0,
+          't_atk': 4.0,
+        },
+        queue: List<CraftQueueJob>.generate(
+          4,
+          (int index) => CraftQueueJob(
+            id: 'job_$index',
+            potionId: 'p_1',
+            repeatCount: 1,
+            retryPolicy: const CraftRetryPolicy(maxRetries: 2),
+            status: QueueJobStatus.queued,
+            eta: const Duration(seconds: 15),
+          ),
+        ),
+      ),
+      characters: session.state.characters.copyWith(
+        homunculi: <CharacterProgress>[
+          session.state.characters.homunculi.first,
+          CharacterProgress(
+            id: 'homo_2',
+            name: 'Swift Nigredo',
+            type: CharacterType.homunculus,
+            level: 1,
+            rank: 1,
+            xp: 0,
+            homunculusTier: HomunculusTier.nigredo,
+            homunculusOrigin: 'Swift Seed Flask',
+            homunculusRole: '기동',
+            homunculusSupportEffect: '행동 속도 보조',
+          ),
+        ],
       ),
     );
 

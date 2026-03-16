@@ -4,6 +4,7 @@ import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 
 class WorkshopExtractionUseCase {
@@ -18,6 +19,7 @@ class WorkshopExtractionUseCase {
     required ExtractionProfileRepository extractionProfileRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
+    required WorkshopSupportService workshopSupportService,
     int quantity = 1,
     List<String>? selectedTraits,
   }) {
@@ -67,7 +69,8 @@ class WorkshopExtractionUseCase {
         workshopSkillTreeService.extractionYieldBonusRate(
           state,
           workshopSkillTreeRepository.nodes(),
-        );
+        ) +
+        workshopSupportService.extractionYieldBonusRate(state);
     extractedTraits.forEach((String traitId, double amount) {
       inventory[traitId] =
           (inventory[traitId] ?? 0) + (amount * quantity * yieldMultiplier);

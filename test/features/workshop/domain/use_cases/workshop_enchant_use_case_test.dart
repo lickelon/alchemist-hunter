@@ -5,6 +5,7 @@ import 'package:alchemist_hunter/features/workshop/data/repositories/static_poti
 import 'package:alchemist_hunter/features/workshop/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/equipment_enchant_service.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_enchant_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -58,6 +59,7 @@ void main() {
         potionCatalogRepository: const StaticPotionCatalogRepository(),
         workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
         workshopSkillTreeService: const WorkshopSkillTreeService(),
+        workshopSupportService: const WorkshopSupportService(),
       );
 
       expect(
@@ -101,6 +103,7 @@ void main() {
         potionCatalogRepository: const StaticPotionCatalogRepository(),
         workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
         workshopSkillTreeService: const WorkshopSkillTreeService(),
+        workshopSupportService: const WorkshopSupportService(),
       );
 
       expect(
@@ -156,6 +159,63 @@ void main() {
       potionCatalogRepository: const StaticPotionCatalogRepository(),
       workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
       workshopSkillTreeService: const WorkshopSkillTreeService(),
+      workshopSupportService: const WorkshopSupportService(),
+    );
+
+    expect(nextState.town.equipmentInventory.first.totalAttack, 26);
+  });
+
+  test('enchantEquipment applies workshop support potency bonus', () {
+    final WorkshopEnchantUseCase useCase = WorkshopEnchantUseCase();
+    final SessionState baseState = buildState();
+    final SessionState state = baseState.copyWith(
+      workshop: baseState.workshop.copyWith(
+        supportAssignmentsByFunction: const <String, String>{
+          'enchant': 'homo_2',
+        },
+      ),
+      characters: baseState.characters.copyWith(
+        homunculi: <CharacterProgress>[
+          baseState.characters.homunculi.first,
+          CharacterProgress(
+            id: 'homo_2',
+            name: 'Guard Nigredo',
+            type: CharacterType.homunculus,
+            level: 1,
+            rank: 1,
+            xp: 0,
+            homunculusTier: HomunculusTier.nigredo,
+            homunculusOrigin: 'Guard Seed Flask',
+            homunculusRole: '방어',
+            homunculusSupportEffect: '방어 안정화 보조',
+          ),
+        ],
+      ),
+      town: baseState.town.copyWith(
+        equipmentInventory: <EquipmentInstance>[
+          EquipmentInstance(
+            id: 'eq_instance_1',
+            blueprintId: 'eq_1',
+            name: 'Bronze Sword',
+            slot: EquipmentSlot.weapon,
+            attack: 12,
+            defense: 0,
+            health: 0,
+            createdAt: DateTime(2026, 1, 1, 10),
+          ),
+        ],
+      ),
+    );
+
+    final SessionState nextState = useCase.enchantEquipment(
+      state: state,
+      equipmentId: 'eq_instance_1',
+      potionStackKey: 'p_1|a',
+      enchantService: const EquipmentEnchantService(),
+      potionCatalogRepository: const StaticPotionCatalogRepository(),
+      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+      workshopSkillTreeService: const WorkshopSkillTreeService(),
+      workshopSupportService: const WorkshopSupportService(),
     );
 
     expect(nextState.town.equipmentInventory.first.totalAttack, 26);
