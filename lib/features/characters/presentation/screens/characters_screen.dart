@@ -10,72 +10,36 @@ class CharactersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<CharacterListItemView> mercenaries = ref.watch(
-      mercenaryListItemViewsProvider,
-    );
-    final List<CharacterListItemView> homunculi = ref.watch(
-      homunculusListItemViewsProvider,
+    final List<CharacterListItemView> characters = ref.watch(
+      allCharacterListItemViewsProvider,
     );
     final CharacterController controller = ref.read(
       characterControllerProvider,
     );
 
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        children: <Widget>[
-          const TabBar(
-            tabs: <Widget>[
-              Tab(text: 'Mercenary'),
-              Tab(text: 'Homunculus'),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              children: <Widget>[
-                CharacterList(
-                  characters: mercenaries,
-                  onRankUp: (String id) =>
-                      controller.rankUp(CharacterType.mercenary, id),
-                  onTierUp: (String id) =>
-                      controller.tierUp(CharacterType.mercenary, id),
-                  onEquip: (String characterId, String equipmentId) =>
-                      controller.equip(
-                        CharacterType.mercenary,
-                        characterId,
-                        equipmentId,
-                      ),
-                  onUnequip: (String characterId, EquipmentSlot slot) =>
-                      controller.unequip(
-                        CharacterType.mercenary,
-                        characterId,
-                        slot,
-                      ),
-                ),
-                CharacterList(
-                  characters: homunculi,
-                  onRankUp: (String id) =>
-                      controller.rankUp(CharacterType.homunculus, id),
-                  onTierUp: (String id) =>
-                      controller.tierUp(CharacterType.homunculus, id),
-                  onEquip: (String characterId, String equipmentId) =>
-                      controller.equip(
-                        CharacterType.homunculus,
-                        characterId,
-                        equipmentId,
-                      ),
-                  onUnequip: (String characterId, EquipmentSlot slot) =>
-                      controller.unequip(
-                        CharacterType.homunculus,
-                        characterId,
-                        slot,
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ],
+    return CharacterList(
+      characters: characters,
+      onRankUp: (String id) => controller.rankUp(_typeOf(characters, id), id),
+      onTierUp: (String id) => controller.tierUp(_typeOf(characters, id), id),
+      onEquip: (String characterId, String equipmentId) => controller.equip(
+        _typeOf(characters, characterId),
+        characterId,
+        equipmentId,
+      ),
+      onUnequip: (String characterId, EquipmentSlot slot) => controller.unequip(
+        _typeOf(characters, characterId),
+        characterId,
+        slot,
       ),
     );
   }
+}
+
+CharacterType _typeOf(List<CharacterListItemView> characters, String id) {
+  for (final CharacterListItemView item in characters) {
+    if (item.character.id == id) {
+      return item.character.type;
+    }
+  }
+  return CharacterType.mercenary;
 }

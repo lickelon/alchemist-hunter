@@ -45,19 +45,29 @@ class CharacterEquipmentSlotView {
 class CharacterListItemView {
   const CharacterListItemView({
     required this.character,
+    required this.typeLabel,
+    required this.summaryLine,
+    required this.growthLabel,
     required this.rankHint,
     required this.tierHint,
+    required this.tierMaterialLabel,
     required this.equipmentSlots,
     required this.detailLines,
     required this.assignmentLabel,
+    required this.assignmentGuideLabel,
   });
 
   final CharacterProgress character;
+  final String typeLabel;
+  final String summaryLine;
+  final String growthLabel;
   final String rankHint;
   final String tierHint;
+  final String tierMaterialLabel;
   final List<CharacterEquipmentSlotView> equipmentSlots;
   final List<String> detailLines;
   final String assignmentLabel;
+  final String assignmentGuideLabel;
 }
 
 final Provider<List<CharacterProgress>> mercenaryListProvider =
@@ -123,6 +133,36 @@ final Provider<List<CharacterListItemView>> homunculusListItemViewsProvider =
       );
     });
 
+final Provider<List<CharacterListItemView>> allCharacterListItemViewsProvider =
+    Provider<List<CharacterListItemView>>((Ref ref) {
+      return <CharacterListItemView>[
+        ...ref.watch(mercenaryListItemViewsProvider),
+        ...ref.watch(homunculusListItemViewsProvider),
+      ];
+    });
+
+final ProviderFamily<CharacterListItemView?, String> mercenaryItemViewProvider =
+    Provider.family<CharacterListItemView?, String>((Ref ref, String id) {
+      for (final CharacterListItemView item
+          in ref.watch(mercenaryListItemViewsProvider)) {
+        if (item.character.id == id) {
+          return item;
+        }
+      }
+      return null;
+    });
+
+final ProviderFamily<CharacterListItemView?, String> homunculusItemViewProvider =
+    Provider.family<CharacterListItemView?, String>((Ref ref, String id) {
+      for (final CharacterListItemView item
+          in ref.watch(homunculusListItemViewsProvider)) {
+        if (item.character.id == id) {
+          return item;
+        }
+      }
+      return null;
+    });
+
 List<CharacterListItemView> _buildCharacterViews({
   required List<CharacterProgress> characters,
   required Map<String, int> inventory,
@@ -133,14 +173,20 @@ List<CharacterListItemView> _buildCharacterViews({
   return characters.map((CharacterProgress character) {
     return CharacterListItemView(
       character: character,
+      typeLabel: _typeLabel(character.type),
+      summaryLine: _summaryLine(character),
+      growthLabel:
+          'Lv ${character.level} / Rank ${character.rank} / Tier ${character.tierIndex}',
       rankHint: _rankUpHint(character),
       tierHint: _tierUpHint(character, inventory),
+      tierMaterialLabel: _tierMaterialLabel(character, inventory),
       detailLines: _detailLines(character),
       assignmentLabel: _assignmentLabel(
         character.id,
         stageAssignments,
         workshopSupportAssignments,
       ),
+      assignmentGuideLabel: '배치 변경은 전투/작업실 화면에서 진행',
       equipmentSlots: EquipmentSlot.values
           .map((EquipmentSlot slot) {
             return CharacterEquipmentSlotView(
@@ -154,6 +200,31 @@ List<CharacterListItemView> _buildCharacterViews({
           .toList(growable: false),
     );
   }).toList();
+}
+
+String _typeLabel(CharacterType type) {
+  return switch (type) {
+    CharacterType.mercenary => '용병',
+    CharacterType.homunculus => '호문쿨루스',
+  };
+}
+
+String _summaryLine(CharacterProgress character) {
+  if (character.type == CharacterType.homunculus) {
+    final String role = character.homunculusRole ?? '지원';
+    final String effect = character.homunculusSupportEffect ?? '효과 분석 중';
+    return '$role / $effect';
+  }
+  if (character.canTierUp) {
+    return '다음 행동: 티어업 가능';
+  }
+  if (character.canRankUp) {
+    return '다음 행동: 랭크업 가능';
+  }
+  if (character.level < character.maxLevelForRank) {
+    return '다음 목표: Lv ${character.maxLevelForRank}';
+  }
+  return '다음 목표: Rank ${character.maxRankForCurrentTier}';
 }
 
 String _rankUpHint(CharacterProgress character) {
@@ -184,6 +255,20 @@ String _tierUpHint(CharacterProgress character, Map<String, int> inventory) {
   }
 
   return '티어업 조건: Rank ${character.maxRankForCurrentTier} 도달 필요';
+}
+
+String _tierMaterialLabel(
+  CharacterProgress character,
+  Map<String, int> inventory,
+) {
+  if (character.tierIndex >= character.maxTier) {
+    return '승급 재료: 없음';
+  }
+  final String materialKey = character.type == CharacterType.mercenary
+      ? 'tier_mat_mercenary_${character.tierIndex + 1}'
+      : 'tier_mat_homunculus_${character.tierIndex + 1}';
+  final int owned = inventory[materialKey] ?? 0;
+  return '승급 재료: $materialKey $owned/1';
 }
 
 String _assignmentLabel(

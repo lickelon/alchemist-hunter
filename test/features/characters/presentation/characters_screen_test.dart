@@ -53,9 +53,29 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    expect(find.text('배치 상태: Stage 1'), findsAtLeastNWidgets(1));
+    expect(find.text('Rank Up'), findsNothing);
+    expect(find.text('Tier Up'), findsNothing);
+    expect(find.text('상세'), findsNothing);
+
+    await tester.tap(find.text(target.name));
+    await tester.pumpAndSettle();
+
+    expect(find.text('현재 성장'), findsOneWidget);
+    expect(find.text('총합 스탯'), findsOneWidget);
+    expect(find.text('ATK 0 / DEF 0 / HP 0'), findsOneWidget);
+    expect(find.text('다음 목표'), findsOneWidget);
     expect(find.text('현재 티어 최대 랭크 도달'), findsOneWidget);
     expect(find.text('티어업 가능'), findsOneWidget);
-    expect(find.text('배치 상태: Stage 1'), findsOneWidget);
+    expect(find.text('승급 재료: tier_mat_mercenary_2 1/1'), findsOneWidget);
+    expect(find.text('배치 변경은 전투/작업실 화면에서 진행'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('무기: 미장착'),
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
+
     expect(find.text('무기: 미장착'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(FilledButton, '장착').first);
@@ -67,9 +87,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('무기: Bronze Sword'), findsOneWidget);
+    expect(find.text('ATK 12 / DEF 0 / HP 0'), findsOneWidget);
   });
 
-  testWidgets('homunculus tab shows origin role and support details', (
+  testWidgets('character screen shows homunculus origin role and support details', (
     WidgetTester tester,
   ) async {
     final ProviderContainer container = ProviderContainer();
@@ -100,13 +121,18 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Homunculus'));
+    expect(find.text('Vital Nigredo'), findsOneWidget);
+    expect(find.text('배치 상태: Stage 1'), findsAtLeastNWidgets(1));
+    expect(find.text('지원 / 파티 생존력 보조'), findsOneWidget);
+
+    await tester.tap(find.text('Vital Nigredo'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Vital Nigredo'), findsOneWidget);
+    expect(find.text('총합 스탯'), findsOneWidget);
+    expect(find.text('ATK 0 / DEF 0 / HP 0'), findsOneWidget);
     expect(find.text('출처 Vital Seed Flask'), findsOneWidget);
     expect(find.text('역할 지원'), findsOneWidget);
     expect(find.text('보조효과 파티 생존력 보조'), findsOneWidget);
-    expect(find.text('배치 상태: Stage 1'), findsOneWidget);
+    expect(find.text('배치 변경은 전투/작업실 화면에서 진행'), findsOneWidget);
   });
 }
