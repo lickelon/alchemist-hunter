@@ -37,7 +37,27 @@ String queueStatusText(CraftQueueJob job) {
   return switch (job.status) {
     QueueJobStatus.processing => '진행 중 / 남은 시간 ${job.eta.inSeconds}s',
     QueueJobStatus.queued => '대기 중 / 예상 ${job.duration.inSeconds}s',
-    QueueJobStatus.completed => '완료',
+    QueueJobStatus.completed => '수령 대기',
     QueueJobStatus.blocked => '진행 불가',
+  };
+}
+
+String? completedResultText(CraftQueueJob job) {
+  if (job.status != QueueJobStatus.completed) {
+    return null;
+  }
+  return switch (job.type) {
+    WorkshopJobType.extraction =>
+      '추출 완료 / 특성 ${job.completedExtractedTraits.length}종 / ArcaneDust +${job.completedArcaneDust}',
+    WorkshopJobType.craft =>
+      '제조 완료 / ${job.completedPotionStackKey ?? job.potionId ?? job.title} x${job.repeatCount}',
+    WorkshopJobType.enchant =>
+      job.completedEquipment?.enchant == null
+          ? '인챈트 완료'
+          : '인챈트 완료 / ${job.completedEquipment!.enchant!.label}',
+    WorkshopJobType.hatch =>
+      job.completedHomunculus?.homunculusRole == null
+          ? '부화 완료'
+          : '부화 완료 / ${job.completedHomunculus!.homunculusRole}',
   };
 }

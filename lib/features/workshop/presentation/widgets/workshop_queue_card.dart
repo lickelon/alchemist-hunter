@@ -7,17 +7,17 @@ class WorkshopQueueCard extends StatelessWidget {
   const WorkshopQueueCard({
     super.key,
     required this.jobCount,
-    this.claimSummary = '수령 가능한 작업실 보상 없음',
+    required this.description,
   });
 
   final int jobCount;
-  final String claimSummary;
+  final String description;
 
   @override
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Craft Queue',
-      description: '대기열 $jobCount개 / $claimSummary',
+      description: description,
       icon: Icons.playlist_add_check_circle_outlined,
       onTap: () => _showQueueSheet(context),
     );

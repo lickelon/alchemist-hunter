@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('workshop queue sheet shows generic queued jobs and claim panel', (
+  testWidgets('workshop queue sheet shows queued and completed jobs in one list', (
     WidgetTester tester,
   ) async {
     final ProviderContainer container = ProviderContainer();
@@ -33,19 +33,24 @@ void main() {
           CraftQueueJob(
             id: 'job_craft',
             type: WorkshopJobType.craft,
-            status: QueueJobStatus.queued,
+            status: QueueJobStatus.completed,
             queuedAt: DateTime(2026, 1, 1, 10),
             duration: const Duration(seconds: 30),
-            eta: const Duration(seconds: 30),
+            eta: Duration.zero,
             title: 'Potion 1',
             potionId: 'p_1',
             repeatCount: 2,
+            completedPotionStackKey: 'p_1|a',
+            completedPotion: CraftedPotion(
+              id: 'cp_1',
+              typePotionId: 'p_1',
+              qualityGrade: PotionQualityGrade.a,
+              qualityScore: 0.84,
+              traits: const <String, double>{'t_hp': 0.5, 't_atk': 0.5},
+              createdAt: DateTime(2026, 1, 1, 10),
+            ),
           ),
         ],
-        pendingClaim: WorkshopPendingClaim(
-          arcaneDust: 1,
-          potionStacks: const <String, int>{'p_1|a': 1},
-        ),
       ),
     );
 
@@ -53,7 +58,12 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(body: WorkshopQueueCard(jobCount: 2)),
+          home: Scaffold(
+            body: WorkshopQueueCard(
+              jobCount: 2,
+              description: '진행 Emberroot / 슬롯 2/3 / 포션 1개',
+            ),
+          ),
         ),
       ),
     );
@@ -61,17 +71,17 @@ void main() {
     await tester.tap(find.text('Craft Queue'));
     await tester.pumpAndSettle();
 
-    expect(find.text('작업실 보상 수령'), findsOneWidget);
-    expect(find.text('통합 수령'), findsOneWidget);
     expect(find.text('Emberroot x2'), findsOneWidget);
     expect(find.text('추출 / 진행 중 / 남은 시간 12s'), findsOneWidget);
     await tester.scrollUntilVisible(
       find.text('Potion 1 x2'),
-      120,
-      scrollable: find.byType(Scrollable).last,
+      80,
+      scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
     expect(find.text('Potion 1 x2'), findsOneWidget);
-    expect(find.text('제조 / 대기 중 / 예상 30s'), findsOneWidget);
+    expect(find.textContaining('수령 대기'), findsOneWidget);
+    expect(find.textContaining('제조 완료'), findsOneWidget);
+    expect(find.text('수령'), findsOneWidget);
   });
 }

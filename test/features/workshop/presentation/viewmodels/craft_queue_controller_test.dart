@@ -57,17 +57,37 @@ void main() {
     expect(session.state.workshop.logs.first, '제조 등록 / p_1 x2');
   });
 
-  test('claimPending applies workshop rewards to claimed inventory', () {
+  test('claimJob applies only selected completed potion job', () {
     final SessionController session = buildSession();
     final WorkshopCraftQueueController controller = buildController(session);
     session.state = session.state.copyWith(
       workshop: session.state.workshop.copyWith(
-        pendingClaim: WorkshopPendingClaim(
-          extractedTraits: const <String, double>{'t_hp': 0.5},
-          arcaneDust: 2,
-          potionStacks: const <String, int>{'p_1|a': 2},
-          potionDetails: <String, CraftedPotion>{
-            'p_1|a': CraftedPotion(
+        queue: <CraftQueueJob>[
+          CraftQueueJob(
+            id: 'job_extract',
+            type: WorkshopJobType.extraction,
+            status: QueueJobStatus.completed,
+            queuedAt: DateTime(2026, 1, 1, 10),
+            duration: const Duration(seconds: 10),
+            eta: Duration.zero,
+            title: 'Emberroot',
+            materialId: 'm_1',
+            quantity: 1,
+            completedExtractedTraits: const <String, double>{'t_hp': 0.5},
+            completedArcaneDust: 2,
+          ),
+          CraftQueueJob(
+            id: 'job_craft',
+            type: WorkshopJobType.craft,
+            status: QueueJobStatus.completed,
+            queuedAt: DateTime(2026, 1, 1, 10),
+            duration: const Duration(seconds: 10),
+            eta: Duration.zero,
+            title: 'Potion 1',
+            potionId: 'p_1',
+            repeatCount: 2,
+            completedPotionStackKey: 'p_1|a',
+            completedPotion: CraftedPotion(
               id: 'cp_1',
               typePotionId: 'p_1',
               qualityGrade: PotionQualityGrade.a,
@@ -75,22 +95,73 @@ void main() {
               traits: const <String, double>{'t_atk': 0.7, 't_hp': 0.3},
               createdAt: DateTime(2026, 1, 1, 10),
             ),
-          },
-          extractionCount: 1,
-          potionCraftCount: 2,
-        ),
+          ),
+        ],
       ),
     );
 
-    controller.claimPending();
+    controller.claimJob('job_craft');
 
-    expect(session.state.workshop.pendingClaim.isEmpty, isTrue);
+    expect(session.state.workshop.queue, hasLength(1));
+    expect(session.state.workshop.queue.single.id, 'job_extract');
+    expect(session.state.player.arcaneDust, 2);
+    expect(session.state.workshop.craftedPotionStacks['p_1|a'], 2);
+    expect(session.state.workshop.potionCraftCount, 2);
+    expect(session.state.workshop.extractionCount, 0);
+    expect(session.state.workshop.logs.first, '큐 작업 수령 / job_craft');
+  });
+
+  test('claimJob applies only selected completed extraction job', () {
+    final SessionController session = buildSession();
+    final WorkshopCraftQueueController controller = buildController(session);
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        queue: <CraftQueueJob>[
+          CraftQueueJob(
+            id: 'job_extract',
+            type: WorkshopJobType.extraction,
+            status: QueueJobStatus.completed,
+            queuedAt: DateTime(2026, 1, 1, 10),
+            duration: const Duration(seconds: 10),
+            eta: Duration.zero,
+            title: 'Emberroot',
+            materialId: 'm_1',
+            quantity: 1,
+            completedExtractedTraits: const <String, double>{'t_hp': 0.5},
+            completedArcaneDust: 2,
+          ),
+          CraftQueueJob(
+            id: 'job_craft',
+            type: WorkshopJobType.craft,
+            status: QueueJobStatus.completed,
+            queuedAt: DateTime(2026, 1, 1, 10),
+            duration: const Duration(seconds: 10),
+            eta: Duration.zero,
+            title: 'Potion 1',
+            potionId: 'p_1',
+            repeatCount: 2,
+            completedPotionStackKey: 'p_1|a',
+            completedPotion: CraftedPotion(
+              id: 'cp_1',
+              typePotionId: 'p_1',
+              qualityGrade: PotionQualityGrade.a,
+              qualityScore: 0.84,
+              traits: const <String, double>{'t_atk': 0.7, 't_hp': 0.3},
+              createdAt: DateTime(2026, 1, 1, 10),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    controller.claimJob('job_extract');
+
+    expect(session.state.workshop.queue, hasLength(1));
+    expect(session.state.workshop.queue.single.id, 'job_craft');
     expect(session.state.player.arcaneDust, 4);
     expect(session.state.workshop.extractedTraitInventory['t_hp'], 0.5);
-    expect(session.state.workshop.craftedPotionStacks['p_1|a'], 2);
     expect(session.state.workshop.extractionCount, 1);
-    expect(session.state.workshop.potionCraftCount, 2);
-    expect(session.state.workshop.logs.first, '작업실 보상 수령');
+    expect(session.state.workshop.logs.first, '큐 작업 수령 / job_extract');
   });
 
   test('enqueuePotion is blocked when queue is full', () {

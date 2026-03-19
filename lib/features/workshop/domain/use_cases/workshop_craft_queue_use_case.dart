@@ -100,29 +100,123 @@ class WorkshopCraftQueueUseCase {
   }
 
   SessionState claimPending({required SessionState state}) {
-    final WorkshopPendingClaim pending = state.workshop.pendingClaim;
-    if (pending.isEmpty) {
+    SessionState nextState = state;
+    for (final String jobId in state.workshop.queue
+        .where((CraftQueueJob job) => job.status == QueueJobStatus.completed)
+        .map((CraftQueueJob job) => job.id)
+        .toList()) {
+      nextState = claimJob(state: nextState, jobId: jobId);
+    }
+    return nextState;
+  }
+
+  SessionState claimJob({
+    required SessionState state,
+    required String jobId,
+  }) {
+    final int jobIndex = state.workshop.queue.indexWhere(
+      (CraftQueueJob job) => job.id == jobId,
+    );
+    if (jobIndex == -1) {
+      return state;
+    }
+    final CraftQueueJob job = state.workshop.queue[jobIndex];
+    if (job.status != QueueJobStatus.completed) {
       return state;
     }
 
+    final List<CraftQueueJob> nextQueue = <CraftQueueJob>[
+      ...state.workshop.queue,
+    ]..removeAt(jobIndex);
+
+    return switch (job.type) {
+      WorkshopJobType.extraction => _claimExtractionJob(
+        state: state,
+        queue: nextQueue,
+        job: job,
+      ),
+      WorkshopJobType.craft => _claimCraftJob(
+        state: state,
+        queue: nextQueue,
+        job: job,
+      ),
+      WorkshopJobType.enchant => _claimEnchantJob(
+        state: state,
+        queue: nextQueue,
+        job: job,
+      ),
+      WorkshopJobType.hatch => _claimHatchJob(
+        state: state,
+        queue: nextQueue,
+        job: job,
+      ),
+    };
+  }
+
+  SessionState _claimExtractionJob({
+    required SessionState state,
+    required List<CraftQueueJob> queue,
+    required CraftQueueJob job,
+  }) {
     final Map<String, double> extractedTraits = <String, double>{
       ...state.workshop.extractedTraitInventory,
     };
-    pending.extractedTraits.forEach((String key, double value) {
+    job.completedExtractedTraits.forEach((String key, double value) {
       extractedTraits[key] = (extractedTraits[key] ?? 0) + value;
     });
+
+    return state.copyWith(
+      player: state.player.copyWith(
+        arcaneDust: state.player.arcaneDust + job.completedArcaneDust,
+      ),
+      workshop: state.workshop.copyWith(
+        queue: queue,
+        extractedTraitInventory: extractedTraits,
+        extractionCount: state.workshop.extractionCount + job.quantity,
+      ),
+    );
+  }
+
+  SessionState _claimCraftJob({
+    required SessionState state,
+    required List<CraftQueueJob> queue,
+    required CraftQueueJob job,
+  }) {
+    final String? stackKey = job.completedPotionStackKey;
+    final CraftedPotion? detail = job.completedPotion;
+    if (stackKey == null || detail == null) {
+      return state;
+    }
 
     final Map<String, int> potionStacks = <String, int>{
       ...state.workshop.craftedPotionStacks,
     };
-    pending.potionStacks.forEach((String key, int value) {
-      potionStacks[key] = (potionStacks[key] ?? 0) + value;
-    });
+    potionStacks[stackKey] = (potionStacks[stackKey] ?? 0) + job.repeatCount;
+
     final Map<String, CraftedPotion> potionDetails = <String, CraftedPotion>{
       ...state.workshop.craftedPotionDetails,
-      ...pending.potionDetails,
     };
+    potionDetails[stackKey] = detail;
 
+    return state.copyWith(
+      workshop: state.workshop.copyWith(
+        queue: queue,
+        craftedPotionStacks: potionStacks,
+        craftedPotionDetails: potionDetails,
+        potionCraftCount: state.workshop.potionCraftCount + job.repeatCount,
+      ),
+    );
+  }
+
+  SessionState _claimEnchantJob({
+    required SessionState state,
+    required List<CraftQueueJob> queue,
+    required CraftQueueJob job,
+  }) {
+    final EquipmentInstance? equipment = job.completedEquipment;
+    if (equipment == null) {
+      return state;
+    }
     List<EquipmentInstance> townInventory = <EquipmentInstance>[
       ...state.town.equipmentInventory,
     ];
@@ -131,62 +225,68 @@ class WorkshopCraftQueueUseCase {
     ];
     List<CharacterProgress> homunculi = <CharacterProgress>[
       ...state.characters.homunculi,
-      ...pending.homunculi,
     ];
 
-    for (final WorkshopEquipmentClaim claim in pending.equipmentClaims) {
-      final CharacterType? ownerType = claim.ownerType;
-      final String? ownerCharacterId = claim.ownerCharacterId;
-      if (ownerType == null || ownerCharacterId == null) {
-        townInventory = <EquipmentInstance>[claim.equipment, ...townInventory];
-        continue;
+    final CharacterType? ownerType = job.equipmentOwnerType;
+    final String? ownerCharacterId = job.equipmentOwnerId;
+    if (ownerType == null || ownerCharacterId == null) {
+      townInventory = <EquipmentInstance>[equipment, ...townInventory];
+    } else if (ownerType == CharacterType.mercenary) {
+      final ({List<CharacterProgress> characters, bool equipped}) result =
+          _applyEquipmentClaimToList(
+            characters: mercenaries,
+            ownerCharacterId: ownerCharacterId,
+            equipment: equipment,
+          );
+      mercenaries = result.characters;
+      if (!result.equipped) {
+        townInventory = <EquipmentInstance>[equipment, ...townInventory];
       }
-
-      if (ownerType == CharacterType.mercenary) {
-        final ({List<CharacterProgress> characters, bool equipped})
-        result = _applyEquipmentClaimToList(
-          characters: mercenaries,
-          ownerCharacterId: ownerCharacterId,
-          equipment: claim.equipment,
-        );
-        mercenaries = result.characters;
-        if (!result.equipped) {
-          townInventory = <EquipmentInstance>[claim.equipment, ...townInventory];
-        }
-        continue;
-      }
-
-      final ({List<CharacterProgress> characters, bool equipped})
-      result = _applyEquipmentClaimToList(
-        characters: homunculi,
-        ownerCharacterId: ownerCharacterId,
-        equipment: claim.equipment,
-      );
+    } else {
+      final ({List<CharacterProgress> characters, bool equipped}) result =
+          _applyEquipmentClaimToList(
+            characters: homunculi,
+            ownerCharacterId: ownerCharacterId,
+            equipment: equipment,
+          );
       homunculi = result.characters;
       if (!result.equipped) {
-        townInventory = <EquipmentInstance>[claim.equipment, ...townInventory];
+        townInventory = <EquipmentInstance>[equipment, ...townInventory];
       }
     }
 
     return state.copyWith(
-      player: state.player.copyWith(
-        arcaneDust: state.player.arcaneDust + pending.arcaneDust,
-      ),
       town: state.town.copyWith(equipmentInventory: townInventory),
       workshop: state.workshop.copyWith(
-        pendingClaim: const WorkshopPendingClaim(),
-        extractedTraitInventory: extractedTraits,
-        craftedPotionStacks: potionStacks,
-        craftedPotionDetails: potionDetails,
-        extractionCount:
-            state.workshop.extractionCount + pending.extractionCount,
-        potionCraftCount:
-            state.workshop.potionCraftCount + pending.potionCraftCount,
-        enchantCount: state.workshop.enchantCount + pending.enchantCount,
+        queue: queue,
+        enchantCount: state.workshop.enchantCount + 1,
       ),
       characters: state.characters.copyWith(
         mercenaries: mercenaries,
         homunculi: homunculi,
+      ),
+    );
+  }
+
+  SessionState _claimHatchJob({
+    required SessionState state,
+    required List<CraftQueueJob> queue,
+    required CraftQueueJob job,
+  }) {
+    final CharacterProgress? homunculus = job.completedHomunculus;
+    if (homunculus == null) {
+      return state;
+    }
+
+    return state.copyWith(
+      workshop: state.workshop.copyWith(
+        queue: queue,
+      ),
+      characters: state.characters.copyWith(
+        homunculi: <CharacterProgress>[
+          ...state.characters.homunculi,
+          homunculus,
+        ],
       ),
     );
   }
@@ -221,4 +321,5 @@ class WorkshopCraftQueueUseCase {
     }
     return (characters: nextCharacters, equipped: false);
   }
+
 }

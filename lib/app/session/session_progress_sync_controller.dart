@@ -15,6 +15,7 @@ import 'package:alchemist_hunter/features/town/domain/services/economy_service.d
 import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:alchemist_hunter/features/town/town_catalog.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 final Provider<BattleExpeditionResolver> battleExpeditionResolverProvider =
     Provider<BattleExpeditionResolver>((Ref ref) {
@@ -81,19 +82,24 @@ class SessionProgressSyncController {
       }
     });
 
-    if (previous.workshop.pendingClaim.isEmpty &&
-        !next.workshop.pendingClaim.isEmpty) {
-      _session.appendLog('작업실 보상 적재');
-    }
-
-    final int previousCompleted = previous.town.forgeQueue
-        .where((TownForgeJob job) => job.status == TownForgeJobStatus.completed)
+    final int previousCompleted = previous.workshop.queue
+        .where((CraftQueueJob job) => job.status == QueueJobStatus.completed)
         .length;
-    final int nextCompleted = next.town.forgeQueue
-        .where((TownForgeJob job) => job.status == TownForgeJobStatus.completed)
+    final int nextCompleted = next.workshop.queue
+        .where((CraftQueueJob job) => job.status == QueueJobStatus.completed)
         .length;
     if (nextCompleted > previousCompleted) {
-      _session.appendLog('대장간 완료 ${nextCompleted - previousCompleted}건');
+      _session.appendLog('작업실 완료 ${nextCompleted - previousCompleted}건');
+    }
+
+    final int previousForgeCompleted = previous.town.forgeQueue
+        .where((TownForgeJob job) => job.status == TownForgeJobStatus.completed)
+        .length;
+    final int nextForgeCompleted = next.town.forgeQueue
+        .where((TownForgeJob job) => job.status == TownForgeJobStatus.completed)
+        .length;
+    if (nextForgeCompleted > previousForgeCompleted) {
+      _session.appendLog('대장간 완료 ${nextForgeCompleted - previousForgeCompleted}건');
     }
   }
 }

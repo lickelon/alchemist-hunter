@@ -1,4 +1,3 @@
-import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 class WorkshopQueueProgressService {
@@ -15,7 +14,6 @@ class WorkshopQueueProgressService {
     }
 
     final List<CraftQueueJob> nextQueue = <CraftQueueJob>[];
-    WorkshopPendingClaim pendingClaim = workshop.pendingClaim;
     DateTime cursor = syncFrom;
 
     for (final CraftQueueJob job in workshop.queue) {
@@ -25,7 +23,7 @@ class WorkshopQueueProgressService {
       }
 
       if (job.status == QueueJobStatus.completed) {
-        pendingClaim = _appendPendingClaim(pendingClaim, job);
+        nextQueue.add(job);
         continue;
       }
 
@@ -60,78 +58,16 @@ class WorkshopQueueProgressService {
         continue;
       }
 
-      pendingClaim = _appendPendingClaim(pendingClaim, job);
+      nextQueue.add(
+        job.copyWith(
+          status: QueueJobStatus.completed,
+          eta: Duration.zero,
+        ),
+      );
       cursor = startTime.add(job.eta);
     }
 
-    return workshop.copyWith(queue: nextQueue, pendingClaim: pendingClaim);
-  }
-
-  WorkshopPendingClaim _appendPendingClaim(
-    WorkshopPendingClaim pendingClaim,
-    CraftQueueJob job,
-  ) {
-    switch (job.type) {
-      case WorkshopJobType.extraction:
-        final Map<String, double> nextTraits = <String, double>{
-          ...pendingClaim.extractedTraits,
-        };
-        job.completedExtractedTraits.forEach((String key, double value) {
-          nextTraits[key] = (nextTraits[key] ?? 0) + value;
-        });
-        return pendingClaim.copyWith(
-          extractedTraits: nextTraits,
-          arcaneDust: pendingClaim.arcaneDust + job.completedArcaneDust,
-          extractionCount: pendingClaim.extractionCount + job.quantity,
-        );
-      case WorkshopJobType.craft:
-        if (job.completedPotionStackKey == null ||
-            job.completedPotion == null) {
-          return pendingClaim;
-        }
-        final Map<String, int> nextStacks = <String, int>{
-          ...pendingClaim.potionStacks,
-        };
-        nextStacks[job.completedPotionStackKey!] =
-            (nextStacks[job.completedPotionStackKey!] ?? 0) + job.repeatCount;
-        final Map<String, CraftedPotion> nextDetails = <String, CraftedPotion>{
-          ...pendingClaim.potionDetails,
-        };
-        nextDetails.putIfAbsent(
-          job.completedPotionStackKey!,
-          () => job.completedPotion!,
-        );
-        return pendingClaim.copyWith(
-          potionStacks: nextStacks,
-          potionDetails: nextDetails,
-          potionCraftCount: pendingClaim.potionCraftCount + job.repeatCount,
-        );
-      case WorkshopJobType.enchant:
-        if (job.completedEquipment == null) {
-          return pendingClaim;
-        }
-        return pendingClaim.copyWith(
-          equipmentClaims: <WorkshopEquipmentClaim>[
-            ...pendingClaim.equipmentClaims,
-            WorkshopEquipmentClaim(
-              equipment: job.completedEquipment!,
-              ownerCharacterId: job.equipmentOwnerId,
-              ownerType: job.equipmentOwnerType,
-            ),
-          ],
-          enchantCount: pendingClaim.enchantCount + 1,
-        );
-      case WorkshopJobType.hatch:
-        if (job.completedHomunculus == null) {
-          return pendingClaim;
-        }
-        return pendingClaim.copyWith(
-          homunculi: <CharacterProgress>[
-            ...pendingClaim.homunculi,
-            job.completedHomunculus!,
-          ],
-        );
-    }
+    return workshop.copyWith(queue: nextQueue);
   }
 
   DateTime _laterOf(DateTime left, DateTime right) {

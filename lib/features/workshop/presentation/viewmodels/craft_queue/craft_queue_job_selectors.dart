@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/craft_queue/craft_queue_labels.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_shared_selectors.dart';
 
 class CraftQueueJobView {
   const CraftQueueJobView({
@@ -10,22 +11,26 @@ class CraftQueueJobView {
     required this.title,
     required this.typeLabel,
     required this.statusText,
+    this.resultText,
+    this.canClaim = false,
   });
 
   final String id;
   final String title;
   final String typeLabel;
   final String statusText;
+  final String? resultText;
+  final bool canClaim;
 }
 
-class WorkshopPendingClaimView {
-  const WorkshopPendingClaimView({
-    required this.canClaim,
-    required this.summary,
+class WorkshopQueueCardSummaryView {
+  const WorkshopQueueCardSummaryView({
+    required this.jobCount,
+    required this.description,
   });
 
-  final bool canClaim;
-  final String summary;
+  final int jobCount;
+  final String description;
 }
 
 final Provider<List<CraftQueueJob>> craftQueueProvider =
@@ -61,32 +66,29 @@ final Provider<List<CraftQueueJobView>> craftQueueJobViewsProvider =
           title: title,
           typeLabel: jobTypeLabel(job.type),
           statusText: queueStatusText(job),
+          resultText: completedResultText(job),
+          canClaim: job.status == QueueJobStatus.completed,
         );
       }).toList();
     });
 
-final Provider<WorkshopPendingClaimView> workshopPendingClaimViewProvider =
-    Provider<WorkshopPendingClaimView>((Ref ref) {
-      final WorkshopPendingClaim claim = ref.watch(
-        sessionControllerProvider.select(
-          (SessionState state) => state.workshop.pendingClaim,
-        ),
+final Provider<WorkshopQueueCardSummaryView> workshopQueueCardSummaryProvider =
+    Provider<WorkshopQueueCardSummaryView>((Ref ref) {
+      final List<CraftQueueJob> jobs = ref.watch(craftQueueProvider);
+      final int jobCount = jobs.length;
+      final int queueCapacity = ref.watch(workshopQueueCapacityProvider);
+      final CraftQueueJob? activeJob = jobs.cast<CraftQueueJob?>().firstWhere(
+        (CraftQueueJob? job) => job?.status == QueueJobStatus.processing,
+        orElse: () => null,
       );
-      if (claim.isEmpty) {
-        return const WorkshopPendingClaimView(
-          canClaim: false,
-          summary: '수령 가능한 작업실 보상 없음',
-        );
-      }
-
-      final int traitTypes = claim.extractedTraits.length;
-      final int potionStacks = claim.potionStacks.values.fold<int>(
-        0,
-        (int total, int value) => total + value,
-      );
-      return WorkshopPendingClaimView(
-        canClaim: true,
-        summary:
-            '추출 특성 $traitTypes종 / ArcaneDust +${claim.arcaneDust} / 포션 $potionStacks개 / 장비 ${claim.equipmentClaims.length}개 / 호문쿨루스 ${claim.homunculi.length}체',
+      final int completedCount = jobs
+          .where((CraftQueueJob job) => job.status == QueueJobStatus.completed)
+          .length;
+      final String left = activeJob == null
+          ? '진행 없음'
+          : '진행 ${activeJob.title}';
+      return WorkshopQueueCardSummaryView(
+        jobCount: jobCount,
+        description: '$left / 슬롯 $jobCount/$queueCapacity / 수령 대기 $completedCount건',
       );
     });

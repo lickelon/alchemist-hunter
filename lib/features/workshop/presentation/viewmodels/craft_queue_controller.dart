@@ -73,6 +73,20 @@ class WorkshopCraftQueueController {
     );
   }
 
+  void claimJob(String jobId) {
+    final SessionState current = _session.snapshot();
+    final SessionState nextState = _craftQueueDomain.claimJob(
+      state: current,
+      jobId: jobId,
+    );
+    _apply(
+      nextState,
+      logMessage: identical(nextState, current)
+          ? '수령 가능한 큐 작업 없음 / $jobId'
+          : '큐 작업 수령 / $jobId',
+    );
+  }
+
   void _apply(SessionState nextState, {String? logMessage}) {
     _session.applyState(nextState);
     if (logMessage != null) {
