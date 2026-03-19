@@ -10,6 +10,12 @@ import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skil
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
+enum WorkshopCraftSubmitResult {
+  success,
+  queueFull,
+  failed,
+}
+
 class WorkshopCraftQueueController {
   WorkshopCraftQueueController(
     this._session,
@@ -34,13 +40,17 @@ class WorkshopCraftQueueController {
   final WorkshopSkillTreeService _workshopSkillTreeService;
   final WorkshopSupportService _workshopSupportService;
 
-  void enqueuePotion(String potionId, int repeatCount) {
+  WorkshopCraftSubmitResult enqueuePotion(String potionId, int repeatCount) {
     final SessionState current = _session.snapshot();
     final int queueCapacity = _workshopSkillTreeService.craftQueueCapacity(
           current,
           _workshopSkillTreeRepository.nodes(),
         ) +
         _workshopSupportService.craftQueueCapacityBonus(current);
+    if (current.workshop.queue.length >= queueCapacity) {
+      _session.appendLog('작업실 큐 가득 참 / $potionId x$repeatCount');
+      return WorkshopCraftSubmitResult.queueFull;
+    }
     final SessionState nextState = _craftQueueDomain.enqueuePotion(
       state: current,
       potionId: potionId,
@@ -52,14 +62,15 @@ class WorkshopCraftQueueController {
       workshopSkillTreeService: _workshopSkillTreeService,
       workshopSupportService: _workshopSupportService,
     );
+    if (identical(nextState, current)) {
+      _session.appendLog('제조 등록 실패 / $potionId x$repeatCount');
+      return WorkshopCraftSubmitResult.failed;
+    }
     _apply(
       nextState,
-      logMessage: identical(nextState, current)
-          ? current.workshop.queue.length >= queueCapacity
-                ? '작업실 큐 가득 참 / $potionId x$repeatCount'
-                : '제조 등록 실패 / $potionId x$repeatCount'
-          : '제조 등록 / $potionId x$repeatCount',
+      logMessage: '제조 등록 / $potionId x$repeatCount',
     );
+    return WorkshopCraftSubmitResult.success;
   }
 
   void claimPending() {

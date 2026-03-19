@@ -24,38 +24,61 @@ class WorkshopEnqueueOptionsSheet extends ConsumerWidget {
       workshopCraftQueueControllerProvider,
     );
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-            Text('최대 $maxCraftableCount회 제작 가능'),
-            const SizedBox(height: 12),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: quantities.map((EnqueueQuantityView quantityView) {
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(quantityView.label),
-                  subtitle: Text(quantityView.requirementText),
-                  trailing: FilledButton.tonal(
-                    onPressed: () {
-                      controller.enqueuePotion(potionId, quantityView.quantity);
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('등록'),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
+    return ScaffoldMessenger(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Builder(
+          builder: (BuildContext sheetContext) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text('최대 $maxCraftableCount회 제작 가능'),
+                    const SizedBox(height: 12),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: quantities.map((EnqueueQuantityView quantityView) {
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(quantityView.label),
+                          subtitle: Text(quantityView.requirementText),
+                          trailing: FilledButton.tonal(
+                            onPressed: () {
+                              final WorkshopCraftSubmitResult result = controller
+                                  .enqueuePotion(potionId, quantityView.quantity);
+                              if (result == WorkshopCraftSubmitResult.success) {
+                                Navigator.of(sheetContext).pop();
+                                return;
+                              }
+                              final String message =
+                                  result == WorkshopCraftSubmitResult.queueFull
+                                  ? '작업실 큐가 가득 찼습니다'
+                                  : '제조 등록에 실패했습니다';
+                              ScaffoldMessenger.of(sheetContext).showSnackBar(
+                                SnackBar(content: Text(message)),
+                              );
+                            },
+                            child: const Text('등록'),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -22,7 +22,7 @@ class WorkshopExtractionSheet extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.75,
+          height: MediaQuery.of(context).size.height * 0.72,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

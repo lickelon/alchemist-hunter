@@ -15,49 +15,75 @@ class WorkshopHatchSheet extends ConsumerWidget {
       homunculusHatchRecipeViewsProvider,
     );
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.72,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text(
-                '호문쿨루스 부화',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Essence $essence / ArcaneDust $arcaneDust / 보유 호문쿨루스 $homunculusCount체',
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: recipes.isEmpty
-                    ? const Center(child: Text('부화 가능한 레시피가 없습니다'))
-                    : ListView(
-                        children: recipes.map((HomunculusHatchRecipeView recipe) {
-                          return ListTile(
-                            dense: true,
-                            title: Text(recipe.name),
-                            subtitle: Text(
-                              '${recipe.description}\n결과 ${recipe.resultName}\n역할 ${recipe.roleLabel}\n보조효과 ${recipe.supportEffectLabel}\n${recipe.costLabel}',
-                            ),
-                            trailing: FilledButton.tonal(
-                              onPressed: recipe.canHatch
-                                  ? () {
-                                      ref
-                                          .read(workshopHatchControllerProvider)
-                                          .hatch(recipe.id);
-                                    }
-                                  : null,
-                              child: const Text('등록'),
-                            ),
-                          );
-                        }).toList(growable: false),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.72,
+      child: ScaffoldMessenger(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Builder(
+            builder: (BuildContext sheetContext) {
+              return SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const Text(
+                        '호문쿨루스 부화',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                       ),
-              ),
-            ],
+                      const SizedBox(height: 8),
+                      Text(
+                        'Essence $essence / ArcaneDust $arcaneDust / 보유 호문쿨루스 $homunculusCount체',
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: recipes.isEmpty
+                            ? const Center(child: Text('부화 가능한 레시피가 없습니다'))
+                            : ListView(
+                                children: recipes.map((HomunculusHatchRecipeView recipe) {
+                                  return ListTile(
+                                    dense: true,
+                                    title: Text(recipe.name),
+                                    subtitle: Text(
+                                      '${recipe.description}\n결과 ${recipe.resultName}\n역할 ${recipe.roleLabel}\n보조효과 ${recipe.supportEffectLabel}\n${recipe.costLabel}',
+                                    ),
+                                    trailing: FilledButton.tonal(
+                                      onPressed: recipe.canHatch
+                                          ? () {
+                                              final WorkshopHatchSubmitResult result =
+                                                  ref
+                                                      .read(
+                                                        workshopHatchControllerProvider,
+                                                      )
+                                                      .hatch(recipe.id);
+                                              if (result ==
+                                                  WorkshopHatchSubmitResult.success) {
+                                                return;
+                                              }
+                                              final String message =
+                                                  result ==
+                                                      WorkshopHatchSubmitResult.queueFull
+                                                  ? '작업실 큐가 가득 찼습니다'
+                                                  : '부화 등록에 실패했습니다';
+                                              ScaffoldMessenger.of(
+                                                sheetContext,
+                                              ).showSnackBar(
+                                                SnackBar(content: Text(message)),
+                                              );
+                                            }
+                                          : null,
+                                      child: const Text('등록'),
+                                    ),
+                                  );
+                                }).toList(growable: false),
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),

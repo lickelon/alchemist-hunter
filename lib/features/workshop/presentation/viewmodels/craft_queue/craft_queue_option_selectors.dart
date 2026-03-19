@@ -100,7 +100,7 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
       title: potion.name,
       unlocked: unlocked,
       lockReason: unlocked ? '' : lockReason(potion),
-      craftableNow: unlocked && craftableNow && !queueFull,
+      craftableNow: unlocked && craftableNow,
       maxCraftableCount: unlocked ? maxCraftableCount : 0,
       materialHint: !unlocked
           ? lockReason(potion)

@@ -11,6 +11,12 @@ import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skil
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
+enum WorkshopExtractionSubmitResult {
+  success,
+  queueFull,
+  failed,
+}
+
 class WorkshopExtractionController {
   WorkshopExtractionController(
     this._session,
@@ -38,7 +44,7 @@ class WorkshopExtractionController {
   final WorkshopSkillTreeService _workshopSkillTreeService;
   final WorkshopSupportService _workshopSupportService;
 
-  void extractMaterial(
+  WorkshopExtractionSubmitResult extractMaterial(
     String materialId,
     String profileId, {
     int quantity = 1,
@@ -50,6 +56,10 @@ class WorkshopExtractionController {
           _workshopSkillTreeRepository.nodes(),
         ) +
         _workshopSupportService.craftQueueCapacityBonus(current);
+    if (current.workshop.queue.length >= queueCapacity) {
+      _session.appendLog('작업실 큐 가득 참 / 추출 $materialId x$quantity');
+      return WorkshopExtractionSubmitResult.queueFull;
+    }
     final SessionState nextState = _extractionDomain.extractMaterial(
       state: current,
       materialId: materialId,
@@ -65,12 +75,13 @@ class WorkshopExtractionController {
       quantity: quantity,
       selectedTraits: selectedTraits,
     );
+    if (identical(nextState, current)) {
+      _session.appendLog('추출 등록 실패 / $materialId x$quantity');
+      return WorkshopExtractionSubmitResult.failed;
+    }
     _session.applyState(nextState);
-    _session.appendLog(
-      identical(nextState, current)
-          ? '추출 등록 실패 / $materialId x$quantity'
-          : '추출 등록 / $materialId x$quantity',
-    );
+    _session.appendLog('추출 등록 / $materialId x$quantity');
+    return WorkshopExtractionSubmitResult.success;
   }
 }
 

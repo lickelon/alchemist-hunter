@@ -9,6 +9,12 @@ import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_hat
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
+enum WorkshopHatchSubmitResult {
+  success,
+  queueFull,
+  failed,
+}
+
 class WorkshopHatchController {
   WorkshopHatchController(
     this._session, {
@@ -30,12 +36,12 @@ class WorkshopHatchController {
   final WorkshopSkillTreeService _workshopSkillTreeService;
   final WorkshopSupportService _workshopSupportService;
 
-  void hatch(String recipeId) {
+  WorkshopHatchSubmitResult hatch(String recipeId) {
     final SessionState current = _session.snapshot();
     final recipe = _hatchRepository.findById(recipeId);
     if (recipe == null) {
       _session.appendLog('Hatch recipe missing: $recipeId');
-      return;
+      return WorkshopHatchSubmitResult.failed;
     }
 
     final int queueCapacity = _workshopSkillTreeService.craftQueueCapacity(
@@ -43,6 +49,10 @@ class WorkshopHatchController {
           _workshopSkillTreeRepository.nodes(),
         ) +
         _workshopSupportService.craftQueueCapacityBonus(current);
+    if (current.workshop.queue.length >= queueCapacity) {
+      _session.appendLog('작업실 큐 가득 참 / 부화 ${recipe.resultName}');
+      return WorkshopHatchSubmitResult.queueFull;
+    }
     final SessionState nextState = _hatchUseCase.hatchHomunculus(
       state: current,
       recipe: recipe,
@@ -50,12 +60,13 @@ class WorkshopHatchController {
       queueCapacity: queueCapacity,
       workshopSupportService: _workshopSupportService,
     );
+    if (identical(nextState, current)) {
+      _session.appendLog('부화 등록 실패 / ${recipe.resultName}');
+      return WorkshopHatchSubmitResult.failed;
+    }
     _session.applyState(nextState);
-    _session.appendLog(
-      identical(nextState, current)
-          ? '부화 등록 실패 / ${recipe.resultName}'
-          : '부화 등록 / ${recipe.resultName}',
-    );
+    _session.appendLog('부화 등록 / ${recipe.resultName}');
+    return WorkshopHatchSubmitResult.success;
   }
 }
 

@@ -10,6 +10,12 @@ import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_enc
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
+enum WorkshopEnchantSubmitResult {
+  success,
+  queueFull,
+  failed,
+}
+
 class WorkshopEnchantController {
   WorkshopEnchantController(
     this._session,
@@ -33,13 +39,20 @@ class WorkshopEnchantController {
   final WorkshopSkillTreeService _workshopSkillTreeService;
   final WorkshopSupportService _workshopSupportService;
 
-  void enchantEquipment(String equipmentId, String potionStackKey) {
+  WorkshopEnchantSubmitResult enchantEquipment(
+    String equipmentId,
+    String potionStackKey,
+  ) {
     final SessionState current = _session.snapshot();
     final int queueCapacity = _workshopSkillTreeService.craftQueueCapacity(
           current,
           _workshopSkillTreeRepository.nodes(),
         ) +
         _workshopSupportService.craftQueueCapacityBonus(current);
+    if (current.workshop.queue.length >= queueCapacity) {
+      _session.appendLog('작업실 큐 가득 참 / 인챈트 $equipmentId');
+      return WorkshopEnchantSubmitResult.queueFull;
+    }
     final SessionState nextState = _enchantUseCase.enchantEquipment(
       state: current,
       equipmentId: equipmentId,
@@ -52,12 +65,13 @@ class WorkshopEnchantController {
       workshopSkillTreeService: _workshopSkillTreeService,
       workshopSupportService: _workshopSupportService,
     );
+    if (identical(nextState, current)) {
+      _session.appendLog('인챈트 등록 실패 / $equipmentId');
+      return WorkshopEnchantSubmitResult.failed;
+    }
     _session.applyState(nextState);
-    _session.appendLog(
-      identical(nextState, current)
-          ? '인챈트 등록 실패 / $equipmentId'
-          : '인챈트 등록 / $equipmentId',
-    );
+    _session.appendLog('인챈트 등록 / $equipmentId');
+    return WorkshopEnchantSubmitResult.success;
   }
 }
 

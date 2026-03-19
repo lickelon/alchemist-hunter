@@ -146,4 +146,47 @@ void main() {
       closeTo(0.8925, 0.0001),
     );
   });
+
+  test('extractMaterial returns queueFull when queue is full', () {
+    final SessionController session = buildSession();
+    final WorkshopExtractionController controller = WorkshopExtractionController(
+      session,
+      AlchemyService(),
+      materialCatalogRepository: const StaticMaterialCatalogRepository(),
+      extractionProfileRepository: const StaticExtractionProfileRepository(),
+      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+      workshopSkillTreeService: const WorkshopSkillTreeService(),
+      workshopSupportService: const WorkshopSupportService(),
+    );
+
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: const <String, int>{'m_1': 1},
+      ),
+      workshop: session.state.workshop.copyWith(
+        queue: List<CraftQueueJob>.generate(
+          4,
+          (int index) => CraftQueueJob(
+            id: 'job_$index',
+            type: WorkshopJobType.craft,
+            status: QueueJobStatus.queued,
+            queuedAt: DateTime(2026, 1, 1, 10),
+            duration: const Duration(seconds: 15),
+            eta: const Duration(seconds: 15),
+            title: 'Potion 1',
+            potionId: 'p_1',
+          ),
+        ),
+      ),
+    );
+
+    final WorkshopExtractionSubmitResult result = controller.extractMaterial(
+      'm_1',
+      'full_basic',
+    );
+
+    expect(result, WorkshopExtractionSubmitResult.queueFull);
+    expect(session.state.workshop.queue, hasLength(4));
+    expect(session.state.workshop.logs.first, '작업실 큐 가득 참 / 추출 m_1 x1');
+  });
 }
