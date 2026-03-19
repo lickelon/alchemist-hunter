@@ -17,7 +17,9 @@ class WorkshopEnchantCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Enchant',
-      description: '포션 $potionStackCount스택 / 장비 $equipmentCount개 인챈트 가능',
+      description: potionStackCount == 0 || equipmentCount == 0
+          ? '즉시 인챈트 준비 부족 / 포션 $potionStackCount스택 / 장비 $equipmentCount개'
+          : '즉시 인챈트 가능 / 포션 $potionStackCount스택 / 장비 $equipmentCount개',
       icon: Icons.auto_fix_high_outlined,
       onTap: () => _showEnchantSheet(context),
     );

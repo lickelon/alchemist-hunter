@@ -29,6 +29,18 @@ class PotionQueueOptionView {
   final bool queueFull;
 }
 
+class WorkshopCraftMenuSummaryView {
+  const WorkshopCraftMenuSummaryView({
+    required this.craftableCount,
+    required this.unlockedCount,
+    required this.description,
+  });
+
+  final int craftableCount;
+  final int unlockedCount;
+  final String description;
+}
+
 final Provider<List<PotionQueueOptionView>>
 workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
   Ref ref,
@@ -119,3 +131,20 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
   });
   return views;
 });
+
+final Provider<WorkshopCraftMenuSummaryView> workshopCraftMenuSummaryProvider =
+    Provider<WorkshopCraftMenuSummaryView>((Ref ref) {
+      final List<PotionQueueOptionView> options = ref.watch(
+        workshopPotionQueueOptionViewsProvider,
+      );
+      final int unlockedCount = options.where((entry) => entry.unlocked).length;
+      final int craftableCount = options.where((entry) => entry.craftableNow).length;
+      final String description = unlockedCount == 0
+          ? '제조 가능한 포션 없음'
+          : '즉시 제작 가능 $craftableCount종 / 해금 포션 $unlockedCount종';
+      return WorkshopCraftMenuSummaryView(
+        craftableCount: craftableCount,
+        unlockedCount: unlockedCount,
+        description: description,
+      );
+    });

@@ -10,5 +10,17 @@ void main() {
     expect(container.read(workshopArcaneDustProvider), 2);
     expect(container.read(workshopSkillNodeCountProvider), greaterThan(0));
     expect(container.read(workshopUnlockedSkillNodeCountProvider), 1);
+    expect(
+      container.read(workshopDashboardSummaryProvider).essenceLabel,
+      'Essence 120',
+    );
+    expect(
+      container.read(workshopDashboardSummaryProvider).arcaneDustLabel,
+      'ArcaneDust 2',
+    );
+    expect(
+      container.read(workshopInventorySummaryProvider).description,
+      contains('재료'),
+    );
   });
 }

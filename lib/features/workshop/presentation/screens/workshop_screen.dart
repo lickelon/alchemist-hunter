@@ -1,4 +1,3 @@
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_sections.dart';
 import 'package:flutter/material.dart';
@@ -9,41 +8,32 @@ class WorkshopScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final int essence = ref.watch(workshopEssenceProvider);
-    final int arcaneDust = ref.watch(workshopArcaneDustProvider);
-    final int unlockedSkillNodes = ref.watch(
-      workshopUnlockedSkillNodeCountProvider,
+    final WorkshopDashboardSummaryView dashboard = ref.watch(
+      workshopDashboardSummaryProvider,
     );
+    final WorkshopQueueCardSummaryView queueSummary = ref.watch(
+      workshopQueueCardSummaryProvider,
+    );
+    final WorkshopCraftMenuSummaryView craftSummary = ref.watch(
+      workshopCraftMenuSummaryProvider,
+    );
+    final WorkshopInventorySummaryView inventorySummary = ref.watch(
+      workshopInventorySummaryProvider,
+    );
+    final int unlockedSkillNodes = ref.watch(workshopUnlockedSkillNodeCountProvider);
     final int totalSkillNodes = ref.watch(workshopSkillNodeCountProvider);
     final int homunculusCount = ref.watch(workshopHomunculusCountProvider);
-    final int supportAssignedCount = ref.watch(
-      workshopSupportAssignedCountProvider,
-    );
+    final int supportAssignedCount = ref.watch(workshopSupportAssignedCountProvider);
     final int supportSlotLimit = ref.watch(workshopSupportSlotLimitProvider);
     final String supportSummary = ref.watch(workshopSupportSummaryProvider);
-    final List<ExtractedTraitInventoryView> extractedTraits = ref.watch(
-      extractedTraitViewsProvider,
-    );
+    final List<ExtractedTraitInventoryView> extractedTraits = ref.watch(extractedTraitViewsProvider);
     final List<HomunculusHatchRecipeView> hatchRecipes = ref.watch(
       homunculusHatchRecipeViewsProvider,
     );
-    final List<CraftQueueJob> queue = ref.watch(craftQueueProvider);
-    final WorkshopPendingClaimView pendingClaim = ref.watch(
-      workshopPendingClaimViewProvider,
-    );
-    final List<MapEntry<String, int>> materials = ref.watch(
-      sortedMaterialInventoryProvider,
-    );
-    final Map<String, int> craftedPotionStacks = ref.watch(
-      craftedPotionStacksProvider,
-    );
+    final List<MapEntry<String, int>> materials = ref.watch(sortedMaterialInventoryProvider);
+    final Map<String, int> craftedPotionStacks = ref.watch(craftedPotionStacksProvider);
     final List<EnchantEquipmentView> enchantEquipmentViews = ref.watch(
       enchantEquipmentViewsProvider,
-    );
-    final List<String> logs = ref.watch(recentLogsProvider);
-    final int materialTotalCount = materials.fold<int>(
-      0,
-      (int total, MapEntry<String, int> entry) => total + entry.value,
     );
 
     return ListView(
@@ -54,9 +44,14 @@ class WorkshopScreen extends ConsumerWidget {
             leading: const Icon(Icons.science_outlined),
             title: const Text('Workshop Resources'),
             subtitle: Text(
-              'Essence: $essence / ArcaneDust: $arcaneDust / Skill Nodes: $unlockedSkillNodes/$totalSkillNodes / Support: $supportAssignedCount/$supportSlotLimit',
+              '${dashboard.essenceLabel} / ${dashboard.arcaneDustLabel}',
             ),
           ),
+        ),
+        const SizedBox(height: 8),
+        WorkshopQueueCard(
+          jobCount: queueSummary.jobCount,
+          description: queueSummary.description,
         ),
         const SizedBox(height: 8),
         WorkshopExtractionCard(
@@ -64,28 +59,7 @@ class WorkshopScreen extends ConsumerWidget {
           extractedTraitTypeCount: extractedTraits.length,
         ),
         const SizedBox(height: 8),
-        WorkshopSkillTreeCard(
-          unlockedCount: unlockedSkillNodes,
-          totalCount: totalSkillNodes,
-        ),
-        const SizedBox(height: 8),
-        WorkshopSupportCard(
-          assignedCount: supportAssignedCount,
-          slotLimit: supportSlotLimit,
-          summary: supportSummary,
-        ),
-        const SizedBox(height: 8),
-        WorkshopQueueCard(
-          jobCount: queue.length,
-          claimSummary: pendingClaim.summary,
-        ),
-        const SizedBox(height: 8),
-        WorkshopMaterialCard(
-          materialTypeCount: materials.length,
-          totalCount: materialTotalCount,
-        ),
-        const SizedBox(height: 8),
-        WorkshopCraftedPotionCard(stackCount: craftedPotionStacks.length),
+        WorkshopCraftCard(description: craftSummary.description),
         const SizedBox(height: 8),
         WorkshopEnchantCard(
           potionStackCount: craftedPotionStacks.length,
@@ -97,7 +71,18 @@ class WorkshopScreen extends ConsumerWidget {
           homunculusCount: homunculusCount,
         ),
         const SizedBox(height: 8),
-        WorkshopLogCard(logCount: logs.length),
+        WorkshopInventoryCard(description: inventorySummary.description),
+        const SizedBox(height: 8),
+        WorkshopSupportCard(
+          assignedCount: supportAssignedCount,
+          slotLimit: supportSlotLimit,
+          summary: supportSummary,
+        ),
+        const SizedBox(height: 8),
+        WorkshopSkillTreeCard(
+          unlockedCount: unlockedSkillNodes,
+          totalCount: totalSkillNodes,
+        ),
       ],
     );
   }

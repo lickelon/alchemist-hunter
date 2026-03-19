@@ -18,7 +18,9 @@ class WorkshopHatchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Homunculus Hatch',
-      description: '레시피 $recipeCount종 / 보유 호문쿨루스 $homunculusCount체',
+      description: recipeCount == 0
+          ? '부화 가능한 레시피 없음'
+          : '즉시 부화 가능 레시피 $recipeCount종 / 보유 호문쿨루스 $homunculusCount체',
       icon: Icons.egg_alt_outlined,
       onTap: () => _showHatchSheet(context),
     );
