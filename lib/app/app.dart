@@ -1,6 +1,8 @@
 import 'package:alchemist_hunter/features/battle/presentation/screens/dungeon_screen.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/app/session/session_progress_sync_controller.dart';
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_theme.dart';
 import 'package:alchemist_hunter/features/characters/presentation/screens/characters_screen.dart';
 import 'package:alchemist_hunter/app/session_sync_scope.dart';
 import 'package:alchemist_hunter/features/town/presentation/screens/town_screen.dart';
@@ -15,7 +17,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Alchemist Hunter',
-      theme: ThemeData(colorSchemeSeed: Colors.orange, useMaterial3: true),
+      theme: AppTheme.light,
       home: const HomePage(),
     );
   }
@@ -81,17 +83,17 @@ class _HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
           label: Text('x${_speedLabel(timeAcceleration)}'),
         ),
         Padding(
-          padding: EdgeInsets.only(right: 12),
+          padding: const EdgeInsets.only(right: AppSpacing.lg),
           child: Row(
-            children: <Widget>[
+            children: const <Widget>[
               Text('Diamonds'),
-              SizedBox(width: 4),
+              SizedBox(width: AppSpacing.sm),
               Icon(Icons.diamond),
             ],
           ),
         ),
       ],
-      titleSpacing: 8,
+      titleSpacing: AppSpacing.md,
       actionsPadding: EdgeInsets.zero,
     );
   }
@@ -120,14 +122,9 @@ class _MainTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: TabBar(
-        indicatorColor: Colors.transparent,
-        labelPadding: EdgeInsets.zero,
-        splashFactory: NoSplash.splashFactory,
-        labelColor: Colors.orange,
-        unselectedLabelColor: Colors.grey,
-        tabs: const <Widget>[
+        tabs: <Widget>[
           Tab(icon: Icon(Icons.location_city), text: 'Town'),
           Tab(icon: Icon(Icons.science), text: 'Workshop'),
           Tab(icon: Icon(Icons.person), text: 'Characters'),
