@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_enchant_sections.dart';
 
 class WorkshopEnchantSheet extends ConsumerStatefulWidget {
   const WorkshopEnchantSheet({super.key});
@@ -53,10 +54,7 @@ class _WorkshopEnchantSheetState extends ConsumerState<WorkshopEnchantSheet> {
 
     final WorkshopEnchantSubmitResult result = ref
         .read(workshopEnchantControllerProvider)
-        .enchantEquipment(
-      _selectedEquipmentId!,
-      _selectedPotionStackKey!,
-    );
+        .enchantEquipment(_selectedEquipmentId!, _selectedPotionStackKey!);
     if (!mounted || !sheetContext.mounted) {
       return;
     }
@@ -67,9 +65,9 @@ class _WorkshopEnchantSheetState extends ConsumerState<WorkshopEnchantSheet> {
     final String message = result == WorkshopEnchantSubmitResult.queueFull
         ? '작업실 큐가 가득 찼습니다'
         : '인챈트 등록에 실패했습니다';
-    ScaffoldMessenger.of(sheetContext).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      sheetContext,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -81,12 +79,10 @@ class _WorkshopEnchantSheetState extends ConsumerState<WorkshopEnchantSheet> {
       enchantEquipmentViewsProvider,
     );
     final EnchantPreviewView? preview = ref.watch(
-      enchantPreviewProvider(
-        (
-          potionStackKey: _selectedPotionStackKey,
-          equipmentId: _selectedEquipmentId,
-        ),
-      ),
+      enchantPreviewProvider((
+        potionStackKey: _selectedPotionStackKey,
+        equipmentId: _selectedEquipmentId,
+      )),
     );
 
     return SizedBox(
@@ -105,108 +101,29 @@ class _WorkshopEnchantSheetState extends ConsumerState<WorkshopEnchantSheet> {
                     children: <Widget>[
                       const Text(
                         '장비 인챈트',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       const SizedBox(height: 12),
-                      const Text(
-                        '포션 선택',
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(height: 8),
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxHeight: 96),
-                        child: RadioGroup<String>(
-                          groupValue: _selectedPotionStackKey,
-                          onChanged: (String? value) {
-                            setState(() => _selectedPotionStackKey = value);
-                          },
-                          child: potions.isEmpty
-                              ? const Center(child: Text('인챈트에 사용할 포션이 없습니다'))
-                              : ListView(
-                                  shrinkWrap: true,
-                                  children: potions.map((EnchantPotionView potion) {
-                                    return RadioListTile<String>(
-                                      value: potion.stackKey,
-                                      title: Text('${potion.name} x${potion.quantity}'),
-                                      subtitle: Text(
-                                        '품질 ${potion.qualityLabel} / ${potion.traitsLabel}',
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                        ),
+                      WorkshopEnchantPotionSelector(
+                        potions: potions,
+                        selectedPotionStackKey: _selectedPotionStackKey,
+                        onChanged: (String? value) {
+                          setState(() => _selectedPotionStackKey = value);
+                        },
                       ),
                       const Divider(),
-                      const Text(
-                        '장비 선택',
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(height: 8),
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxHeight: 120),
-                        child: RadioGroup<String>(
-                          groupValue: _selectedEquipmentId,
-                          onChanged: (String? value) {
-                            setState(() => _selectedEquipmentId = value);
-                          },
-                          child: equipments.isEmpty
-                              ? const Center(child: Text('인챈트 가능한 장비가 없습니다'))
-                              : ListView(
-                                  shrinkWrap: true,
-                                  children: equipments.map((EnchantEquipmentView item) {
-                                    return RadioListTile<String>(
-                                      value: item.equipmentId,
-                                      title: Text(item.name),
-                                      subtitle: Text(
-                                        '${item.locationLabel} / ${item.slotLabel}\n${item.statLabel}\n${item.enchantLabel}',
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                        ),
+                      WorkshopEnchantEquipmentSelector(
+                        equipments: equipments,
+                        selectedEquipmentId: _selectedEquipmentId,
+                        onChanged: (String? value) {
+                          setState(() => _selectedEquipmentId = value);
+                        },
                       ),
                       const SizedBox(height: 12),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '예상 결과',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: preview == null
-                            ? const Text('포션과 장비를 선택하면 인챈트 결과를 미리 볼 수 있습니다')
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    preview.equipmentName,
-                                    style: const TextStyle(fontWeight: FontWeight.w700),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text('현재 ${preview.currentEnchantLabel}'),
-                                  Text('예상 ${preview.nextEnchantLabel}'),
-                                  const SizedBox(height: 6),
-                                  Text(preview.currentStatLabel),
-                                  Text(preview.nextStatLabel),
-                                  Text(preview.deltaStatLabel),
-                                  if (preview.replaceRequired) ...<Widget>[
-                                    const SizedBox(height: 6),
-                                    const Text('기존 인챈트가 교체됩니다'),
-                                  ],
-                                ],
-                              ),
-                      ),
+                      WorkshopEnchantPreviewSection(preview: preview),
                       const SizedBox(height: 8),
                       SizedBox(
                         width: double.infinity,

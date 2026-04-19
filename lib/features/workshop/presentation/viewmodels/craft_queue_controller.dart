@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_craft_queue_use_case.dart';
+import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_craft_enqueue_use_case.dart';
+import 'package:alchemist_hunter/features/workshop/domain/use_cases/workshop_queue_claim_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
@@ -10,23 +11,22 @@ import 'package:alchemist_hunter/features/workshop/domain/services/workshop_skil
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_service_providers.dart';
 
-enum WorkshopCraftSubmitResult {
-  success,
-  queueFull,
-  failed,
-}
+enum WorkshopCraftSubmitResult { success, queueFull, failed }
 
 class WorkshopCraftQueueController {
   WorkshopCraftQueueController(
     this._session,
     this._craftingService, {
-    WorkshopCraftQueueUseCase craftQueueDomain =
-        const WorkshopCraftQueueUseCase(),
+    WorkshopCraftEnqueueUseCase craftEnqueueUseCase =
+        const WorkshopCraftEnqueueUseCase(),
+    WorkshopQueueClaimUseCase queueClaimUseCase =
+        const WorkshopQueueClaimUseCase(),
     required PotionCatalogRepository potionCatalogRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
     required WorkshopSupportService workshopSupportService,
-  }) : _craftQueueDomain = craftQueueDomain,
+  }) : _craftEnqueueUseCase = craftEnqueueUseCase,
+       _queueClaimUseCase = queueClaimUseCase,
        _potionCatalogRepository = potionCatalogRepository,
        _workshopSkillTreeRepository = workshopSkillTreeRepository,
        _workshopSkillTreeService = workshopSkillTreeService,
@@ -34,7 +34,8 @@ class WorkshopCraftQueueController {
 
   final SessionController _session;
   final PotionCraftingService _craftingService;
-  final WorkshopCraftQueueUseCase _craftQueueDomain;
+  final WorkshopCraftEnqueueUseCase _craftEnqueueUseCase;
+  final WorkshopQueueClaimUseCase _queueClaimUseCase;
   final PotionCatalogRepository _potionCatalogRepository;
   final WorkshopSkillTreeRepository _workshopSkillTreeRepository;
   final WorkshopSkillTreeService _workshopSkillTreeService;
@@ -42,7 +43,8 @@ class WorkshopCraftQueueController {
 
   WorkshopCraftSubmitResult enqueuePotion(String potionId, int repeatCount) {
     final SessionState current = _session.snapshot();
-    final int queueCapacity = _workshopSkillTreeService.craftQueueCapacity(
+    final int queueCapacity =
+        _workshopSkillTreeService.craftQueueCapacity(
           current,
           _workshopSkillTreeRepository.nodes(),
         ) +
@@ -51,7 +53,7 @@ class WorkshopCraftQueueController {
       _session.appendLog('작업실 큐 가득 참 / $potionId x$repeatCount');
       return WorkshopCraftSubmitResult.queueFull;
     }
-    final SessionState nextState = _craftQueueDomain.enqueuePotion(
+    final SessionState nextState = _craftEnqueueUseCase.enqueuePotion(
       state: current,
       potionId: potionId,
       repeatCount: repeatCount,
@@ -66,16 +68,15 @@ class WorkshopCraftQueueController {
       _session.appendLog('제조 등록 실패 / $potionId x$repeatCount');
       return WorkshopCraftSubmitResult.failed;
     }
-    _apply(
-      nextState,
-      logMessage: '제조 등록 / $potionId x$repeatCount',
-    );
+    _apply(nextState, logMessage: '제조 등록 / $potionId x$repeatCount');
     return WorkshopCraftSubmitResult.success;
   }
 
   void claimPending() {
     final SessionState current = _session.snapshot();
-    final SessionState nextState = _craftQueueDomain.claimPending(state: current);
+    final SessionState nextState = _queueClaimUseCase.claimPending(
+      state: current,
+    );
     _apply(
       nextState,
       logMessage: identical(nextState, current)
@@ -86,7 +87,7 @@ class WorkshopCraftQueueController {
 
   void claimJob(String jobId) {
     final SessionState current = _session.snapshot();
-    final SessionState nextState = _craftQueueDomain.claimJob(
+    final SessionState nextState = _queueClaimUseCase.claimJob(
       state: current,
       jobId: jobId,
     );
