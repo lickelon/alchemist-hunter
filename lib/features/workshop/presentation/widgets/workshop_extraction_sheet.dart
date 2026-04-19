@@ -1,3 +1,5 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,65 +20,59 @@ class WorkshopExtractionSheet extends ConsumerWidget {
       extractedTraitViewsProvider,
     );
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.72,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text(
-                '추출',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '보유 추출 특성',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 6),
-              WorkshopTraitInventoryStrip(traits: extractedTraits),
-              const Divider(),
-              const Text(
-                '재료 선택',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 6),
-              Expanded(
-                child: materials.isEmpty
-                    ? const Center(child: Text('추출 가능한 재료가 없습니다'))
-                    : ListView.builder(
-                        itemCount: materials.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final MaterialInventoryView entry = materials[index];
-                          return ListTile(
-                            dense: true,
-                            title: Text(entry.name),
-                            subtitle: Text(
-                              '${entry.rarity.name} / ${entry.traitSummary}',
-                            ),
-                            trailing: FilledButton.tonal(
-                              onPressed: () {
-                                showModalBottomSheet<void>(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (BuildContext detailContext) {
-                                    return WorkshopMaterialExtractionDetail(
-                                      materialId: entry.id,
-                                    );
-                                  },
+    return AppBottomSheet(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            '추출',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          const Text(
+            '보유 추출 특성',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          WorkshopTraitInventoryStrip(traits: extractedTraits),
+          const Divider(),
+          const Text(
+            '재료 선택',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Expanded(
+            child: materials.isEmpty
+                ? const Center(child: Text('추출 가능한 재료가 없습니다'))
+                : ListView.builder(
+                    itemCount: materials.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final MaterialInventoryView entry = materials[index];
+                      return ListTile(
+                        dense: true,
+                        title: Text(entry.name),
+                        subtitle: Text(
+                          '${entry.rarity.name} / ${entry.traitSummary}',
+                        ),
+                        trailing: FilledButton.tonal(
+                          onPressed: () {
+                            showModalBottomSheet<void>(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (BuildContext detailContext) {
+                                return WorkshopMaterialExtractionDetail(
+                                  materialId: entry.id,
                                 );
                               },
-                              child: const Text('분석/추출'),
-                            ),
-                          );
-                        },
-                      ),
-              ),
-            ],
+                            );
+                          },
+                          child: const Text('분석/추출'),
+                        ),
+                      );
+                    },
+                  ),
           ),
-        ),
+        ],
       ),
     );
   }

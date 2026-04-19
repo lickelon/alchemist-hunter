@@ -1,5 +1,11 @@
+import 'package:alchemist_hunter/common/themes/app_radius.dart';
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:flutter/material.dart';
+
+/// RadioGroup 선택 목록의 최대 표시 높이 (pt).
+/// 이 값을 초과하면 목록 내부에서 스크롤된다.
+const double _kSelectorMaxHeight = 120.0;
 
 class WorkshopEnchantPotionSelector extends StatelessWidget {
   const WorkshopEnchantPotionSelector({
@@ -19,9 +25,9 @@ class WorkshopEnchantPotionSelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text('포션 선택', style: TextStyle(fontWeight: FontWeight.w700)),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.md),
         ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 96),
+          constraints: const BoxConstraints(maxHeight: _kSelectorMaxHeight),
           child: RadioGroup<String>(
             groupValue: selectedPotionStackKey,
             onChanged: onChanged,
@@ -64,9 +70,9 @@ class WorkshopEnchantEquipmentSelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text('장비 선택', style: TextStyle(fontWeight: FontWeight.w700)),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.md),
         ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 120),
+          constraints: const BoxConstraints(maxHeight: _kSelectorMaxHeight),
           child: RadioGroup<String>(
             groupValue: selectedEquipmentId,
             onChanged: onChanged,
@@ -101,23 +107,20 @@ class WorkshopEnchantPreviewSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            '예상 결과',
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+        Text(
+          '예상 결과',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.md),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.interactive,
           ),
           child: preview == null
               ? const Text('포션과 장비를 선택하면 인챈트 결과를 미리 볼 수 있습니다')
@@ -128,15 +131,15 @@ class WorkshopEnchantPreviewSection extends StatelessWidget {
                       preview!.equipmentName,
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: AppSpacing.sm),
                     Text('현재 ${preview!.currentEnchantLabel}'),
                     Text('예상 ${preview!.nextEnchantLabel}'),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: AppSpacing.sm),
                     Text(preview!.currentStatLabel),
                     Text(preview!.nextStatLabel),
                     Text(preview!.deltaStatLabel),
                     if (preview!.replaceRequired) ...<Widget>[
-                      const SizedBox(height: 6),
+                      const SizedBox(height: AppSpacing.sm),
                       const Text('기존 인챈트가 교체됩니다'),
                     ],
                   ],

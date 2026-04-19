@@ -1,3 +1,5 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:flutter/material.dart';
@@ -49,39 +51,33 @@ class WorkshopInventorySheet extends ConsumerWidget {
 
     return DefaultTabController(
       length: 3,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.72,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Text(
-                  '작업실 인벤토리',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 8),
-                const TabBar(
-                  tabs: <Widget>[
-                    Tab(text: '재료'),
-                    Tab(text: '특성'),
-                    Tab(text: '포션'),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: TabBarView(
-                    children: <Widget>[
-                      _InventoryMaterialTab(materials: materials),
-                      _InventoryTraitTab(traits: traits),
-                      _InventoryPotionTab(potions: potions),
-                    ],
-                  ),
-                ),
+      child: AppBottomSheet(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text(
+              '작업실 인벤토리',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            const TabBar(
+              tabs: <Widget>[
+                Tab(text: '재료'),
+                Tab(text: '특성'),
+                Tab(text: '포션'),
               ],
             ),
-          ),
+            const SizedBox(height: AppSpacing.md),
+            Expanded(
+              child: TabBarView(
+                children: <Widget>[
+                  _InventoryMaterialTab(materials: materials),
+                  _InventoryTraitTab(traits: traits),
+                  _InventoryPotionTab(potions: potions),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

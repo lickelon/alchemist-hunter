@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,7 +32,7 @@ class WorkshopEnqueueOptionsSheet extends ConsumerWidget {
           builder: (BuildContext sheetContext) {
             return SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AppSpacing.xl),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,9 +44,9 @@ class WorkshopEnqueueOptionsSheet extends ConsumerWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.md),
                     Text('최대 $maxCraftableCount회 제작 가능'),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.lg),
                     Column(
                       mainAxisSize: MainAxisSize.min,
                       children: quantities.map((EnqueueQuantityView quantityView) {

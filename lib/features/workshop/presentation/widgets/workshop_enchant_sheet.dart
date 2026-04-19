@@ -1,3 +1,5 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -85,61 +87,58 @@ class _WorkshopEnchantSheetState extends ConsumerState<WorkshopEnchantSheet> {
       )),
     );
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.72,
+    return AppBottomSheet(
       child: ScaffoldMessenger(
         child: Scaffold(
           backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
           body: Builder(
             builder: (BuildContext sheetContext) {
-              return SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Text(
-                        '장비 인챈트',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Text(
+                      '장비 인챈트',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    WorkshopEnchantPotionSelector(
+                      potions: potions,
+                      selectedPotionStackKey: _selectedPotionStackKey,
+                      onChanged: (String? value) {
+                        setState(() => _selectedPotionStackKey = value);
+                      },
+                    ),
+                    const Divider(),
+                    WorkshopEnchantEquipmentSelector(
+                      equipments: equipments,
+                      selectedEquipmentId: _selectedEquipmentId,
+                      onChanged: (String? value) {
+                        setState(() => _selectedEquipmentId = value);
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    WorkshopEnchantPreviewSection(preview: preview),
+                    const SizedBox(height: AppSpacing.md),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: preview == null
+                            ? null
+                            : () => _submitEnchant(sheetContext, preview),
+                        child: Text(
+                          preview?.replaceRequired == true
+                              ? '인챈트 교체 등록'
+                              : '인챈트 등록',
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      WorkshopEnchantPotionSelector(
-                        potions: potions,
-                        selectedPotionStackKey: _selectedPotionStackKey,
-                        onChanged: (String? value) {
-                          setState(() => _selectedPotionStackKey = value);
-                        },
-                      ),
-                      const Divider(),
-                      WorkshopEnchantEquipmentSelector(
-                        equipments: equipments,
-                        selectedEquipmentId: _selectedEquipmentId,
-                        onChanged: (String? value) {
-                          setState(() => _selectedEquipmentId = value);
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      WorkshopEnchantPreviewSection(preview: preview),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        width: double.infinity,
-                        child: FilledButton(
-                          onPressed: preview == null
-                              ? null
-                              : () => _submitEnchant(sheetContext, preview),
-                          child: Text(
-                            preview?.replaceRequired == true
-                                ? '인챈트 교체 등록'
-                                : '인챈트 등록',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               );
             },

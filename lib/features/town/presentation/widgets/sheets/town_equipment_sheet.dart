@@ -1,3 +1,5 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,104 +17,98 @@ class TownEquipmentSheet extends ConsumerWidget {
       townEquipmentInventoryViewsProvider,
     );
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.75,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text(
-                '대장간',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '장비 등록',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 6),
-              Expanded(
-                child: ListView(
-                  children: blueprints.map((TownEquipmentBlueprintView entry) {
-                    return ListTile(
-                      dense: true,
-                      title: Text(entry.name),
-                      subtitle: Text(
-                        '${entry.slotLabel} / ${entry.statLabel}\n${entry.materialCostLabel}\n제작 시간 ${entry.durationLabel}',
-                      ),
-                      trailing: FilledButton.tonal(
-                        onPressed: entry.canCraft
-                            ? () {
-                                ref
-                                    .read(equipmentCraftControllerProvider)
-                                    .craftEquipment(entry.id);
-                              }
-                            : null,
-                        child: const Text('등록'),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const Divider(),
-              const Text(
-                '대장간 진행',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 6),
-              Expanded(
-                child: forgeJobs.isEmpty
-                    ? const Center(child: Text('등록된 대장간 작업이 없습니다'))
-                    : ListView(
-                        children: forgeJobs.map((TownForgeJobView entry) {
-                          return ListTile(
-                            dense: true,
-                            title: Text(entry.name),
-                            subtitle: Text(
-                              '${entry.statusLabel} / ${entry.remainingLabel}',
-                            ),
-                            trailing: FilledButton.tonal(
-                              onPressed: entry.canClaim
-                                  ? () {
-                                      ref
-                                          .read(equipmentCraftControllerProvider)
-                                          .claimCompleted(entry.id);
-                                    }
-                                  : null,
-                              child: const Text('수령'),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-              ),
-              const Divider(),
-              const Text(
-                '보유 장비',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 6),
-              Expanded(
-                child: inventory.isEmpty
-                    ? const Center(child: Text('보유 장비가 없습니다'))
-                    : ListView(
-                        children: inventory.map((
-                          TownEquipmentInventoryView entry,
-                        ) {
-                          return ListTile(
-                            dense: true,
-                            title: Text(entry.name),
-                            subtitle: Text(
-                              '${entry.slotLabel} / ${entry.statLabel}',
-                            ),
-                          );
-                        }).toList(),
-                      ),
-              ),
-            ],
+    return AppBottomSheet(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            '대장간',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
-        ),
+          const SizedBox(height: AppSpacing.md),
+          const Text(
+            '장비 등록',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Expanded(
+            child: ListView(
+              children: blueprints.map((TownEquipmentBlueprintView entry) {
+                return ListTile(
+                  dense: true,
+                  title: Text(entry.name),
+                  subtitle: Text(
+                    '${entry.slotLabel} / ${entry.statLabel}\n${entry.materialCostLabel}\n제작 시간 ${entry.durationLabel}',
+                  ),
+                  trailing: FilledButton.tonal(
+                    onPressed: entry.canCraft
+                        ? () {
+                            ref
+                                .read(equipmentCraftControllerProvider)
+                                .craftEquipment(entry.id);
+                          }
+                        : null,
+                    child: const Text('등록'),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const Divider(),
+          const Text(
+            '대장간 진행',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Expanded(
+            child: forgeJobs.isEmpty
+                ? const Center(child: Text('등록된 대장간 작업이 없습니다'))
+                : ListView(
+                    children: forgeJobs.map((TownForgeJobView entry) {
+                      return ListTile(
+                        dense: true,
+                        title: Text(entry.name),
+                        subtitle: Text(
+                          '${entry.statusLabel} / ${entry.remainingLabel}',
+                        ),
+                        trailing: FilledButton.tonal(
+                          onPressed: entry.canClaim
+                              ? () {
+                                  ref
+                                      .read(equipmentCraftControllerProvider)
+                                      .claimCompleted(entry.id);
+                                }
+                              : null,
+                          child: const Text('수령'),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+          ),
+          const Divider(),
+          const Text(
+            '보유 장비',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Expanded(
+            child: inventory.isEmpty
+                ? const Center(child: Text('보유 장비가 없습니다'))
+                : ListView(
+                    children: inventory.map((
+                      TownEquipmentInventoryView entry,
+                    ) {
+                      return ListTile(
+                        dense: true,
+                        title: Text(entry.name),
+                        subtitle: Text(
+                          '${entry.slotLabel} / ${entry.statLabel}',
+                        ),
+                      );
+                    }).toList(),
+                  ),
+          ),
+        ],
       ),
     );
   }

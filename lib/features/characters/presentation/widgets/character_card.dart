@@ -1,3 +1,5 @@
+import 'package:alchemist_hunter/common/themes/app_radius.dart';
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_detail_sheet.dart';
@@ -24,12 +26,15 @@ class CharacterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final CharacterProgress character = item.character;
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.sm,
+      ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.interactive,
         onTap: () => _showDetailSheet(context, character),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -49,11 +54,11 @@ class CharacterCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: AppSpacing.sm),
               Text(item.assignmentLabel),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppSpacing.sm),
               Text(item.growthLabel),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 item.summaryLine,
                 style: Theme.of(

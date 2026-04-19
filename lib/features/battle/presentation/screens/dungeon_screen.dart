@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_sheet.dart';
@@ -44,18 +45,21 @@ class DungeonScreen extends ConsumerWidget {
             '편성 $assignedCount명 / 전투력 $partyPower / $statusLabel / Gold: $gold / Essence: $essence';
 
         return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          margin: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
+          ),
           child: InkWell(
             onTap: () => _showAssignmentSheet(context, stage),
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(
                     children: <Widget>[
                       const Icon(Icons.shield),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: Text(
                           stageLabel,
@@ -67,13 +71,13 @@ class DungeonScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.md),
                   Text(
                     unlocked
                         ? '$summary\n$pendingLabel${expedition.lastSummary.isEmpty ? "" : "\n최근 ${expedition.lastSummary}"}'
                         : '$summary\n${_lockedReason(stage)}',
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: AppSpacing.lg),
                   Row(
                     children: <Widget>[
                       Expanded(
@@ -94,7 +98,7 @@ class DungeonScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: FilledButton.tonal(
                           onPressed: canClaim

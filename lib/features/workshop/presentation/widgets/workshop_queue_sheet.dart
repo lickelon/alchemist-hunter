@@ -1,3 +1,5 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,32 +18,26 @@ class WorkshopQueueSheet extends ConsumerWidget {
     );
     final int queueCapacity = ref.watch(workshopQueueCapacityProvider);
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text(
-                '제작 큐',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 8),
-              Text('슬롯 ${jobs.length}/$queueCapacity'),
-              const SizedBox(height: 12),
-              Expanded(
-                child: jobs.isEmpty
-                    ? const Center(child: Text('큐가 비어있습니다'))
-                    : WorkshopQueueJobList(
-                        jobs: jobs,
-                        onClaimJob: controller.claimJob,
-                      ),
-              ),
-            ],
+    return AppBottomSheet(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            '제작 큐',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
-        ),
+          const SizedBox(height: AppSpacing.md),
+          Text('슬롯 ${jobs.length}/$queueCapacity'),
+          const SizedBox(height: AppSpacing.lg),
+          Expanded(
+            child: jobs.isEmpty
+                ? const Center(child: Text('큐가 비어있습니다'))
+                : WorkshopQueueJobList(
+                    jobs: jobs,
+                    onClaimJob: controller.claimJob,
+                  ),
+          ),
+        ],
       ),
     );
   }

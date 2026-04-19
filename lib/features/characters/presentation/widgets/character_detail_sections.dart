@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_selectors.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +16,12 @@ class CharacterDetailSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: AppSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.md),
           child,
         ],
       ),
@@ -46,7 +47,7 @@ class CharacterGrowthSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(growthLabel),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             'XP ${character.xp}/${character.xpToNextLevel} / MaxLv ${character.maxLevelForRank}',
           ),
@@ -76,9 +77,9 @@ class CharacterGoalSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(rankHint),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.sm),
           Text(tierHint),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.sm),
           Text(tierMaterialLabel),
         ],
       ),
@@ -104,7 +105,7 @@ class CharacterAssignmentSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(assignmentLabel),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             assignmentGuideLabel,
             style: Theme.of(
@@ -131,7 +132,7 @@ class CharacterProfileSection extends StatelessWidget {
         children: detailLines
             .map(
               (String line) => Padding(
-                padding: const EdgeInsets.only(bottom: 4),
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                 child: Text(line),
               ),
             )
@@ -158,8 +159,8 @@ class CharacterActionSection extends StatelessWidget {
     return CharacterDetailSection(
       title: '액션',
       child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
+        spacing: AppSpacing.md,
+        runSpacing: AppSpacing.md,
         children: <Widget>[
           FilledButton.tonal(
             onPressed: character.canRankUp
@@ -199,7 +200,7 @@ class CharacterEquipmentSection extends StatelessWidget {
               final bool canManage =
                   slot.equippedItem != null || slot.availableItems.isNotEmpty;
               return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: AppSpacing.md),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -211,7 +212,7 @@ class CharacterEquipmentSection extends StatelessWidget {
                             '${slot.slotLabel}: ${slot.currentLabel}',
                             style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: AppSpacing.xs),
                           Text(
                             slot.statLabel,
                             style: Theme.of(context).textTheme.bodySmall,
@@ -219,7 +220,7 @@ class CharacterEquipmentSection extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppSpacing.md),
                     FilledButton.tonal(
                       onPressed: canManage ? () => onManage(slot) : null,
                       child: Text(slot.equippedItem == null ? '장착' : '관리'),

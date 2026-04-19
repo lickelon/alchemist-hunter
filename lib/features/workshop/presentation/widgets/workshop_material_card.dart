@@ -1,5 +1,7 @@
-import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -45,40 +47,34 @@ class _WorkshopMaterialSheet extends ConsumerWidget {
       materialInventoryViewsProvider,
     );
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.65,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text(
-                '보유 아이템 목록',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: materials.isEmpty
-                    ? const Center(child: Text('보유 아이템이 없습니다'))
-                    : ListView.builder(
-                        itemCount: materials.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final MaterialInventoryView entry = materials[index];
-                          return ListTile(
-                            dense: true,
-                            title: Text(entry.name),
-                            subtitle: Text(
-                              '${entry.rarity.name} / ${entry.traitSummary}',
-                            ),
-                            trailing: Text('x${entry.quantity}'),
-                          );
-                        },
-                      ),
-              ),
-            ],
+    return AppBottomSheet(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            '보유 아이템 목록',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
-        ),
+          const SizedBox(height: AppSpacing.md),
+          Expanded(
+            child: materials.isEmpty
+                ? const Center(child: Text('보유 아이템이 없습니다'))
+                : ListView.builder(
+                    itemCount: materials.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final MaterialInventoryView entry = materials[index];
+                      return ListTile(
+                        dense: true,
+                        title: Text(entry.name),
+                        subtitle: Text(
+                          '${entry.rarity.name} / ${entry.traitSummary}',
+                        ),
+                        trailing: Text('x${entry.quantity}'),
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }

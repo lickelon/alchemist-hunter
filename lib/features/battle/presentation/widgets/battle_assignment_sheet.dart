@@ -1,3 +1,5 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,45 +20,39 @@ class BattleAssignmentSheet extends ConsumerWidget {
       battleStageAssignmentCharacterViewsProvider(stageId),
     );
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.72,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                '${stageId.replaceFirst("stage_", "Stage ")} 편성',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 8),
-              Text('배치 ${assignedIds.length}/3명 / 전투력 $partyPower'),
-              const SizedBox(height: 8),
-              Expanded(
-                child: ListView(
-                  children: characters.map((BattleAssignmentCharacterView character) {
-                    return CheckboxListTile(
-                      value: character.assigned,
-                      onChanged: character.assignable
-                          ? (_) {
-                              ref
-                                  .read(battleControllerProvider)
-                                  .toggleStageAssignment(stageId, character.id);
-                            }
-                          : null,
-                      title: Text(character.name),
-                      subtitle: Text(
-                        '${character.typeLabel} / 전투력 ${character.power}${character.assignmentHint.isNotEmpty ? " / ${character.assignmentHint}" : character.assignable ? "" : " / 파티가 가득 참"}',
-                      ),
-                      controlAffinity: ListTileControlAffinity.trailing,
-                    );
-                  }).toList(growable: false),
-                ),
-              ),
-            ],
+    return AppBottomSheet(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            '${stageId.replaceFirst("stage_", "Stage ")} 편성',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
-        ),
+          const SizedBox(height: AppSpacing.md),
+          Text('배치 ${assignedIds.length}/3명 / 전투력 $partyPower'),
+          const SizedBox(height: AppSpacing.md),
+          Expanded(
+            child: ListView(
+              children: characters.map((BattleAssignmentCharacterView character) {
+                return CheckboxListTile(
+                  value: character.assigned,
+                  onChanged: character.assignable
+                      ? (_) {
+                          ref
+                              .read(battleControllerProvider)
+                              .toggleStageAssignment(stageId, character.id);
+                        }
+                      : null,
+                  title: Text(character.name),
+                  subtitle: Text(
+                    '${character.typeLabel} / 전투력 ${character.power}${character.assignmentHint.isNotEmpty ? " / ${character.assignmentHint}" : character.assignable ? "" : " / 파티가 가득 참"}',
+                  ),
+                  controlAffinity: ListTileControlAffinity.trailing,
+                );
+              }).toList(growable: false),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_selectors.dart';
@@ -36,68 +38,63 @@ class CharacterDetailSheet extends ConsumerWidget {
       ),
     };
     if (item == null) {
-      return const SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Text('캐릭터 정보를 찾을 수 없습니다'),
-        ),
+      return const AppBottomSheet(
+        child: Text('캐릭터 정보를 찾을 수 없습니다'),
       );
     }
 
     final CharacterProgress character = item.character;
     final String totalStatLabel = characterTotalStatLabel(item.equipmentSlots);
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.82,
-          child: ListView(
-            children: <Widget>[
-              Text(
-                '${character.name} / ${item.typeLabel}',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 16),
-              CharacterGrowthSection(
-                character: character,
-                growthLabel: item.growthLabel,
-              ),
-              CharacterDetailSection(
-                title: '총합 스탯',
-                child: Text(totalStatLabel),
-              ),
-              CharacterGoalSection(
-                rankHint: item.rankHint,
-                tierHint: item.tierHint,
-                tierMaterialLabel: item.tierMaterialLabel,
-              ),
-              CharacterAssignmentSection(
-                assignmentLabel: item.assignmentLabel,
-                assignmentGuideLabel: item.assignmentGuideLabel,
-              ),
-              if (item.detailLines.isNotEmpty)
-                CharacterProfileSection(detailLines: item.detailLines),
-              CharacterActionSection(
-                character: character,
-                onRankUp: onRankUp,
-                onTierUp: onTierUp,
-              ),
-              CharacterEquipmentSection(
-                slots: item.equipmentSlots,
-                onManage: (CharacterEquipmentSlotView slot) {
-                  _showEquipmentSheet(
-                    context,
-                    character: character,
-                    slot: slot,
-                  );
-                },
-              ),
-            ],
+    return AppBottomSheet(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            '${character.name} / ${item.typeLabel}',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
-        ),
+          const SizedBox(height: AppSpacing.md),
+          Expanded(
+            child: ListView(
+              children: <Widget>[
+                CharacterGrowthSection(
+                  character: character,
+                  growthLabel: item.growthLabel,
+                ),
+                CharacterDetailSection(
+                  title: '총합 스탯',
+                  child: Text(totalStatLabel),
+                ),
+                CharacterGoalSection(
+                  rankHint: item.rankHint,
+                  tierHint: item.tierHint,
+                  tierMaterialLabel: item.tierMaterialLabel,
+                ),
+                CharacterAssignmentSection(
+                  assignmentLabel: item.assignmentLabel,
+                  assignmentGuideLabel: item.assignmentGuideLabel,
+                ),
+                if (item.detailLines.isNotEmpty)
+                  CharacterProfileSection(detailLines: item.detailLines),
+                CharacterActionSection(
+                  character: character,
+                  onRankUp: onRankUp,
+                  onTierUp: onTierUp,
+                ),
+                CharacterEquipmentSection(
+                  slots: item.equipmentSlots,
+                  onManage: (CharacterEquipmentSlotView slot) {
+                    _showEquipmentSheet(
+                      context,
+                      character: character,
+                      slot: slot,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
