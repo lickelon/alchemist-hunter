@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/widgets/app_screen_body.dart';
 import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_card.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
@@ -25,8 +26,7 @@ class CharacterList extends StatelessWidget {
       return const Center(child: Text('No characters'));
     }
 
-    return ListView(
-      padding: const EdgeInsets.all(8),
+    return AppScreenBody(
       children: characters.map((CharacterListItemView item) {
         return CharacterCard(
           item: item,

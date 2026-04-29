@@ -15,16 +15,18 @@ class DungeonScreen extends ConsumerWidget {
     final int gold = ref.watch(battleGoldProvider);
     final int essence = ref.watch(battleEssenceProvider);
 
-    return ListView.builder(
+    return ListView.separated(
+      padding: const EdgeInsets.all(AppSpacing.lg),
       itemCount: stages.length,
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (BuildContext context, int index) {
         final String stage = stages[index];
         final bool unlocked =
             index == 0 || progress.unlockFlags.contains(stage);
         final String stageLabel = stage.replaceFirst('stage_', 'Stage ');
-        final int assignedCount = ref.watch(
-          battleStageAssignmentProvider(stage),
-        ).length;
+        final int assignedCount = ref
+            .watch(battleStageAssignmentProvider(stage))
+            .length;
         final int partyPower = ref.watch(battleStagePartyPowerProvider(stage));
         final BattleExpeditionState expedition = ref.watch(
           battleStageExpeditionStateProvider(stage),
@@ -39,16 +41,13 @@ class DungeonScreen extends ConsumerWidget {
             unlocked &&
             assignedCount > 0 &&
             expedition.status != BattleExpeditionStatus.running;
-        final bool canStop = expedition.status == BattleExpeditionStatus.running;
+        final bool canStop =
+            expedition.status == BattleExpeditionStatus.running;
         final bool canClaim = unlocked && !expedition.pendingClaim.isEmpty;
         final String summary =
             '편성 $assignedCount명 / 전투력 $partyPower / $statusLabel / Gold: $gold / Essence: $essence';
 
         return Card(
-          margin: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.sm,
-          ),
           child: InkWell(
             onTap: () => _showAssignmentSheet(context, stage),
             child: Padding(
@@ -63,10 +62,7 @@ class DungeonScreen extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           stageLabel,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
                     ],
@@ -86,15 +82,23 @@ class DungeonScreen extends ConsumerWidget {
                               ? null
                               : canStop
                               ? () {
-                                  ref.read(battleControllerProvider).stopExpedition(stage);
+                                  ref
+                                      .read(battleControllerProvider)
+                                      .stopExpedition(stage);
                                 }
                               : canStart
                               ? () {
-                                  ref.read(battleControllerProvider).startExpedition(stage);
+                                  ref
+                                      .read(battleControllerProvider)
+                                      .startExpedition(stage);
                                 }
                               : null,
                           child: Text(
-                            !unlocked ? '잠김' : canStop ? '정지' : '원정 시작',
+                            !unlocked
+                                ? '잠김'
+                                : canStop
+                                ? '정지'
+                                : '원정 시작',
                           ),
                         ),
                       ),
@@ -103,7 +107,9 @@ class DungeonScreen extends ConsumerWidget {
                         child: FilledButton.tonal(
                           onPressed: canClaim
                               ? () {
-                                  ref.read(battleControllerProvider).claimStageRewards(stage);
+                                  ref
+                                      .read(battleControllerProvider)
+                                      .claimStageRewards(stage);
                                 }
                               : null,
                           child: const Text('수령'),

@@ -25,11 +25,8 @@ class CharacterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CharacterProgress character = item.character;
+    final ThemeData theme = Theme.of(context);
     return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.sm,
-      ),
       child: InkWell(
         borderRadius: AppRadius.interactive,
         onTap: () => _showDetailSheet(context, character),
@@ -48,9 +45,9 @@ class CharacterCard extends StatelessWidget {
                   ),
                   Text(
                     item.typeLabel,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: Colors.black54),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -61,9 +58,9 @@ class CharacterCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
               Text(
                 item.summaryLine,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: Colors.black54),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
