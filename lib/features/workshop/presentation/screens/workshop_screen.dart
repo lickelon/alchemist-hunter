@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/widgets/app_screen_body.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_sections.dart';
 import 'package:flutter/material.dart';
@@ -20,24 +21,28 @@ class WorkshopScreen extends ConsumerWidget {
     final WorkshopInventorySummaryView inventorySummary = ref.watch(
       workshopInventorySummaryProvider,
     );
-    final int unlockedSkillNodes = ref.watch(workshopUnlockedSkillNodeCountProvider);
+    final int unlockedSkillNodes = ref.watch(
+      workshopUnlockedSkillNodeCountProvider,
+    );
     final int totalSkillNodes = ref.watch(workshopSkillNodeCountProvider);
-    final int homunculusCount = ref.watch(workshopHomunculusCountProvider);
-    final int supportAssignedCount = ref.watch(workshopSupportAssignedCountProvider);
+    final int supportAssignedCount = ref.watch(
+      workshopSupportAssignedCountProvider,
+    );
     final int supportSlotLimit = ref.watch(workshopSupportSlotLimitProvider);
-    final String supportSummary = ref.watch(workshopSupportSummaryProvider);
-    final List<ExtractedTraitInventoryView> extractedTraits = ref.watch(extractedTraitViewsProvider);
     final List<HomunculusHatchRecipeView> hatchRecipes = ref.watch(
       homunculusHatchRecipeViewsProvider,
     );
-    final List<MapEntry<String, int>> materials = ref.watch(sortedMaterialInventoryProvider);
-    final Map<String, int> craftedPotionStacks = ref.watch(craftedPotionStacksProvider);
+    final List<MapEntry<String, int>> materials = ref.watch(
+      sortedMaterialInventoryProvider,
+    );
+    final Map<String, int> craftedPotionStacks = ref.watch(
+      craftedPotionStacksProvider,
+    );
     final List<EnchantEquipmentView> enchantEquipmentViews = ref.watch(
       enchantEquipmentViewsProvider,
     );
 
-    return ListView(
-      padding: const EdgeInsets.all(12),
+    return AppScreenBody(
       children: <Widget>[
         Card(
           child: ListTile(
@@ -48,37 +53,24 @@ class WorkshopScreen extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        WorkshopQueueCard(
-          jobCount: queueSummary.jobCount,
-          description: queueSummary.description,
-        ),
-        const SizedBox(height: 8),
-        WorkshopExtractionCard(
-          materialTypeCount: materials.length,
-          extractedTraitTypeCount: extractedTraits.length,
-        ),
-        const SizedBox(height: 8),
-        WorkshopCraftCard(description: craftSummary.description),
-        const SizedBox(height: 8),
+        WorkshopQueueCard(jobCount: queueSummary.jobCount),
+        WorkshopExtractionCard(materialTypeCount: materials.length),
+        WorkshopCraftCard(craftableCount: craftSummary.craftableCount),
         WorkshopEnchantCard(
-          potionStackCount: craftedPotionStacks.length,
-          equipmentCount: enchantEquipmentViews.length,
+          canEnchant:
+              craftedPotionStacks.isNotEmpty &&
+              enchantEquipmentViews.isNotEmpty,
         ),
-        const SizedBox(height: 8),
-        WorkshopHatchCard(
-          recipeCount: hatchRecipes.length,
-          homunculusCount: homunculusCount,
+        WorkshopHatchCard(recipeCount: hatchRecipes.length),
+        WorkshopInventoryCard(
+          materialTypeCount: inventorySummary.materialTypeCount,
+          traitTypeCount: inventorySummary.traitTypeCount,
+          potionStackCount: inventorySummary.potionStackCount,
         ),
-        const SizedBox(height: 8),
-        WorkshopInventoryCard(description: inventorySummary.description),
-        const SizedBox(height: 8),
         WorkshopSupportCard(
           assignedCount: supportAssignedCount,
           slotLimit: supportSlotLimit,
-          summary: supportSummary,
         ),
-        const SizedBox(height: 8),
         WorkshopSkillTreeCard(
           unlockedCount: unlockedSkillNodes,
           totalCount: totalSkillNodes,

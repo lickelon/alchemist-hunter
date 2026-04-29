@@ -17,7 +17,7 @@ class TownSkillTreeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Town Skill Tree',
-      description: '해금 $unlockedCount/$totalCount',
+      summary: '해금 $unlockedCount/$totalCount',
       icon: Icons.account_tree_outlined,
       onTap: () => _showSkillTreeSheet(context),
     );

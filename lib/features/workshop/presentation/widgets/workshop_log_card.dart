@@ -1,5 +1,5 @@
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
+import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class WorkshopLogCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Logs',
-      description: logCount == 0 ? '로그 없음' : '최근 로그 $logCount개',
+      summary: logCount == 0 ? '로그 없음' : '최근 로그 $logCount개',
       icon: Icons.notes_outlined,
       onTap: () => _showLogSheet(context),
     );
@@ -39,24 +39,15 @@ class _WorkshopLogSheet extends ConsumerWidget {
     final List<String> logs = ref.watch(recentLogsProvider);
 
     return AppBottomSheet(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text(
-            '로그',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Expanded(
-            child: logs.isEmpty
-                ? const Center(child: Text('로그가 없습니다'))
-                : ListView(
-                    children: logs.map((String entry) {
-                      return ListTile(dense: true, title: Text(entry));
-                    }).toList(),
-                  ),
-          ),
-        ],
+      child: AppSheetLayout(
+        title: '로그',
+        body: logs.isEmpty
+            ? const Center(child: Text('로그가 없습니다'))
+            : ListView(
+                children: logs.map((String entry) {
+                  return ListTile(dense: true, title: Text(entry));
+                }).toList(),
+              ),
       ),
     );
   }

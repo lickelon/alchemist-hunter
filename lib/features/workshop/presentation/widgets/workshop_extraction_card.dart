@@ -4,21 +4,17 @@ import 'package:flutter/material.dart';
 import 'workshop_extraction_sheet.dart';
 
 class WorkshopExtractionCard extends StatelessWidget {
-  const WorkshopExtractionCard({
-    super.key,
-    required this.materialTypeCount,
-    required this.extractedTraitTypeCount,
-  });
+  const WorkshopExtractionCard({super.key, required this.materialTypeCount});
 
   final int materialTypeCount;
-  final int extractedTraitTypeCount;
 
   @override
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Extraction',
-      description:
-          '즉시 추출 재료 $materialTypeCount종 / 보유 특성 $extractedTraitTypeCount종',
+      summary: materialTypeCount == 0
+          ? '추출 가능한 재료 없음'
+          : '즉시 추출 재료 $materialTypeCount종',
       icon: Icons.biotech_outlined,
       onTap: () => _showExtractionSheet(context),
     );

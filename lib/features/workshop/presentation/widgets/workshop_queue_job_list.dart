@@ -33,7 +33,9 @@ class WorkshopQueueJobList extends StatelessWidget {
           isThreeLine: job.resultText != null,
           trailing: job.canClaim
               ? FilledButton.tonal(
-                  onPressed: onClaimJob == null ? null : () => onClaimJob!(job.id),
+                  onPressed: onClaimJob == null
+                      ? null
+                      : () => onClaimJob!(job.id),
                   child: const Text('수령'),
                 )
               : null,

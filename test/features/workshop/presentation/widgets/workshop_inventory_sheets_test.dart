@@ -32,7 +32,9 @@ void main() {
         child: const MaterialApp(
           home: Scaffold(
             body: WorkshopInventoryCard(
-              description: '재료 1종 / 특성 1종 / 포션 1스택',
+              materialTypeCount: 1,
+              traitTypeCount: 1,
+              potionStackCount: 1,
             ),
           ),
         ),
@@ -81,12 +83,7 @@ void main() {
         UncontrolledProviderScope(
           container: container,
           child: const MaterialApp(
-            home: Scaffold(
-              body: WorkshopExtractionCard(
-                materialTypeCount: 1,
-                extractedTraitTypeCount: 1,
-              ),
-            ),
+            home: Scaffold(body: WorkshopExtractionCard(materialTypeCount: 1)),
           ),
         ),
       );
@@ -107,59 +104,53 @@ void main() {
     },
   );
 
-  testWidgets(
-    'workshop extraction detail shows snackbar when queue is full',
-    (WidgetTester tester) async {
-      final ProviderContainer container = ProviderContainer();
-      addTearDown(container.dispose);
+  testWidgets('workshop extraction detail shows snackbar when queue is full', (
+    WidgetTester tester,
+  ) async {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
 
-      final SessionController session = container.read(
-        sessionControllerProvider.notifier,
-      );
-      session.state = session.state.copyWith(
-        player: session.state.player.copyWith(
-          materialInventory: const <String, int>{'m_1': 2},
-        ),
-        workshop: session.state.workshop.copyWith(
-          queue: List<CraftQueueJob>.generate(
-            4,
-            (int index) => CraftQueueJob(
-              id: 'job_$index',
-              type: WorkshopJobType.craft,
-              status: QueueJobStatus.queued,
-              queuedAt: DateTime(2026, 1, 1, 10),
-              duration: const Duration(seconds: 15),
-              eta: const Duration(seconds: 15),
-              title: 'Potion 1',
-              potionId: 'p_1',
-            ),
+    final SessionController session = container.read(
+      sessionControllerProvider.notifier,
+    );
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        materialInventory: const <String, int>{'m_1': 2},
+      ),
+      workshop: session.state.workshop.copyWith(
+        queue: List<CraftQueueJob>.generate(
+          4,
+          (int index) => CraftQueueJob(
+            id: 'job_$index',
+            type: WorkshopJobType.craft,
+            status: QueueJobStatus.queued,
+            queuedAt: DateTime(2026, 1, 1, 10),
+            duration: const Duration(seconds: 15),
+            eta: const Duration(seconds: 15),
+            title: 'Potion 1',
+            potionId: 'p_1',
           ),
         ),
-      );
+      ),
+    );
 
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: const MaterialApp(
-            home: Scaffold(
-              body: WorkshopExtractionCard(
-                materialTypeCount: 1,
-                extractedTraitTypeCount: 0,
-              ),
-            ),
-          ),
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: Scaffold(body: WorkshopExtractionCard(materialTypeCount: 1)),
         ),
-      );
+      ),
+    );
 
-      await tester.tap(find.text('Extraction'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('분석/추출'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('등록').first);
-      await tester.pump();
+    await tester.tap(find.text('Extraction'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('분석/추출'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('등록').first);
+    await tester.pump();
 
-      expect(find.text('작업실 큐가 가득 찼습니다'), findsOneWidget);
-      expect(find.text('보유 2개'), findsOneWidget);
-    },
-  );
+    expect(find.text('작업실 큐가 가득 찼습니다'), findsOneWidget);
+    expect(find.text('보유 2개'), findsOneWidget);
+  });
 }

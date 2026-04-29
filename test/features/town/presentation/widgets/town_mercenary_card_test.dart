@@ -15,9 +15,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(
-            body: TownMercenaryHireCard(candidateCount: 3, mercenaryCount: 1),
-          ),
+          home: Scaffold(body: TownMercenaryHireCard(candidateCount: 3)),
         ),
       ),
     );
@@ -44,9 +42,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(
-            body: TownMercenaryHireCard(candidateCount: 3, mercenaryCount: 1),
-          ),
+          home: Scaffold(body: TownMercenaryHireCard(candidateCount: 3)),
         ),
       ),
     );
@@ -58,7 +54,10 @@ void main() {
 
     expect(session.state.player.gold, 1320);
     expect(session.state.characters.mercenaries, hasLength(2));
-    expect(session.state.characters.mercenaries.last.name, 'Apprentice Sellsword');
+    expect(
+      session.state.characters.mercenaries.last.name,
+      'Apprentice Sellsword',
+    );
     expect(session.state.town.mercenaryCandidates, hasLength(2));
   });
 }

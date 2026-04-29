@@ -5,22 +5,15 @@ import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'workshop_hatch_sheet.dart';
 
 class WorkshopHatchCard extends StatelessWidget {
-  const WorkshopHatchCard({
-    super.key,
-    required this.recipeCount,
-    required this.homunculusCount,
-  });
+  const WorkshopHatchCard({super.key, required this.recipeCount});
 
   final int recipeCount;
-  final int homunculusCount;
 
   @override
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Homunculus Hatch',
-      description: recipeCount == 0
-          ? '부화 가능한 레시피 없음'
-          : '즉시 부화 가능 레시피 $recipeCount종 / 보유 호문쿨루스 $homunculusCount체',
+      summary: recipeCount == 0 ? '부화 가능한 레시피 없음' : '즉시 부화 가능 $recipeCount종',
       icon: Icons.egg_alt_outlined,
       onTap: () => _showHatchSheet(context),
     );

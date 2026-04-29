@@ -17,7 +17,7 @@ class WorkshopSkillTreeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Workshop Skill Tree',
-      description: '해금 $unlockedCount/$totalCount',
+      summary: '해금 $unlockedCount/$totalCount',
       icon: Icons.hub_outlined,
       onTap: () => _showSkillTreeSheet(context),
     );

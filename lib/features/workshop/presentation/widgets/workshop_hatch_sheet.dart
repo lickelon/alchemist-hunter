@@ -1,5 +1,5 @@
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
+import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,23 +24,16 @@ class WorkshopHatchSheet extends ConsumerWidget {
           resizeToAvoidBottomInset: false,
           body: Builder(
             builder: (BuildContext sheetContext) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const Text(
-                    '호문쿨루스 부화',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Text(
-                    'Essence $essence / ArcaneDust $arcaneDust / 보유 호문쿨루스 $homunculusCount체',
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Expanded(
-                    child: recipes.isEmpty
-                        ? const Center(child: Text('부화 가능한 레시피가 없습니다'))
-                        : ListView(
-                            children: recipes.map((HomunculusHatchRecipeView recipe) {
+              return AppSheetLayout(
+                title: '호문쿨루스 부화',
+                header: Text(
+                  'Essence $essence / ArcaneDust $arcaneDust / 보유 호문쿨루스 $homunculusCount체',
+                ),
+                body: recipes.isEmpty
+                    ? const Center(child: Text('부화 가능한 레시피가 없습니다'))
+                    : ListView(
+                        children: recipes
+                            .map((HomunculusHatchRecipeView recipe) {
                               return ListTile(
                                 dense: true,
                                 title: Text(recipe.name),
@@ -50,19 +43,21 @@ class WorkshopHatchSheet extends ConsumerWidget {
                                 trailing: FilledButton.tonal(
                                   onPressed: recipe.canHatch
                                       ? () {
-                                          final WorkshopHatchSubmitResult result =
-                                              ref
-                                                  .read(
-                                                    workshopHatchControllerProvider,
-                                                  )
-                                                  .hatch(recipe.id);
+                                          final WorkshopHatchSubmitResult
+                                          result = ref
+                                              .read(
+                                                workshopHatchControllerProvider,
+                                              )
+                                              .hatch(recipe.id);
                                           if (result ==
-                                              WorkshopHatchSubmitResult.success) {
+                                              WorkshopHatchSubmitResult
+                                                  .success) {
                                             return;
                                           }
                                           final String message =
                                               result ==
-                                                  WorkshopHatchSubmitResult.queueFull
+                                                  WorkshopHatchSubmitResult
+                                                      .queueFull
                                               ? '작업실 큐가 가득 찼습니다'
                                               : '부화 등록에 실패했습니다';
                                           ScaffoldMessenger.of(
@@ -75,10 +70,9 @@ class WorkshopHatchSheet extends ConsumerWidget {
                                   child: const Text('등록'),
                                 ),
                               );
-                            }).toList(growable: false),
-                          ),
-                  ),
-                ],
+                            })
+                            .toList(growable: false),
+                      ),
               );
             },
           ),

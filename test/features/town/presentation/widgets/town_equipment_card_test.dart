@@ -23,7 +23,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(body: TownEquipmentCraftCard(equipmentCount: 0)),
+          home: Scaffold(body: TownEquipmentCraftCard()),
         ),
       ),
     );
@@ -58,7 +58,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(body: TownEquipmentCraftCard(equipmentCount: 0)),
+          home: Scaffold(body: TownEquipmentCraftCard()),
         ),
       ),
     );

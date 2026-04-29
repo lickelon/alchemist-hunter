@@ -1,5 +1,5 @@
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
+import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter/material.dart';
@@ -25,54 +25,41 @@ class TownShopSheet extends ConsumerWidget {
     );
 
     return AppBottomSheet(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          FilledButton.tonal(
-            onPressed: () {
-              ref.read(shopControllerProvider).forceRefresh(shopType);
-            },
-            child: Text('강제 갱신 ($refreshCost)'),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Expanded(
-            child: shop.items.isEmpty
-                ? const Center(child: Text('판매 아이템이 없습니다'))
-                : ListView.builder(
-                    itemCount: shop.items.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final ShopItem item = shop.items[index];
-                      return ListTile(
-                        dense: true,
-                        title: Text('${item.name} (${item.quantity})'),
-                        subtitle: Text('가격 ${item.price}'),
-                        trailing: FilledButton.tonal(
-                          onPressed: () {
-                            if (shopType == ShopType.general) {
-                              ref
-                                  .read(shopControllerProvider)
-                                  .buyGeneralMaterial(item.materialId, 1);
-                            } else {
-                              ref
-                                  .read(shopControllerProvider)
-                                  .buyCatalystMaterial(item.materialId, 1);
-                            }
-                          },
-                          child: const Text('구매'),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
+      child: AppSheetLayout(
+        title: title,
+        header: FilledButton.tonal(
+          onPressed: () {
+            ref.read(shopControllerProvider).forceRefresh(shopType);
+          },
+          child: Text('강제 갱신 ($refreshCost)'),
+        ),
+        body: shop.items.isEmpty
+            ? const Center(child: Text('판매 아이템이 없습니다'))
+            : ListView.builder(
+                itemCount: shop.items.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final ShopItem item = shop.items[index];
+                  return ListTile(
+                    dense: true,
+                    title: Text('${item.name} (${item.quantity})'),
+                    subtitle: Text('가격 ${item.price}'),
+                    trailing: FilledButton.tonal(
+                      onPressed: () {
+                        if (shopType == ShopType.general) {
+                          ref
+                              .read(shopControllerProvider)
+                              .buyGeneralMaterial(item.materialId, 1);
+                        } else {
+                          ref
+                              .read(shopControllerProvider)
+                              .buyCatalystMaterial(item.materialId, 1);
+                        }
+                      },
+                      child: const Text('구매'),
+                    ),
+                  );
+                },
+              ),
       ),
     );
   }

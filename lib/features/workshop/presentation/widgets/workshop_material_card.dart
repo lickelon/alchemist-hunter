@@ -1,5 +1,5 @@
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
+import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +19,9 @@ class WorkshopMaterialCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Items',
-      description: materialTypeCount == 0
+      summary: materialTypeCount == 0
           ? '보유 아이템 없음'
-          : '종류 $materialTypeCount개 / 총 $totalCount개',
+          : '보유 아이템 $materialTypeCount종',
       icon: Icons.inventory_2_outlined,
       onTap: () => _showItemList(context),
     );
@@ -48,33 +48,24 @@ class _WorkshopMaterialSheet extends ConsumerWidget {
     );
 
     return AppBottomSheet(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text(
-            '보유 아이템 목록',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Expanded(
-            child: materials.isEmpty
-                ? const Center(child: Text('보유 아이템이 없습니다'))
-                : ListView.builder(
-                    itemCount: materials.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final MaterialInventoryView entry = materials[index];
-                      return ListTile(
-                        dense: true,
-                        title: Text(entry.name),
-                        subtitle: Text(
-                          '${entry.rarity.name} / ${entry.traitSummary}',
-                        ),
-                        trailing: Text('x${entry.quantity}'),
-                      );
-                    },
-                  ),
-          ),
-        ],
+      child: AppSheetLayout(
+        title: '보유 아이템 목록',
+        body: materials.isEmpty
+            ? const Center(child: Text('보유 아이템이 없습니다'))
+            : ListView.builder(
+                itemCount: materials.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final MaterialInventoryView entry = materials[index];
+                  return ListTile(
+                    dense: true,
+                    title: Text(entry.name),
+                    subtitle: Text(
+                      '${entry.rarity.name} / ${entry.traitSummary}',
+                    ),
+                    trailing: Text('x${entry.quantity}'),
+                  );
+                },
+              ),
       ),
     );
   }

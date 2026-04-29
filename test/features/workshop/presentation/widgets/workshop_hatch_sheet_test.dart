@@ -31,9 +31,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(
-            body: WorkshopHatchCard(recipeCount: 3, homunculusCount: 1),
-          ),
+          home: Scaffold(body: WorkshopHatchCard(recipeCount: 3)),
         ),
       ),
     );
@@ -52,7 +50,10 @@ void main() {
     expect(session.state.characters.homunculi, hasLength(1));
     expect(session.state.workshop.queue, hasLength(1));
     expect(session.state.workshop.queue.first.type, WorkshopJobType.hatch);
-    expect(session.state.workshop.queue.first.completedHomunculus?.name, 'Vital Nigredo');
+    expect(
+      session.state.workshop.queue.first.completedHomunculus?.name,
+      'Vital Nigredo',
+    );
     expect(session.state.player.essence, 80);
     expect(session.state.workshop.logs.first, '부화 등록 / Vital Nigredo');
   });
@@ -94,9 +95,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(
-            body: WorkshopHatchCard(recipeCount: 3, homunculusCount: 1),
-          ),
+          home: Scaffold(body: WorkshopHatchCard(recipeCount: 3)),
         ),
       ),
     );

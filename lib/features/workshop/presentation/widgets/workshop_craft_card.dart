@@ -1,5 +1,5 @@
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
+import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:flutter/material.dart';
@@ -8,18 +8,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'workshop_enqueue_options_sheet.dart';
 
 class WorkshopCraftCard extends StatelessWidget {
-  const WorkshopCraftCard({
-    super.key,
-    required this.description,
-  });
+  const WorkshopCraftCard({super.key, required this.craftableCount});
 
-  final String description;
+  final int craftableCount;
 
   @override
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Craft',
-      description: description,
+      summary: craftableCount == 0
+          ? '즉시 제작 가능한 포션 없음'
+          : '즉시 제작 가능 $craftableCount종',
       icon: Icons.local_drink_outlined,
       onTap: () => _showCraftSheet(context),
     );
@@ -46,54 +45,43 @@ class WorkshopCraftSheet extends ConsumerWidget {
     );
 
     return AppBottomSheet(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text(
-            '포션 제조',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Expanded(
-            child: options.isEmpty
-                ? const Center(child: Text('등록 가능한 포션이 없습니다'))
-                : ListView.builder(
-                    itemCount: options.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final PotionQueueOptionView option = options[index];
-                      return ListTile(
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(option.title),
-                        subtitle: Text(
-                          option.unlocked
-                              ? option.materialHint
-                              : '잠김: ${option.lockReason}',
-                        ),
-                        trailing: FilledButton.tonal(
-                          onPressed: option.unlocked && option.craftableNow
-                              ? () {
-                                  showModalBottomSheet<void>(
-                                    context: context,
-                                    builder:
-                                        (BuildContext bottomSheetContext) {
-                                          return WorkshopEnqueueOptionsSheet(
-                                            potionId: option.potionId,
-                                            title: option.title,
-                                            maxCraftableCount:
-                                                option.maxCraftableCount,
-                                          );
-                                        },
+      child: AppSheetLayout(
+        title: '포션 제조',
+        body: options.isEmpty
+            ? const Center(child: Text('등록 가능한 포션이 없습니다'))
+            : ListView.builder(
+                itemCount: options.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final PotionQueueOptionView option = options[index];
+                  return ListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(option.title),
+                    subtitle: Text(
+                      option.unlocked
+                          ? option.materialHint
+                          : '잠김: ${option.lockReason}',
+                    ),
+                    trailing: FilledButton.tonal(
+                      onPressed: option.unlocked && option.craftableNow
+                          ? () {
+                              showModalBottomSheet<void>(
+                                context: context,
+                                builder: (BuildContext bottomSheetContext) {
+                                  return WorkshopEnqueueOptionsSheet(
+                                    potionId: option.potionId,
+                                    title: option.title,
+                                    maxCraftableCount: option.maxCraftableCount,
                                   );
-                                }
-                              : null,
-                          child: const Text('등록'),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
+                                },
+                              );
+                            }
+                          : null,
+                      child: const Text('등록'),
+                    ),
+                  );
+                },
+              ),
       ),
     );
   }

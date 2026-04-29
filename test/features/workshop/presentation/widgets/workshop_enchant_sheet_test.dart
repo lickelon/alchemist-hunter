@@ -50,9 +50,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(
-            body: WorkshopEnchantCard(potionStackCount: 1, equipmentCount: 1),
-          ),
+          home: Scaffold(body: WorkshopEnchantCard(canEnchant: true)),
         ),
       ),
     );
@@ -60,10 +58,7 @@ void main() {
     await tester.tap(find.text('Enchant'));
     await tester.pumpAndSettle();
 
-    expect(
-      find.text('포션과 장비를 선택하면 인챈트 결과를 미리 볼 수 있습니다'),
-      findsOneWidget,
-    );
+    expect(find.text('포션과 장비를 선택하면 인챈트 결과를 미리 볼 수 있습니다'), findsOneWidget);
 
     await tester.tap(find.byType(RadioListTile<String>).at(0));
     await tester.pumpAndSettle();
@@ -140,9 +135,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(
-            body: WorkshopEnchantCard(potionStackCount: 1, equipmentCount: 1),
-          ),
+          home: Scaffold(body: WorkshopEnchantCard(canEnchant: true)),
         ),
       ),
     );
@@ -247,9 +240,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(
-            body: WorkshopEnchantCard(potionStackCount: 1, equipmentCount: 1),
-          ),
+          home: Scaffold(body: WorkshopEnchantCard(canEnchant: true)),
         ),
       ),
     );

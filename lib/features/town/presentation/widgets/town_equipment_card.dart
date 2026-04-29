@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 class TownEquipmentCraftCard extends StatelessWidget {
   const TownEquipmentCraftCard({
     super.key,
-    required this.equipmentCount,
     this.forgeQueueCount = 0,
     this.completedCount = 0,
   });
 
-  final int equipmentCount;
   final int forgeQueueCount;
   final int completedCount;
 
@@ -18,8 +16,11 @@ class TownEquipmentCraftCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Equipment Craft',
-      description:
-          '보유 장비 $equipmentCount개 / 대장간 진행 $forgeQueueCount건 / 완료 $completedCount건',
+      summary: completedCount > 0
+          ? '수령 대기 $completedCount건'
+          : forgeQueueCount > 0
+          ? '제작 진행 $forgeQueueCount건'
+          : '새 장비 제작 가능',
       icon: Icons.construction_outlined,
       onTap: () => _showEquipmentSheet(context),
     );

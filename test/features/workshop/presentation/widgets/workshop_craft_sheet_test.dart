@@ -29,11 +29,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(
-            body: WorkshopCraftCard(
-              description: '즉시 제작 가능 1종 / 해금 포션 10종',
-            ),
-          ),
+          home: Scaffold(body: WorkshopCraftCard(craftableCount: 1)),
         ),
       ),
     );

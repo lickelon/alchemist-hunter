@@ -14,21 +14,17 @@ class TownShopCard extends StatelessWidget {
     required this.title,
     required this.shopType,
     required this.itemCount,
-    required this.refreshCost,
   });
 
   final String title;
   final ShopType shopType;
   final int itemCount;
-  final int refreshCost;
 
   @override
   Widget build(BuildContext context) {
     return ListCard(
       name: title,
-      description: itemCount == 0
-          ? '아이템 없음'
-          : '품목 $itemCount개 / 갱신 비용 $refreshCost',
+      summary: itemCount == 0 ? '판매 품목 없음' : '판매 품목 $itemCount개',
       icon: Icons.storefront_outlined,
       onTap: () => _showShopSheet(context, title, shopType),
     );
@@ -54,7 +50,7 @@ class TownPotionSellCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Potion Sell',
-      description: stackCount == 0 ? '판매 가능한 포션 없음' : '판매 가능한 스택 $stackCount개',
+      summary: stackCount == 0 ? '판매 대기 없음' : '판매 대기 $stackCount스택',
       icon: Icons.sell_outlined,
       onTap: () => _showSellSheet(context),
     );

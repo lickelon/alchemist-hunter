@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
+import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -94,51 +95,45 @@ class _WorkshopEnchantSheetState extends ConsumerState<WorkshopEnchantSheet> {
           resizeToAvoidBottomInset: false,
           body: Builder(
             builder: (BuildContext sheetContext) {
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Text(
-                      '장비 인챈트',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+              return AppSheetLayout(
+                title: '장비 인챈트',
+                body: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      WorkshopEnchantPotionSelector(
+                        potions: potions,
+                        selectedPotionStackKey: _selectedPotionStackKey,
+                        onChanged: (String? value) {
+                          setState(() => _selectedPotionStackKey = value);
+                        },
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    WorkshopEnchantPotionSelector(
-                      potions: potions,
-                      selectedPotionStackKey: _selectedPotionStackKey,
-                      onChanged: (String? value) {
-                        setState(() => _selectedPotionStackKey = value);
-                      },
-                    ),
-                    const Divider(),
-                    WorkshopEnchantEquipmentSelector(
-                      equipments: equipments,
-                      selectedEquipmentId: _selectedEquipmentId,
-                      onChanged: (String? value) {
-                        setState(() => _selectedEquipmentId = value);
-                      },
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    WorkshopEnchantPreviewSection(preview: preview),
-                    const SizedBox(height: AppSpacing.md),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: preview == null
-                            ? null
-                            : () => _submitEnchant(sheetContext, preview),
-                        child: Text(
-                          preview?.replaceRequired == true
-                              ? '인챈트 교체 등록'
-                              : '인챈트 등록',
+                      const Divider(),
+                      WorkshopEnchantEquipmentSelector(
+                        equipments: equipments,
+                        selectedEquipmentId: _selectedEquipmentId,
+                        onChanged: (String? value) {
+                          setState(() => _selectedEquipmentId = value);
+                        },
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      WorkshopEnchantPreviewSection(preview: preview),
+                      const SizedBox(height: AppSpacing.md),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton(
+                          onPressed: preview == null
+                              ? null
+                              : () => _submitEnchant(sheetContext, preview),
+                          child: Text(
+                            preview?.replaceRequired == true
+                                ? '인챈트 교체 등록'
+                                : '인챈트 등록',
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },

@@ -4,20 +4,15 @@ import 'package:flutter/material.dart';
 import 'workshop_queue_sheet.dart';
 
 class WorkshopQueueCard extends StatelessWidget {
-  const WorkshopQueueCard({
-    super.key,
-    required this.jobCount,
-    required this.description,
-  });
+  const WorkshopQueueCard({super.key, required this.jobCount});
 
   final int jobCount;
-  final String description;
 
   @override
   Widget build(BuildContext context) {
     return ListCard(
       name: 'Craft Queue',
-      description: description,
+      summary: jobCount == 0 ? '대기 중 작업 없음' : '대기 중 작업 $jobCount건',
       icon: Icons.playlist_add_check_circle_outlined,
       onTap: () => _showQueueSheet(context),
     );

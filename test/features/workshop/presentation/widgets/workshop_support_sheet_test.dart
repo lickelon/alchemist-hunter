@@ -28,11 +28,7 @@ void main() {
         container: container,
         child: const MaterialApp(
           home: Scaffold(
-            body: WorkshopSupportCard(
-              assignedCount: 0,
-              slotLimit: 3,
-              summary: '보조 효과 없음',
-            ),
+            body: WorkshopSupportCard(assignedCount: 0, slotLimit: 3),
           ),
         ),
       ),
@@ -52,7 +48,9 @@ void main() {
       session.state.workshop.supportAssignmentsByFunction,
       const <String, String>{'extraction': 'homo_1'},
     );
-    expect(session.state.battle.stageAssignments['stage_1'], <String>['merc_1']);
+    expect(session.state.battle.stageAssignments['stage_1'], <String>[
+      'merc_1',
+    ]);
     expect(
       session.state.workshop.logs.first,
       'Assigned Nigredo Seed to workshop 추출',
