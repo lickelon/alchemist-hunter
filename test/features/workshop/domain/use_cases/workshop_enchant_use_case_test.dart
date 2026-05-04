@@ -68,58 +68,58 @@ void main() {
       expect(nextState.workshop.queue.first.type, WorkshopJobType.enchant);
       expect(
         nextState.workshop.queue.first.completedEquipment?.enchant?.label,
-        'Potion 1 A',
+        '활력 포션 A',
       );
-      expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 25);
-    },
-  );
-
-  test(
-    'enchantEquipment reserves equipped item and enqueues enchant job',
-    () {
-      final WorkshopEnchantUseCase useCase = WorkshopEnchantUseCase();
-      final EquipmentInstance sword = EquipmentInstance(
-        id: 'eq_instance_1',
-        blueprintId: 'eq_1',
-        name: 'Bronze Sword',
-        slot: EquipmentSlot.weapon,
-        attack: 12,
-        defense: 0,
-        health: 0,
-        createdAt: DateTime(2026, 1, 1, 10),
-      );
-      final SessionState state = buildState().copyWith(
-        characters: buildState().characters.copyWith(
-          mercenaries: <CharacterProgress>[
-            buildState().characters.mercenaries.first.copyWith(
-              equipment: const CharacterEquipmentLoadout().equip(sword),
-            ),
-          ],
-        ),
-      );
-
-      final SessionState nextState = useCase.enchantEquipment(
-        state: state,
-        equipmentId: 'eq_instance_1',
-        potionStackKey: 'p_1|a',
-        enchantService: const EquipmentEnchantService(),
-        potionCatalogRepository: const StaticPotionCatalogRepository(),
-        workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
-        workshopSkillTreeService: const WorkshopSkillTreeService(),
-        workshopSupportService: const WorkshopSupportService(),
-      );
-
-      expect(nextState.characters.mercenaries.first.equipment.weapon, isNull);
-      expect(nextState.workshop.craftedPotionStacks, isEmpty);
-      expect(nextState.workshop.queue, hasLength(1));
-      expect(nextState.workshop.queue.first.equipmentOwnerId, 'merc_1');
       expect(
-        nextState.workshop.queue.first.completedEquipment?.enchant?.label,
-        'Potion 1 A',
+        nextState.workshop.queue.first.completedEquipment?.totalAttack,
+        25,
       );
-      expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 25);
     },
   );
+
+  test('enchantEquipment reserves equipped item and enqueues enchant job', () {
+    final WorkshopEnchantUseCase useCase = WorkshopEnchantUseCase();
+    final EquipmentInstance sword = EquipmentInstance(
+      id: 'eq_instance_1',
+      blueprintId: 'eq_1',
+      name: 'Bronze Sword',
+      slot: EquipmentSlot.weapon,
+      attack: 12,
+      defense: 0,
+      health: 0,
+      createdAt: DateTime(2026, 1, 1, 10),
+    );
+    final SessionState state = buildState().copyWith(
+      characters: buildState().characters.copyWith(
+        mercenaries: <CharacterProgress>[
+          buildState().characters.mercenaries.first.copyWith(
+            equipment: const CharacterEquipmentLoadout().equip(sword),
+          ),
+        ],
+      ),
+    );
+
+    final SessionState nextState = useCase.enchantEquipment(
+      state: state,
+      equipmentId: 'eq_instance_1',
+      potionStackKey: 'p_1|a',
+      enchantService: const EquipmentEnchantService(),
+      potionCatalogRepository: const StaticPotionCatalogRepository(),
+      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+      workshopSkillTreeService: const WorkshopSkillTreeService(),
+      workshopSupportService: const WorkshopSupportService(),
+    );
+
+    expect(nextState.characters.mercenaries.first.equipment.weapon, isNull);
+    expect(nextState.workshop.craftedPotionStacks, isEmpty);
+    expect(nextState.workshop.queue, hasLength(1));
+    expect(nextState.workshop.queue.first.equipmentOwnerId, 'merc_1');
+    expect(
+      nextState.workshop.queue.first.completedEquipment?.enchant?.label,
+      '활력 포션 A',
+    );
+    expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 25);
+  });
 
   test('enchantEquipment applies sigil press potency bonus', () {
     final WorkshopEnchantUseCase useCase = WorkshopEnchantUseCase();

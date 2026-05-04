@@ -67,7 +67,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('예상 결과'), findsOneWidget);
     expect(find.text('현재 인챈트 없음'), findsOneWidget);
-    expect(find.text('예상 Potion 1 A'), findsOneWidget);
+    expect(find.text('예상 활력 포션 A'), findsOneWidget);
     expect(find.textContaining('변화 ATK +13'), findsOneWidget);
     await tester.ensureVisible(find.text('인챈트 등록'));
     await tester.tap(find.text('인챈트 등록'));
@@ -79,7 +79,7 @@ void main() {
     expect(session.state.workshop.queue.first.type, WorkshopJobType.enchant);
     expect(
       session.state.workshop.queue.first.completedEquipment?.enchant?.label,
-      'Potion 1 A',
+      '활력 포션 A',
     );
   });
 
@@ -151,7 +151,7 @@ void main() {
 
     expect(find.text('기존 인챈트가 교체됩니다'), findsOneWidget);
     expect(find.text('현재 Old Brew B'), findsOneWidget);
-    expect(find.text('예상 Potion 1 A'), findsOneWidget);
+    expect(find.text('예상 활력 포션 A'), findsOneWidget);
     expect(find.text('인챈트 교체 등록'), findsOneWidget);
 
     await tester.ensureVisible(find.text('인챈트 교체 등록'));
@@ -180,7 +180,7 @@ void main() {
     expect(session.state.workshop.queue, hasLength(1));
     expect(
       session.state.workshop.queue.first.completedEquipment?.enchant?.label,
-      'Potion 1 A',
+      '활력 포션 A',
     );
   });
 
@@ -229,7 +229,7 @@ void main() {
             queuedAt: DateTime(2026, 1, 1, 10),
             duration: const Duration(seconds: 15),
             eta: const Duration(seconds: 15),
-            title: 'Potion 1',
+            title: '활력 포션',
             potionId: 'p_1',
           ),
         ),

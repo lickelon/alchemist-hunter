@@ -26,7 +26,7 @@ void main() {
     );
     const PotionBlueprint blueprint = PotionBlueprint(
       id: 'p_1',
-      name: 'Potion 1',
+      name: '활력 포션',
       targetTraits: <String, double>{'t_atk': 0.6, 't_hp': 0.4},
       baseValue: 100,
       useType: PotionUseType.both,
@@ -38,7 +38,7 @@ void main() {
       blueprint: blueprint,
     );
 
-    expect(enchant.label, 'Potion 1 A');
+    expect(enchant.label, '활력 포션 A');
     expect(enchant.attackBonus, 13);
     expect(enchant.defenseBonus, 3);
     expect(enchant.healthBonus, 20);

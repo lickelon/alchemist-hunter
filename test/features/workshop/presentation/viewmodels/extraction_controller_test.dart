@@ -149,7 +149,8 @@ void main() {
 
   test('extractMaterial returns queueFull when queue is full', () {
     final SessionController session = buildSession();
-    final WorkshopExtractionController controller = WorkshopExtractionController(
+    final WorkshopExtractionController
+    controller = WorkshopExtractionController(
       session,
       AlchemyService(),
       materialCatalogRepository: const StaticMaterialCatalogRepository(),
@@ -173,7 +174,7 @@ void main() {
             queuedAt: DateTime(2026, 1, 1, 10),
             duration: const Duration(seconds: 15),
             eta: const Duration(seconds: 15),
-            title: 'Potion 1',
+            title: '활력 포션',
             potionId: 'p_1',
           ),
         ),

@@ -37,7 +37,7 @@ void main() {
               queuedAt: DateTime(2026, 1, 1, 10),
               duration: const Duration(seconds: 30),
               eta: Duration.zero,
-              title: 'Potion 1',
+              title: '활력 포션',
               potionId: 'p_1',
               repeatCount: 2,
               completedPotionStackKey: 'p_1|a',
@@ -69,12 +69,12 @@ void main() {
       expect(find.text('Emberroot x2'), findsOneWidget);
       expect(find.text('추출 / 진행 중 / 남은 시간 12s'), findsOneWidget);
       await tester.scrollUntilVisible(
-        find.text('Potion 1 x2'),
+        find.text('활력 포션 x2'),
         80,
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
-      expect(find.text('Potion 1 x2'), findsOneWidget);
+      expect(find.text('활력 포션 x2'), findsOneWidget);
       expect(find.textContaining('수령 대기'), findsOneWidget);
       expect(find.textContaining('제조 완료'), findsOneWidget);
       expect(find.text('수령'), findsOneWidget);

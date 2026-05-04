@@ -38,7 +38,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('포션 제조'), findsOneWidget);
-    expect(find.text('Potion 1'), findsOneWidget);
+    expect(find.text('활력 포션'), findsOneWidget);
     expect(find.widgetWithText(FilledButton, '등록'), findsWidgets);
   });
 
@@ -66,7 +66,7 @@ void main() {
             queuedAt: DateTime(2026, 1, 1, 10),
             duration: const Duration(seconds: 15),
             eta: const Duration(seconds: 15),
-            title: 'Potion 1',
+            title: '활력 포션',
             potionId: 'p_1',
           ),
         ),
@@ -80,7 +80,7 @@ void main() {
           home: Scaffold(
             body: WorkshopEnqueueOptionsSheet(
               potionId: 'p_1',
-              title: 'Potion 1',
+              title: '활력 포션',
               maxCraftableCount: 1,
             ),
           ),
@@ -92,6 +92,6 @@ void main() {
     await tester.pump();
 
     expect(find.text('작업실 큐가 가득 찼습니다'), findsOneWidget);
-    expect(find.text('Potion 1'), findsWidgets);
+    expect(find.text('활력 포션'), findsWidgets);
   });
 }

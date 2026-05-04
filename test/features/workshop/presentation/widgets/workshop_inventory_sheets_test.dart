@@ -23,6 +23,16 @@ void main() {
       workshop: session.state.workshop.copyWith(
         extractedTraitInventory: const <String, double>{'t_hp': 0.85},
         craftedPotionStacks: const <String, int>{'p_1|a': 1},
+        craftedPotionDetails: <String, CraftedPotion>{
+          'p_1|a': CraftedPotion(
+            id: 'cp_1',
+            typePotionId: 'p_1',
+            qualityGrade: PotionQualityGrade.a,
+            qualityScore: 0.84,
+            traits: const <String, double>{'t_atk': 0.7, 't_hp': 0.3},
+            createdAt: DateTime(2026, 1, 1, 10),
+          ),
+        },
       ),
     );
 
@@ -58,7 +68,8 @@ void main() {
     await tester.tap(find.text('포션'));
     await tester.pumpAndSettle();
 
-    expect(find.text('p_1|a x1'), findsOneWidget);
+    expect(find.text('활력 포션 x1'), findsOneWidget);
+    expect(find.textContaining('특성 Aggro 70%, Vital 30%'), findsOneWidget);
   });
 
   testWidgets(
@@ -127,7 +138,7 @@ void main() {
             queuedAt: DateTime(2026, 1, 1, 10),
             duration: const Duration(seconds: 15),
             eta: const Duration(seconds: 15),
-            title: 'Potion 1',
+            title: '활력 포션',
             potionId: 'p_1',
           ),
         ),

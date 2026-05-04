@@ -2,12 +2,14 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:alchemist_hunter/features/town/town_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/domain/services/potion_display_service.dart';
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TownPotionSaleView {
   const TownPotionSaleView({
     required this.stackKey,
+    required this.name,
     required this.quantity,
     required this.qualityLabel,
     required this.scoreLabel,
@@ -15,6 +17,7 @@ class TownPotionSaleView {
   });
 
   final String stackKey;
+  final String name;
   final int quantity;
   final String qualityLabel;
   final String scoreLabel;
@@ -40,6 +43,7 @@ final Provider<List<TownPotionSaleView>> townPotionSaleViewsProvider =
         ref.watch(townSkillNodesProvider),
       );
       final potionRepository = ref.watch(potionCatalogRepositoryProvider);
+      const PotionDisplayService displayService = PotionDisplayService();
 
       final List<TownPotionSaleView> views = stacks.entries.map((
         MapEntry<String, int> entry,
@@ -57,6 +61,11 @@ final Provider<List<TownPotionSaleView>> townPotionSaleViewsProvider =
         };
         return TownPotionSaleView(
           stackKey: entry.key,
+          name: displayService.potionName(
+            stackKey: entry.key,
+            detail: detail,
+            potionCatalogRepository: potionRepository,
+          ),
           quantity: entry.value,
           qualityLabel: detail?.qualityGrade.name.toUpperCase() ?? '-',
           scoreLabel: (detail?.qualityScore ?? 0).toStringAsFixed(2),
@@ -67,6 +76,10 @@ final Provider<List<TownPotionSaleView>> townPotionSaleViewsProvider =
       }).toList();
 
       views.sort((TownPotionSaleView left, TownPotionSaleView right) {
+        final int nameCompare = left.name.compareTo(right.name);
+        if (nameCompare != 0) {
+          return nameCompare;
+        }
         return left.stackKey.compareTo(right.stackKey);
       });
       return views;

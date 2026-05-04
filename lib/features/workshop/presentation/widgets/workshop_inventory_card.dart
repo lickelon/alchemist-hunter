@@ -152,7 +152,7 @@ class _InventoryPotionTab extends StatelessWidget {
         return ListTile(
           dense: true,
           contentPadding: EdgeInsets.zero,
-          title: Text('${entry.stackKey} x${entry.quantity}'),
+          title: Text('${entry.name} x${entry.quantity}'),
           subtitle: Text(
             '품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}\n특성 ${entry.traitsLabel}',
           ),

@@ -22,7 +22,7 @@ class TownPotionSaleSheet extends ConsumerWidget {
                 children: views.map((TownPotionSaleView entry) {
                   return ListTile(
                     dense: true,
-                    title: Text('${entry.stackKey} x${entry.quantity}'),
+                    title: Text('${entry.name} x${entry.quantity}'),
                     subtitle: Text(
                       '품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}\n판매가 ${entry.saleValue}',
                     ),

@@ -84,7 +84,7 @@ void main() {
             queuedAt: DateTime(2026, 1, 1, 10),
             duration: const Duration(seconds: 15),
             eta: const Duration(seconds: 15),
-            title: 'Potion 1',
+            title: '활력 포션',
             potionId: 'p_1',
           ),
         ),

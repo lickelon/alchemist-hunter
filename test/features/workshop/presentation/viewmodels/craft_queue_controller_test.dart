@@ -52,7 +52,10 @@ void main() {
     expect(session.state.workshop.queue, hasLength(1));
     expect(session.state.workshop.queue.single.type, WorkshopJobType.craft);
     expect(session.state.workshop.queue.single.repeatCount, 2);
-    expect(session.state.workshop.queue.single.status, QueueJobStatus.processing);
+    expect(
+      session.state.workshop.queue.single.status,
+      QueueJobStatus.processing,
+    );
     expect(session.state.workshop.extractedTraitInventory, isEmpty);
     expect(session.state.workshop.logs.first, '제조 등록 / p_1 x2');
   });
@@ -83,7 +86,7 @@ void main() {
             queuedAt: DateTime(2026, 1, 1, 10),
             duration: const Duration(seconds: 10),
             eta: Duration.zero,
-            title: 'Potion 1',
+            title: '활력 포션',
             potionId: 'p_1',
             repeatCount: 2,
             completedPotionStackKey: 'p_1|a',
@@ -137,7 +140,7 @@ void main() {
             queuedAt: DateTime(2026, 1, 1, 10),
             duration: const Duration(seconds: 10),
             eta: Duration.zero,
-            title: 'Potion 1',
+            title: '활력 포션',
             potionId: 'p_1',
             repeatCount: 2,
             completedPotionStackKey: 'p_1|a',
@@ -183,7 +186,7 @@ void main() {
             queuedAt: now,
             duration: const Duration(seconds: 15),
             eta: const Duration(seconds: 15),
-            title: 'Potion 1',
+            title: '활력 포션',
             potionId: 'p_1',
           ),
         ),

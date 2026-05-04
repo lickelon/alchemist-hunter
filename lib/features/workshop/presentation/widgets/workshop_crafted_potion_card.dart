@@ -2,7 +2,6 @@ import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
-import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,30 +37,26 @@ class _WorkshopCraftedPotionSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Map<String, int> stacks = ref.watch(craftedPotionStacksProvider);
-    final Map<String, CraftedPotion> details = ref.watch(
-      craftedPotionDetailsProvider,
+    final List<CraftedPotionStackView> potions = ref.watch(
+      craftedPotionStackViewsProvider,
     );
 
     return AppBottomSheet(
       child: AppSheetLayout(
         title: '완성 포션 상세',
-        body: stacks.isEmpty
+        body: potions.isEmpty
             ? const Center(child: Text('완성 포션이 없습니다'))
             : ListView(
-                children: stacks.entries.map((MapEntry<String, int> entry) {
-                  final CraftedPotion? detail = details[entry.key];
+                children: potions.map((CraftedPotionStackView entry) {
                   return ExpansionTile(
                     tilePadding: EdgeInsets.zero,
-                    title: Text('${entry.key} x${entry.value}'),
-                    subtitle: Text(
-                      '품질 ${detail?.qualityGrade.name.toUpperCase() ?? '-'}',
-                    ),
+                    title: Text('${entry.name} x${entry.quantity}'),
+                    subtitle: Text('품질 ${entry.qualityLabel}'),
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.md),
                         child: Text(
-                          '점수 ${(detail?.qualityScore ?? 0).toStringAsFixed(2)} / 특성 ${detail?.traits.toString() ?? '{}'}',
+                          '점수 ${entry.scoreLabel} / 특성 ${entry.traitsLabel}',
                         ),
                       ),
                     ],
