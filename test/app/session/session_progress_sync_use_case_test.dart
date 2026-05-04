@@ -47,6 +47,10 @@ void main() {
       claim.gold > 0 || claim.essence > 0 || claim.materials.isNotEmpty,
       true,
     );
+    expect(
+      nextState.battle.stageExpeditions['stage_1']!.recentLogs,
+      isNotEmpty,
+    );
   });
 
   test('time acceleration shortens forge completion time', () {
@@ -93,7 +97,10 @@ void main() {
       battleCatalogRepository: const StaticBattleCatalogRepository(),
     );
 
-    expect(nextState.town.forgeQueue.first.status, TownForgeJobStatus.completed);
+    expect(
+      nextState.town.forgeQueue.first.status,
+      TownForgeJobStatus.completed,
+    );
     expect(nextState.town.equipmentInventory, isEmpty);
   });
 }

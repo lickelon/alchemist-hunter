@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_controller.dart';
 import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
@@ -51,6 +52,11 @@ void main() {
           session.state.characters.homunculi.first.xp > previousHomoXp,
       true,
     );
+    final BattleExpeditionState? expedition =
+        session.state.battle.stageExpeditions['stage_1'];
+    expect(expedition, isNotNull);
+    expect(expedition!.recentLogs, isNotEmpty);
+    expect(expedition.recentLogs.first.actions, isNotEmpty);
     expect(session.state.workshop.logs.first, contains('Battle '));
   });
 
@@ -125,10 +131,7 @@ void main() {
 
     controller.runAutoBattle('stage_5');
 
-    expect(
-      session.state.workshop.logs.first,
-      contains('Battle 성공'),
-    );
+    expect(session.state.workshop.logs.first, contains('Battle 성공'));
     expect(session.state.player.essence, 126);
   });
 
@@ -143,7 +146,9 @@ void main() {
 
     controller.toggleStageAssignment('stage_2', 'merc_1');
 
-    expect(session.state.battle.stageAssignments['stage_2'], <String>['merc_1']);
+    expect(session.state.battle.stageAssignments['stage_2'], <String>[
+      'merc_1',
+    ]);
     expect(
       session.state.workshop.logs.first,
       contains('Assigned Rookie Swordsman to stage_2'),
@@ -160,12 +165,17 @@ void main() {
           'extraction': 'homo_1',
         },
       ),
-      battle: session.state.battle.copyWith(stageAssignments: const <String, List<String>>{}),
+      battle: session.state.battle.copyWith(
+        stageAssignments: const <String, List<String>>{},
+      ),
     );
 
     controller.toggleStageAssignment('stage_2', 'homo_1');
 
-    expect(session.state.battle.stageAssignments.containsKey('stage_2'), isFalse);
+    expect(
+      session.state.battle.stageAssignments.containsKey('stage_2'),
+      isFalse,
+    );
     expect(session.state.workshop.logs.first, 'Character assigned to workshop');
   });
 }

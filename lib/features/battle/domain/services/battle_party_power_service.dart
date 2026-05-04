@@ -1,9 +1,14 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
-import 'package:alchemist_hunter/features/town/domain/models.dart';
+
+import 'battle_combat_stat_service.dart';
 
 class BattlePartyPowerService {
-  const BattlePartyPowerService();
+  const BattlePartyPowerService({
+    BattleCombatStatService combatStatService = const BattleCombatStatService(),
+  }) : _combatStatService = combatStatService;
+
+  final BattleCombatStatService _combatStatService;
 
   List<HeroProfile> buildParty(
     CharactersState state, {
@@ -26,45 +31,24 @@ class BattlePartyPowerService {
     ];
   }
 
-  int totalPower(
-    CharactersState state, {
-    List<String>? assignedCharacterIds,
-  }) {
+  int totalPower(CharactersState state, {List<String>? assignedCharacterIds}) {
     return buildParty(
       state,
       assignedCharacterIds: assignedCharacterIds,
     ).fold<int>(0, (int sum, HeroProfile hero) => sum + hero.power);
   }
 
+  BattleCombatStats statsForCharacter(CharacterProgress character) {
+    return _combatStatService.buildStats(character);
+  }
+
   HeroProfile _buildHeroProfile(CharacterProgress character) {
-    return HeroProfile(
-      id: character.id,
-      name: character.name,
-      power: powerForCharacter(character),
-    );
+    return _combatStatService.buildHeroProfile(character);
   }
 
   int powerForCharacter(CharacterProgress character) {
-    final int basePower = character.type == CharacterType.mercenary ? 90 : 80;
-    final int levelPower = character.level * 15;
-    final int rankPower = character.rank * 15;
-    final int tierPower = (character.tierIndex - 1) * 25;
-    final int equipmentPower = _equipmentPower(character.equipment);
-    return basePower + levelPower + rankPower + tierPower + equipmentPower;
-  }
-
-  int _equipmentPower(CharacterEquipmentLoadout equipment) {
-    return _powerForItem(equipment.weapon) +
-        _powerForItem(equipment.armor) +
-        _powerForItem(equipment.accessory);
-  }
-
-  int _powerForItem(EquipmentInstance? item) {
-    if (item == null) {
-      return 0;
-    }
-    return (item.totalAttack * 2) +
-        (item.totalDefense * 2) +
-        (item.totalHealth ~/ 4);
+    return _combatStatService.summaryPowerForStats(
+      _combatStatService.buildStats(character),
+    );
   }
 }

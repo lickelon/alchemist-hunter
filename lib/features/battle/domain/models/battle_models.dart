@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import 'combat_models.dart';
+
 enum SessionPhase { early, mid, late }
 
 enum BattleExpeditionStatus { idle, running, paused }
@@ -37,11 +39,23 @@ class HeroProfile {
   const HeroProfile({
     required this.id,
     required this.name,
+    required this.faction,
+    required this.discipline,
+    required this.jobId,
+    required this.stats,
+    this.modifiers = const <BattleModifier>[],
+    this.passives = const <BattlePassiveEffect>[],
     required this.power,
   });
 
   final String id;
   final String name;
+  final CombatFaction faction;
+  final CombatDiscipline discipline;
+  final String jobId;
+  final BattleCombatStats stats;
+  final List<BattleModifier> modifiers;
+  final List<BattlePassiveEffect> passives;
   final int power;
 }
 
@@ -83,6 +97,68 @@ class ProgressState {
   }
 }
 
+enum BattleTeam { ally, enemy }
+
+enum BattleActionType { attack, regen }
+
+@immutable
+class BattleActionLog {
+  const BattleActionLog({
+    required this.turn,
+    required this.type,
+    required this.actorId,
+    required this.actorName,
+    required this.actorTeam,
+    this.targetId,
+    this.targetName,
+    this.targetTeam,
+    this.school = DamageSchool.any,
+    this.hit = true,
+    this.critical = false,
+    this.damage = 0,
+    this.healing = 0,
+    this.actorHpAfter = 0,
+    this.targetHpAfter,
+  });
+
+  final int turn;
+  final BattleActionType type;
+  final String actorId;
+  final String actorName;
+  final BattleTeam actorTeam;
+  final String? targetId;
+  final String? targetName;
+  final BattleTeam? targetTeam;
+  final DamageSchool school;
+  final bool hit;
+  final bool critical;
+  final int damage;
+  final int healing;
+  final int actorHpAfter;
+  final int? targetHpAfter;
+}
+
+@immutable
+class BattleLogEntry {
+  const BattleLogEntry({
+    required this.resolvedAt,
+    required this.success,
+    required this.gold,
+    required this.essence,
+    required this.materials,
+    required this.turns,
+    this.actions = const <BattleActionLog>[],
+  });
+
+  final DateTime resolvedAt;
+  final bool success;
+  final int gold;
+  final int essence;
+  final Map<String, int> materials;
+  final int turns;
+  final List<BattleActionLog> actions;
+}
+
 @immutable
 class BattleResult {
   const BattleResult({
@@ -90,12 +166,14 @@ class BattleResult {
     required this.turns,
     required this.loot,
     required this.failurePenalty,
+    this.actions = const <BattleActionLog>[],
   });
 
   final bool success;
   final int turns;
   final Map<String, int> loot;
   final int failurePenalty;
+  final List<BattleActionLog> actions;
 }
 
 @immutable
@@ -137,28 +215,28 @@ class BattleExpeditionState {
     required this.lastResolvedAt,
     required this.cycleProgress,
     this.pendingClaim = const BattlePendingClaim(),
-    this.lastSummary = '',
+    this.recentLogs = const <BattleLogEntry>[],
   });
 
   final BattleExpeditionStatus status;
   final DateTime? lastResolvedAt;
   final Duration cycleProgress;
   final BattlePendingClaim pendingClaim;
-  final String lastSummary;
+  final List<BattleLogEntry> recentLogs;
 
   BattleExpeditionState copyWith({
     BattleExpeditionStatus? status,
     DateTime? lastResolvedAt,
     Duration? cycleProgress,
     BattlePendingClaim? pendingClaim,
-    String? lastSummary,
+    List<BattleLogEntry>? recentLogs,
   }) {
     return BattleExpeditionState(
       status: status ?? this.status,
       lastResolvedAt: lastResolvedAt ?? this.lastResolvedAt,
       cycleProgress: cycleProgress ?? this.cycleProgress,
       pendingClaim: pendingClaim ?? this.pendingClaim,
-      lastSummary: lastSummary ?? this.lastSummary,
+      recentLogs: recentLogs ?? this.recentLogs,
     );
   }
 }

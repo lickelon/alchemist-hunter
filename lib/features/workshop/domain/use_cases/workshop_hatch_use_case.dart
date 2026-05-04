@@ -17,10 +17,11 @@ class WorkshopHatchUseCase {
       return state;
     }
 
-    final int arcaneDustCost = (recipe.arcaneDustCost -
-            workshopSupportService.hatchArcaneDustDiscount(state))
-        .clamp(0, recipe.arcaneDustCost)
-        .toInt();
+    final int arcaneDustCost =
+        (recipe.arcaneDustCost -
+                workshopSupportService.hatchArcaneDustDiscount(state))
+            .clamp(0, recipe.arcaneDustCost)
+            .toInt();
     if (state.player.essence < recipe.essenceCost ||
         state.player.arcaneDust < arcaneDustCost) {
       return state;
@@ -66,6 +67,7 @@ class WorkshopHatchUseCase {
       id: 'homo_${now.microsecondsSinceEpoch}_${recipe.id}',
       name: recipe.resultName,
       type: CharacterType.homunculus,
+      combatJobId: recipe.combatJobId,
       level: 1,
       rank: 1,
       xp: 0,

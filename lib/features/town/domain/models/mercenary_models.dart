@@ -6,6 +6,7 @@ class MercenaryTemplate {
     required this.id,
     required this.name,
     required this.roleLabel,
+    required this.combatJobId,
     required this.hireCost,
     required this.tierIndex,
   });
@@ -13,6 +14,7 @@ class MercenaryTemplate {
   final String id;
   final String name;
   final String roleLabel;
+  final String combatJobId;
   final int hireCost;
   final int tierIndex;
 
@@ -39,6 +41,7 @@ class MercenaryCandidate {
     required this.templateId,
     required this.name,
     required this.roleLabel,
+    required this.combatJobId,
     required this.hireCost,
     required this.tierIndex,
   });
@@ -47,6 +50,7 @@ class MercenaryCandidate {
   final String templateId;
   final String name;
   final String roleLabel;
+  final String combatJobId;
   final int hireCost;
   final int tierIndex;
 

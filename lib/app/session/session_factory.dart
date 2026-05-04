@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/characters/domain/combat_jobs.dart';
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:alchemist_hunter/features/characters/domain/models/characters_state.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_mercenary_template_repository.dart';
@@ -53,9 +54,7 @@ SessionState createInitialSessionState(DateTime now) {
       craftedPotionDetails: <String, CraftedPotion>{},
       logs: <String>['Game initialized'],
       skillTree: WorkshopSkillTreeState(
-        unlockedNodes: <String>{
-          'workshop_alembic',
-        },
+        unlockedNodes: <String>{'workshop_alembic'},
         nodeLevels: <String, int>{},
         availablePoints: 0,
         spentPoints: 0,
@@ -81,6 +80,7 @@ SessionState createInitialSessionState(DateTime now) {
           id: 'merc_1',
           name: 'Rookie Swordsman',
           type: CharacterType.mercenary,
+          combatJobId: CombatJobIds.mercenaryWarrior,
           level: 1,
           rank: 1,
           xp: 0,
@@ -92,6 +92,7 @@ SessionState createInitialSessionState(DateTime now) {
           id: 'homo_1',
           name: 'Nigredo Seed',
           type: CharacterType.homunculus,
+          combatJobId: CombatJobIds.homunculusMage,
           level: 1,
           rank: 1,
           xp: 0,

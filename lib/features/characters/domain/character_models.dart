@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 
+import 'combat_jobs.dart';
+
 enum CharacterType { mercenary, homunculus }
 
 enum MercenaryTier { rookie, veteran, elite, champion, legend }
@@ -67,6 +69,7 @@ class CharacterProgress {
     required this.id,
     required this.name,
     required this.type,
+    this.combatJobId,
     required this.level,
     required this.rank,
     required this.xp,
@@ -81,6 +84,7 @@ class CharacterProgress {
   final String id;
   final String name;
   final CharacterType type;
+  final String? combatJobId;
   final int level;
   final int rank;
   final int xp;
@@ -106,6 +110,25 @@ class CharacterProgress {
     return type == CharacterType.mercenary ? 5 : 4;
   }
 
+  int get rankStepPerTier {
+    return type == CharacterType.mercenary ? 2 : 3;
+  }
+
+  int get rankBaseForCurrentTier {
+    return (tierIndex - 1) * rankStepPerTier;
+  }
+
+  int get rankInCurrentTier {
+    final int localRank = rank - rankBaseForCurrentTier;
+    if (localRank < 1) {
+      return 1;
+    }
+    if (localRank > rankStepPerTier) {
+      return rankStepPerTier;
+    }
+    return localRank;
+  }
+
   int get maxRankForCurrentTier {
     if (type == CharacterType.mercenary) {
       return tierIndex * 2;
@@ -118,8 +141,19 @@ class CharacterProgress {
 
   bool get canTierUp => rank >= maxRankForCurrentTier && tierIndex < maxTier;
 
+  String get resolvedCombatJobId {
+    if (combatJobId != null) {
+      return combatJobId!;
+    }
+    return switch (type) {
+      CharacterType.mercenary => CombatJobIds.mercenaryWarrior,
+      CharacterType.homunculus => CombatJobIds.homunculusMage,
+    };
+  }
+
   CharacterProgress copyWith({
     String? name,
+    String? combatJobId,
     int? level,
     int? rank,
     int? xp,
@@ -134,6 +168,7 @@ class CharacterProgress {
       id: id,
       name: name ?? this.name,
       type: type,
+      combatJobId: combatJobId ?? this.combatJobId,
       level: level ?? this.level,
       rank: rank ?? this.rank,
       xp: xp ?? this.xp,

@@ -24,11 +24,14 @@ class AutoBattleUseCase {
     required BattleService battleService,
     required BattleCatalogRepository battleCatalogRepository,
   }) {
-    final List<String> assignedCharacterIds = state.battle.stageAssignments[stageId] ??
-        const <String>[];
+    final List<String> assignedCharacterIds =
+        state.battle.stageAssignments[stageId] ?? const <String>[];
     if (assignedCharacterIds.isEmpty) {
       return state;
     }
+
+    final BattleStageDefinition stageDefinition = battleCatalogRepository
+        .stageDefinition(stageId);
 
     final BattleResult result = battleService.runAutoBattle(
       config: AutoBattleConfig(
@@ -39,6 +42,8 @@ class AutoBattleUseCase {
         potionLoadout: const <String, int>{'p_1': 2, 'p_2': 1},
         stageId: stageId,
       ),
+      stage: stageDefinition,
+      enemies: battleCatalogRepository.enemyDefinitionsForStage(stageId),
       dropTable: battleCatalogRepository.dropTable(stageId),
     );
 
@@ -59,12 +64,15 @@ class AutoBattleUseCase {
     }
 
     final int nextGold =
-        state.player.gold - result.failurePenalty + (result.success ? 35 : 0);
-    final int essenceGain = result.success ? 6 : 2;
-    final int xpGain = _xpGainForStage(
-      stageId: stageId,
-      success: result.success,
-    );
+        state.player.gold -
+        result.failurePenalty +
+        (result.success ? stageDefinition.goldSuccess : 0);
+    final int essenceGain = result.success
+        ? stageDefinition.essenceSuccess
+        : stageDefinition.essenceFailure;
+    final int xpGain = result.success
+        ? stageDefinition.xpSuccessBase
+        : stageDefinition.xpFailureBase;
     final CharactersState nextCharacters = _characterProgressionService
         .grantBattleXp(
           state: state.characters,
@@ -87,14 +95,5 @@ class AutoBattleUseCase {
       ),
       characters: nextCharacters,
     );
-  }
-
-  int _xpGainForStage({required String stageId, required bool success}) {
-    final int stageNumber =
-        int.tryParse(stageId.replaceFirst('stage_', '')) ?? 1;
-    if (success) {
-      return 16 + (stageNumber * 4);
-    }
-    return 6 + (stageNumber * 2);
   }
 }

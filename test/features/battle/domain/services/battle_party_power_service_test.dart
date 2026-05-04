@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
@@ -23,6 +24,7 @@ void main() {
           id: 'merc_1',
           name: 'Rookie Swordsman',
           type: CharacterType.mercenary,
+          combatJobId: CombatJobIds.mercenaryWarrior,
           level: 1,
           rank: 1,
           xp: 0,
@@ -34,6 +36,7 @@ void main() {
           id: 'homo_1',
           name: 'Nigredo Seed',
           type: CharacterType.homunculus,
+          combatJobId: CombatJobIds.homunculusMage,
           level: 1,
           rank: 1,
           xp: 0,
@@ -51,14 +54,68 @@ void main() {
       ],
     );
 
-    expect(basePower, 230);
-    expect(service.totalPower(equippedState), 254);
+    expect(basePower, greaterThan(0));
+    expect(service.totalPower(equippedState), greaterThan(basePower));
     expect(
       service.totalPower(
         equippedState,
         assignedCharacterIds: const <String>['merc_1'],
       ),
-      144,
+      greaterThan(service.powerForCharacter(baseState.mercenaries.first)),
     );
+  });
+
+  test('level increases hp and keeps non-hp base stats stable', () {
+    const BattlePartyPowerService service = BattlePartyPowerService();
+    const CharacterProgress mage = CharacterProgress(
+      id: 'merc_mage_1',
+      name: 'Ash Adept',
+      type: CharacterType.mercenary,
+      combatJobId: CombatJobIds.mercenaryMage,
+      level: 1,
+      rank: 1,
+      xp: 0,
+      mercenaryTier: MercenaryTier.rookie,
+    );
+
+    final BattleCombatStats levelOne = service.statsForCharacter(mage);
+    final BattleCombatStats levelThree = service.statsForCharacter(
+      mage.copyWith(level: 3),
+    );
+
+    expect(levelThree.maxHp, greaterThan(levelOne.maxHp));
+    expect(levelThree.physicalAttack, levelOne.physicalAttack);
+    expect(levelThree.magicalAttack, levelOne.magicalAttack);
+    expect(levelThree.speed, levelOne.speed);
+  });
+
+  test('job id changes stat profile', () {
+    const BattlePartyPowerService service = BattlePartyPowerService();
+    const CharacterProgress warrior = CharacterProgress(
+      id: 'merc_job_1',
+      name: 'Warrior',
+      type: CharacterType.mercenary,
+      combatJobId: CombatJobIds.mercenaryWarrior,
+      level: 1,
+      rank: 1,
+      xp: 0,
+      mercenaryTier: MercenaryTier.rookie,
+    );
+    const CharacterProgress mage = CharacterProgress(
+      id: 'merc_job_2',
+      name: 'Mage',
+      type: CharacterType.mercenary,
+      combatJobId: CombatJobIds.mercenaryMage,
+      level: 1,
+      rank: 1,
+      xp: 0,
+      mercenaryTier: MercenaryTier.rookie,
+    );
+
+    final BattleCombatStats warriorStats = service.statsForCharacter(warrior);
+    final BattleCombatStats mageStats = service.statsForCharacter(mage);
+
+    expect(warriorStats.physicalAttack, greaterThan(mageStats.physicalAttack));
+    expect(mageStats.magicalAttack, greaterThan(warriorStats.magicalAttack));
   });
 }

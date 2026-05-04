@@ -48,26 +48,34 @@ class BattleExpeditionProgressService {
       );
 
       BattlePendingClaim pendingClaim = expedition.pendingClaim;
-      String summary = expedition.lastSummary;
+      List<BattleLogEntry> recentLogs = expedition.recentLogs;
       for (int index = 0; index < cycleCount; index++) {
+        final DateTime cycleResolvedAt = baseTime.add(
+          Duration(
+            milliseconds:
+                ((index + 1) * battleCycle.inMilliseconds / speedMultiplier)
+                    .round(),
+          ),
+        );
         final BattleCycleResolution resolution = battleExpeditionResolver
             .resolveCycle(
               state: state,
               stageId: stageId,
+              resolvedAt: cycleResolvedAt,
               battleCatalogRepository: battleCatalogRepository,
             );
         pendingClaim = _mergePendingClaim(
           pendingClaim,
           resolution.pendingClaim,
         );
-        summary = resolution.summary;
+        recentLogs = _mergeRecentLogs(recentLogs, resolution.logEntry);
       }
 
       nextExpeditions[stageId] = expedition.copyWith(
         lastResolvedAt: now,
         cycleProgress: nextProgress,
         pendingClaim: pendingClaim,
-        lastSummary: summary,
+        recentLogs: recentLogs,
       );
     });
 
@@ -103,5 +111,19 @@ class BattleExpeditionProgressService {
       return source;
     }
     return Duration(microseconds: (source.inMicroseconds * multiplier).round());
+  }
+
+  List<BattleLogEntry> _mergeRecentLogs(
+    List<BattleLogEntry> current,
+    BattleLogEntry? next,
+  ) {
+    if (next == null) {
+      return current;
+    }
+    final List<BattleLogEntry> merged = <BattleLogEntry>[next, ...current];
+    if (merged.length <= 10) {
+      return merged;
+    }
+    return merged.sublist(0, 10);
   }
 }

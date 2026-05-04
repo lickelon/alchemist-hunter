@@ -45,6 +45,7 @@ class HireMercenaryUseCase {
         id: 'mercenary_${state.characters.mercenaries.length + 1}_${candidate.id}',
         name: candidate.name,
         type: CharacterType.mercenary,
+        combatJobId: candidate.combatJobId,
         level: 1,
         rank: 1,
         xp: 0,

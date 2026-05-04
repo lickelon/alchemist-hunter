@@ -10,13 +10,14 @@ class MercenaryRecruitmentService {
   }) {
     final List<MercenaryTemplate> templates = templateRepository.templates();
     return List<MercenaryCandidate>.generate(3, (int index) {
-      final MercenaryTemplate template = templates[
-          (refreshIndex + index) % templates.length];
+      final MercenaryTemplate template =
+          templates[(refreshIndex + index) % templates.length];
       return MercenaryCandidate(
         id: 'candidate_${refreshIndex}_$index',
         templateId: template.id,
         name: template.name,
         roleLabel: template.roleLabel,
+        combatJobId: template.combatJobId,
         hireCost: template.hireCost,
         tierIndex: template.tierIndex,
       );

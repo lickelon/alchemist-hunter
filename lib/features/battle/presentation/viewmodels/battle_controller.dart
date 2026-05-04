@@ -69,7 +69,17 @@ class _MissingBattleCatalogRepository implements BattleCatalogRepository {
   }
 
   @override
+  List<BattleEnemyDefinition> enemyDefinitionsForStage(String stageId) {
+    throw StateError('BattleCatalogRepository is required');
+  }
+
+  @override
   List<String> stageCatalog() {
+    throw StateError('BattleCatalogRepository is required');
+  }
+
+  @override
+  BattleStageDefinition stageDefinition(String stageId) {
     throw StateError('BattleCatalogRepository is required');
   }
 }

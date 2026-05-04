@@ -10,5 +10,13 @@ class StaticBattleCatalogRepository implements BattleCatalogRepository {
   BattleDropTable dropTable(String stageId) => tables.stageDropTable(stageId);
 
   @override
+  List<BattleEnemyDefinition> enemyDefinitionsForStage(String stageId) =>
+      tables.enemyDefinitionsForStage(stageId);
+
+  @override
+  BattleStageDefinition stageDefinition(String stageId) =>
+      tables.stageDefinition(stageId);
+
+  @override
   List<String> stageCatalog() => tables.stageCatalog;
 }

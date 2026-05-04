@@ -8,16 +8,19 @@ class BattleCycleResolution {
   const BattleCycleResolution({
     required this.pendingClaim,
     required this.summary,
+    this.logEntry,
   });
 
   final BattlePendingClaim pendingClaim;
   final String summary;
+  final BattleLogEntry? logEntry;
 }
 
 abstract class BattleExpeditionResolver {
   BattleCycleResolution resolveCycle({
     required SessionState state,
     required String stageId,
+    required DateTime resolvedAt,
     required BattleCatalogRepository battleCatalogRepository,
   });
 }
@@ -37,6 +40,7 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
   BattleCycleResolution resolveCycle({
     required SessionState state,
     required String stageId,
+    required DateTime resolvedAt,
     required BattleCatalogRepository battleCatalogRepository,
   }) {
     final List<String> assignedCharacterIds =
@@ -48,6 +52,9 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
       );
     }
 
+    final BattleStageDefinition stageDefinition = battleCatalogRepository
+        .stageDefinition(stageId);
+
     final BattleResult result = _battleService.runAutoBattle(
       config: AutoBattleConfig(
         party: _battlePartyPowerService.buildParty(
@@ -57,17 +64,33 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
         potionLoadout: const <String, int>{'p_1': 2, 'p_2': 1},
         stageId: stageId,
       ),
+      stage: stageDefinition,
+      enemies: battleCatalogRepository.enemyDefinitionsForStage(stageId),
       dropTable: battleCatalogRepository.dropTable(stageId),
     );
 
-    final int stageNumber =
-        int.tryParse(stageId.replaceFirst('stage_', '')) ?? 1;
-    final int xpGain = result.success ? 16 + (stageNumber * 4) : 6 + (stageNumber * 2);
+    final int xpGain = result.success
+        ? stageDefinition.xpSuccessBase
+        : stageDefinition.xpFailureBase;
     final Map<String, int> characterXp = <String, int>{
-      for (final String characterId in assignedCharacterIds) characterId: xpGain,
+      for (final String characterId in assignedCharacterIds)
+        characterId: xpGain,
     };
-    final int gold = result.success ? 35 : -result.failurePenalty;
-    final int essence = result.success ? 6 : 2;
+    final int gold = result.success
+        ? stageDefinition.goldSuccess
+        : -result.failurePenalty;
+    final int essence = result.success
+        ? stageDefinition.essenceSuccess
+        : stageDefinition.essenceFailure;
+    final BattleLogEntry logEntry = BattleLogEntry(
+      resolvedAt: resolvedAt,
+      success: result.success,
+      gold: gold,
+      essence: essence,
+      materials: result.loot,
+      turns: result.turns,
+      actions: result.actions,
+    );
 
     return BattleCycleResolution(
       pendingClaim: BattlePendingClaim(
@@ -77,7 +100,8 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
         characterXp: characterXp,
       ),
       summary:
-          '${result.success ? '성공' : '실패'} / Gold ${gold >= 0 ? '+' : ''}$gold / Essence +$essence / 재료 ${result.loot.length}종',
+          '${logEntry.success ? '성공' : '실패'} / Gold ${gold >= 0 ? '+' : ''}$gold / Essence +$essence / 재료 ${logEntry.materials.length}종',
+      logEntry: logEntry,
     );
   }
 }

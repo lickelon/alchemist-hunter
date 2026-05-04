@@ -43,15 +43,22 @@ class BattleAutoController {
         ).resolveCycle(
           state: started,
           stageId: stageId,
+          resolvedAt: _session.now(),
           battleCatalogRepository: _battleCatalogRepository,
         );
     final BattleExpeditionState expedition =
         started.battle.stageExpeditions[stageId]!;
     final Map<String, BattleExpeditionState> nextExpeditions =
         <String, BattleExpeditionState>{...started.battle.stageExpeditions};
+    final List<BattleLogEntry> recentLogs = resolution.logEntry == null
+        ? expedition.recentLogs
+        : <BattleLogEntry>[
+            resolution.logEntry!,
+            ...expedition.recentLogs,
+          ].take(10).toList(growable: false);
     nextExpeditions[stageId] = expedition.copyWith(
       pendingClaim: resolution.pendingClaim,
-      lastSummary: resolution.summary,
+      recentLogs: recentLogs,
     );
     final SessionState pendingState = started.copyWith(
       battle: started.battle.copyWith(stageExpeditions: nextExpeditions),
