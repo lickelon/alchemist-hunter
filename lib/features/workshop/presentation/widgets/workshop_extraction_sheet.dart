@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_display_labels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -47,7 +48,7 @@ class WorkshopExtractionSheet extends ConsumerWidget {
                     dense: true,
                     title: Text(entry.name),
                     subtitle: Text(
-                      '${entry.rarity.name} / ${entry.traitSummary}',
+                      '${workshopMaterialRarityLabel(entry.rarity)} / ${entry.traitSummary}',
                     ),
                     trailing: FilledButton.tonal(
                       onPressed: () {

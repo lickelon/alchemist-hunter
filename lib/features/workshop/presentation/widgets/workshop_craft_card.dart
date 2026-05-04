@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,10 +44,20 @@ class WorkshopCraftSheet extends ConsumerWidget {
     final List<PotionQueueOptionView> options = ref.watch(
       workshopPotionQueueOptionViewsProvider,
     );
+    final int queueLength = ref.watch(
+      sessionControllerProvider.select(
+        (SessionState state) => state.workshop.queue.length,
+      ),
+    );
+    final int queueCapacity = ref.watch(workshopQueueCapacityProvider);
+    final bool queueFull = queueLength >= queueCapacity;
 
     return AppBottomSheet(
       child: AppSheetLayout(
         title: '포션 제조',
+        header: queueFull
+            ? Text('작업실 큐 가득 참 ($queueLength/$queueCapacity)')
+            : null,
         body: options.isEmpty
             ? const Center(child: Text('등록 가능한 포션이 없습니다'))
             : ListView.builder(
@@ -63,7 +74,10 @@ class WorkshopCraftSheet extends ConsumerWidget {
                           : '잠김: ${option.lockReason}',
                     ),
                     trailing: FilledButton.tonal(
-                      onPressed: option.unlocked && option.craftableNow
+                      onPressed:
+                          option.unlocked &&
+                              option.craftableNow &&
+                              !option.queueFull
                           ? () {
                               showModalBottomSheet<void>(
                                 context: context,

@@ -42,6 +42,60 @@ void main() {
     expect(find.widgetWithText(FilledButton, '등록'), findsWidgets);
   });
 
+  testWidgets('workshop craft sheet shows queue-full notice once in header', (
+    WidgetTester tester,
+  ) async {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final SessionController session = container.read(
+      sessionControllerProvider.notifier,
+    );
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{
+          't_hp': 1.0,
+          't_atk': 1.0,
+        },
+        queue: List<CraftQueueJob>.generate(
+          4,
+          (int index) => CraftQueueJob(
+            id: 'job_$index',
+            type: WorkshopJobType.craft,
+            status: QueueJobStatus.queued,
+            queuedAt: DateTime(2026, 1, 1, 10),
+            duration: const Duration(seconds: 15),
+            eta: const Duration(seconds: 15),
+            title: '활력 포션',
+            potionId: 'p_1',
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: Scaffold(body: WorkshopCraftCard(craftableCount: 0)),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Craft'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('작업실 큐 가득 참 (4/4)'), findsOneWidget);
+    expect(find.text('큐 가득 참 (4/4)'), findsNothing);
+    final Iterable<FilledButton> registerButtons = tester
+        .widgetList<FilledButton>(find.widgetWithText(FilledButton, '등록'));
+    expect(registerButtons, isNotEmpty);
+    expect(
+      registerButtons.every((FilledButton button) => button.onPressed == null),
+      true,
+    );
+  });
+
   testWidgets('workshop craft sheet shows snackbar when queue is full', (
     WidgetTester tester,
   ) async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_display_labels.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 
 class WorkshopTraitInventoryStrip extends StatelessWidget {
@@ -19,7 +20,7 @@ class WorkshopTraitInventoryStrip extends StatelessWidget {
                 final ExtractedTraitInventoryView entry = traits[index];
                 return Chip(
                   label: Text(
-                    '${entry.name} ${entry.amount.toStringAsFixed(2)}',
+                    '${entry.name} ${workshopTraitAmountLabel(entry.amount)}',
                   ),
                 );
               },

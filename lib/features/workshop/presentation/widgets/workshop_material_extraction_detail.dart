@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_display_labels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -99,7 +100,7 @@ class _WorkshopMaterialExtractionDetailState
                           );
                           return FilterChip(
                             label: Text(
-                              '${trait.name} ${trait.amount.toStringAsFixed(2)}',
+                              '${trait.name} ${workshopTraitAmountLabel(trait.amount)}',
                             ),
                             selected: selected,
                             onSelected: (bool value) {

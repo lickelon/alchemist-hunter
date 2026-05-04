@@ -56,14 +56,14 @@ void main() {
 
     expect(find.text('작업실 인벤토리'), findsOneWidget);
     expect(find.text('Emberroot'), findsOneWidget);
-    expect(find.text('common / Vital / Swift'), findsOneWidget);
+    expect(find.text('일반 / Vital / Swift'), findsOneWidget);
     expect(find.text('x2'), findsOneWidget);
 
     await tester.tap(find.text('특성'));
     await tester.pumpAndSettle();
 
     expect(find.text('Vital'), findsOneWidget);
-    expect(find.text('0.85'), findsOneWidget);
+    expect(find.text('+0.85'), findsOneWidget);
 
     await tester.tap(find.text('포션'));
     await tester.pumpAndSettle();
@@ -103,7 +103,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('보유 추출 특성'), findsOneWidget);
-      expect(find.textContaining('Vital 0.85'), findsOneWidget);
+      expect(find.textContaining('Vital +0.85'), findsOneWidget);
       expect(find.text('분석/추출'), findsOneWidget);
 
       await tester.tap(find.text('분석/추출'));

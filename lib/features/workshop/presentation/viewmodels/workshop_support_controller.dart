@@ -19,7 +19,7 @@ class WorkshopSupportController {
     final SessionState current = _session.snapshot();
     final CharacterProgress? character = _findHomunculus(current, characterId);
     if (character == null) {
-      _session.appendLog('Homunculus not found');
+      _session.appendLog('호문쿨루스를 찾을 수 없음');
       return;
     }
 
@@ -43,21 +43,21 @@ class WorkshopSupportController {
     _session.applyState(nextState);
     if (identical(nextState, current)) {
       if (slotOccupiedByOther) {
-        _session.appendLog('Workshop slot already occupied');
+        _session.appendLog('${_slotLabel(slotId)} 슬롯이 이미 사용 중');
       } else if (assignedToBattle) {
-        _session.appendLog('Character assigned to battle');
+        _session.appendLog('전투에 배치된 호문쿨루스는 작업실에 둘 수 없음');
       } else if (beforeSlot != null && !wasAssignedToSlot) {
-        _session.appendLog('Character assigned to another workshop slot');
+        _session.appendLog('다른 작업실 슬롯에 이미 배치됨');
       } else {
-        _session.appendLog('Workshop support slots full');
+        _session.appendLog('작업실 보조 슬롯이 가득 참');
       }
       return;
     }
 
     _session.appendLog(
       wasAssignedToSlot
-          ? 'Removed ${character.name} from workshop ${_slotLabel(slotId)}'
-          : 'Assigned ${character.name} to workshop ${_slotLabel(slotId)}',
+          ? '${character.name} / 작업실 ${_slotLabel(slotId)} 해제'
+          : '${character.name} / 작업실 ${_slotLabel(slotId)} 배치',
     );
   }
 
@@ -97,5 +97,7 @@ class WorkshopSupportController {
 
 final Provider<WorkshopSupportController> workshopSupportControllerProvider =
     Provider<WorkshopSupportController>((Ref ref) {
-      return WorkshopSupportController(ref.read(sessionControllerProvider.notifier));
+      return WorkshopSupportController(
+        ref.read(sessionControllerProvider.notifier),
+      );
     });

@@ -65,6 +65,9 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
   final PotionCraftingService craftingService = ref.watch(
     potionCraftingServiceProvider,
   );
+  final materialCatalogRepository = ref.watch(
+    materialCatalogRepositoryProvider,
+  );
   final bool queueFull = queueLength >= queueCapacity;
 
   bool isUnlocked(PotionBlueprint potion) {
@@ -88,9 +91,13 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
       return '';
     }
     if (index < 13) {
-      return '특수 재료 Starfire Pollen 드롭 필요';
+      final String materialName =
+          materialCatalogRepository.materialName('m_27') ?? 'm_27';
+      return '특수 재료 $materialName 드롭 필요';
     }
-    return '특수 재료 Moontear Crystal 드롭 필요';
+    final String materialName =
+        materialCatalogRepository.materialName('m_30') ?? 'm_30';
+    return '특수 재료 $materialName 드롭 필요';
   }
 
   int potionOrder(String id) {
@@ -116,8 +123,6 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
       maxCraftableCount: unlocked ? maxCraftableCount : 0,
       materialHint: !unlocked
           ? lockReason(potion)
-          : queueFull
-          ? '큐 가득 참 ($queueLength/$queueCapacity)'
           : (craftableNow ? '최대 $maxCraftableCount회 제작 가능' : '추출 특성 부족'),
       queueFull: queueFull,
     );
@@ -138,7 +143,9 @@ final Provider<WorkshopCraftMenuSummaryView> workshopCraftMenuSummaryProvider =
         workshopPotionQueueOptionViewsProvider,
       );
       final int unlockedCount = options.where((entry) => entry.unlocked).length;
-      final int craftableCount = options.where((entry) => entry.craftableNow).length;
+      final int craftableCount = options
+          .where((entry) => entry.craftableNow)
+          .length;
       final String description = unlockedCount == 0
           ? '제조 가능한 포션 없음'
           : '즉시 제작 가능 $craftableCount종 / 해금 포션 $unlockedCount종';

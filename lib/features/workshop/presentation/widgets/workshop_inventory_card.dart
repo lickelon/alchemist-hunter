@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_display_labels.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/workshop_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -102,7 +103,9 @@ class _InventoryMaterialTab extends StatelessWidget {
           dense: true,
           contentPadding: EdgeInsets.zero,
           title: Text(entry.name),
-          subtitle: Text('${entry.rarity.name} / ${entry.traitSummary}'),
+          subtitle: Text(
+            '${workshopMaterialRarityLabel(entry.rarity)} / ${entry.traitSummary}',
+          ),
           trailing: Text('x${entry.quantity}'),
         );
       },
@@ -128,7 +131,7 @@ class _InventoryTraitTab extends StatelessWidget {
           dense: true,
           contentPadding: EdgeInsets.zero,
           title: Text(entry.name),
-          trailing: Text(entry.amount.toStringAsFixed(2)),
+          trailing: Text(workshopTraitAmountLabel(entry.amount)),
         );
       },
     );

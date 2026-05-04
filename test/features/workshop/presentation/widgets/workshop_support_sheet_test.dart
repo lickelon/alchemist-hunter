@@ -51,9 +51,6 @@ void main() {
     expect(session.state.battle.stageAssignments['stage_1'], <String>[
       'merc_1',
     ]);
-    expect(
-      session.state.workshop.logs.first,
-      'Assigned Nigredo Seed to workshop 추출',
-    );
+    expect(session.state.workshop.logs.first, 'Nigredo Seed / 작업실 추출 배치');
   });
 }
