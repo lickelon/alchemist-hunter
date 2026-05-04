@@ -31,16 +31,17 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('마을 스킬트리'), findsWidgets);
-    expect(find.textContaining('Trade Ledger'), findsOneWidget);
+    expect(find.text('마을 통찰 2 / 골드 1500'), findsOneWidget);
+    expect(find.textContaining('● Trade Ledger (레벨 0/2)'), findsOneWidget);
     expect(find.textContaining('현재 효과 효과 없음'), findsWidgets);
     expect(find.textContaining('다음 효과 포션 판매가 +5%'), findsOneWidget);
-    expect(find.textContaining('↳ Hiring Board'), findsOneWidget);
+    expect(find.textContaining('선행 Trade Ledger'), findsNWidgets(2));
 
     await tester.tap(find.widgetWithText(FilledButton, '강화').first);
     await tester.pumpAndSettle();
 
     expect(session.state.player.townInsight, 1);
     expect(session.state.town.skillTree.nodeLevels['town_trade_ledger'], 1);
-    expect(find.textContaining('Lv 1/2'), findsOneWidget);
+    expect(find.textContaining('레벨 1/2'), findsOneWidget);
   });
 }

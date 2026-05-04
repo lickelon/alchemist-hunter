@@ -33,17 +33,24 @@ class TownSkillNodeView {
   final bool upgradeable;
 }
 
-final Provider<List<TownSkillNodeView>> townSkillNodeViewsProvider =
-    Provider<List<TownSkillNodeView>>((Ref ref) {
-      final SessionState state = ref.watch(sessionControllerProvider);
-      final List<TownSkillNode> nodes = ref.watch(townSkillNodesProvider);
-      const TownSkillTreeService service = TownSkillTreeService();
+final Provider<List<TownSkillNodeView>>
+townSkillNodeViewsProvider = Provider<List<TownSkillNodeView>>((Ref ref) {
+  final SessionState state = ref.watch(sessionControllerProvider);
+  final List<TownSkillNode> nodes = ref.watch(townSkillNodesProvider);
+  const TownSkillTreeService service = TownSkillTreeService();
+  final Map<String, TownSkillNode> nodeMap = <String, TownSkillNode>{
+    for (final TownSkillNode node in nodes) node.id: node,
+  };
 
-      return nodes.map((TownSkillNode node) {
+  return nodes
+      .map((TownSkillNode node) {
         final int level = service.levelOf(state.town.skillTree, node.id);
         final bool prereqMet = service.prerequisitesMet(state, node);
         final bool reqMet = service.requirementsMet(state, node);
-        final List<TownSkillCost> costs = service.costsForNextLevel(node, level);
+        final List<TownSkillCost> costs = service.costsForNextLevel(
+          node,
+          level,
+        );
         final bool affordable = service.canAfford(state, costs);
         final bool upgradeable =
             level < node.maxLevel && prereqMet && reqMet && affordable;
@@ -66,16 +73,18 @@ final Provider<List<TownSkillNodeView>> townSkillNodeViewsProvider =
           name: node.name,
           description: node.description,
           depth: _depthForNode(node, nodes),
-          levelLabel: 'Lv $level/${node.maxLevel}',
+          levelLabel: '레벨 $level/${node.maxLevel}',
           costLabel: costs.isEmpty
               ? '비용 없음'
-              : costs.map((TownSkillCost cost) {
-                  final String label = switch (cost.type) {
-                    TownSkillCostType.townInsight => 'TownInsight',
-                    TownSkillCostType.gold => 'Gold',
-                  };
-                  return '$label ${cost.amount}';
-                }).join(' / '),
+              : costs
+                    .map((TownSkillCost cost) {
+                      final String label = switch (cost.type) {
+                        TownSkillCostType.townInsight => '마을 통찰',
+                        TownSkillCostType.gold => '골드',
+                      };
+                      return '$label ${cost.amount}';
+                    })
+                    .join(' / '),
           currentEffectLabel: _effectPreview(node.effects, level),
           nextEffectLabel: _effectPreview(
             node.effects,
@@ -83,12 +92,22 @@ final Provider<List<TownSkillNodeView>> townSkillNodeViewsProvider =
           ),
           prerequisiteLabel: node.prerequisiteNodeIds.isEmpty
               ? '루트 노드'
-              : '선행 ${node.prerequisiteNodeIds.join(", ")}',
+              : '선행 ${_prerequisiteNames(node.prerequisiteNodeIds, nodeMap)}',
           statusLabel: statusLabel,
           upgradeable: upgradeable,
         );
-      }).toList(growable: false);
-    });
+      })
+      .toList(growable: false);
+});
+
+String _prerequisiteNames(
+  List<String> prerequisiteNodeIds,
+  Map<String, TownSkillNode> nodeMap,
+) {
+  return prerequisiteNodeIds
+      .map((String nodeId) => nodeMap[nodeId]?.name ?? nodeId)
+      .join(', ');
+}
 
 int _depthForNode(TownSkillNode node, List<TownSkillNode> nodes) {
   if (node.prerequisiteNodeIds.isEmpty) {
@@ -115,23 +134,26 @@ String _effectPreview(List<TownSkillEffect> effects, int level) {
   if (level <= 0) {
     return '효과 없음';
   }
-  return effects.map((TownSkillEffect effect) {
-    final double amount = effect.value * level;
-    final String valueLabel = switch (effect.modifierType) {
-      TownSkillModifierType.percent => '${(amount * 100).round()}%',
-      TownSkillModifierType.flat => amount.round().toString(),
-    };
-    final String typeLabel = switch (effect.type) {
-      TownSkillEffectType.shopRefreshDiscount => '강제 갱신 비용',
-      TownSkillEffectType.potionSaleBonus => '포션 판매가',
-      TownSkillEffectType.equipmentCraftEfficiency => '장비 제작 효율',
-      TownSkillEffectType.mercenaryHireDiscount => '용병 고용 비용',
-    };
-    final String sign = effect.modifierType == TownSkillModifierType.percent &&
-            effect.type == TownSkillEffectType.shopRefreshDiscount ||
-        effect.type == TownSkillEffectType.mercenaryHireDiscount
-        ? '-'
-        : '+';
-    return '$typeLabel $sign$valueLabel';
-  }).join(' / ');
+  return effects
+      .map((TownSkillEffect effect) {
+        final double amount = effect.value * level;
+        final String valueLabel = switch (effect.modifierType) {
+          TownSkillModifierType.percent => '${(amount * 100).round()}%',
+          TownSkillModifierType.flat => amount.round().toString(),
+        };
+        final String typeLabel = switch (effect.type) {
+          TownSkillEffectType.shopRefreshDiscount => '강제 갱신 비용',
+          TownSkillEffectType.potionSaleBonus => '포션 판매가',
+          TownSkillEffectType.equipmentCraftEfficiency => '장비 제작 효율',
+          TownSkillEffectType.mercenaryHireDiscount => '용병 고용 비용',
+        };
+        final String sign =
+            effect.modifierType == TownSkillModifierType.percent &&
+                    effect.type == TownSkillEffectType.shopRefreshDiscount ||
+                effect.type == TownSkillEffectType.mercenaryHireDiscount
+            ? '-'
+            : '+';
+        return '$typeLabel $sign$valueLabel';
+      })
+      .join(' / ');
 }
