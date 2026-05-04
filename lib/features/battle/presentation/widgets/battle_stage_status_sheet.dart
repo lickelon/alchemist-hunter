@@ -36,17 +36,26 @@ class BattleStageStatusSheet extends ConsumerWidget {
     final String pendingLabel = ref.watch(
       battleStagePendingClaimLabelProvider(stageId),
     );
+    final BattlePlaybackState? currentBattle = ref.watch(
+      battleStageCurrentBattleProvider(stageId),
+    );
+    final List<BattleActionLog> currentActions = ref.watch(
+      battleStageCurrentActionLogsProvider(stageId),
+    );
     final List<BattleLogEntry> recentLogs = ref.watch(
       battleStageRecentLogsProvider(stageId),
     );
     final String lastResultLabel = ref.watch(
       battleStageLastResultLabelProvider(stageId),
     );
-    final double progressValue = stage.cycleDuration.inMilliseconds == 0
-        ? 0
-        : expedition.cycleProgress.inMilliseconds /
-              stage.cycleDuration.inMilliseconds;
-    final Duration remaining = stage.cycleDuration - expedition.cycleProgress;
+    final _StageProgressView progressView = _progressView(
+      expedition: expedition,
+      stage: stage,
+      assignedCount: assignedCount,
+      partyPower: partyPower,
+      statusLabel: statusLabel,
+      currentBattle: currentBattle,
+    );
 
     return AppBottomSheet(
       child: AppSheetLayout(
@@ -56,18 +65,28 @@ class BattleStageStatusSheet extends ConsumerWidget {
           children: <Widget>[
             _StageStatusBlock(
               title: '현재 상태',
-              lines: <String>[
-                statusLabel,
-                '편성 $assignedCount명 / 전투력 $partyPower',
-                '사이클 진행 ${expedition.cycleProgress.inSeconds}s / ${stage.cycleDuration.inSeconds}s',
-                '다음 판정까지 ${remaining.inSeconds.clamp(0, stage.cycleDuration.inSeconds)}s',
-              ],
-              footer: LinearProgressIndicator(
-                value: progressValue.clamp(0, 1),
-                minHeight: 8,
+              lines: progressView.lines,
+              footer: _SmoothProgressBar(
+                value: progressView.progressValue.clamp(0, 1),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
+            if (currentBattle != null) ...<Widget>[
+              _StageStatusBlock(
+                title: '실시간 전투',
+                lines: currentActions.isEmpty
+                    ? const <String>['첫 행동 대기 중']
+                    : currentActions
+                          .skip(
+                            currentActions.length > 6
+                                ? currentActions.length - 6
+                                : 0,
+                          )
+                          .map(_formatAction)
+                          .toList(growable: false),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+            ],
             _StageStatusBlock(title: '수령 대기', lines: <String>[pendingLabel]),
             const SizedBox(height: AppSpacing.lg),
             _StageStatusBlock(
@@ -127,6 +146,127 @@ class BattleStageStatusSheet extends ConsumerWidget {
     final String minute = dateTime.minute.toString().padLeft(2, '0');
     final String second = dateTime.second.toString().padLeft(2, '0');
     return '$hour:$minute:$second';
+  }
+
+  _StageProgressView _progressView({
+    required BattleExpeditionState expedition,
+    required BattleStageDefinition stage,
+    required int assignedCount,
+    required int partyPower,
+    required String statusLabel,
+    required BattlePlaybackState? currentBattle,
+  }) {
+    final List<String> baseLines = <String>[
+      statusLabel,
+      '편성 $assignedCount명 / 전투력 $partyPower',
+    ];
+    switch (expedition.status) {
+      case BattleExpeditionStatus.idle:
+        return _StageProgressView(progressValue: 0, lines: baseLines);
+      case BattleExpeditionStatus.searching:
+        return _StageProgressView(
+          progressValue: stage.searchDuration.inMilliseconds == 0
+              ? 0
+              : expedition.phaseProgress.inMilliseconds /
+                    stage.searchDuration.inMilliseconds,
+          lines: <String>[
+            ...baseLines,
+            '다음 적 탐색까지 ${_formatRemaining(stage.searchDuration, expedition.phaseProgress)}',
+          ],
+        );
+      case BattleExpeditionStatus.battling:
+        final Duration lifecycleElapsed = _currentLifecycleElapsed(
+          expedition.phaseProgress,
+        );
+        return _StageProgressView(
+          progressValue:
+              lifecycleElapsed.inMilliseconds /
+              battleActionInterval.inMilliseconds,
+          lines: <String>[
+            ...baseLines,
+            '다음 행동까지 ${_formatRemaining(battleActionInterval, lifecycleElapsed)}',
+          ],
+        );
+      case BattleExpeditionStatus.paused:
+        if (currentBattle == null) {
+          return _StageProgressView(
+            progressValue: stage.searchDuration.inMilliseconds == 0
+                ? 0
+                : expedition.phaseProgress.inMilliseconds /
+                      stage.searchDuration.inMilliseconds,
+            lines: <String>[
+              ...baseLines,
+              '다음 적 탐색까지 ${_formatRemaining(stage.searchDuration, expedition.phaseProgress)}',
+            ],
+          );
+        }
+        final Duration lifecycleElapsed = _currentLifecycleElapsed(
+          expedition.phaseProgress,
+        );
+        return _StageProgressView(
+          progressValue:
+              lifecycleElapsed.inMilliseconds /
+              battleActionInterval.inMilliseconds,
+          lines: baseLines,
+        );
+    }
+  }
+
+  Duration _currentLifecycleElapsed(Duration phaseProgress) {
+    final int lifecycleMicros = battleActionInterval.inMicroseconds;
+    if (lifecycleMicros == 0) {
+      return Duration.zero;
+    }
+    final int remainder = phaseProgress.inMicroseconds % lifecycleMicros;
+    return Duration(microseconds: remainder);
+  }
+
+  String _formatRemaining(Duration total, Duration progress) {
+    final Duration remaining = total - progress;
+    if (remaining <= Duration.zero) {
+      return '0.0s';
+    }
+    final double seconds = remaining.inMilliseconds / 1000;
+    return '${seconds.toStringAsFixed(1)}s';
+  }
+
+  String _formatAction(BattleActionLog action) {
+    if (action.type == BattleActionType.regen) {
+      return '${action.actorName} 재생 +${action.healing}';
+    }
+    if (action.type == BattleActionType.lifesteal) {
+      return '${action.actorName} 흡혈 +${action.healing}';
+    }
+    if (!action.hit) {
+      return '${action.actorName} -> ${action.targetName ?? '대상'} 빗나감';
+    }
+    final String criticalLabel = action.critical ? ' 치명타' : '';
+    return '${action.actorName} -> ${action.targetName ?? '대상'} ${action.damage} 피해$criticalLabel';
+  }
+}
+
+class _StageProgressView {
+  const _StageProgressView({required this.progressValue, required this.lines});
+
+  final double progressValue;
+  final List<String> lines;
+}
+
+class _SmoothProgressBar extends StatelessWidget {
+  const _SmoothProgressBar({required this.value});
+
+  final double value;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(end: value),
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.linear,
+      builder: (BuildContext context, double animatedValue, Widget? child) {
+        return LinearProgressIndicator(value: animatedValue, minHeight: 8);
+      },
+    );
   }
 }
 

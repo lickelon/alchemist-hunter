@@ -42,11 +42,8 @@ class DungeonScreen extends ConsumerWidget {
           battleStageRecentLogsProvider(stage),
         );
         final bool canStart =
-            unlocked &&
-            assignedCount > 0 &&
-            expedition.status != BattleExpeditionStatus.running;
-        final bool canStop =
-            expedition.status == BattleExpeditionStatus.running;
+            unlocked && assignedCount > 0 && !expedition.isActive;
+        final bool canStop = expedition.isActive;
         final bool canClaim = unlocked && !expedition.pendingClaim.isEmpty;
         final String summary =
             '편성 $assignedCount명 / 전투력 $partyPower / $statusLabel';
@@ -113,6 +110,9 @@ class DungeonScreen extends ConsumerWidget {
                               ? '잠김'
                               : canStop
                               ? '정지'
+                              : expedition.status ==
+                                    BattleExpeditionStatus.paused
+                              ? '재개'
                               : '원정 시작',
                         ),
                       ),

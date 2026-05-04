@@ -133,6 +133,9 @@ class BattleResultSheet extends ConsumerWidget {
     if (action.type == BattleActionType.regen) {
       return 'T${action.turn} ${action.actorName} 재생 +${action.healing} / HP ${action.actorHpAfter}';
     }
+    if (action.type == BattleActionType.lifesteal) {
+      return 'T${action.turn} ${action.actorName} 흡혈 +${action.healing} / HP ${action.actorHpAfter}';
+    }
     if (!action.hit) {
       return 'T${action.turn} ${action.actorName} -> ${action.targetName} 빗나감';
     }
@@ -142,9 +145,6 @@ class BattleResultSheet extends ConsumerWidget {
       DamageSchool.any => '공격',
     };
     final String criticalLabel = action.critical ? ' / 치명타' : '';
-    final String healingLabel = action.healing > 0
-        ? ' / 흡혈 +${action.healing}'
-        : '';
-    return 'T${action.turn} ${action.actorName} -> ${action.targetName} $schoolLabel ${action.damage}$criticalLabel / 대상 HP ${action.targetHpAfter ?? 0}$healingLabel';
+    return 'T${action.turn} ${action.actorName} -> ${action.targetName} $schoolLabel ${action.damage}$criticalLabel / 대상 HP ${action.targetHpAfter ?? 0}';
   }
 }

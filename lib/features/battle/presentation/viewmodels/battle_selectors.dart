@@ -120,16 +120,35 @@ final battleStageExpeditionStateProvider =
               state.battle.stageExpeditions[stageId] ??
               const BattleExpeditionState(
                 status: BattleExpeditionStatus.idle,
-                lastResolvedAt: null,
-                cycleProgress: Duration.zero,
+                lastProgressedAt: null,
+                phaseProgress: Duration.zero,
               ),
         ),
       );
     });
 
+final battleStageCurrentBattleProvider =
+    Provider.family<BattlePlaybackState?, String>((Ref ref, String stageId) {
+      return ref
+          .watch(battleStageExpeditionStateProvider(stageId))
+          .currentBattle;
+    });
+
 final battleStageRecentLogsProvider =
     Provider.family<List<BattleLogEntry>, String>((Ref ref, String stageId) {
       return ref.watch(battleStageExpeditionStateProvider(stageId)).recentLogs;
+    });
+
+final battleStageCurrentActionLogsProvider =
+    Provider.family<List<BattleActionLog>, String>((Ref ref, String stageId) {
+      final BattleExpeditionState expedition = ref.watch(
+        battleStageExpeditionStateProvider(stageId),
+      );
+      final BattlePlaybackState? currentBattle = expedition.currentBattle;
+      if (currentBattle == null) {
+        return const <BattleActionLog>[];
+      }
+      return currentBattle.revealedActions(elapsed: expedition.phaseProgress);
     });
 
 final battleStagePartyPowerProvider = Provider.family<int, String>((
@@ -156,12 +175,17 @@ final battleStageStatusLabelProvider = Provider.family<String, String>((
   final BattleExpeditionState expedition = ref.watch(
     battleStageExpeditionStateProvider(stageId),
   );
+  final BattleStageDefinition stage = ref
+      .watch(battleCatalogRepositoryProvider)
+      .stageDefinition(stageId);
+  final BattlePlaybackState? currentBattle = expedition.currentBattle;
   return switch (expedition.status) {
     BattleExpeditionStatus.idle => '대기',
-    BattleExpeditionStatus.running =>
-      '원정 중 / ${expedition.cycleProgress.inSeconds}s 진행',
+    BattleExpeditionStatus.searching =>
+      '적 탐색 중 / ${expedition.phaseProgress.inSeconds}s / ${stage.searchDuration.inSeconds}s',
+    BattleExpeditionStatus.battling => '전투 진행 중',
     BattleExpeditionStatus.paused =>
-      '정지 / ${expedition.cycleProgress.inSeconds}s 진행',
+      currentBattle == null ? '정지 / 적 탐색 보류' : '정지 / 전투 보류',
   };
 });
 

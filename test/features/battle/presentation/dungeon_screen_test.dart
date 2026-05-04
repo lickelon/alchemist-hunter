@@ -66,7 +66,7 @@ void main() {
 
     expect(find.text('Stage 1 전투 현황'), findsOneWidget);
     expect(find.text('현재 상태'), findsOneWidget);
-    expect(find.textContaining('사이클 진행 0s / 60s'), findsOneWidget);
+    expect(find.text('대기'), findsOneWidget);
     expect(find.text('적 구성 / 드롭'), findsOneWidget);
 
     await tester.tap(find.text('적 구성 / 드롭'));
@@ -111,8 +111,8 @@ void main() {
         stageExpeditions: <String, BattleExpeditionState>{
           'stage_1': BattleExpeditionState(
             status: BattleExpeditionStatus.idle,
-            lastResolvedAt: DateTime(2026, 1, 1, 10, 13, 42),
-            cycleProgress: Duration.zero,
+            lastProgressedAt: DateTime(2026, 1, 1, 10, 13, 42),
+            phaseProgress: Duration.zero,
             recentLogs: <BattleLogEntry>[
               BattleLogEntry(
                 resolvedAt: DateTime(2026, 1, 1, 10, 13, 42),
@@ -123,6 +123,7 @@ void main() {
                 turns: 4,
                 actions: const <BattleActionLog>[
                   BattleActionLog(
+                    lifecycle: 1,
                     turn: 1,
                     type: BattleActionType.attack,
                     actorId: 'merc_1',
