@@ -49,7 +49,7 @@ class BattleStageDefinition {
     required this.id,
     required this.name,
     required this.recommendedPower,
-    required this.cycleDuration,
+    required this.searchDuration,
     required this.enemySetId,
     required this.goldSuccess,
     required this.goldFailurePenalty,
@@ -62,7 +62,7 @@ class BattleStageDefinition {
   final String id;
   final String name;
   final int recommendedPower;
-  final Duration cycleDuration;
+  final Duration searchDuration;
   final String enemySetId;
   final int goldSuccess;
   final int goldFailurePenalty;

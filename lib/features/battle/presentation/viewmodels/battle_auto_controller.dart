@@ -37,27 +37,28 @@ class BattleAutoController {
       return;
     }
 
-    final BattleCycleResolution resolution =
+    final BattleEncounterResolution resolution =
         DefaultBattleExpeditionResolver(
           battleService: battleService,
-        ).resolveCycle(
+        ).resolveEncounter(
           state: started,
           stageId: stageId,
-          resolvedAt: _session.now(),
           battleCatalogRepository: _battleCatalogRepository,
         );
     final BattleExpeditionState expedition =
         started.battle.stageExpeditions[stageId]!;
     final Map<String, BattleExpeditionState> nextExpeditions =
         <String, BattleExpeditionState>{...started.battle.stageExpeditions};
-    final List<BattleLogEntry> recentLogs = resolution.logEntry == null
+    final BattlePlaybackState? playback = resolution.playback;
+    final BattleLogEntry? completedLog = playback?.completeAt(_session.now());
+    final List<BattleLogEntry> recentLogs = completedLog == null
         ? expedition.recentLogs
         : <BattleLogEntry>[
-            resolution.logEntry!,
+            completedLog,
             ...expedition.recentLogs,
           ].take(10).toList(growable: false);
     nextExpeditions[stageId] = expedition.copyWith(
-      pendingClaim: resolution.pendingClaim,
+      pendingClaim: playback?.pendingClaim ?? const BattlePendingClaim(),
       recentLogs: recentLogs,
     );
     final SessionState pendingState = started.copyWith(

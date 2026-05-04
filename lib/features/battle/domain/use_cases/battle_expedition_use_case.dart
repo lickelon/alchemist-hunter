@@ -16,25 +16,29 @@ class BattleExpeditionUseCase {
     required String stageId,
     required DateTime now,
   }) {
-    final List<String> assigned = state.battle.stageAssignments[stageId] ??
-        const <String>[];
+    final List<String> assigned =
+        state.battle.stageAssignments[stageId] ?? const <String>[];
     if (assigned.isEmpty) {
       return state;
     }
-    final BattleExpeditionState current = state.battle.stageExpeditions[stageId] ??
+    final BattleExpeditionState current =
+        state.battle.stageExpeditions[stageId] ??
         const BattleExpeditionState(
           status: BattleExpeditionStatus.idle,
-          lastResolvedAt: null,
-          cycleProgress: Duration.zero,
+          lastProgressedAt: null,
+          phaseProgress: Duration.zero,
         );
-    if (current.status == BattleExpeditionStatus.running) {
+    if (current.isActive) {
       return state;
     }
+    final BattleExpeditionStatus nextStatus = current.currentBattle == null
+        ? BattleExpeditionStatus.searching
+        : BattleExpeditionStatus.battling;
     final Map<String, BattleExpeditionState> nextExpeditions =
         <String, BattleExpeditionState>{...state.battle.stageExpeditions};
     nextExpeditions[stageId] = current.copyWith(
-      status: BattleExpeditionStatus.running,
-      lastResolvedAt: now,
+      status: nextStatus,
+      lastProgressedAt: now,
     );
     return state.copyWith(
       battle: state.battle.copyWith(stageExpeditions: nextExpeditions),
@@ -46,15 +50,16 @@ class BattleExpeditionUseCase {
     required String stageId,
     required DateTime now,
   }) {
-    final BattleExpeditionState? current = state.battle.stageExpeditions[stageId];
-    if (current == null || current.status != BattleExpeditionStatus.running) {
+    final BattleExpeditionState? current =
+        state.battle.stageExpeditions[stageId];
+    if (current == null || !current.isActive) {
       return state;
     }
     final Map<String, BattleExpeditionState> nextExpeditions =
         <String, BattleExpeditionState>{...state.battle.stageExpeditions};
     nextExpeditions[stageId] = current.copyWith(
       status: BattleExpeditionStatus.paused,
-      lastResolvedAt: now,
+      lastProgressedAt: now,
     );
     return state.copyWith(
       battle: state.battle.copyWith(stageExpeditions: nextExpeditions),
@@ -65,7 +70,8 @@ class BattleExpeditionUseCase {
     required SessionState state,
     required String stageId,
   }) {
-    final BattleExpeditionState? expedition = state.battle.stageExpeditions[stageId];
+    final BattleExpeditionState? expedition =
+        state.battle.stageExpeditions[stageId];
     if (expedition == null || expedition.pendingClaim.isEmpty) {
       return state;
     }
@@ -73,8 +79,12 @@ class BattleExpeditionUseCase {
     final Map<String, int> materialInventory = <String, int>{
       ...state.player.materialInventory,
     };
-    expedition.pendingClaim.materials.forEach((String materialId, int quantity) {
-      materialInventory[materialId] = (materialInventory[materialId] ?? 0) + quantity;
+    expedition.pendingClaim.materials.forEach((
+      String materialId,
+      int quantity,
+    ) {
+      materialInventory[materialId] =
+          (materialInventory[materialId] ?? 0) + quantity;
     });
 
     final Set<String> unlocks = <String>{...state.battle.progress.unlockFlags};

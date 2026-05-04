@@ -129,7 +129,6 @@ class BattleService {
           break;
         }
 
-        turns += 1;
         final int extraAttackCount = _extraAttackCount(actor);
         final int attackCount = 1 + extraAttackCount;
         for (int attackIndex = 0; attackIndex < attackCount; attackIndex++) {
@@ -142,6 +141,8 @@ class BattleService {
           if (currentTarget == null) {
             break;
           }
+          turns += 1;
+          final int lifecycle = turns;
 
           final bool hit = _rollHit(
             attacker: actor,
@@ -151,6 +152,7 @@ class BattleService {
           if (!hit) {
             actions.add(
               BattleActionLog(
+                lifecycle: lifecycle,
                 turn: turns,
                 type: BattleActionType.attack,
                 actorId: actor.id,
@@ -163,6 +165,12 @@ class BattleService {
                 actorHpAfter: actor.currentHp,
                 targetHpAfter: currentTarget.currentHp,
               ),
+            );
+            _applyRegen(
+              actor,
+              lifecycle: lifecycle,
+              turn: turns,
+              actions: actions,
             );
             continue;
           }
@@ -187,6 +195,7 @@ class BattleService {
           final double lifestealRate =
               actor.stats.lifesteal +
               _flatModifierTotal(actor, BattleModifierType.lifesteal);
+          final int actorHpBeforeRecovery = actor.currentHp;
           if (damageRoll.damage > 0 && lifestealRate > 0) {
             lifestealHealing = max(
               1,
@@ -199,6 +208,7 @@ class BattleService {
           }
           actions.add(
             BattleActionLog(
+              lifecycle: lifecycle,
               turn: turns,
               type: BattleActionType.attack,
               actorId: actor.id,
@@ -211,10 +221,33 @@ class BattleService {
               hit: true,
               critical: critical,
               damage: damageRoll.damage,
-              healing: lifestealHealing,
-              actorHpAfter: actor.currentHp,
+              actorHpAfter: actorHpBeforeRecovery,
               targetHpAfter: currentTarget.currentHp,
             ),
+          );
+          if (lifestealHealing > 0) {
+            actions.add(
+              BattleActionLog(
+                lifecycle: lifecycle,
+                turn: turns,
+                type: BattleActionType.lifesteal,
+                actorId: actor.id,
+                actorName: actor.name,
+                actorTeam: _toBattleTeam(actor.side),
+                targetId: currentTarget.id,
+                targetName: currentTarget.name,
+                targetTeam: _toBattleTeam(currentTarget.side),
+                healing: lifestealHealing,
+                actorHpAfter: actor.currentHp,
+                targetHpAfter: currentTarget.currentHp,
+              ),
+            );
+          }
+          _applyRegen(
+            actor,
+            lifecycle: lifecycle,
+            turn: turns,
+            actions: actions,
           );
           target = currentTarget;
         }
@@ -223,9 +256,6 @@ class BattleService {
           break;
         }
       }
-
-      _applyRegen(allies, turn: turns, actions: actions);
-      _applyRegen(enemies, turn: turns, actions: actions);
     }
 
     if (_hasLiving(allies) && !_hasLiving(enemies)) {
@@ -343,34 +373,34 @@ class BattleService {
   }
 
   void _applyRegen(
-    List<_BattleUnit> units, {
+    _BattleUnit unit, {
+    required int lifecycle,
     required int turn,
     required List<BattleActionLog> actions,
   }) {
-    for (final _BattleUnit unit in units) {
-      final double regenRate =
-          unit.stats.regen + _flatModifierTotal(unit, BattleModifierType.regen);
-      if (!unit.isAlive || regenRate <= 0) {
-        continue;
-      }
-      final int healing = max(1, (unit.maxHp * regenRate).round());
-      final int previousHp = unit.currentHp;
-      unit.currentHp = min(unit.maxHp, unit.currentHp + healing);
-      if (unit.currentHp == previousHp) {
-        continue;
-      }
-      actions.add(
-        BattleActionLog(
-          turn: turn,
-          type: BattleActionType.regen,
-          actorId: unit.id,
-          actorName: unit.name,
-          actorTeam: _toBattleTeam(unit.side),
-          healing: unit.currentHp - previousHp,
-          actorHpAfter: unit.currentHp,
-        ),
-      );
+    final double regenRate =
+        unit.stats.regen + _flatModifierTotal(unit, BattleModifierType.regen);
+    if (!unit.isAlive || regenRate <= 0) {
+      return;
     }
+    final int healing = max(1, (unit.maxHp * regenRate).round());
+    final int previousHp = unit.currentHp;
+    unit.currentHp = min(unit.maxHp, unit.currentHp + healing);
+    if (unit.currentHp == previousHp) {
+      return;
+    }
+    actions.add(
+      BattleActionLog(
+        lifecycle: lifecycle,
+        turn: turn,
+        type: BattleActionType.regen,
+        actorId: unit.id,
+        actorName: unit.name,
+        actorTeam: _toBattleTeam(unit.side),
+        healing: unit.currentHp - previousHp,
+        actorHpAfter: unit.currentHp,
+      ),
+    );
   }
 
   BattleTeam _toBattleTeam(_BattleSide side) {

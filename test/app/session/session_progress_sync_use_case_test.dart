@@ -13,7 +13,7 @@ import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.da
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('time acceleration shortens battle expedition cycle progress', () {
+  test('time acceleration progresses search and battle encounters', () {
     final DateTime start = DateTime(2026, 1, 1, 10);
     final SessionState initial = createInitialSessionState(start);
     final SessionState state = initial.copyWith(
@@ -21,9 +21,9 @@ void main() {
       battle: initial.battle.copyWith(
         stageExpeditions: <String, BattleExpeditionState>{
           'stage_1': BattleExpeditionState(
-            status: BattleExpeditionStatus.running,
-            lastResolvedAt: start,
-            cycleProgress: Duration.zero,
+            status: BattleExpeditionStatus.searching,
+            lastProgressedAt: start,
+            phaseProgress: Duration.zero,
           ),
         },
       ),

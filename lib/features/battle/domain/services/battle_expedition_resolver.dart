@@ -4,23 +4,20 @@ import 'package:alchemist_hunter/features/battle/domain/repositories/battle_cata
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 
-class BattleCycleResolution {
-  const BattleCycleResolution({
-    required this.pendingClaim,
+class BattleEncounterResolution {
+  const BattleEncounterResolution({
+    required this.playback,
     required this.summary,
-    this.logEntry,
   });
 
-  final BattlePendingClaim pendingClaim;
+  final BattlePlaybackState? playback;
   final String summary;
-  final BattleLogEntry? logEntry;
 }
 
 abstract class BattleExpeditionResolver {
-  BattleCycleResolution resolveCycle({
+  BattleEncounterResolution resolveEncounter({
     required SessionState state,
     required String stageId,
-    required DateTime resolvedAt,
     required BattleCatalogRepository battleCatalogRepository,
   });
 }
@@ -37,19 +34,15 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
   final BattlePartyPowerService _battlePartyPowerService;
 
   @override
-  BattleCycleResolution resolveCycle({
+  BattleEncounterResolution resolveEncounter({
     required SessionState state,
     required String stageId,
-    required DateTime resolvedAt,
     required BattleCatalogRepository battleCatalogRepository,
   }) {
     final List<String> assignedCharacterIds =
         state.battle.stageAssignments[stageId] ?? const <String>[];
     if (assignedCharacterIds.isEmpty) {
-      return const BattleCycleResolution(
-        pendingClaim: BattlePendingClaim(),
-        summary: '편성 없음',
-      );
+      return const BattleEncounterResolution(playback: null, summary: '편성 없음');
     }
 
     final BattleStageDefinition stageDefinition = battleCatalogRepository
@@ -82,26 +75,23 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
     final int essence = result.success
         ? stageDefinition.essenceSuccess
         : stageDefinition.essenceFailure;
-    final BattleLogEntry logEntry = BattleLogEntry(
-      resolvedAt: resolvedAt,
-      success: result.success,
+    final BattlePendingClaim pendingClaim = BattlePendingClaim(
+      materials: result.loot,
       gold: gold,
       essence: essence,
-      materials: result.loot,
+      characterXp: characterXp,
+    );
+    final BattlePlaybackState playback = BattlePlaybackState(
+      success: result.success,
       turns: result.turns,
+      pendingClaim: pendingClaim,
       actions: result.actions,
     );
 
-    return BattleCycleResolution(
-      pendingClaim: BattlePendingClaim(
-        materials: result.loot,
-        gold: gold,
-        essence: essence,
-        characterXp: characterXp,
-      ),
+    return BattleEncounterResolution(
+      playback: playback,
       summary:
-          '${logEntry.success ? '성공' : '실패'} / Gold ${gold >= 0 ? '+' : ''}$gold / Essence +$essence / 재료 ${logEntry.materials.length}종',
-      logEntry: logEntry,
+          '${playback.success ? '성공' : '실패'} / Gold ${gold >= 0 ? '+' : ''}$gold / Essence +$essence / 재료 ${pendingClaim.materials.length}종',
     );
   }
 }

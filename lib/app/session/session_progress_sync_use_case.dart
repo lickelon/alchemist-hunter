@@ -11,7 +11,7 @@ import 'package:alchemist_hunter/features/workshop/domain/services/workshop_queu
 class SessionProgressSyncUseCase {
   const SessionProgressSyncUseCase({
     this.offlineCap = const Duration(hours: 8),
-    this.battleCycle = const Duration(seconds: 60),
+    this.battleActionInterval = const Duration(seconds: 1),
     BattleExpeditionProgressService battleExpeditionProgressService =
         const BattleExpeditionProgressService(),
     WorkshopQueueProgressService workshopQueueProgressService =
@@ -23,7 +23,7 @@ class SessionProgressSyncUseCase {
        _forgeQueueProgressService = forgeQueueProgressService;
 
   final Duration offlineCap;
-  final Duration battleCycle;
+  final Duration battleActionInterval;
   final BattleExpeditionProgressService _battleExpeditionProgressService;
   final WorkshopQueueProgressService _workshopQueueProgressService;
   final ForgeQueueProgressService _forgeQueueProgressService;
@@ -95,7 +95,7 @@ class SessionProgressSyncUseCase {
         syncFrom: syncFrom,
         now: now,
         speedMultiplier: speedMultiplier,
-        battleCycle: battleCycle,
+        battleActionInterval: battleActionInterval,
         battleExpeditionResolver: battleExpeditionResolver,
         battleCatalogRepository: battleCatalogRepository,
       ),
