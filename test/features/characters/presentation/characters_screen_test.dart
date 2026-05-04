@@ -59,33 +59,38 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('배치 상태: Stage 1'), findsAtLeastNWidgets(1));
-    expect(find.text('Rank Up'), findsNothing);
-    expect(find.text('Tier Up'), findsNothing);
+    expect(find.text('랭크업'), findsNothing);
+    expect(find.text('티어업'), findsNothing);
     expect(find.text('상세'), findsNothing);
 
     await tester.tap(find.text(target.name));
     await tester.pumpAndSettle();
 
     expect(find.text('현재 성장'), findsOneWidget);
-    expect(find.text('총합 스탯'), findsOneWidget);
-    expect(find.text('ATK 0 / DEF 0 / HP 0'), findsOneWidget);
+    expect(find.text('총합 스탯'), findsNothing);
     expect(find.text('전투 스탯'), findsOneWidget);
     expect(
-      find.text(
-        '전투력 $expectedPower / 전투 직군 ${_disciplineLabel(leveledTarget)}',
-      ),
+      find.text('전투력 $expectedPower / 직군 ${_disciplineLabel(leveledTarget)}'),
       findsOneWidget,
     );
     expect(
       find.text(
-        'HP ${expectedStats.maxHp} / 물공 ${expectedStats.physicalAttack} / 물방 ${expectedStats.physicalDefense}',
+        '체력 ${expectedStats.maxHp} / 물공 ${expectedStats.physicalAttack} / 물방 ${expectedStats.physicalDefense}',
       ),
       findsOneWidget,
     );
     expect(find.text('다음 목표'), findsOneWidget);
     expect(find.text('현재 티어 최대 랭크 도달'), findsOneWidget);
     expect(find.text('티어업 가능'), findsOneWidget);
-    expect(find.text('승급 재료: tier_mat_mercenary_2 1/1'), findsOneWidget);
+    expect(find.text('승급 재료: 용병 승급 재료 2 1/1'), findsOneWidget);
+    expect(find.text('직군 전사 / 전열 기본 전열'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('배치 변경은 전투/작업실 화면에서 진행'),
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
+
     expect(find.text('배치 변경은 전투/작업실 화면에서 진행'), findsOneWidget);
     await tester.scrollUntilVisible(
       find.text('무기: 미장착'),
@@ -105,7 +110,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('무기: Bronze Sword'), findsOneWidget);
-    expect(find.text('ATK 12 / DEF 0 / HP 0'), findsOneWidget);
+    expect(find.text('공격력 12 / 방어력 0 / 체력 0'), findsOneWidget);
   });
 
   testWidgets(
@@ -150,11 +155,10 @@ void main() {
       await tester.tap(find.text('Vital Nigredo'));
       await tester.pumpAndSettle();
 
-      expect(find.text('총합 스탯'), findsOneWidget);
-      expect(find.text('ATK 0 / DEF 0 / HP 0'), findsOneWidget);
+      expect(find.text('총합 스탯'), findsNothing);
       expect(find.text('전투 스탯'), findsOneWidget);
       expect(
-        find.text('전투력 $expectedPower / 전투 직군 ${_disciplineLabel(target)}'),
+        find.text('전투력 $expectedPower / 직군 ${_disciplineLabel(target)}'),
         findsOneWidget,
       );
       await tester.scrollUntilVisible(

@@ -51,7 +51,7 @@ class CharacterEquipmentSheet extends StatelessWidget {
             : ListView(
                 children: slot.availableItems.map((EquipmentInstance item) {
                   final String statLabel =
-                      'ATK ${item.totalAttack} / DEF ${item.totalDefense} / HP ${item.totalHealth}';
+                      '공격력 ${item.totalAttack} / 방어력 ${item.totalDefense} / 체력 ${item.totalHealth}';
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(item.name),

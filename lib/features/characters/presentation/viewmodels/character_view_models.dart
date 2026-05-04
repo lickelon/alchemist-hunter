@@ -31,7 +31,7 @@ class CharacterEquipmentSlotView {
       return '장착 가능한 장비 ${availableItems.length}개';
     }
     final String baseLabel =
-        'ATK ${item.totalAttack} / DEF ${item.totalDefense} / HP ${item.totalHealth}';
+        '공격력 ${item.totalAttack} / 방어력 ${item.totalDefense} / 체력 ${item.totalHealth}';
     final String? enchantLabel = item.enchant?.label;
     if (enchantLabel == null) {
       return baseLabel;
@@ -44,7 +44,6 @@ class CharacterListItemView {
   const CharacterListItemView({
     required this.character,
     required this.typeLabel,
-    required this.summaryLine,
     required this.growthLabel,
     required this.rankHint,
     required this.tierHint,
@@ -59,7 +58,6 @@ class CharacterListItemView {
 
   final CharacterProgress character;
   final String typeLabel;
-  final String summaryLine;
   final String growthLabel;
   final String rankHint;
   final String tierHint;

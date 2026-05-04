@@ -34,10 +34,10 @@ class CharacterController {
     _apply(
       nextState,
       logMessage: currentCharacter == null
-          ? 'Character not found'
+          ? '캐릭터를 찾을 수 없음'
           : !currentCharacter.canRankUp
-          ? 'Rank up condition not met'
-          : 'Rank up ${currentCharacter.name} -> Rank ${currentCharacter.rank + 1}',
+          ? '랭크업 조건 미충족'
+          : '${currentCharacter.name} 랭크업 -> 랭크 ${currentCharacter.rank + 1}',
     );
   }
 
@@ -59,12 +59,12 @@ class CharacterController {
     _apply(
       nextState,
       logMessage: currentCharacter == null
-          ? 'Character not found'
+          ? '캐릭터를 찾을 수 없음'
           : !currentCharacter.canTierUp
-          ? 'Tier up condition not met'
+          ? '티어업 조건 미충족'
           : (current.player.materialInventory[requiredMaterial] ?? 0) < 1
-          ? 'Tier material missing: $requiredMaterial'
-          : 'Tier up ${currentCharacter.name} -> Tier ${currentCharacter.tierIndex + 1}',
+          ? '승급 재료 부족'
+          : '${currentCharacter.name} 티어업 -> 티어 ${currentCharacter.tierIndex + 1}',
     );
   }
 
@@ -85,10 +85,10 @@ class CharacterController {
     _apply(
       nextState,
       logMessage: currentCharacter == null
-          ? 'Character not found'
+          ? '캐릭터를 찾을 수 없음'
           : item == null
-          ? 'Equipment not found'
-          : 'Equipped ${item.name} to ${currentCharacter.name}',
+          ? '장비를 찾을 수 없음'
+          : '${currentCharacter.name}에 ${item.name} 장착',
     );
   }
 
@@ -111,10 +111,10 @@ class CharacterController {
     _apply(
       nextState,
       logMessage: currentCharacter == null
-          ? 'Character not found'
+          ? '캐릭터를 찾을 수 없음'
           : item == null
-          ? 'No equipped item in ${slot.name}'
-          : 'Unequipped ${item.name} from ${currentCharacter.name}',
+          ? '${_slotLabel(slot)} 슬롯에 장착된 장비 없음'
+          : '${currentCharacter.name}에서 ${item.name} 해제',
     );
   }
 
@@ -152,6 +152,14 @@ class CharacterController {
       }
     }
     return null;
+  }
+
+  String _slotLabel(EquipmentSlot slot) {
+    return switch (slot) {
+      EquipmentSlot.weapon => '무기',
+      EquipmentSlot.armor => '방어구',
+      EquipmentSlot.accessory => '장신구',
+    };
   }
 
   void _apply(SessionState nextState, {required String logMessage}) {

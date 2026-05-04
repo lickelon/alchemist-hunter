@@ -42,7 +42,6 @@ class CharacterDetailSheet extends ConsumerWidget {
     }
 
     final CharacterProgress character = item.character;
-    final String totalStatLabel = characterTotalStatLabel(item.equipmentSlots);
     return AppBottomSheet(
       child: AppSheetLayout(
         title: '${character.name} / ${item.typeLabel}',
@@ -52,15 +51,10 @@ class CharacterDetailSheet extends ConsumerWidget {
               character: character,
               growthLabel: item.growthLabel,
             ),
-            CharacterDetailSection(title: '총합 스탯', child: Text(totalStatLabel)),
             CharacterGoalSection(
               rankHint: item.rankHint,
               tierHint: item.tierHint,
               tierMaterialLabel: item.tierMaterialLabel,
-            ),
-            CharacterAssignmentSection(
-              assignmentLabel: item.assignmentLabel,
-              assignmentGuideLabel: item.assignmentGuideLabel,
             ),
             CharacterCombatSection(
               powerLabel: item.combatPowerLabel,
@@ -68,16 +62,20 @@ class CharacterDetailSheet extends ConsumerWidget {
             ),
             if (item.detailLines.isNotEmpty)
               CharacterProfileSection(detailLines: item.detailLines),
-            CharacterActionSection(
-              character: character,
-              onRankUp: onRankUp,
-              onTierUp: onTierUp,
+            CharacterAssignmentSection(
+              assignmentLabel: item.assignmentLabel,
+              assignmentGuideLabel: item.assignmentGuideLabel,
             ),
             CharacterEquipmentSection(
               slots: item.equipmentSlots,
               onManage: (CharacterEquipmentSlotView slot) {
                 _showEquipmentSheet(context, character: character, slot: slot);
               },
+            ),
+            CharacterActionSection(
+              character: character,
+              onRankUp: onRankUp,
+              onTierUp: onTierUp,
             ),
           ],
         ),

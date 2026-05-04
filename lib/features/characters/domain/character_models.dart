@@ -147,7 +147,7 @@ class CharacterProgress {
     }
     return switch (type) {
       CharacterType.mercenary => CombatJobIds.mercenaryWarrior,
-      CharacterType.homunculus => CombatJobIds.homunculusMage,
+      CharacterType.homunculus => CombatJobIds.homunculusWarrior,
     };
   }
 

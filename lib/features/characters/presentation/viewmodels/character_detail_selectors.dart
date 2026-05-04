@@ -1,30 +1,13 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_combat_stat_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/static_material_catalog_repository.dart';
 
 String characterTypeLabel(CharacterType type) {
   return switch (type) {
     CharacterType.mercenary => '용병',
     CharacterType.homunculus => '호문쿨루스',
   };
-}
-
-String characterSummaryLine(CharacterProgress character) {
-  if (character.type == CharacterType.homunculus) {
-    final String role = character.homunculusRole ?? '지원';
-    final String effect = character.homunculusSupportEffect ?? '효과 분석 중';
-    return '$role / $effect';
-  }
-  if (character.canTierUp) {
-    return '다음 행동: 티어업 가능';
-  }
-  if (character.canRankUp) {
-    return '다음 행동: 랭크업 가능';
-  }
-  if (character.level < character.maxLevelForRank) {
-    return '다음 목표: Lv ${character.maxLevelForRank}';
-  }
-  return '다음 목표: Rank ${character.maxRankForCurrentTier}';
 }
 
 String characterRankHint(CharacterProgress character) {
@@ -34,7 +17,7 @@ String characterRankHint(CharacterProgress character) {
   if (character.rank >= character.maxRankForCurrentTier) {
     return '현재 티어 최대 랭크 도달';
   }
-  return '랭크업 조건: Lv ${character.maxLevelForRank} 도달 필요';
+  return '랭크업 조건: 레벨 ${character.maxLevelForRank} 도달 필요';
 }
 
 String characterTierHint(
@@ -57,7 +40,7 @@ String characterTierHint(
     return '티어업 조건 충족, 승급 재료 부족';
   }
 
-  return '티어업 조건: Rank ${character.maxRankForCurrentTier} 도달 필요';
+  return '티어업 조건: 랭크 ${character.maxRankForCurrentTier} 도달 필요';
 }
 
 String characterTierMaterialLabel(
@@ -71,10 +54,16 @@ String characterTierMaterialLabel(
       ? 'tier_mat_mercenary_${character.tierIndex + 1}'
       : 'tier_mat_homunculus_${character.tierIndex + 1}';
   final int owned = inventory[materialKey] ?? 0;
-  return '승급 재료: $materialKey $owned/1';
+  final String materialName =
+      const StaticMaterialCatalogRepository().materialName(materialKey) ??
+      _tierMaterialDisplayName(character);
+  return '승급 재료: $materialName $owned/1';
 }
 
-List<String> characterDetailLines(CharacterProgress character) {
+List<String> characterDetailLines(
+  CharacterProgress character, {
+  required String combatDisciplineLabel,
+}) {
   if (character.type == CharacterType.homunculus) {
     return <String>[
       '출처 ${character.homunculusOrigin ?? "미확인 시드"}',
@@ -90,30 +79,22 @@ List<String> characterDetailLines(CharacterProgress character) {
     MercenaryTier.champion => '챔피언 전열',
     MercenaryTier.legend => '전설 전열',
   };
-  return <String>['역할 $role'];
+  return <String>['직군 $combatDisciplineLabel / 전열 $role'];
 }
 
-String characterCombatPowerLabel(CharacterProgress character) {
-  final BattleCombatStatService statService = const BattleCombatStatService();
-  final BattleCombatStats stats = statService.buildStats(character);
+String characterCombatPowerLabel({
+  required BattleCombatStats stats,
+  required BattleCombatStatService statService,
+  required String combatDisciplineLabel,
+}) {
   final int power = statService.summaryPowerForStats(stats);
-  final String disciplineLabel = switch (statService.disciplineFor(
-    character.resolvedCombatJobId,
-  )) {
-    CombatDiscipline.warrior => '전사',
-    CombatDiscipline.mage => '마법사',
-    CombatDiscipline.rogue => '도적',
-    CombatDiscipline.archer => '궁수',
-  };
-  return '전투력 $power / 전투 직군 $disciplineLabel';
+  final String disciplineLabel = combatDisciplineLabel;
+  return '전투력 $power / 직군 $disciplineLabel';
 }
 
-List<String> characterCombatStatLines(CharacterProgress character) {
-  final BattleCombatStats stats = const BattleCombatStatService().buildStats(
-    character,
-  );
+List<String> characterCombatStatLines(BattleCombatStats stats) {
   return <String>[
-    'HP ${stats.maxHp} / 물공 ${stats.physicalAttack} / 물방 ${stats.physicalDefense}',
+    '체력 ${stats.maxHp} / 물공 ${stats.physicalAttack} / 물방 ${stats.physicalDefense}',
     '마공 ${stats.magicalAttack} / 마방 ${stats.magicalDefense} / 속도 ${stats.speed}',
     '치확 ${_percentLabel(stats.critChance)} / 치피 ${_percentLabel(stats.critDamage)}',
     '명중 ${_percentLabel(stats.accuracy)} / 회피 ${_percentLabel(stats.evasion)}',
@@ -121,6 +102,26 @@ List<String> characterCombatStatLines(CharacterProgress character) {
     '물관 ${_percentLabel(stats.physicalPenetration)} / 마관 ${_percentLabel(stats.magicalPenetration)}',
     '흡혈 ${_percentLabel(stats.lifesteal)} / 회복력 ${_percentLabel(stats.healingPower)} / 재생 ${_percentLabel(stats.regen)}',
   ];
+}
+
+String characterCombatDisciplineLabel(
+  String jobId, {
+  BattleCombatStatService statService = const BattleCombatStatService(),
+}) {
+  return switch (statService.disciplineFor(jobId)) {
+    CombatDiscipline.warrior => '전사',
+    CombatDiscipline.mage => '마법사',
+    CombatDiscipline.rogue => '도적',
+    CombatDiscipline.archer => '궁수',
+  };
+}
+
+String _tierMaterialDisplayName(CharacterProgress character) {
+  final int nextTier = character.tierIndex + 1;
+  return switch (character.type) {
+    CharacterType.mercenary => '용병 승급 재료 $nextTier',
+    CharacterType.homunculus => '호문쿨루스 승급 재료 $nextTier',
+  };
 }
 
 String _percentLabel(double value) {

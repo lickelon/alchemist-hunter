@@ -49,7 +49,7 @@ class CharacterGrowthSection extends StatelessWidget {
           Text(growthLabel),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'XP ${character.xp}/${character.xpToNextLevel} / MaxLv ${character.maxLevelForRank}',
+            '경험치 ${character.xp}/${character.xpToNextLevel} / 최대 레벨 ${character.maxLevelForRank}',
           ),
         ],
       ),
@@ -197,13 +197,13 @@ class CharacterActionSection extends StatelessWidget {
             onPressed: character.canRankUp
                 ? () => onRankUp(character.id)
                 : null,
-            child: const Text('Rank Up'),
+            child: const Text('랭크업'),
           ),
           FilledButton.tonal(
             onPressed: character.canTierUp
                 ? () => onTierUp(character.id)
                 : null,
-            child: const Text('Tier Up'),
+            child: const Text('티어업'),
           ),
         ],
       ),

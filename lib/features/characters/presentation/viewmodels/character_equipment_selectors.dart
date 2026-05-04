@@ -18,19 +18,3 @@ List<CharacterEquipmentSlotView> buildCharacterEquipmentSlots({
       })
       .toList(growable: false);
 }
-
-String characterTotalStatLabel(List<CharacterEquipmentSlotView> slots) {
-  int attack = 0;
-  int defense = 0;
-  int health = 0;
-  for (final CharacterEquipmentSlotView slot in slots) {
-    final EquipmentInstance? item = slot.equippedItem;
-    if (item == null) {
-      continue;
-    }
-    attack += item.totalAttack;
-    defense += item.totalDefense;
-    health += item.totalHealth;
-  }
-  return 'ATK $attack / DEF $defense / HP $health';
-}
