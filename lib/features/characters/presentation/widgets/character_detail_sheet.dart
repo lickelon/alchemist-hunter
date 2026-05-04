@@ -62,6 +62,10 @@ class CharacterDetailSheet extends ConsumerWidget {
               assignmentLabel: item.assignmentLabel,
               assignmentGuideLabel: item.assignmentGuideLabel,
             ),
+            CharacterCombatSection(
+              powerLabel: item.combatPowerLabel,
+              statLines: item.combatStatLines,
+            ),
             if (item.detailLines.isNotEmpty)
               CharacterProfileSection(detailLines: item.detailLines),
             CharacterActionSection(

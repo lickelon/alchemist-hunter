@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_sheet.dart';
 
 void main() {
@@ -37,7 +38,13 @@ void main() {
     await tester.tap(find.widgetWithText(CheckboxListTile, 'Rookie Swordsman'));
     await tester.pumpAndSettle();
 
-    expect(session.state.battle.stageAssignments['stage_2'], <String>['merc_1']);
-    expect(find.text('배치 1/3명 / 전투력 120'), findsOneWidget);
+    expect(session.state.battle.stageAssignments['stage_2'], <String>[
+      'merc_1',
+    ]);
+    final int expectedPower = const BattlePartyPowerService().totalPower(
+      session.state.characters,
+      assignedCharacterIds: const <String>['merc_1'],
+    );
+    expect(find.text('배치 1/3명 / 전투력 $expectedPower'), findsOneWidget);
   });
 }

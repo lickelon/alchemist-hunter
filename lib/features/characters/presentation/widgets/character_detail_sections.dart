@@ -142,6 +142,37 @@ class CharacterProfileSection extends StatelessWidget {
   }
 }
 
+class CharacterCombatSection extends StatelessWidget {
+  const CharacterCombatSection({
+    super.key,
+    required this.powerLabel,
+    required this.statLines,
+  });
+
+  final String powerLabel;
+  final List<String> statLines;
+
+  @override
+  Widget build(BuildContext context) {
+    return CharacterDetailSection(
+      title: '전투 스탯',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(powerLabel),
+          const SizedBox(height: AppSpacing.sm),
+          ...statLines.map(
+            (String line) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: Text(line),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class CharacterActionSection extends StatelessWidget {
   const CharacterActionSection({
     super.key,

@@ -55,13 +55,6 @@ class CharacterCard extends StatelessWidget {
               Text(item.assignmentLabel),
               const SizedBox(height: AppSpacing.sm),
               Text(item.growthLabel),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                item.summaryLine,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
             ],
           ),
         ),

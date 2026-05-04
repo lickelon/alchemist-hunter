@@ -1,3 +1,5 @@
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_combat_stat_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 
 String characterTypeLabel(CharacterType type) {
@@ -89,4 +91,38 @@ List<String> characterDetailLines(CharacterProgress character) {
     MercenaryTier.legend => '전설 전열',
   };
   return <String>['역할 $role'];
+}
+
+String characterCombatPowerLabel(CharacterProgress character) {
+  final BattleCombatStatService statService = const BattleCombatStatService();
+  final BattleCombatStats stats = statService.buildStats(character);
+  final int power = statService.summaryPowerForStats(stats);
+  final String disciplineLabel = switch (statService.disciplineFor(
+    character.resolvedCombatJobId,
+  )) {
+    CombatDiscipline.warrior => '전사',
+    CombatDiscipline.mage => '마법사',
+    CombatDiscipline.rogue => '도적',
+    CombatDiscipline.archer => '궁수',
+  };
+  return '전투력 $power / 전투 직군 $disciplineLabel';
+}
+
+List<String> characterCombatStatLines(CharacterProgress character) {
+  final BattleCombatStats stats = const BattleCombatStatService().buildStats(
+    character,
+  );
+  return <String>[
+    'HP ${stats.maxHp} / 물공 ${stats.physicalAttack} / 물방 ${stats.physicalDefense}',
+    '마공 ${stats.magicalAttack} / 마방 ${stats.magicalDefense} / 속도 ${stats.speed}',
+    '치확 ${_percentLabel(stats.critChance)} / 치피 ${_percentLabel(stats.critDamage)}',
+    '명중 ${_percentLabel(stats.accuracy)} / 회피 ${_percentLabel(stats.evasion)}',
+    '상태적중 ${_percentLabel(stats.statusAccuracy)} / 상태저항 ${_percentLabel(stats.statusResistance)}',
+    '물관 ${_percentLabel(stats.physicalPenetration)} / 마관 ${_percentLabel(stats.magicalPenetration)}',
+    '흡혈 ${_percentLabel(stats.lifesteal)} / 회복력 ${_percentLabel(stats.healingPower)} / 재생 ${_percentLabel(stats.regen)}',
+  ];
+}
+
+String _percentLabel(double value) {
+  return '${(value * 100).round()}%';
 }

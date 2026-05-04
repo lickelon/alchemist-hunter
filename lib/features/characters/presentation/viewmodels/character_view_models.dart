@@ -50,6 +50,8 @@ class CharacterListItemView {
     required this.tierHint,
     required this.tierMaterialLabel,
     required this.equipmentSlots,
+    required this.combatPowerLabel,
+    required this.combatStatLines,
     required this.detailLines,
     required this.assignmentLabel,
     required this.assignmentGuideLabel,
@@ -63,6 +65,8 @@ class CharacterListItemView {
   final String tierHint;
   final String tierMaterialLabel;
   final List<CharacterEquipmentSlotView> equipmentSlots;
+  final String combatPowerLabel;
+  final List<String> combatStatLines;
   final List<String> detailLines;
   final String assignmentLabel;
   final String assignmentGuideLabel;

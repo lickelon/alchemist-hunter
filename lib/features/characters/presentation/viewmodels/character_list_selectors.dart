@@ -131,6 +131,8 @@ List<CharacterListItemView> _buildCharacterViews({
       rankHint: characterRankHint(character),
       tierHint: characterTierHint(character, inventory),
       tierMaterialLabel: characterTierMaterialLabel(character, inventory),
+      combatPowerLabel: characterCombatPowerLabel(character),
+      combatStatLines: characterCombatStatLines(character),
       detailLines: characterDetailLines(character),
       assignmentLabel: characterAssignmentLabel(
         characterId: character.id,

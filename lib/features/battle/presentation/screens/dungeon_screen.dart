@@ -1,7 +1,8 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
-import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_sheet.dart';
+import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -37,6 +38,9 @@ class DungeonScreen extends ConsumerWidget {
         final String pendingLabel = ref.watch(
           battleStagePendingClaimLabelProvider(stage),
         );
+        final List<BattleLogEntry> recentLogs = ref.watch(
+          battleStageRecentLogsProvider(stage),
+        );
         final bool canStart =
             unlocked &&
             assignedCount > 0 &&
@@ -45,11 +49,15 @@ class DungeonScreen extends ConsumerWidget {
             expedition.status == BattleExpeditionStatus.running;
         final bool canClaim = unlocked && !expedition.pendingClaim.isEmpty;
         final String summary =
-            '편성 $assignedCount명 / 전투력 $partyPower / $statusLabel / Gold: $gold / Essence: $essence';
+            '편성 $assignedCount명 / 전투력 $partyPower / $statusLabel';
+        final String resourceLine = 'Gold: $gold / Essence: $essence';
+        final String recentLine = recentLogs.isEmpty
+            ? '최근 전투 기록 없음'
+            : '최근 전투 ${recentLogs.first.success ? '성공' : '실패'} / ${recentLogs.first.turns}턴';
 
         return Card(
           child: InkWell(
-            onTap: () => _showAssignmentSheet(context, stage),
+            onTap: () => _showStatusSheet(context, stage),
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
@@ -70,50 +78,53 @@ class DungeonScreen extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.md),
                   Text(
                     unlocked
-                        ? '$summary\n$pendingLabel${expedition.lastSummary.isEmpty ? "" : "\n최근 ${expedition.lastSummary}"}'
-                        : '$summary\n${_lockedReason(stage)}',
+                        ? '$summary\n$resourceLine\n$pendingLabel\n$recentLine'
+                        : '$summary\n$resourceLine\n${_lockedReason(stage)}',
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  Row(
+                  Wrap(
+                    spacing: AppSpacing.md,
+                    runSpacing: AppSpacing.md,
                     children: <Widget>[
-                      Expanded(
-                        child: FilledButton(
-                          onPressed: !unlocked
-                              ? null
+                      FilledButton.tonal(
+                        onPressed: unlocked
+                            ? () => _showAssignmentSheet(context, stage)
+                            : null,
+                        child: const Text('편성'),
+                      ),
+                      FilledButton(
+                        onPressed: !unlocked
+                            ? null
+                            : canStop
+                            ? () {
+                                ref
+                                    .read(battleControllerProvider)
+                                    .stopExpedition(stage);
+                              }
+                            : canStart
+                            ? () {
+                                ref
+                                    .read(battleControllerProvider)
+                                    .startExpedition(stage);
+                              }
+                            : null,
+                        child: Text(
+                          !unlocked
+                              ? '잠김'
                               : canStop
-                              ? () {
-                                  ref
-                                      .read(battleControllerProvider)
-                                      .stopExpedition(stage);
-                                }
-                              : canStart
-                              ? () {
-                                  ref
-                                      .read(battleControllerProvider)
-                                      .startExpedition(stage);
-                                }
-                              : null,
-                          child: Text(
-                            !unlocked
-                                ? '잠김'
-                                : canStop
-                                ? '정지'
-                                : '원정 시작',
-                          ),
+                              ? '정지'
+                              : '원정 시작',
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.md),
-                      Expanded(
-                        child: FilledButton.tonal(
-                          onPressed: canClaim
-                              ? () {
-                                  ref
-                                      .read(battleControllerProvider)
-                                      .claimStageRewards(stage);
-                                }
-                              : null,
-                          child: const Text('수령'),
-                        ),
+                      FilledButton.tonal(
+                        onPressed: canClaim
+                            ? () {
+                                ref
+                                    .read(battleControllerProvider)
+                                    .claimStageRewards(stage);
+                              }
+                            : null,
+                        child: const Text('수령'),
                       ),
                     ],
                   ),
@@ -132,6 +143,16 @@ class DungeonScreen extends ConsumerWidget {
       isScrollControlled: true,
       builder: (BuildContext context) {
         return BattleAssignmentSheet(stageId: stageId);
+      },
+    );
+  }
+
+  void _showStatusSheet(BuildContext context, String stageId) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return BattleStageStatusSheet(stageId: stageId);
       },
     );
   }
