@@ -11,7 +11,7 @@ class TownMercenaryHireCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Mercenary Hire',
+      name: '용병 고용',
       summary: candidateCount == 0 ? '채용 후보 없음' : '채용 후보 $candidateCount명',
       icon: Icons.groups_outlined,
       onTap: () => _showHireSheet(context),

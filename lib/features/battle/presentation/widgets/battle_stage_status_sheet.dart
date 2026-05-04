@@ -5,6 +5,7 @@ import 'package:alchemist_hunter/features/battle/battle_catalog.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_result_sheet.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_drop_sheet.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,8 @@ class BattleStageStatusSheet extends ConsumerWidget {
 
     return AppBottomSheet(
       child: AppSheetLayout(
-        title: '${stage.name} 전투 현황',
+        title:
+            '${battleStageDisplayName(stage.id, fallback: stage.name)} 전투 현황',
         header: Text('권장 전투력 ${stage.recommendedPower} / 적 ${enemies.length}종'),
         body: ListView(
           children: <Widget>[
@@ -96,7 +98,7 @@ class BattleStageStatusSheet extends ConsumerWidget {
                   : <String>[
                       lastResultLabel,
                       ...recentLogs.take(5).map((BattleLogEntry log) {
-                        return '${_formatTime(log.resolvedAt)} / ${log.success ? '성공' : '실패'} / Gold ${log.gold >= 0 ? '+' : ''}${log.gold} / Essence +${log.essence}';
+                        return '${_formatTime(log.resolvedAt)} / ${log.success ? '성공' : '실패'} / 골드 ${battleSignedValueLabel(log.gold)} / 에센스 ${battleSignedValueLabel(log.essence)}';
                       }),
                     ],
             ),
@@ -224,10 +226,10 @@ class BattleStageStatusSheet extends ConsumerWidget {
   String _formatRemaining(Duration total, Duration progress) {
     final Duration remaining = total - progress;
     if (remaining <= Duration.zero) {
-      return '0.0s';
+      return '0.0초';
     }
     final double seconds = remaining.inMilliseconds / 1000;
-    return '${seconds.toStringAsFixed(1)}s';
+    return '${seconds.toStringAsFixed(1)}초';
   }
 
   String _formatAction(BattleActionLog action) {

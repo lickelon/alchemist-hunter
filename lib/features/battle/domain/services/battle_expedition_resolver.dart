@@ -91,7 +91,7 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
     return BattleEncounterResolution(
       playback: playback,
       summary:
-          '${playback.success ? '성공' : '실패'} / Gold ${gold >= 0 ? '+' : ''}$gold / Essence +$essence / 재료 ${pendingClaim.materials.length}종',
+          '${playback.success ? '성공' : '실패'} / 골드 ${gold >= 0 ? '+' : ''}$gold / 에센스 ${essence >= 0 ? '+' : ''}$essence / 재료 ${pendingClaim.materials.length}종',
     );
   }
 }

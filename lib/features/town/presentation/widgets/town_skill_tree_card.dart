@@ -16,7 +16,7 @@ class TownSkillTreeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Town Skill Tree',
+      name: '마을 스킬트리',
       summary: '해금 $unlockedCount/$totalCount',
       icon: Icons.account_tree_outlined,
       onTap: () => _showSkillTreeSheet(context),

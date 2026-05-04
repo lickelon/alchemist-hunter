@@ -32,17 +32,17 @@ class TownScreen extends ConsumerWidget {
         Card(
           child: ListTile(
             leading: const Icon(Icons.account_balance_wallet_outlined),
-            title: const Text('Town Economy'),
-            subtitle: Text('Gold: $gold / TownInsight: $townInsight'),
+            title: const Text('마을 경제'),
+            subtitle: Text('골드 $gold / 마을 통찰 $townInsight'),
           ),
         ),
         TownShopCard(
-          title: 'General Shop',
+          title: '일반 상점',
           shopType: ShopType.general,
           itemCount: generalShop.items.length,
         ),
         TownShopCard(
-          title: 'Catalyst Shop',
+          title: '촉매 상점',
           shopType: ShopType.catalyst,
           itemCount: catalystShop.items.length,
         ),

@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_sheet.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_sheet.dart';
 import 'package:flutter/material.dart';
@@ -18,13 +19,22 @@ class DungeonScreen extends ConsumerWidget {
 
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      itemCount: stages.length,
+      itemCount: stages.length + 1,
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (BuildContext context, int index) {
-        final String stage = stages[index];
+        if (index == 0) {
+          return Card(
+            child: ListTile(
+              leading: const Icon(Icons.savings_outlined),
+              title: const Text('전투 자원'),
+              subtitle: Text('골드 $gold / 에센스 $essence'),
+            ),
+          );
+        }
+        final String stage = stages[index - 1];
         final bool unlocked =
-            index == 0 || progress.unlockFlags.contains(stage);
-        final String stageLabel = stage.replaceFirst('stage_', 'Stage ');
+            index == 1 || progress.unlockFlags.contains(stage);
+        final String stageLabel = battleStageDisplayName(stage);
         final int assignedCount = ref
             .watch(battleStageAssignmentProvider(stage))
             .length;
@@ -47,7 +57,6 @@ class DungeonScreen extends ConsumerWidget {
         final bool canClaim = unlocked && !expedition.pendingClaim.isEmpty;
         final String summary =
             '편성 $assignedCount명 / 전투력 $partyPower / $statusLabel';
-        final String resourceLine = 'Gold: $gold / Essence: $essence';
         final String recentLine = recentLogs.isEmpty
             ? '최근 전투 기록 없음'
             : '최근 전투 ${recentLogs.first.success ? '성공' : '실패'} / ${recentLogs.first.turns}턴';
@@ -75,8 +84,8 @@ class DungeonScreen extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.md),
                   Text(
                     unlocked
-                        ? '$summary\n$resourceLine\n$pendingLabel\n$recentLine'
-                        : '$summary\n$resourceLine\n${_lockedReason(stage)}',
+                        ? '$summary\n$pendingLabel\n$recentLine'
+                        : '$summary\n${_lockedReason(stage)}',
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Wrap(
@@ -159,10 +168,10 @@ class DungeonScreen extends ConsumerWidget {
 
   String _lockedReason(String stageId) {
     return switch (stageId) {
-      'stage_2' => '잠금 조건: 특수 재료 Moontear Crystal 1개 이상 획득',
-      'stage_3' => '잠금 조건: Stage 2 개방 이후 추가 해금 예정',
-      'stage_4' => '잠금 조건: Stage 3 개방 이후 추가 해금 예정',
-      'stage_5' => '잠금 조건: Stage 4 개방 이후 추가 해금 예정',
+      'stage_2' => '잠금 조건: 특수 재료 1개 이상 획득 필요',
+      'stage_3' => '잠금 조건: ${battleStageDisplayName('stage_2')} 개방 이후 추가 해금 예정',
+      'stage_4' => '잠금 조건: ${battleStageDisplayName('stage_3')} 개방 이후 추가 해금 예정',
+      'stage_5' => '잠금 조건: ${battleStageDisplayName('stage_4')} 개방 이후 추가 해금 예정',
       _ => '잠금 조건: 이전 스테이지 진행 필요',
     };
   }

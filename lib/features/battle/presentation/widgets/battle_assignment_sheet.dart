@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,7 +23,7 @@ class BattleAssignmentSheet extends ConsumerWidget {
 
     return AppBottomSheet(
       child: AppSheetLayout(
-        title: '${stageId.replaceFirst("stage_", "Stage ")} 편성',
+        title: '${battleStageDisplayName(stageId)} 편성',
         header: Text('배치 ${assignedIds.length}/3명 / 전투력 $partyPower'),
         body: ListView(
           children: characters

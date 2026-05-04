@@ -49,7 +49,7 @@ class TownPotionSellCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Potion Sell',
+      name: '포션 판매',
       summary: stackCount == 0 ? '판매 대기 없음' : '판매 대기 $stackCount스택',
       icon: Icons.sell_outlined,
       onTap: () => _showSellSheet(context),

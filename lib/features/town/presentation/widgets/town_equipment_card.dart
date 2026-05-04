@@ -15,7 +15,7 @@ class TownEquipmentCraftCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Equipment Craft',
+      name: '장비 제작',
       summary: completedCount > 0
           ? '수령 대기 $completedCount건'
           : forgeQueueCount > 0

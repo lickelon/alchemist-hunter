@@ -52,19 +52,16 @@ void main() {
       assignedCharacterIds: session.state.battle.stageAssignments['stage_1'],
     );
 
-    expect(find.text('Stage 2'), findsOneWidget);
+    expect(find.text('2단계'), findsOneWidget);
     expect(find.textContaining('편성 2명 / 전투력 $expectedPower'), findsOneWidget);
-    expect(
-      find.textContaining('잠금 조건: 특수 재료 Moontear Crystal 1개 이상 획득'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('잠금 조건: 특수 재료 1개 이상 획득 필요'), findsOneWidget);
     expect(find.text('잠김'), findsWidgets);
     expect(find.text('편성'), findsWidgets);
 
-    await tester.tap(find.text('Stage 1'));
+    await tester.tap(find.text('1단계'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Stage 1 전투 현황'), findsOneWidget);
+    expect(find.text('1단계 전투 현황'), findsOneWidget);
     expect(find.text('현재 상태'), findsOneWidget);
     expect(find.text('대기'), findsOneWidget);
     expect(find.text('적 구성 / 드롭'), findsOneWidget);
@@ -72,7 +69,7 @@ void main() {
     await tester.tap(find.text('적 구성 / 드롭'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Stage 1 적 정보'), findsOneWidget);
+    expect(find.text('1단계 적 정보'), findsOneWidget);
     expect(find.text('Ruin Scavenger'), findsOneWidget);
     expect(find.text('전투 스탯'), findsNothing);
 
@@ -84,16 +81,16 @@ void main() {
     expect(find.textContaining('물방 9'), findsOneWidget);
     expect(find.textContaining('받는 피해 -5%'), findsOneWidget);
 
-    Navigator.of(tester.element(find.text('Stage 1 적 정보'))).pop();
+    Navigator.of(tester.element(find.text('1단계 적 정보'))).pop();
     await tester.pumpAndSettle();
 
-    Navigator.of(tester.element(find.text('Stage 1 전투 현황'))).pop();
+    Navigator.of(tester.element(find.text('1단계 전투 현황'))).pop();
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('편성').first);
     await tester.pumpAndSettle();
 
-    expect(find.text('Stage 1 편성'), findsOneWidget);
+    expect(find.text('1단계 편성'), findsOneWidget);
     expect(find.text('배치 2/3명 / 전투력 $expectedPower'), findsOneWidget);
   });
 
@@ -155,13 +152,13 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Stage 1'));
+    await tester.tap(find.text('1단계'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('최근 결과').last);
     await tester.pumpAndSettle();
 
-    expect(find.text('Stage 1 전투 기록'), findsOneWidget);
+    expect(find.text('1단계 전투 기록'), findsOneWidget);
     expect(find.textContaining('획득 재료: Emberroot x2'), findsOneWidget);
     expect(
       find.textContaining('Rookie Swordsman -> Ruin Scavenger 물리 12'),

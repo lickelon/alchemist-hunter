@@ -32,7 +32,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Stage 2 편성'), findsOneWidget);
+    expect(find.text('2단계 편성'), findsOneWidget);
     expect(find.text('배치 0/3명 / 전투력 0'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(CheckboxListTile, 'Rookie Swordsman'));

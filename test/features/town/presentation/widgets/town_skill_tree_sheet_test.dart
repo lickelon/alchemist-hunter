@@ -27,10 +27,10 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Town Skill Tree'));
+    await tester.tap(find.text('마을 스킬트리'));
     await tester.pumpAndSettle();
 
-    expect(find.text('마을 스킬트리'), findsOneWidget);
+    expect(find.text('마을 스킬트리'), findsWidgets);
     expect(find.textContaining('Trade Ledger'), findsOneWidget);
     expect(find.textContaining('현재 효과 효과 없음'), findsWidgets);
     expect(find.textContaining('다음 효과 포션 판매가 +5%'), findsOneWidget);

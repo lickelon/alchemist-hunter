@@ -20,10 +20,10 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Mercenary Hire'));
+    await tester.tap(find.text('용병 고용'));
     await tester.pumpAndSettle();
 
-    expect(find.text('용병 고용'), findsOneWidget);
+    expect(find.text('용병 고용'), findsWidgets);
     expect(find.text('Apprentice Sellsword'), findsOneWidget);
     expect(find.text('Hedge Guard'), findsOneWidget);
     expect(find.text('후보 갱신'), findsOneWidget);
@@ -47,7 +47,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Mercenary Hire'));
+    await tester.tap(find.text('용병 고용'));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(FilledButton, '고용').first);
     await tester.pumpAndSettle();

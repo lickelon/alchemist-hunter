@@ -3,6 +3,7 @@ import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class BattleResultSheet extends ConsumerWidget {
 
     return AppBottomSheet(
       child: AppSheetLayout(
-        title: '${stageId.replaceFirst("stage_", "Stage ")} 전투 기록',
+        title: '${battleStageDisplayName(stageId)} 전투 기록',
         header: Text(logs.isEmpty ? '최근 기록 없음' : '최근 ${logs.length}회'),
         body: logs.isEmpty
             ? const Center(child: Text('전투 기록이 없습니다.'))
@@ -58,7 +59,7 @@ class BattleResultSheet extends ConsumerWidget {
                         ],
                       ),
                       subtitle: Text(
-                        'Gold ${log.gold >= 0 ? '+' : ''}${log.gold} / Essence +${log.essence} / 재료 ${log.materials.length}종 / ${log.turns}턴',
+                        '골드 ${battleSignedValueLabel(log.gold)} / 에센스 ${battleSignedValueLabel(log.essence)} / 재료 ${log.materials.length}종 / ${log.turns}턴',
                       ),
                       childrenPadding: const EdgeInsets.fromLTRB(
                         AppSpacing.lg,

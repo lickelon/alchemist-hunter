@@ -3,6 +3,7 @@ import 'package:alchemist_hunter/features/battle/battle_catalog.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/repositories/material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
@@ -182,7 +183,7 @@ final battleStageStatusLabelProvider = Provider.family<String, String>((
   return switch (expedition.status) {
     BattleExpeditionStatus.idle => '대기',
     BattleExpeditionStatus.searching =>
-      '적 탐색 중 / ${expedition.phaseProgress.inSeconds}s / ${stage.searchDuration.inSeconds}s',
+      '적 탐색 중 / ${expedition.phaseProgress.inSeconds}초 / ${stage.searchDuration.inSeconds}초',
     BattleExpeditionStatus.battling => '전투 진행 중',
     BattleExpeditionStatus.paused =>
       currentBattle == null ? '정지 / 적 탐색 보류' : '정지 / 전투 보류',
@@ -201,7 +202,7 @@ final battleStagePendingClaimLabelProvider = Provider.family<String, String>((
   if (claim.isEmpty) {
     return '수령 대기 보상 없음';
   }
-  return 'Gold ${claim.gold >= 0 ? '+' : ''}${claim.gold} / Essence +${claim.essence} / 재료 $materialKinds종 / XP ${claim.characterXp.values.fold<int>(0, (int total, int value) => total + value)}';
+  return '골드 ${battleSignedValueLabel(claim.gold)} / 에센스 ${battleSignedValueLabel(claim.essence)} / 재료 $materialKinds종 / 경험치 ${claim.characterXp.values.fold<int>(0, (int total, int value) => total + value)}';
 });
 
 final battleStageLastResultLabelProvider = Provider.family<String, String>((
@@ -215,7 +216,7 @@ final battleStageLastResultLabelProvider = Provider.family<String, String>((
     return '최근 결과 없음';
   }
   final BattleLogEntry log = logs.first;
-  return '최근 결과 ${log.success ? '성공' : '실패'} / Gold ${log.gold >= 0 ? '+' : ''}${log.gold} / 재료 ${log.materials.length}종';
+  return '최근 결과 ${log.success ? '성공' : '실패'} / 골드 ${battleSignedValueLabel(log.gold)} / 재료 ${log.materials.length}종';
 });
 
 final battleStageDropOverviewProvider =
@@ -236,7 +237,7 @@ final battleStageDropOverviewProvider =
           .enemyDefinitionsForStage(stageId);
 
       return BattleStageDropOverviewView(
-        stageName: stage.name,
+        stageName: battleStageDisplayName(stage.id, fallback: stage.name),
         recommendedPower: stage.recommendedPower,
         enemies: enemies
             .map((BattleEnemyDefinition enemy) {
