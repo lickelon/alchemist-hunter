@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/app/session/session_progress_sync_use_case.dart';
-import 'package:alchemist_hunter/features/battle/battle_catalog.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_resolver.dart';
@@ -14,7 +13,7 @@ import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
-import 'package:alchemist_hunter/features/town/town_catalog.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 final Provider<BattleExpeditionResolver> battleExpeditionResolverProvider =
@@ -73,11 +72,13 @@ class SessionProgressSyncController {
       String stageId,
       BattleExpeditionState expedition,
     ) {
-      final BattleExpeditionState? nextExpedition = next.battle.stageExpeditions[stageId];
+      final BattleExpeditionState? nextExpedition =
+          next.battle.stageExpeditions[stageId];
       if (nextExpedition == null) {
         return;
       }
-      if (expedition.pendingClaim.isEmpty && !nextExpedition.pendingClaim.isEmpty) {
+      if (expedition.pendingClaim.isEmpty &&
+          !nextExpedition.pendingClaim.isEmpty) {
         _session.appendLog('${stageId.replaceFirst('stage_', 'Stage ')} 보상 적재');
       }
     });
@@ -99,22 +100,24 @@ class SessionProgressSyncController {
         .where((TownForgeJob job) => job.status == TownForgeJobStatus.completed)
         .length;
     if (nextForgeCompleted > previousForgeCompleted) {
-      _session.appendLog('대장간 완료 ${nextForgeCompleted - previousForgeCompleted}건');
+      _session.appendLog(
+        '대장간 완료 ${nextForgeCompleted - previousForgeCompleted}건',
+      );
     }
   }
 }
 
 final Provider<SessionProgressSyncController>
-sessionProgressSyncControllerProvider = Provider<SessionProgressSyncController>((
-  Ref ref,
-) {
-  return SessionProgressSyncController(
-    ref.read(sessionControllerProvider.notifier),
-    syncUseCase: ref.read(sessionProgressSyncUseCaseProvider),
-    townUseCase: const TownUseCase(),
-    economyService: ref.read(economyServiceProvider),
-    shopCatalogRepository: ref.read(shopCatalogRepositoryProvider),
-    battleExpeditionResolver: ref.read(battleExpeditionResolverProvider),
-    battleCatalogRepository: ref.read(battleCatalogRepositoryProvider),
-  );
-});
+sessionProgressSyncControllerProvider = Provider<SessionProgressSyncController>(
+  (Ref ref) {
+    return SessionProgressSyncController(
+      ref.read(sessionControllerProvider.notifier),
+      syncUseCase: ref.read(sessionProgressSyncUseCaseProvider),
+      townUseCase: const TownUseCase(),
+      economyService: ref.read(economyServiceProvider),
+      shopCatalogRepository: ref.read(shopCatalogRepositoryProvider),
+      battleExpeditionResolver: ref.read(battleExpeditionResolverProvider),
+      battleCatalogRepository: ref.read(battleCatalogRepositoryProvider),
+    );
+  },
+);

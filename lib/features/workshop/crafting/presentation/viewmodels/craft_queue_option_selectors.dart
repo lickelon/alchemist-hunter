@@ -5,7 +5,7 @@ import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/dashboard/presentation/viewmodels/workshop_shared_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/crafting_service_providers.dart';
-import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 
 class PotionQueueOptionView {
   const PotionQueueOptionView({

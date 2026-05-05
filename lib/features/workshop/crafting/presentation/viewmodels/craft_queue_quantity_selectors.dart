@@ -5,7 +5,7 @@ import 'package:alchemist_hunter/features/workshop/crafting/domain/services/poti
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_labels.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/craft_queue_option_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/crafting_service_providers.dart';
-import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 
 class EnqueueQuantityView {
   const EnqueueQuantityView({

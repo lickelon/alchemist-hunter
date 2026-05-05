@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/battle/battle_catalog.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';

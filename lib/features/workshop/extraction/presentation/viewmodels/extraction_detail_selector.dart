@@ -1,7 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/dashboard/presentation/viewmodels/workshop_shared_selectors.dart';
-import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ExtractionTraitOptionView {

@@ -4,7 +4,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/services/workshop_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/use_cases/upgrade_workshop_skill_node_use_case.dart';
-import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 
 class WorkshopSkillTreeController {
   WorkshopSkillTreeController(

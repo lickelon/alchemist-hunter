@@ -5,7 +5,7 @@ import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/domain/repositories/material_catalog_repository.dart';
-import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

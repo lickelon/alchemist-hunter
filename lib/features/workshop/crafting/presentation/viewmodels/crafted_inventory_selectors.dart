@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_display_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 
 class CraftedPotionStackView {
   const CraftedPotionStackView({

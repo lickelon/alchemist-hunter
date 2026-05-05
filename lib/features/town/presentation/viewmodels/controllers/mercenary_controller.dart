@@ -5,7 +5,7 @@ import 'package:alchemist_hunter/features/town/domain/services/mercenary_recruit
 import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/hire_mercenary_use_case.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/refresh_mercenary_candidates_use_case.dart';
-import 'package:alchemist_hunter/features/town/town_catalog.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

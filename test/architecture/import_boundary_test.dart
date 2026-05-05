@@ -47,6 +47,18 @@ void main() {
         }
       }
 
+      if (relativePath.startsWith('lib/features/') &&
+          !relativePath.contains('/domain/') &&
+          !relativePath.contains('/presentation/') &&
+          !relativePath.contains('/data/')) {
+        for (final RegExpMatch match in imports) {
+          final String target = match.group(1)!;
+          if (target.contains('/data/')) {
+            violations.add('$relativePath -> $target');
+          }
+        }
+      }
+
       if (relativePath.startsWith('lib/features/')) {
         final List<String> segments = relativePath.split('/');
         final String currentFeature = segments[2];
