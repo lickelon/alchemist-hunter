@@ -4,6 +4,7 @@
 - 이 문서는 전투 시스템 중 `combat` 하위 설계 문서의 진입점이다.
 - 전투 전체 실행 계획은 `docs/battle/battle_completion_plan.md`를 따른다.
 - 실제 전투 규칙 설계는 아래 세 문서를 함께 참고한다.
+- 장비가 전투 스탯에 기여하는 방식은 장비 전용 설계 문서를 함께 참고한다.
 
 ## 1. battle과 combat의 경계
 - `battle`은 스테이지, 원정, 드롭, 보상, 해금, 로그, UI, sync를 포함한 전투 상위 영역이다.
@@ -17,11 +18,14 @@
   - 수치 보정 효과, 피해 증감, 버프/디버프, modifier 계산 순서
 - `docs/battle/combat/combat_passive_design.md`
   - 필중, 2회 공격, 선공, 반격 같은 판정 규칙 변경 효과
+- `docs/battle/combat/combat_equipment_design.md`
+  - 장비 기본 6스탯, 특수 능력 분리, 장비의 전투 반영 기준
 
 ## 3. 문서 사용 기준
 - 기본 몸값과 성장 규칙을 정할 때는 `combat_stat_design.md`를 본다.
 - 수치를 더하거나 빼는 효과를 설계할 때는 `combat_modifier_design.md`를 본다.
 - 판정 절차를 건너뛰거나 행동 규칙을 추가하는 효과를 설계할 때는 `combat_passive_design.md`를 본다.
+- 장비 스탯 구조나 장비 특수 옵션 기준을 정할 때는 `combat_equipment_design.md`를 본다.
 
 ## 4. 책임 분리
 - `BattleCombatStats`
