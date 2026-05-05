@@ -58,7 +58,7 @@ void main() {
     expect(session.state.workshop.logs.first, '부화 등록 / Vital Nigredo');
   });
 
-  testWidgets('workshop hatch sheet shows snackbar when queue is full', (
+  testWidgets('workshop hatch sheet shows toast when queue is full', (
     WidgetTester tester,
   ) async {
     final ProviderContainer container = ProviderContainer();
@@ -107,5 +107,6 @@ void main() {
 
     expect(find.text('작업실 큐가 가득 찼습니다'), findsOneWidget);
     expect(find.text('호문쿨루스 부화'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 2000));
   });
 }

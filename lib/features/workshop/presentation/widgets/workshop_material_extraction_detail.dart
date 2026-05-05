@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/viewmodels/workshop_display_labels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,114 +47,109 @@ class _WorkshopMaterialExtractionDetailState
     }.where((int value) => value > 0).toList()..sort();
 
     return AppBottomSheet(
-      child: ScaffoldMessenger(
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: false,
-          body: Builder(
-            builder: (BuildContext sheetContext) {
-              return AppSheetLayout(
-                title: detail.materialName,
-                header: Text('보유 ${detail.ownedQuantity}개'),
-                body: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      const Text(
-                        '추출 수량',
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      Wrap(
-                        spacing: AppSpacing.md,
-                        runSpacing: AppSpacing.md,
-                        children: quantityOptions.map((int quantity) {
-                          final bool selected = quantity == selectedQuantity;
-                          final String label = quantity == detail.ownedQuantity
-                              ? '최대'
-                              : 'x$quantity';
-                          return ChoiceChip(
-                            label: Text(label),
-                            selected: selected,
-                            onSelected: (_) {
-                              setState(() {
-                                _quantity = quantity;
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      const Text(
-                        '분석 결과',
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      Wrap(
-                        spacing: AppSpacing.md,
-                        runSpacing: AppSpacing.md,
-                        children: detail.traits.map((
-                          ExtractionTraitOptionView trait,
-                        ) {
-                          final bool selected = _selectedTraits.contains(
-                            trait.id,
-                          );
-                          return FilterChip(
-                            label: Text(
-                              '${trait.name} ${workshopTraitAmountLabel(trait.amount)}',
-                            ),
-                            selected: selected,
-                            onSelected: (bool value) {
-                              setState(() {
-                                if (value) {
-                                  _selectedTraits.add(trait.id);
-                                } else {
-                                  _selectedTraits.remove(trait.id);
-                                }
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      const Text(
-                        '추출 프로필',
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      WorkshopExtractionProfileList(
-                        profiles: detail.profiles,
-                        hasSelection: _selectedTraits.isNotEmpty,
-                        onExtract: (String profileId) {
-                          final WorkshopExtractionSubmitResult result =
-                              controller.extractMaterial(
-                                detail.materialId,
-                                profileId,
-                                quantity: selectedQuantity,
-                                selectedTraits: _selectedTraits.isEmpty
-                                    ? null
-                                    : _selectedTraits.toList(),
-                              );
-                          if (result ==
-                              WorkshopExtractionSubmitResult.success) {
-                            Navigator.of(sheetContext).pop();
-                            return;
-                          }
-                          final String message =
-                              result == WorkshopExtractionSubmitResult.queueFull
-                              ? '작업실 큐가 가득 찼습니다'
-                              : '추출 등록에 실패했습니다';
-                          ScaffoldMessenger.of(
-                            sheetContext,
-                          ).showSnackBar(SnackBar(content: Text(message)));
-                        },
-                      ),
-                    ],
-                  ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        resizeToAvoidBottomInset: false,
+        body: Builder(
+          builder: (BuildContext sheetContext) {
+            return AppSheetLayout(
+              title: detail.materialName,
+              header: Text('보유 ${detail.ownedQuantity}개'),
+              body: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Text(
+                      '추출 수량',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Wrap(
+                      spacing: AppSpacing.md,
+                      runSpacing: AppSpacing.md,
+                      children: quantityOptions.map((int quantity) {
+                        final bool selected = quantity == selectedQuantity;
+                        final String label = quantity == detail.ownedQuantity
+                            ? '최대'
+                            : 'x$quantity';
+                        return ChoiceChip(
+                          label: Text(label),
+                          selected: selected,
+                          onSelected: (_) {
+                            setState(() {
+                              _quantity = quantity;
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    const Text(
+                      '분석 결과',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Wrap(
+                      spacing: AppSpacing.md,
+                      runSpacing: AppSpacing.md,
+                      children: detail.traits.map((
+                        ExtractionTraitOptionView trait,
+                      ) {
+                        final bool selected = _selectedTraits.contains(
+                          trait.id,
+                        );
+                        return FilterChip(
+                          label: Text(
+                            '${trait.name} ${workshopTraitAmountLabel(trait.amount)}',
+                          ),
+                          selected: selected,
+                          onSelected: (bool value) {
+                            setState(() {
+                              if (value) {
+                                _selectedTraits.add(trait.id);
+                              } else {
+                                _selectedTraits.remove(trait.id);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    const Text(
+                      '추출 프로필',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    WorkshopExtractionProfileList(
+                      profiles: detail.profiles,
+                      hasSelection: _selectedTraits.isNotEmpty,
+                      onExtract: (String profileId) {
+                        final WorkshopExtractionSubmitResult result = controller
+                            .extractMaterial(
+                              detail.materialId,
+                              profileId,
+                              quantity: selectedQuantity,
+                              selectedTraits: _selectedTraits.isEmpty
+                                  ? null
+                                  : _selectedTraits.toList(),
+                            );
+                        if (result == WorkshopExtractionSubmitResult.success) {
+                          Navigator.of(sheetContext).pop();
+                          return;
+                        }
+                        final String message =
+                            result == WorkshopExtractionSubmitResult.queueFull
+                            ? '작업실 큐가 가득 찼습니다'
+                            : '추출 등록에 실패했습니다';
+                        AppToast.show(sheetContext, message);
+                      },
+                    ),
+                  ],
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

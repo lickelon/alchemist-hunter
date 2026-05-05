@@ -184,7 +184,7 @@ void main() {
     );
   });
 
-  testWidgets('workshop enchant sheet shows snackbar when queue is full', (
+  testWidgets('workshop enchant sheet shows toast when queue is full', (
     WidgetTester tester,
   ) async {
     final ProviderContainer container = ProviderContainer();
@@ -258,5 +258,6 @@ void main() {
 
     expect(find.text('작업실 큐가 가득 찼습니다'), findsOneWidget);
     expect(find.text('장비 인챈트'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 2000));
   });
 }
