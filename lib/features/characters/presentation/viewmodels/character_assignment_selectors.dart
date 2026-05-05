@@ -1,5 +1,3 @@
-import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
-
 const String characterAssignmentGuideLabel = '배치 변경은 전투/작업실 화면에서 진행';
 
 String characterAssignmentLabel({
@@ -54,9 +52,9 @@ String? _workshopSlotLabel(
 }
 
 String _stageLabel(String stageId) {
-  try {
-    return const StaticBattleCatalogRepository().stageDefinition(stageId).name;
-  } on StateError {
-    return stageId;
+  if (stageId.startsWith('stage_')) {
+    final String stageNumber = stageId.substring('stage_'.length);
+    return 'Stage $stageNumber';
   }
+  return stageId;
 }

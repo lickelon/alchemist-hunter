@@ -1,7 +1,6 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_combat_stat_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/static_material_catalog_repository.dart';
 
 String characterTypeLabel(CharacterType type) {
   return switch (type) {
@@ -67,9 +66,7 @@ String characterTierMaterialLabel(
       ? 'tier_mat_mercenary_${character.tierIndex + 1}'
       : 'tier_mat_homunculus_${character.tierIndex + 1}';
   final int owned = inventory[materialKey] ?? 0;
-  final String materialName =
-      const StaticMaterialCatalogRepository().materialName(materialKey) ??
-      _tierMaterialDisplayName(character);
+  final String materialName = _tierMaterialDisplayName(character);
   return '승급 재료: $materialName $owned/1';
 }
 
