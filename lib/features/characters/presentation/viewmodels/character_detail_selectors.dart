@@ -43,6 +43,19 @@ String characterTierHint(
   return '티어업 조건: 랭크 ${character.maxRankForCurrentTier} 도달 필요';
 }
 
+bool characterHasTierUpMaterial(
+  CharacterProgress character,
+  Map<String, int> inventory,
+) {
+  if (character.tierIndex >= character.maxTier) {
+    return false;
+  }
+  final String materialKey = character.type == CharacterType.mercenary
+      ? 'tier_mat_mercenary_${character.tierIndex + 1}'
+      : 'tier_mat_homunculus_${character.tierIndex + 1}';
+  return (inventory[materialKey] ?? 0) >= 1;
+}
+
 String characterTierMaterialLabel(
   CharacterProgress character,
   Map<String, int> inventory,
@@ -92,15 +105,25 @@ String characterCombatPowerLabel({
   return '전투력 $power / 직군 $disciplineLabel';
 }
 
-List<String> characterCombatStatLines(BattleCombatStats stats) {
-  return <String>[
-    '체력 ${stats.maxHp} / 물공 ${stats.physicalAttack} / 물방 ${stats.physicalDefense}',
-    '마공 ${stats.magicalAttack} / 마방 ${stats.magicalDefense} / 속도 ${stats.speed}',
-    '치확 ${_percentLabel(stats.critChance)} / 치피 ${_percentLabel(stats.critDamage)}',
-    '명중 ${_percentLabel(stats.accuracy)} / 회피 ${_percentLabel(stats.evasion)}',
-    '상태적중 ${_percentLabel(stats.statusAccuracy)} / 상태저항 ${_percentLabel(stats.statusResistance)}',
-    '물관 ${_percentLabel(stats.physicalPenetration)} / 마관 ${_percentLabel(stats.magicalPenetration)}',
-    '흡혈 ${_percentLabel(stats.lifesteal)} / 회복력 ${_percentLabel(stats.healingPower)} / 재생 ${_percentLabel(stats.regen)}',
+List<(String, String)> characterCombatStatPairs(BattleCombatStats stats) {
+  return <(String, String)>[
+    ('체력', '${stats.maxHp}'),
+    ('물공', '${stats.physicalAttack}'),
+    ('물방', '${stats.physicalDefense}'),
+    ('마공', '${stats.magicalAttack}'),
+    ('마방', '${stats.magicalDefense}'),
+    ('속도', '${stats.speed}'),
+    ('치확', _percentLabel(stats.critChance)),
+    ('치피', _percentLabel(stats.critDamage)),
+    ('명중', _percentLabel(stats.accuracy)),
+    ('회피', _percentLabel(stats.evasion)),
+    ('상태적중', _percentLabel(stats.statusAccuracy)),
+    ('상태저항', _percentLabel(stats.statusResistance)),
+    ('물관', _percentLabel(stats.physicalPenetration)),
+    ('마관', _percentLabel(stats.magicalPenetration)),
+    ('흡혈', _percentLabel(stats.lifesteal)),
+    ('회복력', _percentLabel(stats.healingPower)),
+    ('재생', _percentLabel(stats.regen)),
   ];
 }
 

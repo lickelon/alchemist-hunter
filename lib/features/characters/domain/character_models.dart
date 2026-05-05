@@ -139,7 +139,10 @@ class CharacterProgress {
   bool get canRankUp =>
       level >= maxLevelForRank && rank < maxRankForCurrentTier;
 
-  bool get canTierUp => rank >= maxRankForCurrentTier && tierIndex < maxTier;
+  bool get canTierUp =>
+      rank >= maxRankForCurrentTier &&
+      level >= maxLevelForRank &&
+      tierIndex < maxTier;
 
   String get resolvedCombatJobId {
     if (combatJobId != null) {

@@ -142,7 +142,8 @@ List<CharacterListItemView> _buildCharacterViews({
         statService: statService,
         combatDisciplineLabel: combatDisciplineLabel,
       ),
-      combatStatLines: characterCombatStatLines(stats),
+      combatStatPairs: characterCombatStatPairs(stats),
+      hasTierUpMaterial: characterHasTierUpMaterial(character, inventory),
       detailLines: characterDetailLines(
         character,
         combatDisciplineLabel: combatDisciplineLabel,

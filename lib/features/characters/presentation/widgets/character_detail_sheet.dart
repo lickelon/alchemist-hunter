@@ -50,21 +50,13 @@ class CharacterDetailSheet extends ConsumerWidget {
             CharacterGrowthSection(
               character: character,
               growthLabel: item.growthLabel,
-            ),
-            CharacterGoalSection(
-              rankHint: item.rankHint,
-              tierHint: item.tierHint,
-              tierMaterialLabel: item.tierMaterialLabel,
+              hasTierUpMaterial: item.hasTierUpMaterial,
+              onRankUp: onRankUp,
+              onTierUp: onTierUp,
             ),
             CharacterCombatSection(
               powerLabel: item.combatPowerLabel,
-              statLines: item.combatStatLines,
-            ),
-            if (item.detailLines.isNotEmpty)
-              CharacterProfileSection(detailLines: item.detailLines),
-            CharacterAssignmentSection(
-              assignmentLabel: item.assignmentLabel,
-              assignmentGuideLabel: item.assignmentGuideLabel,
+              statPairs: item.combatStatPairs,
             ),
             CharacterEquipmentSection(
               slots: item.equipmentSlots,
@@ -72,10 +64,9 @@ class CharacterDetailSheet extends ConsumerWidget {
                 _showEquipmentSheet(context, character: character, slot: slot);
               },
             ),
-            CharacterActionSection(
-              character: character,
-              onRankUp: onRankUp,
-              onTierUp: onTierUp,
+            CharacterAssignmentSection(
+              assignmentLabel: item.assignmentLabel,
+              assignmentGuideLabel: item.assignmentGuideLabel,
             ),
           ],
         ),
