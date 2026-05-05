@@ -14,26 +14,15 @@ class DungeonScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final List<String> stages = ref.watch(unlockedStageListProvider);
     final ProgressState progress = ref.watch(battleProgressProvider);
-    final int gold = ref.watch(battleGoldProvider);
-    final int essence = ref.watch(battleEssenceProvider);
 
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      itemCount: stages.length + 1,
+      itemCount: stages.length,
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (BuildContext context, int index) {
-        if (index == 0) {
-          return Card(
-            child: ListTile(
-              leading: const Icon(Icons.savings_outlined),
-              title: const Text('전투 자원'),
-              subtitle: Text('골드 $gold / 에센스 $essence'),
-            ),
-          );
-        }
-        final String stage = stages[index - 1];
+        final String stage = stages[index];
         final bool unlocked =
-            index == 1 || progress.unlockFlags.contains(stage);
+            index == 0 || progress.unlockFlags.contains(stage);
         final String stageLabel = battleStageDisplayName(stage);
         final int assignedCount = ref
             .watch(battleStageAssignmentProvider(stage))
