@@ -35,6 +35,9 @@ void main() {
     final SessionController session = buildSession();
     final CharacterController controller = CharacterController(session);
     final CharacterProgress target = session.state.characters.mercenaries.first;
+    final CharacterProgress tierReadyTarget = target.copyWith(
+      rank: target.maxRankForCurrentTier,
+    );
     final String matKey = 'tier_mat_mercenary_2';
 
     session.state = session.state.copyWith(
@@ -43,10 +46,7 @@ void main() {
       ),
       characters: session.state.characters.copyWith(
         mercenaries: <CharacterProgress>[
-          target.copyWith(
-            rank: target.maxRankForCurrentTier,
-            level: target.maxLevelForRank,
-          ),
+          tierReadyTarget.copyWith(level: tierReadyTarget.maxLevelForRank),
         ],
       ),
     );

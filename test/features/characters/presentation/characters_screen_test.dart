@@ -19,9 +19,11 @@ void main() {
       sessionControllerProvider.notifier,
     );
     final CharacterProgress target = session.state.characters.mercenaries.first;
-    final CharacterProgress leveledTarget = target.copyWith(
+    final CharacterProgress tierReadyTarget = target.copyWith(
       rank: target.maxRankForCurrentTier,
-      level: target.maxLevelForRank,
+    );
+    final CharacterProgress leveledTarget = tierReadyTarget.copyWith(
+      level: tierReadyTarget.maxLevelForRank,
     );
     final BattleCombatStats expectedStats = const BattleCombatStatService()
         .buildStats(leveledTarget);
@@ -73,17 +75,23 @@ void main() {
       find.text('전투력 $expectedPower / 직군 ${_disciplineLabel(leveledTarget)}'),
       findsOneWidget,
     );
+    expect(find.text('체력'), findsOneWidget);
+    expect(find.text('${expectedStats.maxHp}'), findsAtLeastNWidgets(1));
+    expect(find.text('물공'), findsOneWidget);
     expect(
-      find.text(
-        '체력 ${expectedStats.maxHp} / 물공 ${expectedStats.physicalAttack} / 물방 ${expectedStats.physicalDefense}',
-      ),
-      findsOneWidget,
+      find.text('${expectedStats.physicalAttack}'),
+      findsAtLeastNWidgets(1),
     );
-    expect(find.text('다음 목표'), findsOneWidget);
-    expect(find.text('현재 티어 최대 랭크 도달'), findsOneWidget);
-    expect(find.text('티어업 가능'), findsOneWidget);
-    expect(find.text('승급 재료: 용병 승급 재료 2 1/1'), findsOneWidget);
-    expect(find.text('직군 전사 / 전열 기본 전열'), findsOneWidget);
+    expect(find.text('물방'), findsOneWidget);
+    expect(
+      find.text('${expectedStats.physicalDefense}'),
+      findsAtLeastNWidgets(1),
+    );
+    expect(find.text('다음 목표'), findsNothing);
+    expect(find.text('현재 티어 최대 랭크 도달'), findsNothing);
+    expect(find.text('티어업 가능'), findsNothing);
+    expect(find.text('승급 재료: 용병 승급 재료 2 1/1'), findsNothing);
+    expect(find.text('직군 전사 / 전열 기본 전열'), findsNothing);
     await tester.scrollUntilVisible(
       find.text('배치 변경은 전투/작업실 화면에서 진행'),
       200,
@@ -161,16 +169,9 @@ void main() {
         find.text('전투력 $expectedPower / 직군 ${_disciplineLabel(target)}'),
         findsOneWidget,
       );
-      await tester.scrollUntilVisible(
-        find.text('출처 Vital Seed Flask'),
-        200,
-        scrollable: find.byType(Scrollable).last,
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('출처 Vital Seed Flask'), findsOneWidget);
-      expect(find.text('역할 지원'), findsOneWidget);
-      expect(find.text('보조효과 파티 생존력 보조'), findsOneWidget);
+      expect(find.text('출처 Vital Seed Flask'), findsNothing);
+      expect(find.text('역할 지원'), findsNothing);
+      expect(find.text('보조효과 파티 생존력 보조'), findsNothing);
     },
   );
 }
