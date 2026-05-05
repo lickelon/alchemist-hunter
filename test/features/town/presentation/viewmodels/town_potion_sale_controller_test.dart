@@ -1,7 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/static_potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_potion_sale_controller.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';

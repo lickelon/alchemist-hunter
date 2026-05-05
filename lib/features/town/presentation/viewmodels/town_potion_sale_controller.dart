@@ -4,7 +4,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/sell_crafted_potion_use_case.dart';
-import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/workshop_catalog.dart';
 import 'package:alchemist_hunter/features/town/town_catalog.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';

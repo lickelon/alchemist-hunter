@@ -1,14 +1,14 @@
-import 'package:alchemist_hunter/features/workshop/data/repositories/static_extraction_profile_repository.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/static_homunculus_hatch_repository.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/static_material_catalog_repository.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/static_potion_catalog_repository.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/static_workshop_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_extraction_profile_repository.dart';
+import 'package:alchemist_hunter/features/workshop/hatchery/data/repositories/static_homunculus_hatch_repository.dart';
+import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_material_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/skill_tree/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/domain/repositories/extraction_profile_repository.dart';
-import 'package:alchemist_hunter/features/workshop/domain/repositories/homunculus_hatch_repository.dart';
-import 'package:alchemist_hunter/features/workshop/domain/repositories/material_catalog_repository.dart';
-import 'package:alchemist_hunter/features/workshop/domain/repositories/potion_catalog_repository.dart';
-import 'package:alchemist_hunter/features/workshop/domain/repositories/workshop_skill_tree_repository.dart';
+import 'package:alchemist_hunter/features/workshop/extraction/domain/repositories/extraction_profile_repository.dart';
+import 'package:alchemist_hunter/features/workshop/hatchery/domain/repositories/homunculus_hatch_repository.dart';
+import 'package:alchemist_hunter/features/workshop/extraction/domain/repositories/material_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final Provider<MaterialCatalogRepository> materialCatalogRepositoryProvider =
@@ -26,10 +26,10 @@ extractionProfileRepositoryProvider = Provider<ExtractionProfileRepository>(
   (Ref ref) => const StaticExtractionProfileRepository(),
 );
 
-final Provider<WorkshopSkillTreeRepository> workshopSkillTreeRepositoryProvider =
-    Provider<WorkshopSkillTreeRepository>(
-      (Ref ref) => const StaticWorkshopSkillTreeRepository(),
-    );
+final Provider<WorkshopSkillTreeRepository>
+workshopSkillTreeRepositoryProvider = Provider<WorkshopSkillTreeRepository>(
+  (Ref ref) => const StaticWorkshopSkillTreeRepository(),
+);
 
 final Provider<HomunculusHatchRepository> homunculusHatchRepositoryProvider =
     Provider<HomunculusHatchRepository>(

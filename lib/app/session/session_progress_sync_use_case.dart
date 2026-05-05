@@ -6,7 +6,7 @@ import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 import 'package:alchemist_hunter/features/town/domain/services/forge_queue_progress_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.dart';
-import 'package:alchemist_hunter/features/workshop/domain/services/workshop_queue_progress_service.dart';
+import 'package:alchemist_hunter/features/workshop/craft_queue/domain/services/workshop_queue_progress_service.dart';
 
 class SessionProgressSyncUseCase {
   const SessionProgressSyncUseCase({

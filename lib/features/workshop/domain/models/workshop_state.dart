@@ -1,6 +1,6 @@
-import 'craft_queue_models.dart';
-import 'potion_models.dart';
-import 'workshop_skill_tree_models.dart';
+import 'package:alchemist_hunter/features/workshop/craft_queue/domain/models/craft_queue_models.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/domain/models/potion_models.dart';
+import 'package:alchemist_hunter/features/workshop/skill_tree/domain/models/workshop_skill_tree_models.dart';
 
 class WorkshopState {
   const WorkshopState({
