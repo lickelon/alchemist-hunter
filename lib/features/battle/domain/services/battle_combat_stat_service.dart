@@ -83,7 +83,7 @@ class BattleCombatStatService {
           healingPower: 0,
           regen: 0,
         ) +
-        _equipmentStats(character.equipment, disciplineFor(jobId));
+        _equipmentStats(character.equipment);
   }
 
   int summaryPowerForStats(BattleCombatStats stats) {
@@ -99,52 +99,27 @@ class BattleCombatStatService {
     return health + offense + defense + utility;
   }
 
-  BattleCombatStats _equipmentStats(
-    CharacterEquipmentLoadout equipment,
-    CombatDiscipline discipline,
-  ) {
-    return _statsForItem(equipment.weapon, discipline) +
-        _statsForItem(equipment.armor, discipline) +
-        _statsForItem(equipment.accessory, discipline);
+  BattleCombatStats _equipmentStats(CharacterEquipmentLoadout equipment) {
+    return _statsForItem(equipment.weapon) +
+        _statsForItem(equipment.armor) +
+        _statsForItem(equipment.accessory);
   }
 
-  BattleCombatStats _statsForItem(
-    EquipmentInstance? item,
-    CombatDiscipline discipline,
-  ) {
+  BattleCombatStats _statsForItem(EquipmentInstance? item) {
     if (item == null) {
       return const BattleCombatStats.zero();
     }
 
-    final int physicalAttack = switch (discipline) {
-      CombatDiscipline.mage => item.totalAttack ~/ 3,
-      _ => item.totalAttack,
-    };
-    final int magicalAttack = switch (discipline) {
-      CombatDiscipline.mage => item.totalAttack,
-      _ => item.totalAttack ~/ 3,
-    };
-    final int magicalDefense = switch (discipline) {
-      CombatDiscipline.mage => item.totalDefense,
-      _ => item.totalDefense ~/ 2,
-    };
-    final double accuracy = discipline == CombatDiscipline.archer
-        ? item.totalAttack * 0.002
-        : 0;
-    final double critChance = discipline == CombatDiscipline.rogue
-        ? item.totalAttack * 0.001
-        : 0;
-
     return BattleCombatStats(
-      maxHp: item.totalHealth,
-      physicalAttack: physicalAttack,
-      physicalDefense: item.totalDefense,
-      magicalAttack: magicalAttack,
-      magicalDefense: magicalDefense,
-      speed: discipline == CombatDiscipline.rogue ? item.totalAttack ~/ 8 : 0,
-      critChance: critChance,
+      maxHp: item.totalMaxHp,
+      physicalAttack: item.totalPhysicalAttack,
+      physicalDefense: item.totalPhysicalDefense,
+      magicalAttack: item.totalMagicalAttack,
+      magicalDefense: item.totalMagicalDefense,
+      speed: item.totalSpeed,
+      critChance: 0,
       critDamage: 0,
-      accuracy: accuracy,
+      accuracy: 0,
       evasion: 0,
       statusAccuracy: 0,
       statusResistance: 0,

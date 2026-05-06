@@ -35,9 +35,12 @@ class CraftEquipmentUseCase {
       blueprintId: blueprint.id,
       name: blueprint.name,
       slot: blueprint.slot,
-      attack: blueprint.attack,
-      defense: blueprint.defense,
-      health: blueprint.health,
+      maxHp: blueprint.maxHp,
+      physicalAttack: blueprint.physicalAttack,
+      physicalDefense: blueprint.physicalDefense,
+      magicalAttack: blueprint.magicalAttack,
+      magicalDefense: blueprint.magicalDefense,
+      speed: blueprint.speed,
       createdAt: now,
     );
 

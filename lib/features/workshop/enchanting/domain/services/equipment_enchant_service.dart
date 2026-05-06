@@ -22,9 +22,14 @@ class EquipmentEnchantService {
           potionName: blueprint.name,
           qualityLabel: potion.qualityGrade.name.toUpperCase(),
           dominantTraitId: dominantTraitId,
-          attackBonus: potency + _attackAffinity(dominantTraitId),
-          defenseBonus: max(0, potency ~/ 3),
-          healthBonus: max(0, potency * 2),
+          maxHpBonus: max(0, potency * 2) + _maxHpAffinity(dominantTraitId),
+          physicalAttackBonus:
+              potency + _physicalAttackAffinity(dominantTraitId),
+          physicalDefenseBonus: max(0, potency ~/ 3),
+          magicalAttackBonus: _magicalAttackAffinity(dominantTraitId),
+          magicalDefenseBonus:
+              max(0, potency ~/ 4) + _magicalDefenseAffinity(dominantTraitId),
+          speedBonus: _speedAffinity(dominantTraitId),
         );
       case EquipmentSlot.armor:
         return EquipmentEnchant(
@@ -32,9 +37,14 @@ class EquipmentEnchantService {
           potionName: blueprint.name,
           qualityLabel: potion.qualityGrade.name.toUpperCase(),
           dominantTraitId: dominantTraitId,
-          attackBonus: max(0, potency ~/ 4),
-          defenseBonus: potency + _defenseAffinity(dominantTraitId),
-          healthBonus: (potency * 4) + _vitalAffinity(dominantTraitId),
+          maxHpBonus: (potency * 4) + _maxHpAffinity(dominantTraitId),
+          physicalAttackBonus: max(0, potency ~/ 4),
+          physicalDefenseBonus:
+              potency + _physicalDefenseAffinity(dominantTraitId),
+          magicalAttackBonus: max(0, potency ~/ 6),
+          magicalDefenseBonus:
+              max(0, potency ~/ 2) + _magicalDefenseAffinity(dominantTraitId),
+          speedBonus: _speedAffinity(dominantTraitId),
         );
       case EquipmentSlot.accessory:
         return EquipmentEnchant(
@@ -42,10 +52,16 @@ class EquipmentEnchantService {
           potionName: blueprint.name,
           qualityLabel: potion.qualityGrade.name.toUpperCase(),
           dominantTraitId: dominantTraitId,
-          attackBonus: max(0, potency ~/ 2) + _attackAffinity(dominantTraitId),
-          defenseBonus:
-              max(0, potency ~/ 2) + _defenseAffinity(dominantTraitId),
-          healthBonus: (potency * 3) + _vitalAffinity(dominantTraitId),
+          maxHpBonus: (potency * 3) + _maxHpAffinity(dominantTraitId),
+          physicalAttackBonus:
+              max(0, potency ~/ 2) + _physicalAttackAffinity(dominantTraitId),
+          physicalDefenseBonus:
+              max(0, potency ~/ 2) + _physicalDefenseAffinity(dominantTraitId),
+          magicalAttackBonus:
+              max(0, potency ~/ 2) + _magicalAttackAffinity(dominantTraitId),
+          magicalDefenseBonus:
+              max(0, potency ~/ 2) + _magicalDefenseAffinity(dominantTraitId),
+          speedBonus: max(0, potency ~/ 4) + _speedAffinity(dominantTraitId),
         );
     }
   }
@@ -73,28 +89,53 @@ class EquipmentEnchantService {
     return max(1, (basePotency * (1 + bonusRate)).round());
   }
 
-  int _attackAffinity(String traitId) {
-    if (const <String>{
-      't_atk',
-      't_crit',
-      't_spd',
-      't_focus',
-    }.contains(traitId)) {
+  int _physicalAttackAffinity(String traitId) {
+    if (const <String>{'t_atk', 't_crit'}.contains(traitId)) {
+      return 3;
+    }
+    if (traitId == 't_focus') {
+      return 2;
+    }
+    return 0;
+  }
+
+  int _physicalDefenseAffinity(String traitId) {
+    if (const <String>{'t_def', 't_pure'}.contains(traitId)) {
       return 3;
     }
     return 0;
   }
 
-  int _defenseAffinity(String traitId) {
-    if (const <String>{'t_def', 't_pure', 't_mana'}.contains(traitId)) {
+  int _magicalAttackAffinity(String traitId) {
+    if (const <String>{'t_mana', 't_dark'}.contains(traitId)) {
+      return 3;
+    }
+    if (traitId == 't_focus') {
+      return 2;
+    }
+    return 0;
+  }
+
+  int _magicalDefenseAffinity(String traitId) {
+    if (const <String>{'t_pure', 't_mana', 't_dark'}.contains(traitId)) {
       return 3;
     }
     return 0;
   }
 
-  int _vitalAffinity(String traitId) {
+  int _maxHpAffinity(String traitId) {
     if (const <String>{'t_hp', 't_life', 't_regen'}.contains(traitId)) {
       return 6;
+    }
+    return 0;
+  }
+
+  int _speedAffinity(String traitId) {
+    if (traitId == 't_spd') {
+      return 2;
+    }
+    if (traitId == 't_focus') {
+      return 1;
     }
     return 0;
   }
