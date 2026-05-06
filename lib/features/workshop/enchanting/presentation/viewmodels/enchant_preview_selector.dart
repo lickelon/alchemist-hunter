@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/dashboard/presentation/viewmodels/workshop_shared_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_lookup.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchanting_service_providers.dart';
-import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 
 class EnchantPreviewView {
   const EnchantPreviewView({
@@ -75,14 +75,10 @@ final enchantPreviewProvider =
         equipmentName: equipment.name,
         currentEnchantLabel: equipment.enchant?.label ?? '인챈트 없음',
         nextEnchantLabel: nextEnchant.label,
-        currentStatLabel:
-            'ATK ${equipment.totalAttack} / DEF ${equipment.totalDefense} / HP ${equipment.totalHealth}',
-        nextStatLabel:
-            'ATK ${previewEquipment.totalAttack} / DEF ${previewEquipment.totalDefense} / HP ${previewEquipment.totalHealth}',
+        currentStatLabel: equipment.statLabel,
+        nextStatLabel: previewEquipment.statLabel,
         deltaStatLabel:
-            '변화 ${signedDelta(previewEquipment.totalAttack - equipment.totalAttack, "ATK")} / '
-            '${signedDelta(previewEquipment.totalDefense - equipment.totalDefense, "DEF")} / '
-            '${signedDelta(previewEquipment.totalHealth - equipment.totalHealth, "HP")}',
+            '변화 ${formatEquipmentStatLabel(maxHp: previewEquipment.totalMaxHp - equipment.totalMaxHp, physicalAttack: previewEquipment.totalPhysicalAttack - equipment.totalPhysicalAttack, physicalDefense: previewEquipment.totalPhysicalDefense - equipment.totalPhysicalDefense, magicalAttack: previewEquipment.totalMagicalAttack - equipment.totalMagicalAttack, magicalDefense: previewEquipment.totalMagicalDefense - equipment.totalMagicalDefense, speed: previewEquipment.totalSpeed - equipment.totalSpeed, signed: true, includeZero: false, emptyLabel: '없음')}',
         replaceRequired: equipment.enchant != null,
       );
     });

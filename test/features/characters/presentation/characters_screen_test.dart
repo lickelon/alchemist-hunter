@@ -118,7 +118,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('무기: Bronze Sword'), findsOneWidget);
-    expect(find.text('공격력 12 / 방어력 0 / 체력 0'), findsOneWidget);
+    expect(
+      find.text('체력 0 / 물공 12 / 물방 0\n마공 0 / 마방 0 / 속도 0'),
+      findsOneWidget,
+    );
   });
 
   testWidgets(

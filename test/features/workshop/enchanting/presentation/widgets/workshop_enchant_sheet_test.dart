@@ -68,7 +68,7 @@ void main() {
     expect(find.text('예상 결과'), findsOneWidget);
     expect(find.text('현재 인챈트 없음'), findsOneWidget);
     expect(find.text('예상 활력 포션 A'), findsOneWidget);
-    expect(find.textContaining('변화 ATK +13'), findsOneWidget);
+    expect(find.textContaining('물공 +13'), findsOneWidget);
     await tester.ensureVisible(find.text('인챈트 등록'));
     await tester.tap(find.text('인챈트 등록'));
     await tester.pumpAndSettle();

@@ -21,33 +21,32 @@ class EnchantEquipmentView {
   final String enchantLabel;
 }
 
-final Provider<List<EnchantEquipmentView>>
-enchantEquipmentViewsProvider = Provider<List<EnchantEquipmentView>>((Ref ref) {
-  final SessionState state = ref.watch(sessionControllerProvider);
-  final List<EnchantEquipmentView>
-  views = collectEnchantEquipmentRecords(state).map((
-    EnchantEquipmentRecord record,
-  ) {
-    final item = record.item;
-    return EnchantEquipmentView(
-      equipmentId: item.id,
-      name: item.name,
-      slotLabel: equipmentSlotLabel(item.slot),
-      locationLabel: record.locationLabel,
-      statLabel:
-          'ATK ${item.totalAttack} / DEF ${item.totalDefense} / HP ${item.totalHealth}',
-      enchantLabel: item.enchant?.label ?? '인챈트 없음',
-    );
-  }).toList();
+final Provider<List<EnchantEquipmentView>> enchantEquipmentViewsProvider =
+    Provider<List<EnchantEquipmentView>>((Ref ref) {
+      final SessionState state = ref.watch(sessionControllerProvider);
+      final List<EnchantEquipmentView> views =
+          collectEnchantEquipmentRecords(state).map((
+            EnchantEquipmentRecord record,
+          ) {
+            final item = record.item;
+            return EnchantEquipmentView(
+              equipmentId: item.id,
+              name: item.name,
+              slotLabel: equipmentSlotLabel(item.slot),
+              locationLabel: record.locationLabel,
+              statLabel: item.statLabel,
+              enchantLabel: item.enchant?.label ?? '인챈트 없음',
+            );
+          }).toList();
 
-  views.sort((EnchantEquipmentView left, EnchantEquipmentView right) {
-    final int locationCompare = left.locationLabel.compareTo(
-      right.locationLabel,
-    );
-    if (locationCompare != 0) {
-      return locationCompare;
-    }
-    return left.name.compareTo(right.name);
-  });
-  return views;
-});
+      views.sort((EnchantEquipmentView left, EnchantEquipmentView right) {
+        final int locationCompare = left.locationLabel.compareTo(
+          right.locationLabel,
+        );
+        if (locationCompare != 0) {
+          return locationCompare;
+        }
+        return left.name.compareTo(right.name);
+      });
+      return views;
+    });

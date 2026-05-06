@@ -50,15 +50,13 @@ class CharacterEquipmentSheet extends StatelessWidget {
             ? const Center(child: Text('장착 가능한 장비가 없습니다'))
             : ListView(
                 children: slot.availableItems.map((EquipmentInstance item) {
-                  final String statLabel =
-                      '공격력 ${item.totalAttack} / 방어력 ${item.totalDefense} / 체력 ${item.totalHealth}';
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(item.name),
                     subtitle: Text(
                       item.enchant == null
-                          ? statLabel
-                          : '$statLabel\n${item.enchant!.label}',
+                          ? item.statLabel
+                          : '${item.statLabel}\n${item.enchant!.label}',
                     ),
                     trailing: FilledButton.tonal(
                       onPressed: () {

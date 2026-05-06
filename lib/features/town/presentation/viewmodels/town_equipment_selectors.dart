@@ -133,8 +133,7 @@ townEquipmentBlueprintViewsProvider = Provider<List<TownEquipmentBlueprintView>>
           id: blueprint.id,
           name: blueprint.name,
           slotLabel: blueprint.slot.name,
-          statLabel:
-              'ATK ${blueprint.attack} / DEF ${blueprint.defense} / HP ${blueprint.health}',
+          statLabel: blueprint.statLabel,
           materialCostLabel: adjustedCosts.entries
               .map(
                 (MapEntry<String, int> entry) =>
@@ -149,27 +148,24 @@ townEquipmentBlueprintViewsProvider = Provider<List<TownEquipmentBlueprintView>>
 });
 
 final Provider<List<TownEquipmentInventoryView>>
-townEquipmentInventoryViewsProvider = Provider<List<TownEquipmentInventoryView>>((
-  Ref ref,
-) {
-  final List<EquipmentInstance> inventory = ref.watch(
-    townEquipmentInventoryProvider,
-  );
-  return inventory
-      .map((EquipmentInstance entry) {
-        final String baseLabel =
-            'ATK ${entry.totalAttack} / DEF ${entry.totalDefense} / HP ${entry.totalHealth}';
-        return TownEquipmentInventoryView(
-          id: entry.id,
-          name: entry.name,
-          slotLabel: entry.slot.name,
-          statLabel: entry.enchant == null
-              ? baseLabel
-              : '$baseLabel / ${entry.enchant!.label}',
-        );
-      })
-      .toList(growable: false);
-});
+townEquipmentInventoryViewsProvider =
+    Provider<List<TownEquipmentInventoryView>>((Ref ref) {
+      final List<EquipmentInstance> inventory = ref.watch(
+        townEquipmentInventoryProvider,
+      );
+      return inventory
+          .map((EquipmentInstance entry) {
+            return TownEquipmentInventoryView(
+              id: entry.id,
+              name: entry.name,
+              slotLabel: entry.slot.name,
+              statLabel: entry.enchant == null
+                  ? entry.statLabel
+                  : '${entry.statLabel}\n${entry.enchant!.label}',
+            );
+          })
+          .toList(growable: false);
+    });
 
 final Provider<List<TownForgeJobView>> townForgeJobViewsProvider =
     Provider<List<TownForgeJobView>>((Ref ref) {
