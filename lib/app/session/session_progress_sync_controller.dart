@@ -12,7 +12,6 @@ import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.dart';
-import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
@@ -114,7 +113,7 @@ sessionProgressSyncControllerProvider = Provider<SessionProgressSyncController>(
       ref.read(sessionControllerProvider.notifier),
       syncUseCase: ref.read(sessionProgressSyncUseCaseProvider),
       townUseCase: const TownUseCase(),
-      economyService: ref.read(economyServiceProvider),
+      economyService: EconomyService(),
       shopCatalogRepository: ref.read(shopCatalogRepositoryProvider),
       battleExpeditionResolver: ref.read(battleExpeditionResolverProvider),
       battleCatalogRepository: ref.read(battleCatalogRepositoryProvider),

@@ -2,17 +2,32 @@ import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/combat_jobs.dart';
 import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
 import 'package:alchemist_hunter/features/characters/domain/models/characters_state.dart';
-import 'package:alchemist_hunter/features/town/data/repositories/static_mercenary_template_repository.dart';
-import 'package:alchemist_hunter/features/town/data/repositories/static_town_skill_tree_repository.dart';
-import 'package:alchemist_hunter/features/town/data/catalogs/shop_seed.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/domain/repositories/mercenary_template_repository.dart';
+import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
+import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/mercenary_recruitment_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 import 'player_state.dart';
 import 'session_state.dart';
 
-SessionState createInitialSessionState(DateTime now) {
+class InitialSessionCatalogs {
+  const InitialSessionCatalogs({
+    required this.shopCatalogRepository,
+    required this.mercenaryTemplateRepository,
+    required this.townSkillTreeRepository,
+  });
+
+  final ShopCatalogRepository shopCatalogRepository;
+  final MercenaryTemplateRepository mercenaryTemplateRepository;
+  final TownSkillTreeRepository townSkillTreeRepository;
+}
+
+SessionState createInitialSessionStateFromCatalogs(
+  DateTime now,
+  InitialSessionCatalogs catalogs,
+) {
   return SessionState(
     lastSyncAt: now,
     player: const PlayerState(
@@ -25,18 +40,18 @@ SessionState createInitialSessionState(DateTime now) {
       materialInventory: <String, int>{},
     ),
     town: TownState(
-      generalShop: buildGeneralShopState(now),
-      catalystShop: buildCatalystShopState(now),
+      generalShop: catalogs.shopCatalogRepository.createGeneralShopState(now),
+      catalystShop: catalogs.shopCatalogRepository.createCatalystShopState(now),
       equipmentInventory: const <EquipmentInstance>[],
       forgeQueue: const <TownForgeJob>[],
       mercenaryCandidates: const MercenaryRecruitmentService().buildCandidates(
         refreshIndex: 0,
-        templateRepository: const StaticMercenaryTemplateRepository(),
+        templateRepository: catalogs.mercenaryTemplateRepository,
       ),
       mercenaryRefreshCount: 0,
       skillTree: TownSkillTreeState(
         unlockedNodes: <String>{
-          const StaticTownSkillTreeRepository().nodes().first.id,
+          catalogs.townSkillTreeRepository.nodes().first.id,
         },
         nodeLevels: const <String, int>{},
         availablePoints: 0,

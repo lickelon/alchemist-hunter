@@ -1,11 +1,13 @@
 import 'package:alchemist_hunter/core/session/session_controller.dart' as core;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../catalog/app_catalog_providers.dart';
 import 'session_factory.dart';
 import 'session_state.dart';
 
 export 'player_state.dart';
-export 'session_factory.dart';
+export 'session_factory.dart'
+    show InitialSessionCatalogs, createInitialSessionStateFromCatalogs;
 export 'session_state.dart';
 
 SessionState _appendLog(SessionState state, String message) {
@@ -16,6 +18,13 @@ SessionState _appendLog(SessionState state, String message) {
     workshop: state.workshop.copyWith(
       logs: <String>[message, ...state.workshop.logs].take(20).toList(),
     ),
+  );
+}
+
+SessionState createInitialSessionState(DateTime now) {
+  return createInitialSessionStateFromCatalogs(
+    now,
+    createDefaultInitialSessionCatalogs(),
   );
 }
 

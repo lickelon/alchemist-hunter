@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:alchemist_hunter/app/session/session_factory.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/upgrade_town_skill_node_use_case.dart';
@@ -29,19 +29,18 @@ void main() {
       player: createInitialSessionState(
         DateTime(2026, 1, 1, 10),
       ).player.copyWith(gold: 2000, townInsight: 5),
-      town: createInitialSessionState(
-        DateTime(2026, 1, 1, 10),
-      ).town.copyWith(
-        skillTree: createInitialSessionState(
-          DateTime(2026, 1, 1, 10),
-        ).town.skillTree.copyWith(
-          nodeLevels: const <String, int>{'town_trade_ledger': 1},
-          unlockedNodes: const <String>{
-            'town_trade_ledger',
-            'town_hiring_board',
-            'town_forge_rack',
-          },
-        ),
+      town: createInitialSessionState(DateTime(2026, 1, 1, 10)).town.copyWith(
+        skillTree: createInitialSessionState(DateTime(2026, 1, 1, 10))
+            .town
+            .skillTree
+            .copyWith(
+              nodeLevels: const <String, int>{'town_trade_ledger': 1},
+              unlockedNodes: const <String>{
+                'town_trade_ledger',
+                'town_hiring_board',
+                'town_forge_rack',
+              },
+            ),
       ),
     );
 
