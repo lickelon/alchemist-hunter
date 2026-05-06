@@ -74,6 +74,7 @@
 
 ### 4.4 장비 특수 능력
 - 6개 기본 스탯 밖의 효과는 아래 둘 중 하나로 둔다.
+  - `BattleStatModifier`
   - `BattleModifier`
   - `BattlePassiveEffect`
 
@@ -102,23 +103,28 @@
 
 ## 6. 특수 능력 기준
 
-### 6.1 modifier로 가야 하는 효과
+### 6.1 stat modifier로 가야 하는 효과
 - `치확 +5%`
 - `명중 +8%`
 - `회피 +6%`
 - `흡혈 +3%`
 - `재생 +0.02`
-- `대 용병 피해 +12%`
 
-### 6.2 passive로 가야 하는 효과
+### 6.2 battle modifier로 가야 하는 효과
+- `대 용병 피해 +12%`
+- `주는 피해 +8%`
+- `받는 피해 -5%`
+
+### 6.3 passive로 가야 하는 효과
 - `필중`
 - `2회 공격`
 - `첫 턴 선공`
 - `반격`
 - `상태이상 면역`
 
-### 6.3 원칙
-- 수치 보정은 `modifier`
+### 6.4 원칙
+- 최종 스탯에 흡수되는 수치 보정은 `BattleStatModifier`
+- 최종 스탯으로 환원되지 않는 전투 효과는 `BattleModifier`
 - 판정 절차 변경은 `passive`
 
 ## 7. 예시
@@ -175,3 +181,4 @@
 - 장비 기본 능력은 `체력 / 물공 / 물방 / 마공 / 마방 / 속도`
 - 그 외 전투 성질은 모두 `modifier / passive`
 - 장비는 더 이상 직군별 환산의 입력값이 아니라, 실제 전투 스탯의 직접 원천이어야 한다.
+- 장비 특수 능력은 `BattleStatModifier / BattleModifier / BattlePassiveEffect`로 분리한다.

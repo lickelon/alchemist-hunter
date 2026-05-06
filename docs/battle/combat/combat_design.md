@@ -30,9 +30,11 @@
 ## 4. 책임 분리
 - `BattleCombatStats`
   - 기본 전투 수치
+- `BattleStatModifier`
+  - 최종 전투 스탯에 흡수되는 추가 수치
 - `BattleModifier`
-  - 수치 보정
+  - 최종 스탯으로 환원되지 않는 전투 배율 / 조건부 효과
 - `BattlePassiveEffect`
   - 전투 판정 규칙 변경
 
-이 3층 분리를 combat 설계의 기본 원칙으로 유지한다.
+이 4층 분리를 combat 설계의 기본 원칙으로 유지한다.

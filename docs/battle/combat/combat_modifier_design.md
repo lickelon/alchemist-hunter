@@ -8,7 +8,8 @@
 
 ### 1.1 기본 원칙
 - `BattleCombatStats`는 캐릭터의 기본 몸값만 담당한다.
-- `Modifier`는 장비 특수 효과, 포션, 패시브, 상태이상, 전투 중 임시 효과를 담당한다.
+- `BattleStatModifier`는 최종 전투 스탯에 흡수되는 추가 수치를 담당한다.
+- `BattleModifier`는 최종 스탯으로 환원되지 않는 전투 효과를 담당한다.
 - `주는 피해 증가`, `받는 피해 증가` 같은 효과는 기본 스탯으로 넣지 않는다.
 
 ### 1.2 책임 구분
@@ -22,7 +23,14 @@
   - `상태적중 / 상태저항`
   - `물리관통 / 마법관통`
   - `흡혈 / 회복력 / 재생`
-- modifier:
+- stat modifier:
+  - `치확`
+  - `치피`
+  - `명중 / 회피`
+  - `상태적중 / 상태저항`
+  - `물리관통 / 마법관통`
+  - `흡혈 / 회복력 / 재생`
+- battle modifier:
   - `주는 피해 증가`
   - `받는 피해 증가`
   - `받는 피해 감소`
@@ -34,34 +42,43 @@
 ## 2. 모델 방향
 
 ### 2.1 핵심 타입
+- `BattleStatModifier`
+- `BattleStatModifierType`
 - `BattleModifier`
 - `BattleModifierType`
 - `BattleModifierMode`
 - `DamageSchool`
-- `ModifierScope`
 
 ### 2.2 권장 구조
 ```dart
-enum BattleModifierType {
-  damageDealt,
-  damageTaken,
+enum BattleStatModifierType {
   critRate,
   critDamage,
   accuracy,
   evasion,
+  statusAccuracy,
+  statusResistance,
+  physicalPenetration,
+  magicalPenetration,
   lifesteal,
   healingPower,
   regen,
+}
+
+enum BattleModifierType {
+  damageDealt,
+  damageTaken,
 }
 
 enum BattleModifierMode { flat, percent }
 
 enum DamageSchool { any, physical, magical }
 
-enum ModifierScope {
-  self,
-  ally,
-  enemy,
+class BattleStatModifier {
+  final BattleStatModifierType type;
+  final BattleModifierMode mode;
+  final double value;
+  final String sourceId;
 }
 
 class BattleModifier {
@@ -70,20 +87,17 @@ class BattleModifier {
   final double value;
   final DamageSchool school;
   final CombatFaction? targetFaction;
-  final ModifierScope scope;
-  final int? remainingTurns;
   final String sourceId;
 }
 ```
 
 ### 2.3 필드 의미
-- `type`: 어떤 전투 속성에 영향을 주는지
+- `BattleStatModifier.type`: 어떤 최종 스탯에 흡수되는지
+- `BattleModifier.type`: 어떤 전투 효과를 조정하는지
 - `mode`: `flat` 또는 `percent`
 - `value`: 효과 수치
 - `school`: `전체 / 물리 / 마법` 적용 범위
 - `targetFaction`: `용병 / 호문` 조건부 대상
-- `scope`: 자기 자신, 아군, 적군 중 적용 대상
-- `remainingTurns`: 턴 지속형이면 남은 턴 수
 - `sourceId`: 장비, 포션, 스킬, 상태이상 등 출처 추적용 식별자
 
 ## 3. Modifier 분류
@@ -113,8 +127,6 @@ class BattleModifier {
 ## 4. 초기 지원 범위
 
 ### 4.1 1차 지원 modifier
-- `damageDealt`
-- `damageTaken`
 - `critRate`
 - `critDamage`
 - `accuracy`
@@ -122,6 +134,8 @@ class BattleModifier {
 - `lifesteal`
 - `healingPower`
 - `regen`
+- `damageDealt`
+- `damageTaken`
 
 ### 4.2 적용 범위
 - `damageDealt`
@@ -180,13 +194,13 @@ finalDamage =
 - 초기 규칙은 `가산 합산`을 기본으로 한다.
 
 ### 6.2 mode 처리
-- `flat`: 직접 더한다
-- `percent`: 기준값에 비율로 곱한다
+- `BattleStatModifier.flat`: 최종 스탯에 직접 더한다
+- `BattleModifier.percent`: 최종 전투 계산에서 배율로 반영한다
 
 ### 6.3 권장 정책
-- `damageDealt`, `damageTaken`은 초반엔 `percent`만 허용한다.
-- `critRate`, `accuracy`, `evasion`은 `flat` 기반이 다루기 쉽다.
-- `lifesteal`, `healingPower`, `regen`은 비율 중심으로 시작하는 편이 안전하다.
+- `damageDealt`, `damageTaken`은 `BattleModifier.percent`만 허용한다.
+- `critRate`, `accuracy`, `evasion`은 `BattleStatModifier.flat`로 다룬다.
+- `lifesteal`, `healingPower`, `regen`도 `BattleStatModifier.flat`로 다룬다.
 
 ## 7. 소유권과 적용 시점
 
@@ -195,7 +209,8 @@ finalDamage =
   - 기본 전투 스탯
   - 장비 기본 보너스
   - 인챈트 기본 보너스
-  - 상시 modifier
+  - 상시 stat modifier
+  - 상시 battle modifier
 
 ### 7.2 전투 중 상태
 - 전투 중에는 `ActiveBattleState` 또는 동등한 모델이 임시 modifier를 관리한다.
@@ -204,8 +219,9 @@ finalDamage =
 
 ### 7.3 출처별 연결
 - 장비 기본 옵션: `BattleCombatStats`
-- 장비 특수 옵션: `BattleModifier`
-- 포션 효과: `BattleModifier`
+- 장비 특수 수치: `BattleStatModifier`
+- 장비 전투 효과: `BattleModifier`
+- 포션 효과: `BattleStatModifier` 또는 `BattleModifier`
 - 스킬 효과: `BattleModifier`
 - 상태이상 효과: `StatusEffect -> BattleModifier`
 
@@ -228,8 +244,8 @@ finalDamage =
 - 상태이상 저항 계산 상세식
 
 ## 10. 구현 시 주의점
-- `BattleCombatStats`와 `BattleModifier`를 섞어 한 모델에 우겨넣지 않는다.
+- `BattleCombatStats`, `BattleStatModifier`, `BattleModifier`를 한 모델에 우겨넣지 않는다.
 - 기본 스탯 테이블에는 `주는 피해 증가`, `받는 피해 증가`를 넣지 않는다.
-- 수치 계산은 반드시 `전투 스냅샷 -> modifier 누적 -> 최종 계산` 순서를 유지한다.
+- 수치 계산은 반드시 `전투 스냅샷 -> stat modifier 흡수 -> battle modifier 누적 -> 최종 계산` 순서를 유지한다.
 - UI 표시용 문자열과 내부 modifier key를 같은 값으로 재사용하지 않는다.
 - 로그/리포트에는 modifier 출처가 추적 가능해야 한다.
