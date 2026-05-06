@@ -19,17 +19,6 @@ class _BattleModifierResolver {
         });
   }
 
-  static double flatModifierTotal(_BattleUnit unit, BattleModifierType type) {
-    return unit.modifiers
-        .where(
-          (BattleModifier modifier) =>
-              modifier.type == type && modifier.mode == BattleModifierMode.flat,
-        )
-        .fold<double>(0, (double total, BattleModifier modifier) {
-          return total + modifier.value;
-        });
-  }
-
   static double percentModifierTotal(
     _BattleUnit unit,
     BattleModifierType type, {

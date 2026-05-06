@@ -4,21 +4,31 @@ enum CombatFaction { mercenary, homunculus }
 
 enum CombatDiscipline { warrior, mage, rogue, archer }
 
-enum BattleModifierType {
-  damageDealt,
-  damageTaken,
-  critRate,
-  critDamage,
-  accuracy,
-  evasion,
-  lifesteal,
-  healingPower,
-  regen,
-}
+enum BattleModifierType { damageDealt, damageTaken }
 
 enum BattleModifierMode { flat, percent }
 
 enum DamageSchool { any, physical, magical }
+
+enum BattleStatModifierType {
+  maxHp,
+  physicalAttack,
+  physicalDefense,
+  magicalAttack,
+  magicalDefense,
+  speed,
+  critRate,
+  critDamage,
+  accuracy,
+  evasion,
+  statusAccuracy,
+  statusResistance,
+  physicalPenetration,
+  magicalPenetration,
+  lifesteal,
+  healingPower,
+  regen,
+}
 
 enum BattlePassiveTrigger { battleStart, beforeHitCheck, afterAction }
 
@@ -40,6 +50,21 @@ class BattleModifier {
   final double value;
   final DamageSchool school;
   final CombatFaction? targetFaction;
+  final String sourceId;
+}
+
+@immutable
+class BattleStatModifier {
+  const BattleStatModifier({
+    required this.type,
+    required this.mode,
+    required this.value,
+    required this.sourceId,
+  });
+
+  final BattleStatModifierType type;
+  final BattleModifierMode mode;
+  final double value;
   final String sourceId;
 }
 

@@ -18,17 +18,7 @@ class _BattleAttackResolver {
     }
     final double accuracyBonus = potionBoost * 0.02;
     final double hitChance =
-        (attacker.stats.accuracy +
-                accuracyBonus +
-                _BattleModifierResolver.flatModifierTotal(
-                  attacker,
-                  BattleModifierType.accuracy,
-                ) -
-                defender.stats.evasion -
-                _BattleModifierResolver.flatModifierTotal(
-                  defender,
-                  BattleModifierType.evasion,
-                ))
+        (attacker.stats.accuracy + accuracyBonus - defender.stats.evasion)
             .clamp(0.25, 0.98);
     return _random.nextDouble() <= hitChance;
   }
@@ -39,17 +29,7 @@ class _BattleAttackResolver {
     required int potionBoost,
   }) {
     final double critChance =
-        (attacker.stats.critChance +
-                (potionBoost * 0.005) +
-                _BattleModifierResolver.flatModifierTotal(
-                  attacker,
-                  BattleModifierType.critRate,
-                ) -
-                _BattleModifierResolver.flatModifierTotal(
-                  defender,
-                  BattleModifierType.critRate,
-                ))
-            .clamp(0, 0.95);
+        (attacker.stats.critChance + (potionBoost * 0.005)).clamp(0, 0.95);
     return _random.nextDouble() <= critChance;
   }
 
@@ -81,13 +61,7 @@ class _BattleAttackResolver {
       damage *= 1 + (potionBoost * 0.08);
     }
     if (critical) {
-      damage *=
-          1 +
-          attacker.stats.critDamage +
-          _BattleModifierResolver.flatModifierTotal(
-            attacker,
-            BattleModifierType.critDamage,
-          );
+      damage *= 1 + attacker.stats.critDamage;
     }
     damage *=
         1 +

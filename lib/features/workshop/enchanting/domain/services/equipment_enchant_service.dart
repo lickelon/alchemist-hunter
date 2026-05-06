@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
@@ -30,6 +31,19 @@ class EquipmentEnchantService {
           magicalDefenseBonus:
               max(0, potency ~/ 4) + _magicalDefenseAffinity(dominantTraitId),
           speedBonus: _speedAffinity(dominantTraitId),
+          statModifiers: _buildStatModifiers(
+            slot: equipment.slot,
+            dominantTraitId: dominantTraitId,
+            potency: potency,
+          ),
+          modifiers: _buildModifiers(
+            dominantTraitId: dominantTraitId,
+            potency: potency,
+          ),
+          passives: _buildPassives(
+            slot: equipment.slot,
+            dominantTraitId: dominantTraitId,
+          ),
         );
       case EquipmentSlot.armor:
         return EquipmentEnchant(
@@ -45,6 +59,19 @@ class EquipmentEnchantService {
           magicalDefenseBonus:
               max(0, potency ~/ 2) + _magicalDefenseAffinity(dominantTraitId),
           speedBonus: _speedAffinity(dominantTraitId),
+          statModifiers: _buildStatModifiers(
+            slot: equipment.slot,
+            dominantTraitId: dominantTraitId,
+            potency: potency,
+          ),
+          modifiers: _buildModifiers(
+            dominantTraitId: dominantTraitId,
+            potency: potency,
+          ),
+          passives: _buildPassives(
+            slot: equipment.slot,
+            dominantTraitId: dominantTraitId,
+          ),
         );
       case EquipmentSlot.accessory:
         return EquipmentEnchant(
@@ -62,8 +89,181 @@ class EquipmentEnchantService {
           magicalDefenseBonus:
               max(0, potency ~/ 2) + _magicalDefenseAffinity(dominantTraitId),
           speedBonus: max(0, potency ~/ 4) + _speedAffinity(dominantTraitId),
+          statModifiers: _buildStatModifiers(
+            slot: equipment.slot,
+            dominantTraitId: dominantTraitId,
+            potency: potency,
+          ),
+          modifiers: _buildModifiers(
+            dominantTraitId: dominantTraitId,
+            potency: potency,
+          ),
+          passives: _buildPassives(
+            slot: equipment.slot,
+            dominantTraitId: dominantTraitId,
+          ),
         );
     }
+  }
+
+  List<BattleStatModifier> _buildStatModifiers({
+    required EquipmentSlot slot,
+    required String dominantTraitId,
+    required int potency,
+  }) {
+    final String sourceId = 'enchant_$dominantTraitId';
+    final List<BattleStatModifier> modifiers = <BattleStatModifier>[];
+
+    switch (dominantTraitId) {
+      case 't_crit':
+        modifiers.add(
+          BattleStatModifier(
+            type: BattleStatModifierType.critRate,
+            mode: BattleModifierMode.flat,
+            value: 0.04 + (potency * 0.001),
+            sourceId: sourceId,
+          ),
+        );
+      case 't_focus':
+        modifiers.add(
+          BattleStatModifier(
+            type: BattleStatModifierType.accuracy,
+            mode: BattleModifierMode.flat,
+            value: 0.05 + (potency * 0.001),
+            sourceId: sourceId,
+          ),
+        );
+      case 't_life':
+        modifiers.add(
+          BattleStatModifier(
+            type: BattleStatModifierType.lifesteal,
+            mode: BattleModifierMode.flat,
+            value: 0.02 + (potency * 0.001),
+            sourceId: sourceId,
+          ),
+        );
+      case 't_regen':
+        modifiers.add(
+          BattleStatModifier(
+            type: BattleStatModifierType.regen,
+            mode: BattleModifierMode.flat,
+            value: 0.01 + (potency * 0.001),
+            sourceId: sourceId,
+          ),
+        );
+      case 't_dark':
+        modifiers.add(
+          BattleStatModifier(
+            type: BattleStatModifierType.critDamage,
+            mode: BattleModifierMode.flat,
+            value: 0.08 + (potency * 0.002),
+            sourceId: sourceId,
+          ),
+        );
+      case 't_mana':
+        modifiers.add(
+          BattleStatModifier(
+            type: BattleStatModifierType.healingPower,
+            mode: BattleModifierMode.flat,
+            value: 0.05 + (potency * 0.001),
+            sourceId: sourceId,
+          ),
+        );
+      case 't_pure':
+        modifiers.add(
+          BattleStatModifier(
+            type: BattleStatModifierType.evasion,
+            mode: BattleModifierMode.flat,
+            value: 0.04 + (potency * 0.001),
+            sourceId: sourceId,
+          ),
+        );
+      case 't_spd':
+        modifiers.add(
+          BattleStatModifier(
+            type: BattleStatModifierType.evasion,
+            mode: BattleModifierMode.flat,
+            value: 0.03 + (potency * 0.001),
+            sourceId: sourceId,
+          ),
+        );
+      default:
+        break;
+    }
+
+    if (slot == EquipmentSlot.accessory && dominantTraitId == 't_focus') {
+      modifiers.add(
+        BattleStatModifier(
+          type: BattleStatModifierType.critRate,
+          mode: BattleModifierMode.flat,
+          value: 0.02,
+          sourceId: '${sourceId}_focus_crit',
+        ),
+      );
+    }
+
+    return modifiers;
+  }
+
+  List<BattleModifier> _buildModifiers({
+    required String dominantTraitId,
+    required int potency,
+  }) {
+    final String sourceId = 'enchant_$dominantTraitId';
+    final List<BattleModifier> modifiers = <BattleModifier>[];
+
+    switch (dominantTraitId) {
+      case 't_atk':
+        modifiers.add(
+          BattleModifier(
+            type: BattleModifierType.damageDealt,
+            mode: BattleModifierMode.percent,
+            value: 0.06 + (potency * 0.002),
+            sourceId: sourceId,
+          ),
+        );
+      case 't_def':
+        modifiers.add(
+          BattleModifier(
+            type: BattleModifierType.damageTaken,
+            mode: BattleModifierMode.percent,
+            value: -0.05 - (potency * 0.001),
+            sourceId: sourceId,
+          ),
+        );
+      default:
+        break;
+    }
+
+    return modifiers;
+  }
+
+  List<BattlePassiveEffect> _buildPassives({
+    required EquipmentSlot slot,
+    required String dominantTraitId,
+  }) {
+    if (slot == EquipmentSlot.accessory && dominantTraitId == 't_spd') {
+      return const <BattlePassiveEffect>[
+        BattlePassiveEffect(
+          trigger: BattlePassiveTrigger.afterAction,
+          type: BattlePassiveEffectType.extraAttack,
+          sourceId: 'enchant_t_spd_extra_attack',
+          value: 1,
+        ),
+      ];
+    }
+
+    if (slot == EquipmentSlot.weapon && dominantTraitId == 't_focus') {
+      return const <BattlePassiveEffect>[
+        BattlePassiveEffect(
+          trigger: BattlePassiveTrigger.beforeHitCheck,
+          type: BattlePassiveEffectType.alwaysHit,
+          sourceId: 'enchant_t_focus_always_hit',
+        ),
+      ];
+    }
+
+    return const <BattlePassiveEffect>[];
   }
 
   String _dominantTraitId(CraftedPotion potion) {

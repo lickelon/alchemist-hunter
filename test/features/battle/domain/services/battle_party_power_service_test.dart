@@ -65,6 +65,72 @@ void main() {
     );
   });
 
+  test('buildParty includes equipment special effects in hero profile', () {
+    const BattlePartyPowerService service = BattlePartyPowerService();
+    final EquipmentInstance sword = EquipmentInstance(
+      id: 'eq_instance_1',
+      blueprintId: 'eq_1',
+      name: 'Bronze Sword',
+      slot: EquipmentSlot.weapon,
+      physicalAttack: 12,
+      statModifiers: const <BattleStatModifier>[
+        BattleStatModifier(
+          type: BattleStatModifierType.accuracy,
+          mode: BattleModifierMode.flat,
+          value: 0.06,
+          sourceId: 'eq_1_focus',
+        ),
+      ],
+      modifiers: const <BattleModifier>[
+        BattleModifier(
+          type: BattleModifierType.damageDealt,
+          mode: BattleModifierMode.percent,
+          value: 0.05,
+          sourceId: 'eq_1_edge',
+        ),
+      ],
+      createdAt: DateTime(2026, 1, 1, 10),
+    );
+
+    final CharactersState state =
+        const CharactersState(
+          mercenaries: <CharacterProgress>[
+            CharacterProgress(
+              id: 'merc_1',
+              name: 'Rookie Swordsman',
+              type: CharacterType.mercenary,
+              combatJobId: CombatJobIds.mercenaryWarrior,
+              level: 1,
+              rank: 1,
+              xp: 0,
+              mercenaryTier: MercenaryTier.rookie,
+            ),
+          ],
+          homunculi: <CharacterProgress>[],
+        ).copyWith(
+          mercenaries: <CharacterProgress>[
+            const CharacterProgress(
+              id: 'merc_1',
+              name: 'Rookie Swordsman',
+              type: CharacterType.mercenary,
+              combatJobId: CombatJobIds.mercenaryWarrior,
+              level: 1,
+              rank: 1,
+              xp: 0,
+              mercenaryTier: MercenaryTier.rookie,
+            ).copyWith(
+              equipment: const CharacterEquipmentLoadout().equip(sword),
+            ),
+          ],
+        );
+
+    final HeroProfile hero = service.buildParty(state).first;
+
+    expect(hero.stats.accuracy, greaterThan(0));
+    expect(hero.modifiers, isNotEmpty);
+    expect(hero.modifiers.first.type, BattleModifierType.damageDealt);
+  });
+
   test('level increases hp and keeps non-hp base stats stable', () {
     const BattlePartyPowerService service = BattlePartyPowerService();
     const CharacterProgress mage = CharacterProgress(

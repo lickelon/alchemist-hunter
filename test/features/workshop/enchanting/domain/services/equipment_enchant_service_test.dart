@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/domain/services/equipment_enchant_service.dart';
@@ -42,5 +43,7 @@ void main() {
     expect(enchant.attackBonus, 13);
     expect(enchant.defenseBonus, 3);
     expect(enchant.healthBonus, 20);
+    expect(enchant.modifiers, hasLength(1));
+    expect(enchant.modifiers.first.type, BattleModifierType.damageDealt);
   });
 }

@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:flutter/foundation.dart';
 
 enum EquipmentSlot { weapon, armor, accessory }
@@ -43,6 +44,113 @@ String formatEquipmentStatLabel({
 
 String _signedValue(int value) => value >= 0 ? '+$value' : '$value';
 
+String formatEquipmentStatModifierLabel(
+  List<BattleStatModifier> modifiers, {
+  String emptyLabel = '추가 스탯 없음',
+}) {
+  final List<String> lines = modifiers.map(_statModifierLabel).toList();
+  if (lines.isEmpty) {
+    return emptyLabel;
+  }
+  return lines.join('\n');
+}
+
+String formatEquipmentEffectLabel({
+  required List<BattleStatModifier> statModifiers,
+  required List<BattleModifier> modifiers,
+  required List<BattlePassiveEffect> passives,
+  String emptyLabel = '특수 효과 없음',
+}) {
+  final List<String> lines = <String>[
+    ...statModifiers.map(_statModifierLabel),
+    ...modifiers.map(_modifierLabel),
+    ...passives.map(_passiveLabel),
+  ];
+  if (lines.isEmpty) {
+    return emptyLabel;
+  }
+  return lines.join('\n');
+}
+
+String _statModifierLabel(BattleStatModifier modifier) {
+  final String valueLabel = _battleStatModifierUsesPercent(modifier.type)
+      ? _signedPercent(modifier.value)
+      : _signedValue(modifier.value.round());
+  return switch (modifier.type) {
+    BattleStatModifierType.maxHp => '체력 $valueLabel',
+    BattleStatModifierType.physicalAttack => '물공 $valueLabel',
+    BattleStatModifierType.physicalDefense => '물방 $valueLabel',
+    BattleStatModifierType.magicalAttack => '마공 $valueLabel',
+    BattleStatModifierType.magicalDefense => '마방 $valueLabel',
+    BattleStatModifierType.speed => '속도 $valueLabel',
+    BattleStatModifierType.critRate => '치확 $valueLabel',
+    BattleStatModifierType.critDamage => '치피 $valueLabel',
+    BattleStatModifierType.accuracy => '명중 $valueLabel',
+    BattleStatModifierType.evasion => '회피 $valueLabel',
+    BattleStatModifierType.statusAccuracy => '상태적중 $valueLabel',
+    BattleStatModifierType.statusResistance => '상태저항 $valueLabel',
+    BattleStatModifierType.physicalPenetration => '물관 $valueLabel',
+    BattleStatModifierType.magicalPenetration => '마관 $valueLabel',
+    BattleStatModifierType.lifesteal => '흡혈 $valueLabel',
+    BattleStatModifierType.healingPower => '회복력 $valueLabel',
+    BattleStatModifierType.regen => '재생 $valueLabel',
+  };
+}
+
+String _modifierLabel(BattleModifier modifier) {
+  final String valueLabel = _signedPercent(modifier.value);
+  final String schoolLabel = switch (modifier.school) {
+    DamageSchool.any => '',
+    DamageSchool.physical => ' / 물리',
+    DamageSchool.magical => ' / 마법',
+  };
+  final String targetLabel = modifier.targetFaction == null
+      ? ''
+      : ' / 대 ${modifier.targetFaction == CombatFaction.mercenary ? "용병" : "호문쿨루스"}';
+  final String base = switch (modifier.type) {
+    BattleModifierType.damageDealt => '주는 피해 $valueLabel',
+    BattleModifierType.damageTaken => '받는 피해 $valueLabel',
+  };
+  return '$base$schoolLabel$targetLabel';
+}
+
+String _passiveLabel(BattlePassiveEffect passive) {
+  return switch (passive.type) {
+    BattlePassiveEffectType.alwaysHit => '패시브: 필중',
+    BattlePassiveEffectType.extraAttack => '패시브: 추가 공격 +${passive.value ?? 1}회',
+  };
+}
+
+String _signedPercent(double value) {
+  final int percent = (value * 100).round();
+  if (percent > 0) {
+    return '+$percent%';
+  }
+  return '$percent%';
+}
+
+bool _battleStatModifierUsesPercent(BattleStatModifierType type) {
+  return switch (type) {
+    BattleStatModifierType.maxHp ||
+    BattleStatModifierType.physicalAttack ||
+    BattleStatModifierType.physicalDefense ||
+    BattleStatModifierType.magicalAttack ||
+    BattleStatModifierType.magicalDefense ||
+    BattleStatModifierType.speed => false,
+    BattleStatModifierType.critRate ||
+    BattleStatModifierType.critDamage ||
+    BattleStatModifierType.accuracy ||
+    BattleStatModifierType.evasion ||
+    BattleStatModifierType.statusAccuracy ||
+    BattleStatModifierType.statusResistance ||
+    BattleStatModifierType.physicalPenetration ||
+    BattleStatModifierType.magicalPenetration ||
+    BattleStatModifierType.lifesteal ||
+    BattleStatModifierType.healingPower ||
+    BattleStatModifierType.regen => true,
+  };
+}
+
 @immutable
 class EquipmentEnchant {
   const EquipmentEnchant({
@@ -53,6 +161,9 @@ class EquipmentEnchant {
     this.magicalAttackBonus = 0,
     this.magicalDefenseBonus = 0,
     this.speedBonus = 0,
+    this.statModifiers = const <BattleStatModifier>[],
+    this.modifiers = const <BattleModifier>[],
+    this.passives = const <BattlePassiveEffect>[],
     int maxHpBonus = 0,
     int physicalAttackBonus = 0,
     int physicalDefenseBonus = 0,
@@ -77,6 +188,9 @@ class EquipmentEnchant {
   final int magicalAttackBonus;
   final int magicalDefenseBonus;
   final int speedBonus;
+  final List<BattleStatModifier> statModifiers;
+  final List<BattleModifier> modifiers;
+  final List<BattlePassiveEffect> passives;
 
   int get attackBonus => physicalAttackBonus;
 
@@ -97,6 +211,12 @@ class EquipmentEnchant {
     includeZero: false,
     emptyLabel: '보정 없음',
   );
+
+  String get effectLabel => formatEquipmentEffectLabel(
+    statModifiers: statModifiers,
+    modifiers: modifiers,
+    passives: passives,
+  );
 }
 
 @immutable
@@ -110,6 +230,9 @@ class EquipmentBlueprint {
     this.magicalAttack = 0,
     this.magicalDefense = 0,
     this.speed = 0,
+    this.statModifiers = const <BattleStatModifier>[],
+    this.modifiers = const <BattleModifier>[],
+    this.passives = const <BattlePassiveEffect>[],
     int maxHp = 0,
     int physicalAttack = 0,
     int physicalDefense = 0,
@@ -131,6 +254,9 @@ class EquipmentBlueprint {
   final int magicalAttack;
   final int magicalDefense;
   final int speed;
+  final List<BattleStatModifier> statModifiers;
+  final List<BattleModifier> modifiers;
+  final List<BattlePassiveEffect> passives;
 
   int get attack => physicalAttack;
 
@@ -146,6 +272,12 @@ class EquipmentBlueprint {
     magicalDefense: magicalDefense,
     speed: speed,
   );
+
+  String get effectLabel => formatEquipmentEffectLabel(
+    statModifiers: statModifiers,
+    modifiers: modifiers,
+    passives: passives,
+  );
 }
 
 @immutable
@@ -158,6 +290,9 @@ class EquipmentInstance {
     this.magicalAttack = 0,
     this.magicalDefense = 0,
     this.speed = 0,
+    this.statModifiers = const <BattleStatModifier>[],
+    this.modifiers = const <BattleModifier>[],
+    this.passives = const <BattlePassiveEffect>[],
     int maxHp = 0,
     int physicalAttack = 0,
     int physicalDefense = 0,
@@ -180,6 +315,9 @@ class EquipmentInstance {
   final int magicalAttack;
   final int magicalDefense;
   final int speed;
+  final List<BattleStatModifier> statModifiers;
+  final List<BattleModifier> modifiers;
+  final List<BattlePassiveEffect> passives;
   final DateTime createdAt;
   final EquipmentEnchant? enchant;
 
@@ -211,6 +349,21 @@ class EquipmentInstance {
 
   int get totalHealth => totalMaxHp;
 
+  List<BattleStatModifier> get totalStatModifiers => <BattleStatModifier>[
+    ...statModifiers,
+    ...?enchant?.statModifiers,
+  ];
+
+  List<BattleModifier> get totalModifiers => <BattleModifier>[
+    ...modifiers,
+    ...?enchant?.modifiers,
+  ];
+
+  List<BattlePassiveEffect> get totalPassives => <BattlePassiveEffect>[
+    ...passives,
+    ...?enchant?.passives,
+  ];
+
   String get statLabel => formatEquipmentStatLabel(
     maxHp: totalMaxHp,
     physicalAttack: totalPhysicalAttack,
@@ -219,6 +372,25 @@ class EquipmentInstance {
     magicalDefense: totalMagicalDefense,
     speed: totalSpeed,
   );
+
+  String get effectLabel => formatEquipmentEffectLabel(
+    statModifiers: totalStatModifiers,
+    modifiers: totalModifiers,
+    passives: totalPassives,
+  );
+
+  String get detailLabel {
+    final List<String> lines = <String>[
+      statLabel,
+      if (enchant != null) '인챈트 ${enchant!.label}',
+    ];
+    if (totalStatModifiers.isNotEmpty ||
+        totalModifiers.isNotEmpty ||
+        totalPassives.isNotEmpty) {
+      lines.add(effectLabel);
+    }
+    return lines.join('\n');
+  }
 
   EquipmentInstance copyWith({
     EquipmentEnchant? enchant,
@@ -235,6 +407,9 @@ class EquipmentInstance {
       magicalAttack: magicalAttack,
       magicalDefense: magicalDefense,
       speed: speed,
+      statModifiers: statModifiers,
+      modifiers: modifiers,
+      passives: passives,
       createdAt: createdAt,
       enchant: clearEnchant ? null : enchant ?? this.enchant,
     );

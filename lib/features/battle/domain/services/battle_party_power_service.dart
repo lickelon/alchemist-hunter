@@ -47,8 +47,6 @@ class BattlePartyPowerService {
   }
 
   int powerForCharacter(CharacterProgress character) {
-    return _combatStatService.summaryPowerForStats(
-      _combatStatService.buildStats(character),
-    );
+    return _combatStatService.buildHeroProfile(character).power;
   }
 }

@@ -4,12 +4,7 @@ class _BattleRecoveryResolver {
   const _BattleRecoveryResolver();
 
   int applyLifesteal({required _BattleUnit actor, required int damage}) {
-    final double lifestealRate =
-        actor.stats.lifesteal +
-        _BattleModifierResolver.flatModifierTotal(
-          actor,
-          BattleModifierType.lifesteal,
-        );
+    final double lifestealRate = actor.stats.lifesteal;
     if (damage <= 0 || lifestealRate <= 0) {
       return 0;
     }
@@ -19,12 +14,7 @@ class _BattleRecoveryResolver {
   }
 
   int applyRegen(_BattleUnit unit) {
-    final double regenRate =
-        unit.stats.regen +
-        _BattleModifierResolver.flatModifierTotal(
-          unit,
-          BattleModifierType.regen,
-        );
+    final double regenRate = unit.stats.regen;
     if (!unit.isAlive || regenRate <= 0) {
       return 0;
     }

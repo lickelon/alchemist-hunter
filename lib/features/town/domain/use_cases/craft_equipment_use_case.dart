@@ -41,6 +41,9 @@ class CraftEquipmentUseCase {
       magicalAttack: blueprint.magicalAttack,
       magicalDefense: blueprint.magicalDefense,
       speed: blueprint.speed,
+      statModifiers: blueprint.statModifiers,
+      modifiers: blueprint.modifiers,
+      passives: blueprint.passives,
       createdAt: now,
     );
 

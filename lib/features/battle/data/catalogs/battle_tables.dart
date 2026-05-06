@@ -85,7 +85,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           speed: 11,
           critChance: 0.06,
           critDamage: 0.48,
-          accuracy: 0.9,
+          accuracy: 0.94,
           evasion: 0.06,
           statusAccuracy: 0.03,
           statusResistance: 0.04,
@@ -95,14 +95,6 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           healingPower: 0,
           regen: 0.01,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
-            type: BattleModifierType.accuracy,
-            mode: BattleModifierMode.flat,
-            value: 0.04,
-            sourceId: 'enemy_scout_focus',
-          ),
-        ],
         normalDrops: <BattleDropEntry>[
           BattleDropEntry(materialId: 'm_2', min: 1, max: 2, chance: 0.72),
           BattleDropEntry(materialId: 'm_7', min: 1, max: 1, chance: 0.45),
