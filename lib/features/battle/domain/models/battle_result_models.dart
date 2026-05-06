@@ -1,0 +1,73 @@
+import 'package:flutter/foundation.dart';
+
+import 'battle_playback_models.dart';
+
+@immutable
+class BattleLogEntry {
+  const BattleLogEntry({
+    required this.resolvedAt,
+    required this.success,
+    required this.gold,
+    required this.essence,
+    required this.materials,
+    required this.turns,
+    this.actions = const <BattleActionLog>[],
+  });
+
+  final DateTime resolvedAt;
+  final bool success;
+  final int gold;
+  final int essence;
+  final Map<String, int> materials;
+  final int turns;
+  final List<BattleActionLog> actions;
+}
+
+@immutable
+class BattleResult {
+  const BattleResult({
+    required this.success,
+    required this.turns,
+    required this.loot,
+    required this.failurePenalty,
+    this.actions = const <BattleActionLog>[],
+  });
+
+  final bool success;
+  final int turns;
+  final Map<String, int> loot;
+  final int failurePenalty;
+  final List<BattleActionLog> actions;
+}
+
+@immutable
+class BattlePendingClaim {
+  const BattlePendingClaim({
+    this.materials = const <String, int>{},
+    this.gold = 0,
+    this.essence = 0,
+    this.characterXp = const <String, int>{},
+  });
+
+  final Map<String, int> materials;
+  final int gold;
+  final int essence;
+  final Map<String, int> characterXp;
+
+  bool get isEmpty =>
+      materials.isEmpty && gold == 0 && essence == 0 && characterXp.isEmpty;
+
+  BattlePendingClaim copyWith({
+    Map<String, int>? materials,
+    int? gold,
+    int? essence,
+    Map<String, int>? characterXp,
+  }) {
+    return BattlePendingClaim(
+      materials: materials ?? this.materials,
+      gold: gold ?? this.gold,
+      essence: essence ?? this.essence,
+      characterXp: characterXp ?? this.characterXp,
+    );
+  }
+}
