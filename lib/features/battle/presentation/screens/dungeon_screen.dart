@@ -13,7 +13,6 @@ class DungeonScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final List<String> stages = ref.watch(unlockedStageListProvider);
-    final ProgressState progress = ref.watch(battleProgressProvider);
 
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -21,8 +20,10 @@ class DungeonScreen extends ConsumerWidget {
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (BuildContext context, int index) {
         final String stage = stages[index];
-        final bool unlocked =
-            index == 0 || progress.unlockFlags.contains(stage);
+        final bool unlocked = ref.watch(battleStageUnlockedProvider(stage));
+        final String lockReason = ref.watch(
+          battleStageLockReasonProvider(stage),
+        );
         final String stageLabel = battleStageDisplayName(stage);
         final int assignedCount = ref
             .watch(battleStageAssignmentProvider(stage))
@@ -74,7 +75,7 @@ class DungeonScreen extends ConsumerWidget {
                   Text(
                     unlocked
                         ? '$summary\n$pendingLabel\n$recentLine'
-                        : '$summary\n${_lockedReason(stage)}',
+                        : '$summary\n$lockReason',
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Wrap(
@@ -153,15 +154,5 @@ class DungeonScreen extends ConsumerWidget {
         return BattleStageStatusSheet(stageId: stageId);
       },
     );
-  }
-
-  String _lockedReason(String stageId) {
-    return switch (stageId) {
-      'stage_2' => '잠금 조건: 특수 재료 1개 이상 획득 필요',
-      'stage_3' => '잠금 조건: ${battleStageDisplayName('stage_2')} 개방 이후 추가 해금 예정',
-      'stage_4' => '잠금 조건: ${battleStageDisplayName('stage_3')} 개방 이후 추가 해금 예정',
-      'stage_5' => '잠금 조건: ${battleStageDisplayName('stage_4')} 개방 이후 추가 해금 예정',
-      _ => '잠금 조건: 이전 스테이지 진행 필요',
-    };
   }
 }

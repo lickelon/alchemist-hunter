@@ -54,7 +54,7 @@ void main() {
 
     expect(find.text('2단계'), findsOneWidget);
     expect(find.textContaining('편성 2명 / 전투력 $expectedPower'), findsOneWidget);
-    expect(find.textContaining('잠금 조건: 특수 재료 1개 이상 획득 필요'), findsOneWidget);
+    expect(find.textContaining('잠금 조건: 1단계 클리어 필요'), findsOneWidget);
     expect(find.text('잠김'), findsWidgets);
     expect(find.text('편성'), findsWidgets);
 

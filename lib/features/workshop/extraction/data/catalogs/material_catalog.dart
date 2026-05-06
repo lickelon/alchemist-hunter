@@ -161,6 +161,17 @@ final List<MaterialEntity> materialCatalog = List<MaterialEntity>.generate(
       traitCatalog[(i + 3) % traitCatalog.length],
     ],
     analyzable: true,
-    source: i < 18 ? 'general_shop' : 'battle',
+    source: _materialSource(i + 1),
   ),
 );
+
+String _materialSource(int materialNumber) {
+  return switch (materialNumber) {
+    1 || 2 || 25 => 'battle_stage_1',
+    3 || 4 || 26 => 'battle_stage_2',
+    5 || 6 || 27 => 'battle_stage_3',
+    7 || 8 || 28 => 'battle_stage_4',
+    29 || 30 => 'battle_stage_5',
+    _ => 'battle',
+  };
+}

@@ -65,7 +65,11 @@ class BattleAutoController {
       battle: started.battle.copyWith(stageExpeditions: nextExpeditions),
     );
     final SessionState claimedState = _battleExpeditionUseCase
-        .claimStageRewards(state: pendingState, stageId: stageId);
+        .claimStageRewards(
+          state: pendingState,
+          stageId: stageId,
+          battleCatalogRepository: _battleCatalogRepository,
+        );
     _session.applyState(claimedState);
     _session.appendLog('Battle ${resolution.summary} on $stageId');
   }

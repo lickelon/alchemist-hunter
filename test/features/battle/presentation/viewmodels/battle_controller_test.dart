@@ -52,6 +52,7 @@ void main() {
           session.state.characters.homunculi.first.xp > previousHomoXp,
       true,
     );
+    expect(session.state.battle.progress.unlockFlags, contains('stage_2'));
     final BattleExpeditionState? expedition =
         session.state.battle.stageExpeditions['stage_1'];
     expect(expedition, isNotNull);
@@ -132,7 +133,7 @@ void main() {
     controller.runAutoBattle('stage_5');
 
     expect(session.state.workshop.logs.first, contains('Battle 성공'));
-    expect(session.state.player.essence, 126);
+    expect(session.state.player.essence, 138);
   });
 
   test('toggleStageAssignment stores assignment per stage', () {

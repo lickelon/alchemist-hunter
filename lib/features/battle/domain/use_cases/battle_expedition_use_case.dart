@@ -1,5 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/services/character_progression_service.dart';
 
@@ -7,9 +9,13 @@ class BattleExpeditionUseCase {
   const BattleExpeditionUseCase({
     CharacterProgressionService characterProgressionService =
         const CharacterProgressionService(),
-  }) : _characterProgressionService = characterProgressionService;
+    BattleProgressionService battleProgressionService =
+        const BattleProgressionService(),
+  }) : _characterProgressionService = characterProgressionService,
+       _battleProgressionService = battleProgressionService;
 
   final CharacterProgressionService _characterProgressionService;
+  final BattleProgressionService _battleProgressionService;
 
   SessionState startExpedition({
     required SessionState state,
@@ -69,6 +75,7 @@ class BattleExpeditionUseCase {
   SessionState claimStageRewards({
     required SessionState state,
     required String stageId,
+    required BattleCatalogRepository battleCatalogRepository,
   }) {
     final BattleExpeditionState? expedition =
         state.battle.stageExpeditions[stageId];
@@ -87,14 +94,15 @@ class BattleExpeditionUseCase {
           (materialInventory[materialId] ?? 0) + quantity;
     });
 
-    final Set<String> unlocks = <String>{...state.battle.progress.unlockFlags};
-    if ((expedition.pendingClaim.materials['m_27'] ?? 0) > 0) {
-      unlocks.add('potion_special_1');
-    }
-    if ((expedition.pendingClaim.materials['m_30'] ?? 0) > 0) {
-      unlocks.add('potion_special_2');
-      unlocks.add('stage_2');
-    }
+    final BattleStageDefinition stageDefinition = battleCatalogRepository
+        .stageDefinition(stageId);
+    final bool success = expedition.pendingClaim.gold >= 0;
+    final Set<String> unlocks = _battleProgressionService
+        .applyStageClearUnlocks(
+          currentUnlockFlags: state.battle.progress.unlockFlags,
+          clearedStage: stageDefinition,
+          success: success,
+        );
 
     final CharactersState nextCharacters = _characterProgressionService
         .grantCharacterXpMap(

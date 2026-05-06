@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/use_cases/battle_expedition_use_case.dart';
 
 class BattleExpeditionController {
@@ -6,10 +7,13 @@ class BattleExpeditionController {
     this._session, {
     BattleExpeditionUseCase battleExpeditionUseCase =
         const BattleExpeditionUseCase(),
-  }) : _battleExpeditionUseCase = battleExpeditionUseCase;
+    required BattleCatalogRepository battleCatalogRepository,
+  }) : _battleExpeditionUseCase = battleExpeditionUseCase,
+       _battleCatalogRepository = battleCatalogRepository;
 
   final SessionController _session;
   final BattleExpeditionUseCase _battleExpeditionUseCase;
+  final BattleCatalogRepository _battleCatalogRepository;
 
   void startExpedition(String stageId) {
     final SessionState current = _session.snapshot();
@@ -53,6 +57,7 @@ class BattleExpeditionController {
     final SessionState nextState = _battleExpeditionUseCase.claimStageRewards(
       state: current,
       stageId: stageId,
+      battleCatalogRepository: _battleCatalogRepository,
     );
     _session.applyState(nextState);
     _session.appendLog(

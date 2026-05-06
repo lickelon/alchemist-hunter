@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,6 +34,30 @@ final Provider<ProgressState> battleProgressProvider = Provider<ProgressState>((
       (SessionState state) => state.battle.progress,
     ),
   );
+});
+
+final battleStageUnlockedProvider = Provider.family<bool, String>((
+  Ref ref,
+  String stageId,
+) {
+  final ProgressState progress = ref.watch(battleProgressProvider);
+  final BattleStageDefinition stage = ref
+      .watch(battleCatalogRepositoryProvider)
+      .stageDefinition(stageId);
+  return const BattleProgressionService().isStageUnlocked(
+    progress: progress,
+    stage: stage,
+  );
+});
+
+final battleStageLockReasonProvider = Provider.family<String, String>((
+  Ref ref,
+  String stageId,
+) {
+  final BattleStageDefinition stage = ref
+      .watch(battleCatalogRepositoryProvider)
+      .stageDefinition(stageId);
+  return const BattleProgressionService().lockReason(stage);
 });
 
 final battleStageAssignmentProvider = Provider.family<List<String>, String>((

@@ -35,6 +35,8 @@ class BattleController {
        _expeditionController = BattleExpeditionController(
          session,
          battleExpeditionUseCase: battleExpeditionUseCase,
+         battleCatalogRepository:
+             battleCatalogRepository ?? const _MissingBattleCatalogRepository(),
        ),
        _assignmentController = BattleAssignmentController(
          session,

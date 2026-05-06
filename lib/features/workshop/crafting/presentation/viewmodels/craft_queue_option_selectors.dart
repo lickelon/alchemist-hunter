@@ -65,9 +65,6 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
   final PotionCraftingService craftingService = ref.watch(
     potionCraftingServiceProvider,
   );
-  final materialCatalogRepository = ref.watch(
-    materialCatalogRepositoryProvider,
-  );
   final bool queueFull = queueLength >= queueCapacity;
 
   bool isUnlocked(PotionBlueprint potion) {
@@ -91,13 +88,9 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
       return '';
     }
     if (index < 13) {
-      final String materialName =
-          materialCatalogRepository.materialName('m_27') ?? 'm_27';
-      return '특수 재료 $materialName 드롭 필요';
+      return '3단계 클리어 필요';
     }
-    final String materialName =
-        materialCatalogRepository.materialName('m_30') ?? 'm_30';
-    return '특수 재료 $materialName 드롭 필요';
+    return '5단계 클리어 필요';
   }
 
   int potionOrder(String id) {

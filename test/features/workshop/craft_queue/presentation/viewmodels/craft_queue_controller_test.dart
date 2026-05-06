@@ -243,7 +243,7 @@ void main() {
       expect(basePotion.maxCraftableCount, greaterThanOrEqualTo(1));
       expect(specialPotion.unlocked, true);
       expect(lockedPotion.unlocked, false);
-      expect(lockedPotion.lockReason, '특수 재료 Moontear Crystal 드롭 필요');
+      expect(lockedPotion.lockReason, '5단계 클리어 필요');
     },
   );
 }

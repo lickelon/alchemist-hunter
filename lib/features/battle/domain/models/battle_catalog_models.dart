@@ -44,6 +44,17 @@ class BattleEnemySetDefinition {
 }
 
 @immutable
+class BattleStageUnlockCondition {
+  const BattleStageUnlockCondition({
+    required this.requiredStageId,
+    required this.label,
+  });
+
+  final String requiredStageId;
+  final String label;
+}
+
+@immutable
 class BattleStageDefinition {
   const BattleStageDefinition({
     required this.id,
@@ -57,6 +68,8 @@ class BattleStageDefinition {
     required this.essenceFailure,
     required this.xpSuccessBase,
     required this.xpFailureBase,
+    this.unlockCondition,
+    this.clearUnlockFlags = const <String>{},
   });
 
   final String id;
@@ -70,4 +83,6 @@ class BattleStageDefinition {
   final int essenceFailure;
   final int xpSuccessBase;
   final int xpFailureBase;
+  final BattleStageUnlockCondition? unlockCondition;
+  final Set<String> clearUnlockFlags;
 }

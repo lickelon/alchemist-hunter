@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/services/character_progression_service.dart';
@@ -12,11 +13,15 @@ class AutoBattleUseCase {
         const CharacterProgressionService(),
     BattlePartyPowerService battlePartyPowerService =
         const BattlePartyPowerService(),
+    BattleProgressionService battleProgressionService =
+        const BattleProgressionService(),
   }) : _characterProgressionService = characterProgressionService,
-       _battlePartyPowerService = battlePartyPowerService;
+       _battlePartyPowerService = battlePartyPowerService,
+       _battleProgressionService = battleProgressionService;
 
   final CharacterProgressionService _characterProgressionService;
   final BattlePartyPowerService _battlePartyPowerService;
+  final BattleProgressionService _battleProgressionService;
 
   SessionState runAutoBattle({
     required SessionState state,
@@ -54,14 +59,12 @@ class AutoBattleUseCase {
       inventory[materialId] = (inventory[materialId] ?? 0) + quantity;
     });
 
-    final Set<String> unlocks = <String>{...state.battle.progress.unlockFlags};
-    if ((result.loot['m_27'] ?? 0) > 0) {
-      unlocks.add('potion_special_1');
-    }
-    if ((result.loot['m_30'] ?? 0) > 0) {
-      unlocks.add('potion_special_2');
-      unlocks.add('stage_2');
-    }
+    final Set<String> unlocks = _battleProgressionService
+        .applyStageClearUnlocks(
+          currentUnlockFlags: state.battle.progress.unlockFlags,
+          clearedStage: stageDefinition,
+          success: result.success,
+        );
 
     final int nextGold =
         state.player.gold -
