@@ -30,11 +30,7 @@ class CharacterEquipmentSlotView {
     if (item == null) {
       return '장착 가능한 장비 ${availableItems.length}개';
     }
-    final String? enchantLabel = item.enchant?.label;
-    if (enchantLabel == null) {
-      return item.statLabel;
-    }
-    return '${item.statLabel}\n$enchantLabel';
+    return item.detailLabel;
   }
 }
 
@@ -49,6 +45,7 @@ class CharacterListItemView {
     required this.equipmentSlots,
     required this.combatPowerLabel,
     required this.combatStatPairs,
+    required this.combatEffectLines,
     required this.hasTierUpMaterial,
     required this.detailLines,
     required this.assignmentLabel,
@@ -64,6 +61,7 @@ class CharacterListItemView {
   final List<CharacterEquipmentSlotView> equipmentSlots;
   final String combatPowerLabel;
   final List<(String, String)> combatStatPairs;
+  final List<String> combatEffectLines;
   final bool hasTierUpMaterial;
   final List<String> detailLines;
   final String assignmentLabel;

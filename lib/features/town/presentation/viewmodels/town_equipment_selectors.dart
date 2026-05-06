@@ -133,7 +133,12 @@ townEquipmentBlueprintViewsProvider = Provider<List<TownEquipmentBlueprintView>>
           id: blueprint.id,
           name: blueprint.name,
           slotLabel: blueprint.slot.name,
-          statLabel: blueprint.statLabel,
+          statLabel:
+              blueprint.statModifiers.isEmpty &&
+                  blueprint.modifiers.isEmpty &&
+                  blueprint.passives.isEmpty
+              ? blueprint.statLabel
+              : '${blueprint.statLabel}\n${blueprint.effectLabel}',
           materialCostLabel: adjustedCosts.entries
               .map(
                 (MapEntry<String, int> entry) =>
@@ -159,9 +164,7 @@ townEquipmentInventoryViewsProvider =
               id: entry.id,
               name: entry.name,
               slotLabel: entry.slot.name,
-              statLabel: entry.enchant == null
-                  ? entry.statLabel
-                  : '${entry.statLabel}\n${entry.enchant!.label}',
+              statLabel: entry.detailLabel,
             );
           })
           .toList(growable: false);

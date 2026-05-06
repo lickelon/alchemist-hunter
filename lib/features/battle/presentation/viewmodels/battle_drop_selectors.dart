@@ -159,13 +159,6 @@ String _modifierLabel(BattleModifier modifier) {
   final String baseLabel = switch (modifier.type) {
     BattleModifierType.damageDealt => '주는 피해 $valueLabel',
     BattleModifierType.damageTaken => '받는 피해 $valueLabel',
-    BattleModifierType.critRate => '치확 $valueLabel',
-    BattleModifierType.critDamage => '치피 $valueLabel',
-    BattleModifierType.accuracy => '명중 $valueLabel',
-    BattleModifierType.evasion => '회피 $valueLabel',
-    BattleModifierType.lifesteal => '흡혈 $valueLabel',
-    BattleModifierType.healingPower => '회복력 $valueLabel',
-    BattleModifierType.regen => '재생 $valueLabel',
   };
   return '$baseLabel$schoolLabel$targetLabel';
 }

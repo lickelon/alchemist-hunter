@@ -75,8 +75,8 @@ final enchantPreviewProvider =
         equipmentName: equipment.name,
         currentEnchantLabel: equipment.enchant?.label ?? '인챈트 없음',
         nextEnchantLabel: nextEnchant.label,
-        currentStatLabel: equipment.statLabel,
-        nextStatLabel: previewEquipment.statLabel,
+        currentStatLabel: equipment.detailLabel,
+        nextStatLabel: previewEquipment.detailLabel,
         deltaStatLabel:
             '변화 ${formatEquipmentStatLabel(maxHp: previewEquipment.totalMaxHp - equipment.totalMaxHp, physicalAttack: previewEquipment.totalPhysicalAttack - equipment.totalPhysicalAttack, physicalDefense: previewEquipment.totalPhysicalDefense - equipment.totalPhysicalDefense, magicalAttack: previewEquipment.totalMagicalAttack - equipment.totalMagicalAttack, magicalDefense: previewEquipment.totalMagicalDefense - equipment.totalMagicalDefense, speed: previewEquipment.totalSpeed - equipment.totalSpeed, signed: true, includeZero: false, emptyLabel: '없음')}',
         replaceRequired: equipment.enchant != null,

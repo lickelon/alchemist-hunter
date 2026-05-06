@@ -34,7 +34,7 @@ final Provider<List<EnchantEquipmentView>> enchantEquipmentViewsProvider =
               name: item.name,
               slotLabel: equipmentSlotLabel(item.slot),
               locationLabel: record.locationLabel,
-              statLabel: item.statLabel,
+              statLabel: item.detailLabel,
               enchantLabel: item.enchant?.label ?? '인챈트 없음',
             );
           }).toList();

@@ -53,11 +53,7 @@ class CharacterEquipmentSheet extends StatelessWidget {
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(item.name),
-                    subtitle: Text(
-                      item.enchant == null
-                          ? item.statLabel
-                          : '${item.statLabel}\n${item.enchant!.label}',
-                    ),
+                    subtitle: Text(item.detailLabel),
                     trailing: FilledButton.tonal(
                       onPressed: () {
                         Navigator.of(context).pop();

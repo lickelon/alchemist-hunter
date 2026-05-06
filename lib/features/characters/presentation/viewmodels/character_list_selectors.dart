@@ -124,7 +124,7 @@ List<CharacterListItemView> _buildCharacterViews({
 }) {
   const BattleCombatStatService statService = BattleCombatStatService();
   return characters.map((CharacterProgress character) {
-    final stats = statService.buildStats(character);
+    final heroProfile = statService.buildHeroProfile(character);
     final String combatDisciplineLabel = characterCombatDisciplineLabel(
       character.resolvedCombatJobId,
       statService: statService,
@@ -138,11 +138,11 @@ List<CharacterListItemView> _buildCharacterViews({
       tierHint: characterTierHint(character, inventory),
       tierMaterialLabel: characterTierMaterialLabel(character, inventory),
       combatPowerLabel: characterCombatPowerLabel(
-        stats: stats,
-        statService: statService,
+        power: heroProfile.power,
         combatDisciplineLabel: combatDisciplineLabel,
       ),
-      combatStatPairs: characterCombatStatPairs(stats),
+      combatStatPairs: characterCombatStatPairs(heroProfile.stats),
+      combatEffectLines: characterCombatEffectLines(heroProfile),
       hasTierUpMaterial: characterHasTierUpMaterial(character, inventory),
       detailLines: characterDetailLines(
         character,

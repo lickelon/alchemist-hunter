@@ -175,6 +175,30 @@ class CharacterCombatSection extends StatelessWidget {
   }
 }
 
+class CharacterCombatEffectSection extends StatelessWidget {
+  const CharacterCombatEffectSection({super.key, required this.effectLines});
+
+  final List<String> effectLines;
+
+  @override
+  Widget build(BuildContext context) {
+    return CharacterDetailSection(
+      title: '전투 효과',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: effectLines
+            .map(
+              (String line) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                child: Text(line),
+              ),
+            )
+            .toList(growable: false),
+      ),
+    );
+  }
+}
+
 class _StatGrid extends StatelessWidget {
   const _StatGrid({required this.pairs});
 

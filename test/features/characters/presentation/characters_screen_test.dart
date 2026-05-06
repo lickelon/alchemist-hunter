@@ -25,10 +25,11 @@ void main() {
     final CharacterProgress leveledTarget = tierReadyTarget.copyWith(
       level: tierReadyTarget.maxLevelForRank,
     );
-    final BattleCombatStats expectedStats = const BattleCombatStatService()
-        .buildStats(leveledTarget);
-    final int expectedPower = const BattleCombatStatService()
-        .summaryPowerForStats(expectedStats);
+    final BattleCombatStatService statService = const BattleCombatStatService();
+    final BattleCombatStats expectedStats = statService.buildStats(
+      leveledTarget,
+    );
+    final int expectedPower = statService.buildHeroProfile(leveledTarget).power;
     session.state = session.state.copyWith(
       player: session.state.player.copyWith(
         materialInventory: const <String, int>{'tier_mat_mercenary_2': 1},
@@ -43,6 +44,22 @@ void main() {
             attack: 12,
             defense: 0,
             health: 0,
+            statModifiers: const <BattleStatModifier>[
+              BattleStatModifier(
+                type: BattleStatModifierType.accuracy,
+                mode: BattleModifierMode.flat,
+                value: 0.06,
+                sourceId: 'test_accuracy',
+              ),
+            ],
+            modifiers: const <BattleModifier>[
+              BattleModifier(
+                type: BattleModifierType.damageDealt,
+                mode: BattleModifierMode.percent,
+                value: 0.05,
+                sourceId: 'test_damage',
+              ),
+            ],
             createdAt: DateTime(2026, 1, 1, 10),
           ),
         ],
@@ -93,6 +110,14 @@ void main() {
     expect(find.text('승급 재료: 용병 승급 재료 2 1/1'), findsNothing);
     expect(find.text('직군 전사 / 전열 기본 전열'), findsNothing);
     await tester.scrollUntilVisible(
+      find.text('전투 효과'),
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('전투 효과'), findsOneWidget);
+    expect(find.text('전투 효과 없음'), findsOneWidget);
+    await tester.scrollUntilVisible(
       find.text('배치 변경은 전투/작업실 화면에서 진행'),
       200,
       scrollable: find.byType(Scrollable).last,
@@ -118,10 +143,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('무기: Bronze Sword'), findsOneWidget);
-    expect(
-      find.text('체력 0 / 물공 12 / 물방 0\n마공 0 / 마방 0 / 속도 0'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('체력 0 / 물공 12 / 물방 0'), findsOneWidget);
+    expect(find.textContaining('마공 0 / 마방 0 / 속도 0'), findsOneWidget);
+    expect(find.text('주는 피해 +5%'), findsOneWidget);
+    expect(find.text('명중 +6%'), findsNothing);
   });
 
   testWidgets(
@@ -134,10 +159,9 @@ void main() {
         sessionControllerProvider.notifier,
       );
       final CharacterProgress target = session.state.characters.homunculi.first;
-      final BattleCombatStats expectedStats = const BattleCombatStatService()
-          .buildStats(target);
-      final int expectedPower = const BattleCombatStatService()
-          .summaryPowerForStats(expectedStats);
+      final BattleCombatStatService statService =
+          const BattleCombatStatService();
+      final int expectedPower = statService.buildHeroProfile(target).power;
       session.state = session.state.copyWith(
         characters: session.state.characters.copyWith(
           homunculi: <CharacterProgress>[

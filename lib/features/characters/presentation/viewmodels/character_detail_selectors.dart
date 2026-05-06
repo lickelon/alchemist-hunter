@@ -93,13 +93,22 @@ List<String> characterDetailLines(
 }
 
 String characterCombatPowerLabel({
-  required BattleCombatStats stats,
-  required BattleCombatStatService statService,
+  required int power,
   required String combatDisciplineLabel,
 }) {
-  final int power = statService.summaryPowerForStats(stats);
   final String disciplineLabel = combatDisciplineLabel;
   return '전투력 $power / 직군 $disciplineLabel';
+}
+
+List<String> characterCombatEffectLines(HeroProfile hero) {
+  final List<String> lines = <String>[
+    ...hero.modifiers.map(_combatModifierLabel),
+    ...hero.passives.map(_combatPassiveLabel),
+  ];
+  if (lines.isEmpty) {
+    return const <String>['전투 효과 없음'];
+  }
+  return lines;
 }
 
 List<(String, String)> characterCombatStatPairs(BattleCombatStats stats) {
@@ -146,4 +155,38 @@ String _tierMaterialDisplayName(CharacterProgress character) {
 
 String _percentLabel(double value) {
   return '${(value * 100).round()}%';
+}
+
+String _combatModifierLabel(BattleModifier modifier) {
+  final String schoolLabel = switch (modifier.school) {
+    DamageSchool.any => '',
+    DamageSchool.physical => ' / 물리',
+    DamageSchool.magical => ' / 마법',
+  };
+  final String targetLabel = modifier.targetFaction == null
+      ? ''
+      : ' / 대 ${modifier.targetFaction == CombatFaction.mercenary ? "용병" : "호문쿨루스"}';
+  final String valueLabel = modifier.mode == BattleModifierMode.percent
+      ? _signedPercentLabel(modifier.value)
+      : _signedPercentLabel(modifier.value);
+  final String baseLabel = switch (modifier.type) {
+    BattleModifierType.damageDealt => '주는 피해 $valueLabel',
+    BattleModifierType.damageTaken => '받는 피해 $valueLabel',
+  };
+  return '$baseLabel$schoolLabel$targetLabel';
+}
+
+String _combatPassiveLabel(BattlePassiveEffect passive) {
+  return switch (passive.type) {
+    BattlePassiveEffectType.alwaysHit => '패시브: 필중',
+    BattlePassiveEffectType.extraAttack => '패시브: 추가 공격 +${passive.value ?? 1}회',
+  };
+}
+
+String _signedPercentLabel(double value) {
+  final int percent = (value * 100).round();
+  if (percent > 0) {
+    return '+$percent%';
+  }
+  return '$percent%';
 }
