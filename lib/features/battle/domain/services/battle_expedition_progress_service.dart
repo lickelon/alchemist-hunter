@@ -170,6 +170,8 @@ class BattleExpeditionProgressService {
       gold: left.gold + right.gold,
       essence: left.essence + right.essence,
       characterXp: mergedXp,
+      hasSuccessfulBattle:
+          left.hasSuccessfulBattle || right.hasSuccessfulBattle,
     );
   }
 

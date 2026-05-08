@@ -47,27 +47,35 @@ class BattlePendingClaim {
     this.gold = 0,
     this.essence = 0,
     this.characterXp = const <String, int>{},
+    this.hasSuccessfulBattle = false,
   });
 
   final Map<String, int> materials;
   final int gold;
   final int essence;
   final Map<String, int> characterXp;
+  final bool hasSuccessfulBattle;
 
   bool get isEmpty =>
-      materials.isEmpty && gold == 0 && essence == 0 && characterXp.isEmpty;
+      materials.isEmpty &&
+      gold == 0 &&
+      essence == 0 &&
+      characterXp.isEmpty &&
+      !hasSuccessfulBattle;
 
   BattlePendingClaim copyWith({
     Map<String, int>? materials,
     int? gold,
     int? essence,
     Map<String, int>? characterXp,
+    bool? hasSuccessfulBattle,
   }) {
     return BattlePendingClaim(
       materials: materials ?? this.materials,
       gold: gold ?? this.gold,
       essence: essence ?? this.essence,
       characterXp: characterXp ?? this.characterXp,
+      hasSuccessfulBattle: hasSuccessfulBattle ?? this.hasSuccessfulBattle,
     );
   }
 }

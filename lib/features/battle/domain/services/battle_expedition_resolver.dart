@@ -75,6 +75,7 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
       gold: gold,
       essence: essence,
       characterXp: characterXp,
+      hasSuccessfulBattle: result.success,
     );
     final BattlePlaybackState playback = BattlePlaybackState(
       success: result.success,

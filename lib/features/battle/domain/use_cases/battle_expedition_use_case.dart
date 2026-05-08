@@ -96,7 +96,7 @@ class BattleExpeditionUseCase {
 
     final BattleStageDefinition stageDefinition = battleCatalogRepository
         .stageDefinition(stageId);
-    final bool success = expedition.pendingClaim.gold >= 0;
+    final bool success = expedition.pendingClaim.hasSuccessfulBattle;
     final Set<String> unlocks = _battleProgressionService
         .applyStageClearUnlocks(
           currentUnlockFlags: state.battle.progress.unlockFlags,
