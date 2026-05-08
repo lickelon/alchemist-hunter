@@ -41,6 +41,8 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
   }) {
     final List<String> assignedCharacterIds =
         state.battle.stageAssignments[stageId] ?? const <String>[];
+    final Map<String, int> potionLoadout =
+        state.battle.stagePotionLoadouts[stageId] ?? const <String, int>{};
     if (assignedCharacterIds.isEmpty) {
       return const BattleEncounterResolution(playback: null, summary: '편성 없음');
     }
@@ -54,7 +56,7 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
           state.characters,
           assignedCharacterIds: assignedCharacterIds,
         ),
-        potionLoadout: const <String, int>{},
+        potionLoadout: potionLoadout,
         stageId: stageId,
       ),
       stage: stageDefinition,

@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/use_cases/configure_battle_assignment_use_case.dart';
+import 'package:alchemist_hunter/features/battle/domain/use_cases/configure_battle_potion_loadout_use_case.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 
 class BattleAssignmentController {
@@ -7,10 +8,16 @@ class BattleAssignmentController {
     this._session, {
     ConfigureBattleAssignmentUseCase configureBattleAssignmentUseCase =
         const ConfigureBattleAssignmentUseCase(),
-  }) : _configureBattleAssignmentUseCase = configureBattleAssignmentUseCase;
+    ConfigureBattlePotionLoadoutUseCase configureBattlePotionLoadoutUseCase =
+        const ConfigureBattlePotionLoadoutUseCase(),
+  }) : _configureBattleAssignmentUseCase = configureBattleAssignmentUseCase,
+       _configureBattlePotionLoadoutUseCase =
+           configureBattlePotionLoadoutUseCase;
 
   final SessionController _session;
   final ConfigureBattleAssignmentUseCase _configureBattleAssignmentUseCase;
+  final ConfigureBattlePotionLoadoutUseCase
+      _configureBattlePotionLoadoutUseCase;
 
   void toggleStageAssignment(String stageId, String characterId) {
     final SessionState current = _session.snapshot();
@@ -61,6 +68,27 @@ class BattleAssignmentController {
           ? 'Assigned ${character.name} to $stageId'
           : 'Removed ${character.name} from $stageId',
     );
+  }
+
+  void setPotionCount(
+    String stageId,
+    String potionStackKey, {
+    required int count,
+    required int maxOwned,
+  }) {
+    final SessionState current = _session.snapshot();
+    final SessionState nextState = _configureBattlePotionLoadoutUseCase
+        .setPotionCount(
+          state: current,
+          stageId: stageId,
+          potionStackKey: potionStackKey,
+          count: count,
+          maxOwned: maxOwned,
+        );
+    if (identical(nextState, current)) {
+      return;
+    }
+    _session.applyState(nextState);
   }
 
   CharacterProgress? _findCharacter(SessionState state, String characterId) {

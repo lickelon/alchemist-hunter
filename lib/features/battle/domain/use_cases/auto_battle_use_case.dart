@@ -31,6 +31,8 @@ class AutoBattleUseCase {
   }) {
     final List<String> assignedCharacterIds =
         state.battle.stageAssignments[stageId] ?? const <String>[];
+    final Map<String, int> potionLoadout =
+        state.battle.stagePotionLoadouts[stageId] ?? const <String, int>{};
     if (assignedCharacterIds.isEmpty) {
       return state;
     }
@@ -44,7 +46,7 @@ class AutoBattleUseCase {
           state.characters,
           assignedCharacterIds: assignedCharacterIds,
         ),
-        potionLoadout: const <String, int>{},
+        potionLoadout: potionLoadout,
         stageId: stageId,
       ),
       stage: stageDefinition,

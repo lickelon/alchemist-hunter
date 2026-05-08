@@ -87,6 +87,7 @@ SessionState createInitialSessionStateFromCatalogs(
       stageAssignments: <String, List<String>>{
         'stage_1': <String>['merc_1', 'homo_1'],
       },
+      stagePotionLoadouts: <String, Map<String, int>>{},
       stageExpeditions: <String, BattleExpeditionState>{},
     ),
     characters: const CharactersState(

@@ -7,6 +7,7 @@ import 'package:alchemist_hunter/features/battle/domain/repositories/battle_cata
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/use_cases/battle_expedition_use_case.dart';
 import 'package:alchemist_hunter/features/battle/domain/use_cases/configure_battle_assignment_use_case.dart';
+import 'package:alchemist_hunter/features/battle/domain/use_cases/configure_battle_potion_loadout_use_case.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_assignment_controller.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_auto_controller.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_expedition_controller.dart';
@@ -24,6 +25,8 @@ class BattleController {
         const BattleExpeditionUseCase(),
     ConfigureBattleAssignmentUseCase configureBattleAssignmentUseCase =
         const ConfigureBattleAssignmentUseCase(),
+    ConfigureBattlePotionLoadoutUseCase configureBattlePotionLoadoutUseCase =
+        const ConfigureBattlePotionLoadoutUseCase(),
     BattleCatalogRepository? battleCatalogRepository,
   }) : _autoController = BattleAutoController(
          session,
@@ -41,6 +44,8 @@ class BattleController {
        _assignmentController = BattleAssignmentController(
          session,
          configureBattleAssignmentUseCase: configureBattleAssignmentUseCase,
+         configureBattlePotionLoadoutUseCase:
+             configureBattlePotionLoadoutUseCase,
        );
 
   final BattleAutoController _autoController;
@@ -60,6 +65,18 @@ class BattleController {
 
   void toggleStageAssignment(String stageId, String characterId) =>
       _assignmentController.toggleStageAssignment(stageId, characterId);
+
+  void setStagePotionCount(
+    String stageId,
+    String potionStackKey, {
+    required int count,
+    required int maxOwned,
+  }) => _assignmentController.setPotionCount(
+    stageId,
+    potionStackKey,
+    count: count,
+    maxOwned: maxOwned,
+  );
 }
 
 class _MissingBattleCatalogRepository implements BattleCatalogRepository {
