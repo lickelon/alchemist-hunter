@@ -2,16 +2,21 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_potion_loadout_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 
 class BattleEncounterResolution {
   const BattleEncounterResolution({
     required this.playback,
     required this.summary,
+    this.consumedPotionLoadout = const <String, int>{},
+    this.usedLoadoutFallback = false,
   });
 
   final BattlePlaybackState? playback;
   final String summary;
+  final Map<String, int> consumedPotionLoadout;
+  final bool usedLoadoutFallback;
 }
 
 abstract class BattleExpeditionResolver {
@@ -27,11 +32,15 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
     BattleService? battleService,
     BattlePartyPowerService battlePartyPowerService =
         const BattlePartyPowerService(),
+    BattlePotionLoadoutService battlePotionLoadoutService =
+        const BattlePotionLoadoutService(),
   }) : _battleService = battleService ?? BattleService(),
-       _battlePartyPowerService = battlePartyPowerService;
+       _battlePartyPowerService = battlePartyPowerService,
+       _battlePotionLoadoutService = battlePotionLoadoutService;
 
   final BattleService _battleService;
   final BattlePartyPowerService _battlePartyPowerService;
+  final BattlePotionLoadoutService _battlePotionLoadoutService;
 
   @override
   BattleEncounterResolution resolveEncounter({
@@ -41,11 +50,16 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
   }) {
     final List<String> assignedCharacterIds =
         state.battle.stageAssignments[stageId] ?? const <String>[];
-    final Map<String, int> potionLoadout =
+    final Map<String, int> requestedPotionLoadout =
         state.battle.stagePotionLoadouts[stageId] ?? const <String, int>{};
     if (assignedCharacterIds.isEmpty) {
       return const BattleEncounterResolution(playback: null, summary: '편성 없음');
     }
+    final ResolvedBattlePotionLoadout resolvedLoadout =
+        _battlePotionLoadoutService.resolveLoadout(
+          requestedLoadout: requestedPotionLoadout,
+          ownedStacks: state.workshop.craftedPotionStacks,
+        );
 
     final BattleStageDefinition stageDefinition = battleCatalogRepository
         .stageDefinition(stageId);
@@ -56,7 +70,7 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
           state.characters,
           assignedCharacterIds: assignedCharacterIds,
         ),
-        potionLoadout: potionLoadout,
+        potionLoadout: resolvedLoadout.appliedLoadout,
         stageId: stageId,
       ),
       stage: stageDefinition,
@@ -90,6 +104,8 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
       playback: playback,
       summary:
           '${playback.success ? '성공' : '실패'} / 골드 ${gold >= 0 ? '+' : ''}$gold / 에센스 ${essence >= 0 ? '+' : ''}$essence / 재료 ${pendingClaim.materials.length}종',
+      consumedPotionLoadout: resolvedLoadout.appliedLoadout,
+      usedLoadoutFallback: resolvedLoadout.fallback,
     );
   }
 }

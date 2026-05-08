@@ -3,10 +3,22 @@ import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_resolver.dart';
 
+class BattleExpeditionSyncResult {
+  const BattleExpeditionSyncResult({
+    required this.battle,
+    this.consumedPotionStacks = const <String, int>{},
+    this.fallbackStageIds = const <String>{},
+  });
+
+  final BattleState battle;
+  final Map<String, int> consumedPotionStacks;
+  final Set<String> fallbackStageIds;
+}
+
 class BattleExpeditionProgressService {
   const BattleExpeditionProgressService();
 
-  BattleState syncExpeditions({
+  BattleExpeditionSyncResult syncExpeditions({
     required SessionState state,
     required DateTime syncFrom,
     required DateTime now,
@@ -16,11 +28,13 @@ class BattleExpeditionProgressService {
     required BattleCatalogRepository battleCatalogRepository,
   }) {
     if (state.battle.stageExpeditions.isEmpty) {
-      return state.battle;
+      return BattleExpeditionSyncResult(battle: state.battle);
     }
 
     final Map<String, BattleExpeditionState> nextExpeditions =
         <String, BattleExpeditionState>{...state.battle.stageExpeditions};
+    final Map<String, int> consumedPotionStacks = <String, int>{};
+    final Set<String> fallbackStageIds = <String>{};
 
     state.battle.stageExpeditions.forEach((
       String stageId,
@@ -86,6 +100,16 @@ class BattleExpeditionProgressService {
                 stageId: stageId,
                 battleCatalogRepository: battleCatalogRepository,
               );
+          resolution.consumedPotionLoadout.forEach((
+            String stackKey,
+            int quantity,
+          ) {
+            consumedPotionStacks[stackKey] =
+                (consumedPotionStacks[stackKey] ?? 0) + quantity;
+          });
+          if (resolution.usedLoadoutFallback) {
+            fallbackStageIds.add(stageId);
+          }
           if (resolution.playback == null) {
             nextStatus = BattleExpeditionStatus.idle;
             nextPhaseProgress = Duration.zero;
@@ -150,7 +174,11 @@ class BattleExpeditionProgressService {
       );
     });
 
-    return state.battle.copyWith(stageExpeditions: nextExpeditions);
+    return BattleExpeditionSyncResult(
+      battle: state.battle.copyWith(stageExpeditions: nextExpeditions),
+      consumedPotionStacks: consumedPotionStacks,
+      fallbackStageIds: fallbackStageIds,
+    );
   }
 
   BattlePendingClaim _mergePendingClaim(

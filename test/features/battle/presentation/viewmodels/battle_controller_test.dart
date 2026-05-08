@@ -7,6 +7,7 @@ import 'package:alchemist_hunter/features/battle/domain/services/battle_service.
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -134,6 +135,37 @@ void main() {
 
     expect(session.state.workshop.logs.first, contains('Battle 성공'));
     expect(session.state.player.essence, 138);
+  });
+
+  test('runAutoBattle consumes configured stage potions when available', () {
+    final SessionController session = buildSession();
+    final BattleController controller = buildController(session);
+
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        craftedPotionStacks: const <String, int>{'p_1|a': 1},
+        craftedPotionDetails: <String, CraftedPotion>{
+          'p_1|a': CraftedPotion(
+            id: 'cp_1',
+            typePotionId: 'p_1',
+            qualityGrade: PotionQualityGrade.a,
+            qualityScore: 0.84,
+            traits: const <String, double>{'t_atk': 0.7, 't_hp': 0.3},
+            createdAt: DateTime(2026, 1, 1, 10),
+          ),
+        },
+      ),
+      battle: session.state.battle.copyWith(
+        stagePotionLoadouts: const <String, Map<String, int>>{
+          'stage_1': <String, int>{'p_1|a': 1},
+        },
+      ),
+    );
+
+    controller.runAutoBattle('stage_1');
+
+    expect(session.state.workshop.craftedPotionStacks, isEmpty);
+    expect(session.state.workshop.craftedPotionDetails, isEmpty);
   });
 
   test('toggleStageAssignment stores assignment per stage', () {

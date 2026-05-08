@@ -10,6 +10,7 @@ import 'package:alchemist_hunter/features/town/data/repositories/static_shop_cat
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -17,8 +18,24 @@ void main() {
     final DateTime start = DateTime(2026, 1, 1, 10);
     final SessionState initial = createInitialSessionState(start);
     final SessionState state = initial.copyWith(
-      player: initial.player.copyWith(timeAcceleration: 30),
+      player: initial.player.copyWith(timeAcceleration: 8),
+      workshop: initial.workshop.copyWith(
+        craftedPotionStacks: const <String, int>{'p_1|a': 1},
+        craftedPotionDetails: <String, CraftedPotion>{
+          'p_1|a': CraftedPotion(
+            id: 'cp_1',
+            typePotionId: 'p_1',
+            qualityGrade: PotionQualityGrade.a,
+            qualityScore: 0.84,
+            traits: const <String, double>{'t_atk': 0.7, 't_hp': 0.3},
+            createdAt: start,
+          ),
+        },
+      ),
       battle: initial.battle.copyWith(
+        stagePotionLoadouts: const <String, Map<String, int>>{
+          'stage_1': <String, int>{'p_1|a': 1},
+        },
         stageExpeditions: <String, BattleExpeditionState>{
           'stage_1': BattleExpeditionState(
             status: BattleExpeditionStatus.searching,
@@ -31,7 +48,7 @@ void main() {
 
     final SessionState nextState = const SessionProgressSyncUseCase().sync(
       state: state,
-      now: start.add(const Duration(seconds: 2)),
+      now: start.add(const Duration(seconds: 1)),
       townUseCase: const TownUseCase(),
       economyService: EconomyService(),
       shopCatalogRepository: const StaticShopCatalogRepository(),
@@ -41,16 +58,11 @@ void main() {
       battleCatalogRepository: const StaticBattleCatalogRepository(),
     );
 
-    final BattlePendingClaim claim =
-        nextState.battle.stageExpeditions['stage_1']!.pendingClaim;
     expect(
-      claim.gold > 0 || claim.essence > 0 || claim.materials.isNotEmpty,
-      true,
+      nextState.battle.stageExpeditions['stage_1']!.currentBattle,
+      isNotNull,
     );
-    expect(
-      nextState.battle.stageExpeditions['stage_1']!.recentLogs,
-      isNotEmpty,
-    );
+    expect(nextState.workshop.craftedPotionStacks, isEmpty);
   });
 
   test('time acceleration shortens forge completion time', () {

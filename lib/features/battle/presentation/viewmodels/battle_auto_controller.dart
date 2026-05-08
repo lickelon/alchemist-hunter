@@ -4,6 +4,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_resolver.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_potion_loadout_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/use_cases/battle_expedition_use_case.dart';
 
@@ -22,6 +23,8 @@ class BattleAutoController {
   final BattleService? _battleService;
   final BattleExpeditionUseCase _battleExpeditionUseCase;
   final BattleCatalogRepository _battleCatalogRepository;
+  static const BattlePotionLoadoutService _battlePotionLoadoutService =
+      BattlePotionLoadoutService();
 
   void runAutoBattle(String stageId) {
     final SessionState current = _session.snapshot();
@@ -62,6 +65,10 @@ class BattleAutoController {
       recentLogs: recentLogs,
     );
     final SessionState pendingState = started.copyWith(
+      workshop: _battlePotionLoadoutService.consumeLoadout(
+        workshop: started.workshop,
+        appliedLoadout: resolution.consumedPotionLoadout,
+      ),
       battle: started.battle.copyWith(stageExpeditions: nextExpeditions),
     );
     final SessionState claimedState = _battleExpeditionUseCase

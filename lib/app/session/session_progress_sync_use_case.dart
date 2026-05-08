@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_resolver.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_progress_service.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_potion_loadout_service.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 import 'package:alchemist_hunter/features/town/domain/services/forge_queue_progress_service.dart';
@@ -27,6 +28,8 @@ class SessionProgressSyncUseCase {
   final BattleExpeditionProgressService _battleExpeditionProgressService;
   final WorkshopQueueProgressService _workshopQueueProgressService;
   final ForgeQueueProgressService _forgeQueueProgressService;
+  static const BattlePotionLoadoutService _battlePotionLoadoutService =
+      BattlePotionLoadoutService();
 
   SessionState sync({
     required SessionState state,
@@ -89,15 +92,21 @@ class SessionProgressSyncUseCase {
     required BattleExpeditionResolver battleExpeditionResolver,
     required BattleCatalogRepository battleCatalogRepository,
   }) {
+    final BattleExpeditionSyncResult result = _battleExpeditionProgressService
+        .syncExpeditions(
+          state: state,
+          syncFrom: syncFrom,
+          now: now,
+          speedMultiplier: speedMultiplier,
+          battleActionInterval: battleActionInterval,
+          battleExpeditionResolver: battleExpeditionResolver,
+          battleCatalogRepository: battleCatalogRepository,
+        );
     return state.copyWith(
-      battle: _battleExpeditionProgressService.syncExpeditions(
-        state: state,
-        syncFrom: syncFrom,
-        now: now,
-        speedMultiplier: speedMultiplier,
-        battleActionInterval: battleActionInterval,
-        battleExpeditionResolver: battleExpeditionResolver,
-        battleCatalogRepository: battleCatalogRepository,
+      battle: result.battle,
+      workshop: _battlePotionLoadoutService.consumeLoadout(
+        workshop: state.workshop,
+        appliedLoadout: result.consumedPotionStacks,
       ),
     );
   }

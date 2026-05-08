@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_potion_loadout_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
@@ -15,13 +16,17 @@ class AutoBattleUseCase {
         const BattlePartyPowerService(),
     BattleProgressionService battleProgressionService =
         const BattleProgressionService(),
+    BattlePotionLoadoutService battlePotionLoadoutService =
+        const BattlePotionLoadoutService(),
   }) : _characterProgressionService = characterProgressionService,
        _battlePartyPowerService = battlePartyPowerService,
-       _battleProgressionService = battleProgressionService;
+       _battleProgressionService = battleProgressionService,
+       _battlePotionLoadoutService = battlePotionLoadoutService;
 
   final CharacterProgressionService _characterProgressionService;
   final BattlePartyPowerService _battlePartyPowerService;
   final BattleProgressionService _battleProgressionService;
+  final BattlePotionLoadoutService _battlePotionLoadoutService;
 
   SessionState runAutoBattle({
     required SessionState state,
@@ -40,13 +45,19 @@ class AutoBattleUseCase {
     final BattleStageDefinition stageDefinition = battleCatalogRepository
         .stageDefinition(stageId);
 
+    final ResolvedBattlePotionLoadout resolvedLoadout =
+        _battlePotionLoadoutService.resolveLoadout(
+          requestedLoadout: potionLoadout,
+          ownedStacks: state.workshop.craftedPotionStacks,
+        );
+
     final BattleResult result = battleService.runAutoBattle(
       config: AutoBattleConfig(
         party: _battlePartyPowerService.buildParty(
           state.characters,
           assignedCharacterIds: assignedCharacterIds,
         ),
-        potionLoadout: potionLoadout,
+        potionLoadout: resolvedLoadout.appliedLoadout,
         stageId: stageId,
       ),
       stage: stageDefinition,
@@ -84,6 +95,10 @@ class AutoBattleUseCase {
         gold: nextGold,
         essence: state.player.essence + essenceGain,
         materialInventory: inventory,
+      ),
+      workshop: _battlePotionLoadoutService.consumeLoadout(
+        workshop: state.workshop,
+        appliedLoadout: resolvedLoadout.appliedLoadout,
       ),
       battle: state.battle.copyWith(
         progress: ProgressState(
