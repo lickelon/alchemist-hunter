@@ -65,6 +65,44 @@ void main() {
     expect(nextState.workshop.craftedPotionStacks, isEmpty);
   });
 
+  test('sync marks current battle as loadout fallback when potions are missing', () {
+    final DateTime start = DateTime(2026, 1, 1, 10);
+    final SessionState initial = createInitialSessionState(start);
+    final SessionState state = initial.copyWith(
+      player: initial.player.copyWith(timeAcceleration: 8),
+      battle: initial.battle.copyWith(
+        stagePotionLoadouts: const <String, Map<String, int>>{
+          'stage_1': <String, int>{'p_1|a': 1},
+        },
+        stageExpeditions: <String, BattleExpeditionState>{
+          'stage_1': BattleExpeditionState(
+            status: BattleExpeditionStatus.searching,
+            lastProgressedAt: start,
+            phaseProgress: Duration.zero,
+          ),
+        },
+      ),
+    );
+
+    final SessionState nextState = const SessionProgressSyncUseCase().sync(
+      state: state,
+      now: start.add(const Duration(seconds: 1)),
+      townUseCase: const TownUseCase(),
+      economyService: EconomyService(),
+      shopCatalogRepository: const StaticShopCatalogRepository(),
+      battleExpeditionResolver: DefaultBattleExpeditionResolver(
+        battleService: BattleService(random: Random(11)),
+      ),
+      battleCatalogRepository: const StaticBattleCatalogRepository(),
+    );
+
+    expect(
+      nextState.battle.stageExpeditions['stage_1']!.currentBattle
+          ?.usedLoadoutFallback,
+      isTrue,
+    );
+  });
+
   test('time acceleration shortens forge completion time', () {
     final DateTime start = DateTime(2026, 1, 1, 10);
     final SessionState initial = createInitialSessionState(start);
