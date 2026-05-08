@@ -169,6 +169,27 @@ void main() {
     expect(session.state.workshop.craftedPotionDetails, isEmpty);
   });
 
+  test('runAutoBattle records loadout fallback when potions are missing', () {
+    final SessionController session = buildSession();
+    final BattleController controller = buildController(session);
+
+    session.state = session.state.copyWith(
+      battle: session.state.battle.copyWith(
+        stagePotionLoadouts: const <String, Map<String, int>>{
+          'stage_1': <String, int>{'p_1|a': 1},
+        },
+      ),
+    );
+
+    controller.runAutoBattle('stage_1');
+
+    final BattleExpeditionState? expedition =
+        session.state.battle.stageExpeditions['stage_1'];
+    expect(expedition, isNotNull);
+    expect(expedition!.recentLogs.first.usedLoadoutFallback, isTrue);
+    expect(session.state.workshop.logs.first, contains('포션 미적용'));
+  });
+
   test('toggleStageAssignment stores assignment per stage', () {
     final SessionController session = buildSession();
     final BattleController controller = buildController(session);

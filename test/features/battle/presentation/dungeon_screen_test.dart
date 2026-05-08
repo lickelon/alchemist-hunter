@@ -118,6 +118,7 @@ void main() {
                 essence: 6,
                 materials: const <String, int>{'m_1': 2},
                 turns: 4,
+                usedLoadoutFallback: true,
                 actions: const <BattleActionLog>[
                   BattleActionLog(
                     lifecycle: 1,
@@ -155,10 +156,16 @@ void main() {
     await tester.tap(find.text('1단계'));
     await tester.pumpAndSettle();
 
+    expect(find.textContaining('포션 미적용'), findsWidgets);
+
     await tester.tap(find.text('최근 결과').last);
     await tester.pumpAndSettle();
 
     expect(find.text('1단계 전투 기록'), findsOneWidget);
+    expect(
+      find.text('포션 재고 부족으로 로드아웃이 적용되지 않았습니다.'),
+      findsOneWidget,
+    );
     expect(find.textContaining('획득 재료: Emberroot x2'), findsOneWidget);
     expect(
       find.textContaining('Rookie Swordsman -> Ruin Scavenger 물리 12'),

@@ -59,7 +59,7 @@ class BattleResultSheet extends ConsumerWidget {
                         ],
                       ),
                       subtitle: Text(
-                        '골드 ${battleSignedValueLabel(log.gold)} / 에센스 ${battleSignedValueLabel(log.essence)} / 재료 ${log.materials.length}종 / ${log.turns}턴',
+                        '골드 ${battleSignedValueLabel(log.gold)} / 에센스 ${battleSignedValueLabel(log.essence)} / 재료 ${log.materials.length}종 / ${log.turns}턴${log.usedLoadoutFallback ? ' / 포션 미적용' : ''}',
                       ),
                       childrenPadding: const EdgeInsets.fromLTRB(
                         AppSpacing.lg,
@@ -68,6 +68,16 @@ class BattleResultSheet extends ConsumerWidget {
                         AppSpacing.lg,
                       ),
                       children: <Widget>[
+                        if (log.usedLoadoutFallback)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '포션 재고 부족으로 로드아웃이 적용되지 않았습니다.',
+                            ),
+                          ),
+                        if (log.usedLoadoutFallback &&
+                            (log.materials.isNotEmpty || log.actions.isNotEmpty))
+                          const SizedBox(height: AppSpacing.md),
                         if (log.materials.isNotEmpty)
                           Align(
                             alignment: Alignment.centerLeft,

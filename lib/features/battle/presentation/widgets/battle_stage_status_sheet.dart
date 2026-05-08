@@ -98,7 +98,7 @@ class BattleStageStatusSheet extends ConsumerWidget {
                   : <String>[
                       lastResultLabel,
                       ...recentLogs.take(5).map((BattleLogEntry log) {
-                        return '${_formatTime(log.resolvedAt)} / ${log.success ? '성공' : '실패'} / 골드 ${battleSignedValueLabel(log.gold)} / 에센스 ${battleSignedValueLabel(log.essence)}';
+                        return '${_formatTime(log.resolvedAt)} / ${log.success ? '성공' : '실패'} / 골드 ${battleSignedValueLabel(log.gold)} / 에센스 ${battleSignedValueLabel(log.essence)}${log.usedLoadoutFallback ? ' / 포션 미적용' : ''}';
                       }),
                     ],
             ),
@@ -186,6 +186,8 @@ class BattleStageStatusSheet extends ConsumerWidget {
               battleActionInterval.inMilliseconds,
           lines: <String>[
             ...baseLines,
+            if (currentBattle?.usedLoadoutFallback ?? false)
+              '포션 부족으로 로드아웃 미적용',
             '다음 행동까지 ${_formatRemaining(battleActionInterval, lifecycleElapsed)}',
           ],
         );
@@ -209,7 +211,10 @@ class BattleStageStatusSheet extends ConsumerWidget {
           progressValue:
               lifecycleElapsed.inMilliseconds /
               battleActionInterval.inMilliseconds,
-          lines: baseLines,
+          lines: <String>[
+            ...baseLines,
+            if (currentBattle.usedLoadoutFallback) '포션 부족으로 로드아웃 미적용',
+          ],
         );
     }
   }

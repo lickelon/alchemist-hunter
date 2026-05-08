@@ -12,12 +12,14 @@ class BattlePlaybackState {
     required this.turns,
     required this.pendingClaim,
     this.actions = const <BattleActionLog>[],
+    this.usedLoadoutFallback = false,
   });
 
   final bool success;
   final int turns;
   final BattlePendingClaim pendingClaim;
   final List<BattleActionLog> actions;
+  final bool usedLoadoutFallback;
 
   int revealedActionCount({
     required Duration elapsed,
@@ -69,6 +71,7 @@ class BattlePlaybackState {
       materials: pendingClaim.materials,
       turns: turns,
       actions: actions,
+      usedLoadoutFallback: usedLoadoutFallback,
     );
   }
 }

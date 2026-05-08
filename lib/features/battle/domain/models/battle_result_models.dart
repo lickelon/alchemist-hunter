@@ -12,6 +12,7 @@ class BattleLogEntry {
     required this.materials,
     required this.turns,
     this.actions = const <BattleActionLog>[],
+    this.usedLoadoutFallback = false,
   });
 
   final DateTime resolvedAt;
@@ -21,6 +22,7 @@ class BattleLogEntry {
   final Map<String, int> materials;
   final int turns;
   final List<BattleActionLog> actions;
+  final bool usedLoadoutFallback;
 }
 
 @immutable

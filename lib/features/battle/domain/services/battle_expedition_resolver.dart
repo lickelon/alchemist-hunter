@@ -98,12 +98,13 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
       turns: result.turns,
       pendingClaim: pendingClaim,
       actions: result.actions,
+      usedLoadoutFallback: resolvedLoadout.fallback,
     );
 
     return BattleEncounterResolution(
       playback: playback,
       summary:
-          '${playback.success ? '성공' : '실패'} / 골드 ${gold >= 0 ? '+' : ''}$gold / 에센스 ${essence >= 0 ? '+' : ''}$essence / 재료 ${pendingClaim.materials.length}종',
+          '${playback.success ? '성공' : '실패'} / 골드 ${gold >= 0 ? '+' : ''}$gold / 에센스 ${essence >= 0 ? '+' : ''}$essence / 재료 ${pendingClaim.materials.length}종${resolvedLoadout.fallback ? ' / 포션 미적용' : ''}',
       consumedPotionLoadout: resolvedLoadout.appliedLoadout,
       usedLoadoutFallback: resolvedLoadout.fallback,
     );

@@ -175,5 +175,5 @@ final battleStageLastResultLabelProvider = Provider.family<String, String>((
     return '최근 결과 없음';
   }
   final BattleLogEntry log = logs.first;
-  return '최근 결과 ${log.success ? '성공' : '실패'} / 골드 ${battleSignedValueLabel(log.gold)} / 재료 ${log.materials.length}종';
+  return '최근 결과 ${log.success ? '성공' : '실패'} / 골드 ${battleSignedValueLabel(log.gold)} / 재료 ${log.materials.length}종${log.usedLoadoutFallback ? ' / 포션 미적용' : ''}';
 });
