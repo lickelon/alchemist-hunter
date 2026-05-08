@@ -54,7 +54,7 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
           state.characters,
           assignedCharacterIds: assignedCharacterIds,
         ),
-        potionLoadout: const <String, int>{'p_1': 2, 'p_2': 1},
+        potionLoadout: const <String, int>{},
         stageId: stageId,
       ),
       stage: stageDefinition,

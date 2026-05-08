@@ -40,9 +40,9 @@ void main() {
     );
 
     expect(enchant.label, '활력 포션 A');
-    expect(enchant.attackBonus, 13);
-    expect(enchant.defenseBonus, 3);
-    expect(enchant.healthBonus, 20);
+    expect(enchant.attackBonus, 6);
+    expect(enchant.defenseBonus, 1);
+    expect(enchant.healthBonus, 7);
     expect(enchant.modifiers, hasLength(1));
     expect(enchant.modifiers.first.type, BattleModifierType.damageDealt);
   });

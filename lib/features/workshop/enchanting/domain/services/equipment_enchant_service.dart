@@ -23,13 +23,13 @@ class EquipmentEnchantService {
           potionName: blueprint.name,
           qualityLabel: potion.qualityGrade.name.toUpperCase(),
           dominantTraitId: dominantTraitId,
-          maxHpBonus: max(0, potency * 2) + _maxHpAffinity(dominantTraitId),
+          maxHpBonus: potency + _maxHpAffinity(dominantTraitId),
           physicalAttackBonus:
-              potency + _physicalAttackAffinity(dominantTraitId),
-          physicalDefenseBonus: max(0, potency ~/ 3),
+              max(1, potency ~/ 2) + _physicalAttackAffinity(dominantTraitId),
+          physicalDefenseBonus: max(0, potency ~/ 4),
           magicalAttackBonus: _magicalAttackAffinity(dominantTraitId),
           magicalDefenseBonus:
-              max(0, potency ~/ 4) + _magicalDefenseAffinity(dominantTraitId),
+              max(0, potency ~/ 5) + _magicalDefenseAffinity(dominantTraitId),
           speedBonus: _speedAffinity(dominantTraitId),
           statModifiers: _buildStatModifiers(
             slot: equipment.slot,
@@ -43,6 +43,7 @@ class EquipmentEnchantService {
           passives: _buildPassives(
             slot: equipment.slot,
             dominantTraitId: dominantTraitId,
+            potency: potency,
           ),
         );
       case EquipmentSlot.armor:
@@ -51,13 +52,14 @@ class EquipmentEnchantService {
           potionName: blueprint.name,
           qualityLabel: potion.qualityGrade.name.toUpperCase(),
           dominantTraitId: dominantTraitId,
-          maxHpBonus: (potency * 4) + _maxHpAffinity(dominantTraitId),
-          physicalAttackBonus: max(0, potency ~/ 4),
+          maxHpBonus: (potency * 2) + _maxHpAffinity(dominantTraitId),
+          physicalAttackBonus: max(0, potency ~/ 6),
           physicalDefenseBonus:
-              potency + _physicalDefenseAffinity(dominantTraitId),
-          magicalAttackBonus: max(0, potency ~/ 6),
+              max(1, (potency * 3) ~/ 4) +
+              _physicalDefenseAffinity(dominantTraitId),
+          magicalAttackBonus: max(0, potency ~/ 8),
           magicalDefenseBonus:
-              max(0, potency ~/ 2) + _magicalDefenseAffinity(dominantTraitId),
+              max(0, potency ~/ 3) + _magicalDefenseAffinity(dominantTraitId),
           speedBonus: _speedAffinity(dominantTraitId),
           statModifiers: _buildStatModifiers(
             slot: equipment.slot,
@@ -71,6 +73,7 @@ class EquipmentEnchantService {
           passives: _buildPassives(
             slot: equipment.slot,
             dominantTraitId: dominantTraitId,
+            potency: potency,
           ),
         );
       case EquipmentSlot.accessory:
@@ -79,16 +82,16 @@ class EquipmentEnchantService {
           potionName: blueprint.name,
           qualityLabel: potion.qualityGrade.name.toUpperCase(),
           dominantTraitId: dominantTraitId,
-          maxHpBonus: (potency * 3) + _maxHpAffinity(dominantTraitId),
+          maxHpBonus: (potency * 2) + _maxHpAffinity(dominantTraitId),
           physicalAttackBonus:
-              max(0, potency ~/ 2) + _physicalAttackAffinity(dominantTraitId),
+              max(0, potency ~/ 3) + _physicalAttackAffinity(dominantTraitId),
           physicalDefenseBonus:
-              max(0, potency ~/ 2) + _physicalDefenseAffinity(dominantTraitId),
+              max(0, potency ~/ 3) + _physicalDefenseAffinity(dominantTraitId),
           magicalAttackBonus:
-              max(0, potency ~/ 2) + _magicalAttackAffinity(dominantTraitId),
+              max(0, potency ~/ 3) + _magicalAttackAffinity(dominantTraitId),
           magicalDefenseBonus:
-              max(0, potency ~/ 2) + _magicalDefenseAffinity(dominantTraitId),
-          speedBonus: max(0, potency ~/ 4) + _speedAffinity(dominantTraitId),
+              max(0, potency ~/ 3) + _magicalDefenseAffinity(dominantTraitId),
+          speedBonus: max(0, potency ~/ 6) + _speedAffinity(dominantTraitId),
           statModifiers: _buildStatModifiers(
             slot: equipment.slot,
             dominantTraitId: dominantTraitId,
@@ -101,6 +104,7 @@ class EquipmentEnchantService {
           passives: _buildPassives(
             slot: equipment.slot,
             dominantTraitId: dominantTraitId,
+            potency: potency,
           ),
         );
     }
@@ -120,7 +124,7 @@ class EquipmentEnchantService {
           BattleStatModifier(
             type: BattleStatModifierType.critRate,
             mode: BattleModifierMode.flat,
-            value: 0.04 + (potency * 0.001),
+            value: 0.025 + (potency * 0.0006),
             sourceId: sourceId,
           ),
         );
@@ -129,7 +133,7 @@ class EquipmentEnchantService {
           BattleStatModifier(
             type: BattleStatModifierType.accuracy,
             mode: BattleModifierMode.flat,
-            value: 0.05 + (potency * 0.001),
+            value: 0.03 + (potency * 0.0006),
             sourceId: sourceId,
           ),
         );
@@ -138,7 +142,7 @@ class EquipmentEnchantService {
           BattleStatModifier(
             type: BattleStatModifierType.lifesteal,
             mode: BattleModifierMode.flat,
-            value: 0.02 + (potency * 0.001),
+            value: 0.01 + (potency * 0.0005),
             sourceId: sourceId,
           ),
         );
@@ -147,7 +151,7 @@ class EquipmentEnchantService {
           BattleStatModifier(
             type: BattleStatModifierType.regen,
             mode: BattleModifierMode.flat,
-            value: 0.01 + (potency * 0.001),
+            value: 0.005 + (potency * 0.0004),
             sourceId: sourceId,
           ),
         );
@@ -156,7 +160,7 @@ class EquipmentEnchantService {
           BattleStatModifier(
             type: BattleStatModifierType.critDamage,
             mode: BattleModifierMode.flat,
-            value: 0.08 + (potency * 0.002),
+            value: 0.04 + (potency * 0.001),
             sourceId: sourceId,
           ),
         );
@@ -165,7 +169,7 @@ class EquipmentEnchantService {
           BattleStatModifier(
             type: BattleStatModifierType.healingPower,
             mode: BattleModifierMode.flat,
-            value: 0.05 + (potency * 0.001),
+            value: 0.03 + (potency * 0.0006),
             sourceId: sourceId,
           ),
         );
@@ -174,7 +178,7 @@ class EquipmentEnchantService {
           BattleStatModifier(
             type: BattleStatModifierType.evasion,
             mode: BattleModifierMode.flat,
-            value: 0.04 + (potency * 0.001),
+            value: 0.025 + (potency * 0.0006),
             sourceId: sourceId,
           ),
         );
@@ -183,7 +187,7 @@ class EquipmentEnchantService {
           BattleStatModifier(
             type: BattleStatModifierType.evasion,
             mode: BattleModifierMode.flat,
-            value: 0.03 + (potency * 0.001),
+            value: 0.02 + (potency * 0.0005),
             sourceId: sourceId,
           ),
         );
@@ -196,10 +200,10 @@ class EquipmentEnchantService {
         BattleStatModifier(
           type: BattleStatModifierType.critRate,
           mode: BattleModifierMode.flat,
-          value: 0.02,
-          sourceId: '${sourceId}_focus_crit',
-        ),
-      );
+            value: 0.01,
+            sourceId: '${sourceId}_focus_crit',
+          ),
+        );
     }
 
     return modifiers;
@@ -218,7 +222,7 @@ class EquipmentEnchantService {
           BattleModifier(
             type: BattleModifierType.damageDealt,
             mode: BattleModifierMode.percent,
-            value: 0.06 + (potency * 0.002),
+            value: 0.03 + (potency * 0.001),
             sourceId: sourceId,
           ),
         );
@@ -227,7 +231,7 @@ class EquipmentEnchantService {
           BattleModifier(
             type: BattleModifierType.damageTaken,
             mode: BattleModifierMode.percent,
-            value: -0.05 - (potency * 0.001),
+            value: -0.03 - (potency * 0.0008),
             sourceId: sourceId,
           ),
         );
@@ -241,8 +245,11 @@ class EquipmentEnchantService {
   List<BattlePassiveEffect> _buildPassives({
     required EquipmentSlot slot,
     required String dominantTraitId,
+    required int potency,
   }) {
-    if (slot == EquipmentSlot.accessory && dominantTraitId == 't_spd') {
+    if (slot == EquipmentSlot.accessory &&
+        dominantTraitId == 't_spd' &&
+        potency >= 9) {
       return const <BattlePassiveEffect>[
         BattlePassiveEffect(
           trigger: BattlePassiveTrigger.afterAction,
@@ -253,7 +260,9 @@ class EquipmentEnchantService {
       ];
     }
 
-    if (slot == EquipmentSlot.weapon && dominantTraitId == 't_focus') {
+    if (slot == EquipmentSlot.weapon &&
+        dominantTraitId == 't_focus' &&
+        potency >= 10) {
       return const <BattlePassiveEffect>[
         BattlePassiveEffect(
           trigger: BattlePassiveTrigger.beforeHitCheck,
@@ -285,7 +294,7 @@ class EquipmentEnchantService {
       PotionQualityGrade.b => 2,
       PotionQualityGrade.c => 1,
     };
-    final int basePotency = (potion.qualityScore * 8).round() + qualityBonus;
+    final int basePotency = (potion.qualityScore * 5).round() + qualityBonus;
     return max(1, (basePotency * (1 + bonusRate)).round());
   }
 

@@ -72,7 +72,7 @@ void main() {
       );
       expect(
         nextState.workshop.queue.first.completedEquipment?.totalAttack,
-        25,
+        18,
       );
     },
   );
@@ -118,7 +118,7 @@ void main() {
       nextState.workshop.queue.first.completedEquipment?.enchant?.label,
       '활력 포션 A',
     );
-    expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 25);
+    expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 18);
   });
 
   test('enchantEquipment applies sigil press potency bonus', () {
@@ -167,7 +167,7 @@ void main() {
 
     expect(nextState.town.equipmentInventory, isEmpty);
     expect(nextState.workshop.queue, hasLength(1));
-    expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 26);
+    expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 19);
   });
 
   test('enchantEquipment applies workshop support potency bonus', () {
@@ -225,6 +225,6 @@ void main() {
 
     expect(nextState.town.equipmentInventory, isEmpty);
     expect(nextState.workshop.queue, hasLength(1));
-    expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 26);
+    expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 18);
   });
 }
