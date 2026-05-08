@@ -53,7 +53,8 @@ void main() {
           session.state.characters.homunculi.first.xp > previousHomoXp,
       true,
     );
-    expect(session.state.battle.progress.unlockFlags, contains('stage_2'));
+    expect(session.state.battle.progress.clearedStageIds, contains('stage_1'));
+    expect(session.state.battle.progress.unlockFlags, isNot(contains('stage_2')));
     final BattleExpeditionState? expedition =
         session.state.battle.stageExpeditions['stage_1'];
     expect(expedition, isNotNull);

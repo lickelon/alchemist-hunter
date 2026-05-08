@@ -72,9 +72,9 @@ class AutoBattleUseCase {
       inventory[materialId] = (inventory[materialId] ?? 0) + quantity;
     });
 
-    final Set<String> unlocks = _battleProgressionService
+    final ProgressState nextProgress = _battleProgressionService
         .applyStageClearUnlocks(
-          currentUnlockFlags: state.battle.progress.unlockFlags,
+          currentProgress: state.battle.progress,
           clearedStage: stageDefinition,
           success: result.success,
         );
@@ -101,11 +101,7 @@ class AutoBattleUseCase {
         appliedLoadout: resolvedLoadout.appliedLoadout,
       ),
       battle: state.battle.copyWith(
-        progress: ProgressState(
-          unlockFlags: unlocks,
-          automationTier: state.battle.progress.automationTier,
-          sessionPhase: state.battle.progress.sessionPhase,
-        ),
+        progress: nextProgress,
       ),
       characters: nextCharacters,
     );

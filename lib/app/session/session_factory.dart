@@ -80,7 +80,8 @@ SessionState createInitialSessionStateFromCatalogs(
     ),
     battle: const BattleState(
       progress: ProgressState(
-        unlockFlags: <String>{'stage_1'},
+        unlockFlags: <String>{},
+        clearedStageIds: <String>{},
         automationTier: 1,
         sessionPhase: SessionPhase.early,
       ),

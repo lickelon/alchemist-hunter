@@ -7,28 +7,36 @@ class BattleProgressionService {
     required ProgressState progress,
     required BattleStageDefinition stage,
   }) {
-    if (stage.unlockCondition == null) {
+    final BattleStageUnlockCondition? condition = stage.unlockCondition;
+    if (condition == null) {
       return true;
     }
-    return progress.unlockFlags.contains(stage.id);
+    return progress.clearedStageIds.contains(condition.requiredStageId);
   }
 
   String lockReason(BattleStageDefinition stage) {
     return stage.unlockCondition?.label ?? '';
   }
 
-  Set<String> applyStageClearUnlocks({
-    required Set<String> currentUnlockFlags,
+  ProgressState applyStageClearUnlocks({
+    required ProgressState currentProgress,
     required BattleStageDefinition clearedStage,
     required bool success,
   }) {
     if (!success) {
-      return currentUnlockFlags;
+      return currentProgress;
     }
-    return <String>{
-      ...currentUnlockFlags,
-      clearedStage.id,
-      ...clearedStage.clearUnlockFlags,
-    };
+    return currentProgress.copyWith(
+      clearedStageIds: <String>{
+        ...currentProgress.clearedStageIds,
+        clearedStage.id,
+      },
+      unlockFlags: <String>{
+        ...currentProgress.unlockFlags,
+        ...clearedStage.clearUnlockFlags.where(
+          (String flag) => !flag.startsWith('stage_'),
+        ),
+      },
+    );
   }
 }

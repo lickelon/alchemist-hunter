@@ -217,7 +217,8 @@ void main() {
         ),
         battle: session.state.battle.copyWith(
           progress: ProgressState(
-            unlockFlags: <String>{'stage_1', 'potion_special_1'},
+            unlockFlags: <String>{'potion_special_1'},
+            clearedStageIds: session.state.battle.progress.clearedStageIds,
             automationTier: session.state.battle.progress.automationTier,
             sessionPhase: session.state.battle.progress.sessionPhase,
           ),

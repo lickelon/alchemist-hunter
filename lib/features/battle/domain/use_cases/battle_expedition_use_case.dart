@@ -97,9 +97,9 @@ class BattleExpeditionUseCase {
     final BattleStageDefinition stageDefinition = battleCatalogRepository
         .stageDefinition(stageId);
     final bool success = expedition.pendingClaim.hasSuccessfulBattle;
-    final Set<String> unlocks = _battleProgressionService
+    final ProgressState nextProgress = _battleProgressionService
         .applyStageClearUnlocks(
-          currentUnlockFlags: state.battle.progress.unlockFlags,
+          currentProgress: state.battle.progress,
           clearedStage: stageDefinition,
           success: success,
         );
@@ -123,7 +123,7 @@ class BattleExpeditionUseCase {
       ),
       battle: state.battle.copyWith(
         stageExpeditions: nextExpeditions,
-        progress: state.battle.progress.copyWith(unlockFlags: unlocks),
+        progress: nextProgress,
       ),
       characters: nextCharacters,
     );

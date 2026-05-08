@@ -11,7 +11,7 @@ void main() {
     final SessionState state = createInitialSessionState(now).copyWith(
       battle: createInitialSessionState(now).battle.copyWith(
         progress: createInitialSessionState(now).battle.progress.copyWith(
-          unlockFlags: const <String>{'stage_1', 'stage_2'},
+          clearedStageIds: const <String>{'stage_1'},
         ),
         stageExpeditions: const <String, BattleExpeditionState>{
           'stage_2': BattleExpeditionState(
@@ -36,6 +36,7 @@ void main() {
       battleCatalogRepository: const StaticBattleCatalogRepository(),
     );
 
-    expect(nextState.battle.progress.unlockFlags, isNot(contains('stage_3')));
+    expect(nextState.battle.progress.clearedStageIds, isNot(contains('stage_2')));
+    expect(nextState.battle.progress.unlockFlags, isNot(contains('potion_special_1')));
   });
 }
