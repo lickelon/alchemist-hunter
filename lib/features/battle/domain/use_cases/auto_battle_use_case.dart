@@ -67,15 +67,9 @@ class AutoBattleUseCase {
         );
 
     final int nextGold =
-        state.player.gold -
-        result.failurePenalty +
-        (result.success ? stageDefinition.goldSuccess : 0);
-    final int essenceGain = result.success
-        ? stageDefinition.essenceSuccess
-        : stageDefinition.essenceFailure;
-    final int xpGain = result.success
-        ? stageDefinition.xpSuccessBase
-        : stageDefinition.xpFailureBase;
+        state.player.gold + (result.success ? stageDefinition.goldSuccess : 0);
+    final int essenceGain = result.success ? stageDefinition.essenceSuccess : 0;
+    final int xpGain = result.success ? stageDefinition.xpSuccessBase : 0;
     final CharactersState nextCharacters = _characterProgressionService
         .grantBattleXp(
           state: state.characters,

@@ -62,19 +62,14 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
       dropTable: battleCatalogRepository.dropTable(stageId),
     );
 
-    final int xpGain = result.success
-        ? stageDefinition.xpSuccessBase
-        : stageDefinition.xpFailureBase;
-    final Map<String, int> characterXp = <String, int>{
-      for (final String characterId in assignedCharacterIds)
-        characterId: xpGain,
-    };
-    final int gold = result.success
-        ? stageDefinition.goldSuccess
-        : -result.failurePenalty;
-    final int essence = result.success
-        ? stageDefinition.essenceSuccess
-        : stageDefinition.essenceFailure;
+    final Map<String, int> characterXp = result.success
+        ? <String, int>{
+            for (final String characterId in assignedCharacterIds)
+              characterId: stageDefinition.xpSuccessBase,
+          }
+        : const <String, int>{};
+    final int gold = result.success ? stageDefinition.goldSuccess : 0;
+    final int essence = result.success ? stageDefinition.essenceSuccess : 0;
     final BattlePendingClaim pendingClaim = BattlePendingClaim(
       materials: result.loot,
       gold: gold,

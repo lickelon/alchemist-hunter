@@ -27,13 +27,11 @@ class BattleService {
       success: loopResult.success,
       table: dropTable,
     );
-    final int penalty = loopResult.success ? 0 : stage.goldFailurePenalty;
-
     return BattleResult(
       success: loopResult.success,
       turns: loopResult.turns,
       loot: loot,
-      failurePenalty: penalty,
+      failurePenalty: 0,
       actions: loopResult.actions,
     );
   }

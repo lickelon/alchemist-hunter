@@ -218,7 +218,8 @@ void main() {
     );
 
     expect(result.success, isFalse);
-    expect(result.failurePenalty, 15);
+    expect(result.failurePenalty, 0);
+    expect(result.loot, isEmpty);
     expect(result.actions, isNotEmpty);
   });
 }

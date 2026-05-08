@@ -7,5 +7,8 @@ String battleStageDisplayName(String stageId, {String? fallback}) {
 }
 
 String battleSignedValueLabel(int value) {
-  return '${value >= 0 ? '+' : ''}$value';
+  if (value == 0) {
+    return '0';
+  }
+  return '${value > 0 ? '+' : ''}$value';
 }
