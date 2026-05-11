@@ -10,14 +10,14 @@
 | 항목 | 현재 상태 | 문제 |
 | --- | --- | --- |
 | 아군 전투 스탯 | `BattleCombatStats` + `BattleStatModifier` + `BattleModifier` + `BattlePassiveEffect` 구조 반영 | 성장 / 장비 / 인챈트 반영은 됐지만 loadout 보정은 아직 없다 |
-| 적 전투 스탯 | `BattleEnemyDefinition`과 stage / enemy set catalog 사용 | Stage 1~5 데이터 밀도와 해금 조건은 더 구체화가 필요하다 |
+| 적 전투 스탯 | `BattleEnemyDefinition`과 stage / enemy set / encounter catalog 사용 | 보스 고유 규칙과 행동 패턴은 아직 더 깊게 확장할 여지가 있다 |
 | 전투 루프 | 속도, 명중, 치명, 물리/마법, 흡혈, 재생, 추가 공격 반영 | 상태이상 / 스킬 / loadout 개입은 아직 없다 |
 | 전투 결과 표시 | 최근 결과 시트와 실시간 전투 현황 시트 제공, 포션 fallback 사유 노출 | 해금 근거와 전투 외 성장 요약은 아직 없다 |
 | 결과 이력 | stage별 최근 로그 10개 보존, loadout fallback 사유 기록 | 해금 / 드롭 상세 근거는 아직 더 보강할 여지가 있다 |
-| 드롭 근거 | stage별 적 구성과 적별 드롭 표시 가능 | Stage 1~5 재료 분배 정책은 더 명확히 정리해야 한다 |
-| 스테이지 데이터 | stage / enemy set / enemy catalog 분리 완료, `clearedStageIds` 기반 해금 판정 반영 | clear 기반 unlock 자체는 임시 기준이라 추후 재설계 여지가 있다 |
-| 적 정보 | 상세 스탯 / 특수 효과 / 드롭 표시 가능 | 행동 패턴과 후반 적 다양성은 아직 얕다 |
-| 적별 드롭 | 적별 표시 가능 | 재료의 stage 중복 제거와 상점 의존 제거가 남아 있다 |
+| 드롭 근거 | stage별 encounter 조합, 적별 드롭, 조합 확률 표시 가능 | 확률 자체의 밸런스 튜닝과 희소성 체감은 더 다듬을 수 있다 |
+| 스테이지 데이터 | stage / enemy set / encounter / enemy catalog 분리 완료, `clearedStageIds` 기반 해금 판정 반영 | clear 기반 unlock 자체는 임시 기준이라 추후 재설계 여지가 있다 |
+| 적 정보 | 상세 스탯 / 특수 효과 / 드롭 표시 가능 | 행동 패턴과 보스 고유 기믹은 아직 얕다 |
+| 적별 드롭 | stage 전용 재료 분배와 상점 재료의 battle 획득 경로 반영 완료 | 후반 드롭 가치와 반복 파밍 동기는 더 조정할 수 있다 |
 | 포션 loadout | stage별 저장 / 편성 UI / 실제 소비 / fallback 반영 완료 | 부분 적용 규칙과 loadout별 세분 효과는 아직 없다 |
 | sync 경계 | battle sync에서 workshop 포션 재고를 같이 반영 | 저장/복원 도입 전까지는 cross-feature 마이그레이션 여지가 남아 있다 |
 
@@ -60,7 +60,7 @@
 - 전투 엔진은 아군을 `power` 1개가 아닌 실제 전투 stats로 입력받는다.
 - UI의 `전투력`은 남겨도 되지만 실제 전투 입력의 요약치가 된다.
 
-### 3.2 B단계: 적 유닛 / enemy set / 스테이지 데이터 정규화 [진행 중]
+### 3.2 B단계: 적 유닛 / enemy set / 스테이지 데이터 정규화 [완료]
 
 #### 목표
 - 적과 스테이지를 데이터로 정의해서 전투 난이도와 드롭의 근거를 만든다.
@@ -81,13 +81,20 @@
   - `name`
   - `enemyIds`
   - `summary`
+- `BattleStageEncounterDefinition` 모델 추가
+- 권장 필드:
+  - `id`
+  - `name`
+  - `enemySetId`
+  - `summary`
+  - `chance`
 - `BattleStageDefinition` 모델 추가
 - 권장 필드:
   - `id`
   - `name`
   - `recommendedPower`
-  - `cycleDuration`
-  - `enemySetId`
+  - `searchDuration`
+  - `encounters`
   - `goldSuccess`
   - `goldFailurePenalty`
   - `essenceSuccess`
@@ -104,13 +111,15 @@
   - `condition`
 - `lib/features/battle/data/catalogs/battle_tables.dart`
   - stage 정의, enemy set 정의, enemy 정의를 분리
+  - encounter 조합과 조합별 확률 정의
   - 적별 드롭 테이블 정의
   - stage별 보상 스케일 정의
 
 #### 완료 기준
 - Stage 1~5가 서로 다른 적 구성, 드롭, 보상, 권장 전투력 데이터를 가진다.
-- 각 stage는 enemy set을 통해 어떤 적을 만나는지 설명할 수 있다.
+- 각 stage는 여러 encounter 조합과 조합별 확률을 통해 어떤 적을 만나는지 설명할 수 있다.
 - 각 재료 드롭은 stage 단위가 아니라 enemy 단위 근거를 가진다.
+- 상점에 노출되는 battle 재료는 모두 stage에서 획득 가능하고, stage 간 재료 중복은 현재 두지 않는다.
 - stage 튜닝이 battle catalog 수정만으로 가능하다.
 
 ### 3.3 C단계: 전투 루프 고도화 [완료]
@@ -272,23 +281,22 @@
 - stage별 잠금 문구 표시
 
 ## 4. 권장 다음 순서
-1. B단계 잔여 작업
-   - Stage 1~5 적 세트 / 드롭 / 보상 / 재료 분배 구체화
-   - 상점 전용 재료 제거
-   - 재료의 stage 중복 제거
-2. H단계 테스트 확장
+1. clear 기반 unlock 이후의 차기 해금 규칙 재설계 메모 정리
+2. 적 행동 패턴 / 보스 규칙 확장
+   - 보스전 전용 규칙
+   - 후반 적 조합의 역할 차별화
+3. H단계 테스트 확장
    - 해금 / loadout / fallback / 소비 회귀 보강
-3. clear 기반 unlock 이후의 차기 해금 규칙 재설계 메모 정리
 
 ## 5. 남은 PR 분리 기준
 - 1차 PR
-  - Stage 1~5 적 세트 / 드롭 / 보상 / 재료 분배 구체화
-  - 목적: stage progression과 재료 수급 경로 확정
-- 2차 PR
-  - 회귀 / 보강 테스트
-- 3차 PR
   - clear 기반 unlock 이후의 차기 해금 규칙 재설계
   - 목적: 임시 progression 규칙 탈피
+- 2차 PR
+  - 적 행동 패턴 / 보스 규칙 확장
+  - 목적: 후반 전투 체감 차별화
+- 3차 PR
+  - 회귀 / 보강 테스트
 
 ## 6. 보류 판단
 - 저장/복원은 이 문서 범위에 넣지 않는다.
