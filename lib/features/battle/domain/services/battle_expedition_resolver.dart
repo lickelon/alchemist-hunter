@@ -1,6 +1,9 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'dart:math';
+
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_encounter_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_potion_loadout_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
@@ -30,17 +33,24 @@ abstract class BattleExpeditionResolver {
 class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
   DefaultBattleExpeditionResolver({
     BattleService? battleService,
+    BattleEncounterService battleEncounterService =
+        const BattleEncounterService(),
     BattlePartyPowerService battlePartyPowerService =
         const BattlePartyPowerService(),
     BattlePotionLoadoutService battlePotionLoadoutService =
         const BattlePotionLoadoutService(),
+    Random? random,
   }) : _battleService = battleService ?? BattleService(),
+       _battleEncounterService = battleEncounterService,
        _battlePartyPowerService = battlePartyPowerService,
-       _battlePotionLoadoutService = battlePotionLoadoutService;
+       _battlePotionLoadoutService = battlePotionLoadoutService,
+       _random = random ?? Random();
 
   final BattleService _battleService;
+  final BattleEncounterService _battleEncounterService;
   final BattlePartyPowerService _battlePartyPowerService;
   final BattlePotionLoadoutService _battlePotionLoadoutService;
+  final Random _random;
 
   @override
   BattleEncounterResolution resolveEncounter({
@@ -63,6 +73,12 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
 
     final BattleStageDefinition stageDefinition = battleCatalogRepository
         .stageDefinition(stageId);
+    final BattleEncounterSelection encounter = _battleEncounterService
+        .selectEncounter(
+          stage: stageDefinition,
+          battleCatalogRepository: battleCatalogRepository,
+          random: _random,
+        );
 
     final BattleResult result = _battleService.runAutoBattle(
       config: AutoBattleConfig(
@@ -74,8 +90,8 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
         stageId: stageId,
       ),
       stage: stageDefinition,
-      enemies: battleCatalogRepository.enemyDefinitionsForStage(stageId),
-      dropTable: battleCatalogRepository.dropTable(stageId),
+      enemies: encounter.enemies,
+      dropTable: encounter.dropTable,
     );
 
     final Map<String, int> characterXp = result.success
@@ -104,7 +120,7 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
     return BattleEncounterResolution(
       playback: playback,
       summary:
-          '${playback.success ? '성공' : '실패'} / 골드 ${gold >= 0 ? '+' : ''}$gold / 에센스 ${essence >= 0 ? '+' : ''}$essence / 재료 ${pendingClaim.materials.length}종${resolvedLoadout.fallback ? ' / 포션 미적용' : ''}',
+          '${encounter.definition.name} / ${playback.success ? '성공' : '실패'} / 골드 ${gold >= 0 ? '+' : ''}$gold / 에센스 ${essence >= 0 ? '+' : ''}$essence / 재료 ${pendingClaim.materials.length}종${resolvedLoadout.fallback ? ' / 포션 미적용' : ''}',
       consumedPotionLoadout: resolvedLoadout.appliedLoadout,
       usedLoadoutFallback: resolvedLoadout.fallback,
     );

@@ -1,6 +1,9 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'dart:math';
+
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_encounter_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_potion_loadout_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
@@ -9,24 +12,31 @@ import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/services/character_progression_service.dart';
 
 class AutoBattleUseCase {
-  const AutoBattleUseCase({
+  AutoBattleUseCase({
     CharacterProgressionService characterProgressionService =
         const CharacterProgressionService(),
     BattlePartyPowerService battlePartyPowerService =
         const BattlePartyPowerService(),
     BattleProgressionService battleProgressionService =
         const BattleProgressionService(),
+    BattleEncounterService battleEncounterService =
+        const BattleEncounterService(),
     BattlePotionLoadoutService battlePotionLoadoutService =
         const BattlePotionLoadoutService(),
+    Random? random,
   }) : _characterProgressionService = characterProgressionService,
        _battlePartyPowerService = battlePartyPowerService,
        _battleProgressionService = battleProgressionService,
-       _battlePotionLoadoutService = battlePotionLoadoutService;
+       _battleEncounterService = battleEncounterService,
+       _battlePotionLoadoutService = battlePotionLoadoutService,
+       _random = random ?? Random();
 
   final CharacterProgressionService _characterProgressionService;
   final BattlePartyPowerService _battlePartyPowerService;
   final BattleProgressionService _battleProgressionService;
+  final BattleEncounterService _battleEncounterService;
   final BattlePotionLoadoutService _battlePotionLoadoutService;
+  final Random _random;
 
   SessionState runAutoBattle({
     required SessionState state,
@@ -44,6 +54,12 @@ class AutoBattleUseCase {
 
     final BattleStageDefinition stageDefinition = battleCatalogRepository
         .stageDefinition(stageId);
+    final BattleEncounterSelection encounter = _battleEncounterService
+        .selectEncounter(
+          stage: stageDefinition,
+          battleCatalogRepository: battleCatalogRepository,
+          random: _random,
+        );
 
     final ResolvedBattlePotionLoadout resolvedLoadout =
         _battlePotionLoadoutService.resolveLoadout(
@@ -61,8 +77,8 @@ class AutoBattleUseCase {
         stageId: stageId,
       ),
       stage: stageDefinition,
-      enemies: battleCatalogRepository.enemyDefinitionsForStage(stageId),
-      dropTable: battleCatalogRepository.dropTable(stageId),
+      enemies: encounter.enemies,
+      dropTable: encounter.dropTable,
     );
 
     final Map<String, int> inventory = <String, int>{
@@ -100,9 +116,7 @@ class AutoBattleUseCase {
         workshop: state.workshop,
         appliedLoadout: resolvedLoadout.appliedLoadout,
       ),
-      battle: state.battle.copyWith(
-        progress: nextProgress,
-      ),
+      battle: state.battle.copyWith(progress: nextProgress),
       characters: nextCharacters,
     );
   }

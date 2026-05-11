@@ -73,7 +73,15 @@ void main() {
         name: 'Stage 1',
         recommendedPower: 0,
         searchDuration: Duration(seconds: 8),
-        enemySetId: 'enemy_set_1',
+        encounters: <BattleStageEncounterDefinition>[
+          BattleStageEncounterDefinition(
+            id: 'encounter_1',
+            name: 'Encounter 1',
+            enemySetId: 'enemy_set_1',
+            summary: '기본 조합',
+            chance: 1,
+          ),
+        ],
         goldSuccess: 35,
         goldFailurePenalty: 15,
         essenceSuccess: 6,
@@ -163,7 +171,15 @@ void main() {
         name: 'Stage 5',
         recommendedPower: 0,
         searchDuration: Duration(seconds: 14),
-        enemySetId: 'enemy_set_5',
+        encounters: <BattleStageEncounterDefinition>[
+          BattleStageEncounterDefinition(
+            id: 'encounter_5',
+            name: 'Encounter 5',
+            enemySetId: 'enemy_set_5',
+            summary: '보스 조합',
+            chance: 1,
+          ),
+        ],
         goldSuccess: 35,
         goldFailurePenalty: 15,
         essenceSuccess: 6,

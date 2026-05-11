@@ -22,8 +22,6 @@ class BattleStageStatusSheet extends ConsumerWidget {
       battleCatalogRepositoryProvider,
     );
     final BattleStageDefinition stage = battleCatalog.stageDefinition(stageId);
-    final List<BattleEnemyDefinition> enemies = battleCatalog
-        .enemyDefinitionsForStage(stageId);
     final BattleExpeditionState expedition = ref.watch(
       battleStageExpeditionStateProvider(stageId),
     );
@@ -62,7 +60,9 @@ class BattleStageStatusSheet extends ConsumerWidget {
       child: AppSheetLayout(
         title:
             '${battleStageDisplayName(stage.id, fallback: stage.name)} 전투 현황',
-        header: Text('권장 전투력 ${stage.recommendedPower} / 적 ${enemies.length}종'),
+        header: Text(
+          '권장 전투력 ${stage.recommendedPower} / 조합 ${stage.encounters.length}종',
+        ),
         body: ListView(
           children: <Widget>[
             _StageStatusBlock(
@@ -186,8 +186,7 @@ class BattleStageStatusSheet extends ConsumerWidget {
               battleActionInterval.inMilliseconds,
           lines: <String>[
             ...baseLines,
-            if (currentBattle?.usedLoadoutFallback ?? false)
-              '포션 부족으로 로드아웃 미적용',
+            if (currentBattle?.usedLoadoutFallback ?? false) '포션 부족으로 로드아웃 미적용',
             '다음 행동까지 ${_formatRemaining(battleActionInterval, lifecycleElapsed)}',
           ],
         );

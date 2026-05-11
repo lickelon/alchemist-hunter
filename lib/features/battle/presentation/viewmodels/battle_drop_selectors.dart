@@ -35,16 +35,34 @@ class BattleEnemyDropView {
   final List<BattleDropChanceView> specialDrops;
 }
 
+class BattleStageEncounterDropView {
+  const BattleStageEncounterDropView({
+    required this.name,
+    required this.summary,
+    required this.chanceLabel,
+    required this.enemies,
+  });
+
+  final String name;
+  final String summary;
+  final String chanceLabel;
+  final List<BattleEnemyDropView> enemies;
+}
+
 class BattleStageDropOverviewView {
   const BattleStageDropOverviewView({
     required this.stageName,
     required this.recommendedPower,
-    required this.enemies,
+    required this.encounterCount,
+    required this.enemyCount,
+    required this.encounters,
   });
 
   final String stageName;
   final int recommendedPower;
-  final List<BattleEnemyDropView> enemies;
+  final int encounterCount;
+  final int enemyCount;
+  final List<BattleStageEncounterDropView> encounters;
 }
 
 final battleStageDropOverviewProvider =
@@ -61,41 +79,60 @@ final battleStageDropOverviewProvider =
       final BattleStageDefinition stage = battleCatalog.stageDefinition(
         stageId,
       );
-      final List<BattleEnemyDefinition> enemies = battleCatalog
+      final List<BattleStageEncounterDefinition> encounters = battleCatalog
+          .encounterDefinitionsForStage(stageId);
+      final List<BattleEnemyDefinition> uniqueEnemies = battleCatalog
           .enemyDefinitionsForStage(stageId);
 
       return BattleStageDropOverviewView(
         stageName: battleStageDisplayName(stage.id, fallback: stage.name),
         recommendedPower: stage.recommendedPower,
-        enemies: enemies
-            .map((BattleEnemyDefinition enemy) {
-              return BattleEnemyDropView(
-                enemyName: enemy.name,
-                identityLabel:
-                    '${_factionLabel(enemy.faction)} / ${enemy.summary}',
-                statLines: _enemyStatLines(enemy.stats),
-                effectLines: _enemyEffectLines(enemy),
-                normalDrops: enemy.normalDrops
-                    .map(
-                      (BattleDropEntry drop) => BattleDropChanceView(
-                        materialName:
-                            materialCatalog.materialName(drop.materialId) ??
-                            drop.materialId,
-                        quantityLabel: _quantityLabel(drop),
-                        chanceLabel: _chanceLabel(drop.chance),
-                      ),
-                    )
-                    .toList(growable: false),
-                specialDrops: enemy.specialDrops
-                    .map(
-                      (BattleDropEntry drop) => BattleDropChanceView(
-                        materialName:
-                            materialCatalog.materialName(drop.materialId) ??
-                            drop.materialId,
-                        quantityLabel: _quantityLabel(drop),
-                        chanceLabel: _chanceLabel(drop.chance),
-                      ),
-                    )
+        encounterCount: encounters.length,
+        enemyCount: uniqueEnemies.length,
+        encounters: encounters
+            .map((BattleStageEncounterDefinition encounter) {
+              final List<BattleEnemyDefinition> enemies = battleCatalog
+                  .enemyDefinitionsForSet(encounter.enemySetId);
+              return BattleStageEncounterDropView(
+                name: encounter.name,
+                summary: encounter.summary,
+                chanceLabel: _chanceLabel(encounter.chance),
+                enemies: enemies
+                    .map((BattleEnemyDefinition enemy) {
+                      return BattleEnemyDropView(
+                        enemyName: enemy.name,
+                        identityLabel:
+                            '${_factionLabel(enemy.faction)} / ${enemy.summary}',
+                        statLines: _enemyStatLines(enemy.stats),
+                        effectLines: _enemyEffectLines(enemy),
+                        normalDrops: enemy.normalDrops
+                            .map(
+                              (BattleDropEntry drop) => BattleDropChanceView(
+                                materialName:
+                                    materialCatalog.materialName(
+                                      drop.materialId,
+                                    ) ??
+                                    drop.materialId,
+                                quantityLabel: _quantityLabel(drop),
+                                chanceLabel: _chanceLabel(drop.chance),
+                              ),
+                            )
+                            .toList(growable: false),
+                        specialDrops: enemy.specialDrops
+                            .map(
+                              (BattleDropEntry drop) => BattleDropChanceView(
+                                materialName:
+                                    materialCatalog.materialName(
+                                      drop.materialId,
+                                    ) ??
+                                    drop.materialId,
+                                quantityLabel: _quantityLabel(drop),
+                                chanceLabel: _chanceLabel(drop.chance),
+                              ),
+                            )
+                            .toList(growable: false),
+                      );
+                    })
                     .toList(growable: false),
               );
             })

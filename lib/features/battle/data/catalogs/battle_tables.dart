@@ -6,7 +6,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         id: 'enemy_scavenger',
         name: 'Ruin Scavenger',
         faction: CombatFaction.homunculus,
-        summary: '잔해를 모으는 전열형',
+        summary: '잔해를 주워 버티는 전열형',
         stats: BattleCombatStats(
           maxHp: 46,
           physicalAttack: 10,
@@ -42,7 +42,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         id: 'enemy_wisp',
         name: 'Moontear Wisp',
         faction: CombatFaction.homunculus,
-        summary: '희귀 재료를 품은 부유체',
+        summary: '희귀 촉매를 품은 부유체',
         stats: BattleCombatStats(
           maxHp: 38,
           physicalAttack: 4,
@@ -67,6 +67,35 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         ],
         specialDrops: <BattleDropEntry>[
           BattleDropEntry(materialId: 'm_25', min: 1, max: 1, chance: 0.24),
+        ],
+      ),
+      'enemy_mite': BattleEnemyDefinition(
+        id: 'enemy_mite',
+        name: 'Ash Mite',
+        faction: CombatFaction.homunculus,
+        summary: '빠르게 파고드는 군체형',
+        stats: BattleCombatStats(
+          maxHp: 34,
+          physicalAttack: 8,
+          physicalDefense: 4,
+          magicalAttack: 3,
+          magicalDefense: 4,
+          speed: 12,
+          critChance: 0.05,
+          critDamage: 0.42,
+          accuracy: 0.86,
+          evasion: 0.06,
+          statusAccuracy: 0.02,
+          statusResistance: 0.03,
+          physicalPenetration: 0.02,
+          magicalPenetration: 0.01,
+          lifesteal: 0,
+          healingPower: 0,
+          regen: 0,
+        ),
+        normalDrops: <BattleDropEntry>[
+          BattleDropEntry(materialId: 'm_1', min: 1, max: 2, chance: 0.7),
+          BattleDropEntry(materialId: 'm_2', min: 1, max: 1, chance: 0.32),
         ],
       ),
       'enemy_scout': BattleEnemyDefinition(
@@ -170,6 +199,44 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         ],
         normalDrops: <BattleDropEntry>[
           BattleDropEntry(materialId: 'm_4', min: 1, max: 3, chance: 0.8),
+        ],
+      ),
+      'enemy_raider': BattleEnemyDefinition(
+        id: 'enemy_raider',
+        name: 'Dust Raider',
+        faction: CombatFaction.mercenary,
+        summary: '짧은 교전 뒤 파고드는 돌격형',
+        stats: BattleCombatStats(
+          maxHp: 50,
+          physicalAttack: 14,
+          physicalDefense: 7,
+          magicalAttack: 4,
+          magicalDefense: 6,
+          speed: 12,
+          critChance: 0.05,
+          critDamage: 0.48,
+          accuracy: 0.9,
+          evasion: 0.05,
+          statusAccuracy: 0.03,
+          statusResistance: 0.05,
+          physicalPenetration: 0.04,
+          magicalPenetration: 0.01,
+          lifesteal: 0.01,
+          healingPower: 0,
+          regen: 0.01,
+        ),
+        modifiers: <BattleModifier>[
+          BattleModifier(
+            type: BattleModifierType.damageDealt,
+            mode: BattleModifierMode.percent,
+            value: 0.06,
+            school: DamageSchool.physical,
+            sourceId: 'enemy_raider_lunge',
+          ),
+        ],
+        normalDrops: <BattleDropEntry>[
+          BattleDropEntry(materialId: 'm_3', min: 1, max: 2, chance: 0.68),
+          BattleDropEntry(materialId: 'm_4', min: 1, max: 1, chance: 0.36),
         ],
       ),
       'enemy_apprentice': BattleEnemyDefinition(
@@ -284,6 +351,43 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           BattleDropEntry(materialId: 'm_5', min: 1, max: 3, chance: 0.82),
         ],
       ),
+      'enemy_distiller': BattleEnemyDefinition(
+        id: 'enemy_distiller',
+        name: 'Soot Distiller',
+        faction: CombatFaction.mercenary,
+        summary: '잔열을 돌려 화력을 키우는 후열형',
+        stats: BattleCombatStats(
+          maxHp: 56,
+          physicalAttack: 6,
+          physicalDefense: 7,
+          magicalAttack: 16,
+          magicalDefense: 10,
+          speed: 10,
+          critChance: 0.05,
+          critDamage: 0.48,
+          accuracy: 0.9,
+          evasion: 0.04,
+          statusAccuracy: 0.06,
+          statusResistance: 0.06,
+          physicalPenetration: 0.01,
+          magicalPenetration: 0.04,
+          lifesteal: 0,
+          healingPower: 0.05,
+          regen: 0.02,
+        ),
+        modifiers: <BattleModifier>[
+          BattleModifier(
+            type: BattleModifierType.damageDealt,
+            mode: BattleModifierMode.percent,
+            value: 0.1,
+            school: DamageSchool.magical,
+            sourceId: 'enemy_distiller_heat_cycle',
+          ),
+        ],
+        normalDrops: <BattleDropEntry>[
+          BattleDropEntry(materialId: 'm_6', min: 1, max: 2, chance: 0.72),
+        ],
+      ),
       'enemy_sniper': BattleEnemyDefinition(
         id: 'enemy_sniper',
         name: 'Gale Sniper',
@@ -395,11 +499,48 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           BattleDropEntry(materialId: 'm_8', min: 1, max: 2, chance: 0.78),
         ],
       ),
+      'enemy_mirage': BattleEnemyDefinition(
+        id: 'enemy_mirage',
+        name: 'Mirage Harrier',
+        faction: CombatFaction.homunculus,
+        summary: '회피와 견제를 반복하는 교란형',
+        stats: BattleCombatStats(
+          maxHp: 56,
+          physicalAttack: 10,
+          physicalDefense: 7,
+          magicalAttack: 14,
+          magicalDefense: 10,
+          speed: 15,
+          critChance: 0.06,
+          critDamage: 0.5,
+          accuracy: 0.91,
+          evasion: 0.1,
+          statusAccuracy: 0.07,
+          statusResistance: 0.07,
+          physicalPenetration: 0.03,
+          magicalPenetration: 0.04,
+          lifesteal: 0,
+          healingPower: 0.02,
+          regen: 0.01,
+        ),
+        modifiers: <BattleModifier>[
+          BattleModifier(
+            type: BattleModifierType.damageTaken,
+            mode: BattleModifierMode.percent,
+            value: -0.07,
+            sourceId: 'enemy_mirage_distortion',
+          ),
+        ],
+        normalDrops: <BattleDropEntry>[
+          BattleDropEntry(materialId: 'm_7', min: 1, max: 1, chance: 0.34),
+          BattleDropEntry(materialId: 'm_8', min: 1, max: 2, chance: 0.62),
+        ],
+      ),
       'enemy_chimera': BattleEnemyDefinition(
         id: 'enemy_chimera',
         name: 'Moontear Chimera',
         faction: CombatFaction.homunculus,
-        summary: '흡혈과 압박을 겸한 단일 보스',
+        summary: '흡혈과 압박을 겸한 보스형',
         stats: BattleCombatStats(
           maxHp: 72,
           physicalAttack: 15,
@@ -434,45 +575,174 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           BattleDropEntry(materialId: 'm_30', min: 1, max: 2, chance: 0.46),
         ],
       ),
+      'enemy_herald': BattleEnemyDefinition(
+        id: 'enemy_herald',
+        name: 'Core Herald',
+        faction: CombatFaction.mercenary,
+        summary: '보스의 틈을 벌리는 고속 보조형',
+        stats: BattleCombatStats(
+          maxHp: 68,
+          physicalAttack: 12,
+          physicalDefense: 10,
+          magicalAttack: 17,
+          magicalDefense: 12,
+          speed: 14,
+          critChance: 0.07,
+          critDamage: 0.52,
+          accuracy: 0.93,
+          evasion: 0.07,
+          statusAccuracy: 0.08,
+          statusResistance: 0.08,
+          physicalPenetration: 0.03,
+          magicalPenetration: 0.05,
+          lifesteal: 0,
+          healingPower: 0.04,
+          regen: 0.01,
+        ),
+        modifiers: <BattleModifier>[
+          BattleModifier(
+            type: BattleModifierType.damageDealt,
+            mode: BattleModifierMode.percent,
+            value: 0.1,
+            school: DamageSchool.magical,
+            sourceId: 'enemy_herald_core_signal',
+          ),
+        ],
+        normalDrops: <BattleDropEntry>[
+          BattleDropEntry(materialId: 'm_29', min: 1, max: 2, chance: 0.8),
+        ],
+      ),
+      'enemy_warden': BattleEnemyDefinition(
+        id: 'enemy_warden',
+        name: 'Moonvault Warden',
+        faction: CombatFaction.homunculus,
+        summary: '핵심을 지키는 중장갑 호위체',
+        stats: BattleCombatStats(
+          maxHp: 82,
+          physicalAttack: 13,
+          physicalDefense: 14,
+          magicalAttack: 6,
+          magicalDefense: 12,
+          speed: 9,
+          critChance: 0.04,
+          critDamage: 0.48,
+          accuracy: 0.88,
+          evasion: 0.02,
+          statusAccuracy: 0.04,
+          statusResistance: 0.1,
+          physicalPenetration: 0.03,
+          magicalPenetration: 0.02,
+          lifesteal: 0,
+          healingPower: 0,
+          regen: 0.02,
+        ),
+        modifiers: <BattleModifier>[
+          BattleModifier(
+            type: BattleModifierType.damageTaken,
+            mode: BattleModifierMode.percent,
+            value: -0.12,
+            sourceId: 'enemy_warden_core_shell',
+          ),
+        ],
+        normalDrops: <BattleDropEntry>[
+          BattleDropEntry(materialId: 'm_29', min: 1, max: 2, chance: 0.84),
+        ],
+      ),
     };
 
-const Map<String, BattleEnemySetDefinition> battleEnemySetDefinitions =
-    <String, BattleEnemySetDefinition>{
-      'enemy_set_stage_1': BattleEnemySetDefinition(
-        id: 'enemy_set_stage_1',
-        name: 'Ruins Entrance',
-        enemyIds: <String>['enemy_scavenger', 'enemy_wisp'],
-        summary: '기초 재료와 첫 특수 촉매를 얻는 초입 구간',
-      ),
-      'enemy_set_stage_2': BattleEnemySetDefinition(
-        id: 'enemy_set_stage_2',
-        name: 'Dust Trail',
-        enemyIds: <String>['enemy_scout', 'enemy_stalker', 'enemy_bruiser'],
-        summary: '원거리 견제와 근접 압박이 함께 오는 첫 전술 분기 구간',
-      ),
-      'enemy_set_stage_3': BattleEnemySetDefinition(
-        id: 'enemy_set_stage_3',
-        name: 'Ash Workshop',
-        enemyIds: <String>[
-          'enemy_sentinel',
-          'enemy_apprentice',
-          'enemy_crucible',
-        ],
-        summary: '장갑 수호기와 연성 화력을 동시에 상대하는 공방 지대',
-      ),
-      'enemy_set_stage_4': BattleEnemySetDefinition(
-        id: 'enemy_set_stage_4',
-        name: 'Storm Gallery',
-        enemyIds: <String>['enemy_sniper', 'enemy_weaver', 'enemy_tempest'],
-        summary: '필중 견제와 연속 주문이 겹치는 고압 구간',
-      ),
-      'enemy_set_stage_5': BattleEnemySetDefinition(
-        id: 'enemy_set_stage_5',
-        name: 'Moontear Core',
-        enemyIds: <String>['enemy_chimera'],
-        summary: '희귀 촉매를 지키는 단일 보스전',
-      ),
-    };
+const Map<String, BattleEnemySetDefinition>
+battleEnemySetDefinitions = <String, BattleEnemySetDefinition>{
+  'enemy_set_stage_1_patrol': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_1_patrol',
+    name: 'Ruins Patrol',
+    enemyIds: <String>['enemy_scavenger', 'enemy_mite'],
+    summary: '기본 약재를 긁어모으는 순찰조',
+  ),
+  'enemy_set_stage_1_haunt': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_1_haunt',
+    name: 'Crystal Haunt',
+    enemyIds: <String>['enemy_scavenger', 'enemy_wisp'],
+    summary: '희귀 촉매를 품은 부유체가 섞인 초입 조합',
+  ),
+  'enemy_set_stage_1_swarm': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_1_swarm',
+    name: 'Mite Swarm',
+    enemyIds: <String>['enemy_mite', 'enemy_wisp'],
+    summary: '빠른 군체와 부유체가 엮이는 초반 혼성 조합',
+  ),
+  'enemy_set_stage_2_crossfire': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_2_crossfire',
+    name: 'Crossfire Line',
+    enemyIds: <String>['enemy_scout', 'enemy_stalker', 'enemy_bruiser'],
+    summary: '정찰, 연타, 압박이 모두 들어오는 기본 전개',
+  ),
+  'enemy_set_stage_2_ambush': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_2_ambush',
+    name: 'Ambush Knot',
+    enemyIds: <String>['enemy_scout', 'enemy_stalker', 'enemy_raider'],
+    summary: '고속 접근과 기습이 겹치는 교란 조합',
+  ),
+  'enemy_set_stage_2_assault': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_2_assault',
+    name: 'Assault Wedge',
+    enemyIds: <String>['enemy_scout', 'enemy_bruiser', 'enemy_raider'],
+    summary: '전열 압박 비중이 높은 돌격 조합',
+  ),
+  'enemy_set_stage_3_furnace': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_3_furnace',
+    name: 'Furnace Front',
+    enemyIds: <String>['enemy_sentinel', 'enemy_crucible', 'enemy_apprentice'],
+    summary: '장갑 수호기와 돌진형이 전열을 잡는 표준 조합',
+  ),
+  'enemy_set_stage_3_relay': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_3_relay',
+    name: 'Arcane Relay',
+    enemyIds: <String>['enemy_sentinel', 'enemy_apprentice', 'enemy_distiller'],
+    summary: '후열 화력이 강하게 몰리는 연성 조합',
+  ),
+  'enemy_set_stage_3_overheat': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_3_overheat',
+    name: 'Overheat Wing',
+    enemyIds: <String>['enemy_crucible', 'enemy_apprentice', 'enemy_distiller'],
+    summary: '방어보다 화력 압박이 앞서는 고열 조합',
+  ),
+  'enemy_set_stage_4_lattice': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_4_lattice',
+    name: 'Storm Lattice',
+    enemyIds: <String>['enemy_sniper', 'enemy_weaver', 'enemy_tempest'],
+    summary: '필중 견제와 연속 주문이 겹치는 기본 고압 조합',
+  ),
+  'enemy_set_stage_4_volley': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_4_volley',
+    name: 'Phantom Volley',
+    enemyIds: <String>['enemy_sniper', 'enemy_weaver', 'enemy_mirage'],
+    summary: '회피 교란 비중이 높은 원거리 압박 조합',
+  ),
+  'enemy_set_stage_4_hunt': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_4_hunt',
+    name: 'Chain Hunt',
+    enemyIds: <String>['enemy_sniper', 'enemy_tempest', 'enemy_mirage'],
+    summary: '기동 교전과 후속 타격이 강한 추격 조합',
+  ),
+  'enemy_set_stage_5_guarded': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_5_guarded',
+    name: 'Core Keeper',
+    enemyIds: <String>['enemy_chimera', 'enemy_warden'],
+    summary: '보스와 중장갑 호위체가 함께 버티는 기본 조합',
+  ),
+  'enemy_set_stage_5_signal': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_5_signal',
+    name: 'Signal Choir',
+    enemyIds: <String>['enemy_chimera', 'enemy_herald'],
+    summary: '보스와 후열 화력이 동시에 압박하는 조합',
+  ),
+  'enemy_set_stage_5_awakened': BattleEnemySetDefinition(
+    id: 'enemy_set_stage_5_awakened',
+    name: 'Full Awakening',
+    enemyIds: <String>['enemy_chimera', 'enemy_herald', 'enemy_warden'],
+    summary: '최종 구간의 완전체 조합',
+  ),
+};
 
 const Map<String, BattleStageDefinition> battleStageDefinitions =
     <String, BattleStageDefinition>{
@@ -481,7 +751,29 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         name: '폐허 입구',
         recommendedPower: 210,
         searchDuration: Duration(seconds: 7),
-        enemySetId: 'enemy_set_stage_1',
+        encounters: <BattleStageEncounterDefinition>[
+          BattleStageEncounterDefinition(
+            id: 'stage_1_patrol',
+            name: '순찰 조합',
+            enemySetId: 'enemy_set_stage_1_patrol',
+            summary: '기본 약재 중심의 순찰조',
+            chance: 0.42,
+          ),
+          BattleStageEncounterDefinition(
+            id: 'stage_1_haunt',
+            name: '부유체 조합',
+            enemySetId: 'enemy_set_stage_1_haunt',
+            summary: '희귀 촉매가 섞인 초입 조합',
+            chance: 0.33,
+          ),
+          BattleStageEncounterDefinition(
+            id: 'stage_1_swarm',
+            name: '군체 조합',
+            enemySetId: 'enemy_set_stage_1_swarm',
+            summary: '빠른 교전 위주의 군체 조합',
+            chance: 0.25,
+          ),
+        ],
         goldSuccess: 24,
         goldFailurePenalty: 0,
         essenceSuccess: 4,
@@ -495,7 +787,29 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         name: '먼지 회랑',
         recommendedPower: 300,
         searchDuration: Duration(seconds: 9),
-        enemySetId: 'enemy_set_stage_2',
+        encounters: <BattleStageEncounterDefinition>[
+          BattleStageEncounterDefinition(
+            id: 'stage_2_crossfire',
+            name: '교차 화력 조합',
+            enemySetId: 'enemy_set_stage_2_crossfire',
+            summary: '정찰과 연타, 압박이 고르게 섞인 전개',
+            chance: 0.4,
+          ),
+          BattleStageEncounterDefinition(
+            id: 'stage_2_ambush',
+            name: '기습 조합',
+            enemySetId: 'enemy_set_stage_2_ambush',
+            summary: '고속 접근과 후열 압박 비중이 높은 전개',
+            chance: 0.34,
+          ),
+          BattleStageEncounterDefinition(
+            id: 'stage_2_assault',
+            name: '돌격 조합',
+            enemySetId: 'enemy_set_stage_2_assault',
+            summary: '전열 압박이 강한 정면 돌파 전개',
+            chance: 0.26,
+          ),
+        ],
         goldSuccess: 42,
         goldFailurePenalty: 0,
         essenceSuccess: 6,
@@ -513,7 +827,29 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         name: '재의 공방',
         recommendedPower: 390,
         searchDuration: Duration(seconds: 11),
-        enemySetId: 'enemy_set_stage_3',
+        encounters: <BattleStageEncounterDefinition>[
+          BattleStageEncounterDefinition(
+            id: 'stage_3_furnace',
+            name: '용광 전선 조합',
+            enemySetId: 'enemy_set_stage_3_furnace',
+            summary: '전열 버티기와 후열 화력이 균형 잡힌 전개',
+            chance: 0.38,
+          ),
+          BattleStageEncounterDefinition(
+            id: 'stage_3_relay',
+            name: '연성 릴레이 조합',
+            enemySetId: 'enemy_set_stage_3_relay',
+            summary: '후열 연성 화력이 몰리는 전개',
+            chance: 0.34,
+          ),
+          BattleStageEncounterDefinition(
+            id: 'stage_3_overheat',
+            name: '과열 조합',
+            enemySetId: 'enemy_set_stage_3_overheat',
+            summary: '방어보다 화력 압박이 앞서는 전개',
+            chance: 0.28,
+          ),
+        ],
         goldSuccess: 60,
         goldFailurePenalty: 0,
         essenceSuccess: 9,
@@ -531,7 +867,29 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         name: '폭풍 전시실',
         recommendedPower: 490,
         searchDuration: Duration(seconds: 14),
-        enemySetId: 'enemy_set_stage_4',
+        encounters: <BattleStageEncounterDefinition>[
+          BattleStageEncounterDefinition(
+            id: 'stage_4_lattice',
+            name: '폭풍 조합',
+            enemySetId: 'enemy_set_stage_4_lattice',
+            summary: '필중 견제와 연속 주문이 겹치는 기본 전개',
+            chance: 0.4,
+          ),
+          BattleStageEncounterDefinition(
+            id: 'stage_4_volley',
+            name: '교란 조합',
+            enemySetId: 'enemy_set_stage_4_volley',
+            summary: '회피 교란 비중이 높은 원거리 전개',
+            chance: 0.33,
+          ),
+          BattleStageEncounterDefinition(
+            id: 'stage_4_hunt',
+            name: '추격 조합',
+            enemySetId: 'enemy_set_stage_4_hunt',
+            summary: '기동 교전과 후속 타격이 강한 전개',
+            chance: 0.27,
+          ),
+        ],
         goldSuccess: 86,
         goldFailurePenalty: 0,
         essenceSuccess: 13,
@@ -549,7 +907,29 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         name: '문물의 핵',
         recommendedPower: 580,
         searchDuration: Duration(seconds: 15),
-        enemySetId: 'enemy_set_stage_5',
+        encounters: <BattleStageEncounterDefinition>[
+          BattleStageEncounterDefinition(
+            id: 'stage_5_guarded',
+            name: '호위 조합',
+            enemySetId: 'enemy_set_stage_5_guarded',
+            summary: '보스와 중장갑 호위체가 버티는 전개',
+            chance: 0.48,
+          ),
+          BattleStageEncounterDefinition(
+            id: 'stage_5_signal',
+            name: '신호 조합',
+            enemySetId: 'enemy_set_stage_5_signal',
+            summary: '보스와 후열 화력이 동시에 몰아치는 전개',
+            chance: 0.34,
+          ),
+          BattleStageEncounterDefinition(
+            id: 'stage_5_awakened',
+            name: '각성 조합',
+            enemySetId: 'enemy_set_stage_5_awakened',
+            summary: '최종 구간 완전체 전개',
+            chance: 0.18,
+          ),
+        ],
         goldSuccess: 112,
         goldFailurePenalty: 0,
         essenceSuccess: 18,
@@ -589,11 +969,14 @@ BattleEnemySetDefinition enemySetDefinition(String enemySetId) {
   return definition;
 }
 
-List<BattleEnemyDefinition> enemyDefinitionsForStage(String stageId) {
-  final BattleStageDefinition stage = stageDefinition(stageId);
-  final BattleEnemySetDefinition enemySet = enemySetDefinition(
-    stage.enemySetId,
-  );
+List<BattleStageEncounterDefinition> encounterDefinitionsForStage(
+  String stageId,
+) {
+  return stageDefinition(stageId).encounters;
+}
+
+List<BattleEnemyDefinition> enemyDefinitionsForSet(String enemySetId) {
+  final BattleEnemySetDefinition enemySet = enemySetDefinition(enemySetId);
   return enemySet.enemyIds
       .map((String enemyId) {
         final BattleEnemyDefinition? definition =
@@ -604,6 +987,38 @@ List<BattleEnemyDefinition> enemyDefinitionsForStage(String stageId) {
         return definition;
       })
       .toList(growable: false);
+}
+
+List<BattleEnemyDefinition> enemyDefinitionsForStage(String stageId) {
+  final Map<String, BattleEnemyDefinition> uniqueEnemies =
+      <String, BattleEnemyDefinition>{};
+  for (final BattleStageEncounterDefinition encounter
+      in encounterDefinitionsForStage(stageId)) {
+    for (final BattleEnemyDefinition enemy in enemyDefinitionsForSet(
+      encounter.enemySetId,
+    )) {
+      uniqueEnemies[enemy.id] = enemy;
+    }
+  }
+  return uniqueEnemies.values.toList(growable: false);
+}
+
+BattleDropTable dropTableForEnemySet({
+  required String stageId,
+  required String enemySetId,
+}) {
+  final List<BattleEnemyDefinition> enemies = enemyDefinitionsForSet(
+    enemySetId,
+  );
+  return BattleDropTable(
+    stageId: stageId,
+    normalDrops: enemies
+        .expand((BattleEnemyDefinition enemy) => enemy.normalDrops)
+        .toList(growable: false),
+    specialDrops: enemies
+        .expand((BattleEnemyDefinition enemy) => enemy.specialDrops)
+        .toList(growable: false),
+  );
 }
 
 BattleDropTable stageDropTable(String stageId) {

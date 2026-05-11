@@ -55,13 +55,30 @@ class BattleStageUnlockCondition {
 }
 
 @immutable
+class BattleStageEncounterDefinition {
+  const BattleStageEncounterDefinition({
+    required this.id,
+    required this.name,
+    required this.enemySetId,
+    required this.summary,
+    required this.chance,
+  });
+
+  final String id;
+  final String name;
+  final String enemySetId;
+  final String summary;
+  final double chance;
+}
+
+@immutable
 class BattleStageDefinition {
   const BattleStageDefinition({
     required this.id,
     required this.name,
     required this.recommendedPower,
     required this.searchDuration,
-    required this.enemySetId,
+    required this.encounters,
     required this.goldSuccess,
     required this.goldFailurePenalty,
     required this.essenceSuccess,
@@ -76,7 +93,7 @@ class BattleStageDefinition {
   final String name;
   final int recommendedPower;
   final Duration searchDuration;
-  final String enemySetId;
+  final List<BattleStageEncounterDefinition> encounters;
   final int goldSuccess;
   final int goldFailurePenalty;
   final int essenceSuccess;

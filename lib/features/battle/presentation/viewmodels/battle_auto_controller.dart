@@ -14,14 +14,17 @@ class BattleAutoController {
     BattleService? battleService,
     BattleExpeditionUseCase battleExpeditionUseCase =
         const BattleExpeditionUseCase(),
+    Random? encounterRandom,
     required BattleCatalogRepository battleCatalogRepository,
   }) : _battleService = battleService,
        _battleExpeditionUseCase = battleExpeditionUseCase,
+       _encounterRandom = encounterRandom ?? Random(),
        _battleCatalogRepository = battleCatalogRepository;
 
   final SessionController _session;
   final BattleService? _battleService;
   final BattleExpeditionUseCase _battleExpeditionUseCase;
+  final Random _encounterRandom;
   final BattleCatalogRepository _battleCatalogRepository;
   static const BattlePotionLoadoutService _battlePotionLoadoutService =
       BattlePotionLoadoutService();
@@ -43,6 +46,7 @@ class BattleAutoController {
     final BattleEncounterResolution resolution =
         DefaultBattleExpeditionResolver(
           battleService: battleService,
+          random: _encounterRandom,
         ).resolveEncounter(
           state: started,
           stageId: stageId,

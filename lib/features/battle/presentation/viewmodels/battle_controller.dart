@@ -21,6 +21,7 @@ class BattleController {
   BattleController(
     SessionController session, {
     BattleService? battleService,
+    Random? encounterRandom,
     BattleExpeditionUseCase battleExpeditionUseCase =
         const BattleExpeditionUseCase(),
     ConfigureBattleAssignmentUseCase configureBattleAssignmentUseCase =
@@ -32,6 +33,7 @@ class BattleController {
          session,
          battleService: battleService,
          battleExpeditionUseCase: battleExpeditionUseCase,
+         encounterRandom: encounterRandom,
          battleCatalogRepository:
              battleCatalogRepository ?? const _MissingBattleCatalogRepository(),
        ),
@@ -83,12 +85,32 @@ class _MissingBattleCatalogRepository implements BattleCatalogRepository {
   const _MissingBattleCatalogRepository();
 
   @override
+  List<BattleStageEncounterDefinition> encounterDefinitionsForStage(
+    String stageId,
+  ) {
+    throw StateError('BattleCatalogRepository is required');
+  }
+
+  @override
   BattleDropTable dropTable(String stageId) {
     throw StateError('BattleCatalogRepository is required');
   }
 
   @override
+  BattleDropTable dropTableForEnemySet({
+    required String stageId,
+    required String enemySetId,
+  }) {
+    throw StateError('BattleCatalogRepository is required');
+  }
+
+  @override
   List<BattleEnemyDefinition> enemyDefinitionsForStage(String stageId) {
+    throw StateError('BattleCatalogRepository is required');
+  }
+
+  @override
+  List<BattleEnemyDefinition> enemyDefinitionsForSet(String enemySetId) {
     throw StateError('BattleCatalogRepository is required');
   }
 
@@ -108,6 +130,7 @@ final Provider<BattleController> battleControllerProvider =
       return BattleController(
         ref.read(sessionControllerProvider.notifier),
         battleService: ref.read(battleServiceProvider),
+        encounterRandom: Random(17),
         battleCatalogRepository: ref.read(battleCatalogRepositoryProvider),
       );
     });

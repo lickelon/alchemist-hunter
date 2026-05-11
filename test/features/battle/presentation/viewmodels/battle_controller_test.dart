@@ -18,10 +18,12 @@ void main() {
   BattleController buildController(
     SessionController session, {
     int battleSeed = 11,
+    int encounterSeed = 17,
   }) {
     return BattleController(
       session,
       battleService: BattleService(random: Random(battleSeed)),
+      encounterRandom: Random(encounterSeed),
       battleCatalogRepository: const StaticBattleCatalogRepository(),
     );
   }
@@ -54,7 +56,10 @@ void main() {
       true,
     );
     expect(session.state.battle.progress.clearedStageIds, contains('stage_1'));
-    expect(session.state.battle.progress.unlockFlags, isNot(contains('stage_2')));
+    expect(
+      session.state.battle.progress.unlockFlags,
+      isNot(contains('stage_2')),
+    );
     final BattleExpeditionState? expedition =
         session.state.battle.stageExpeditions['stage_1'];
     expect(expedition, isNotNull);
@@ -73,7 +78,7 @@ void main() {
       battle: session.state.battle.copyWith(
         stageAssignments: <String, List<String>>{
           ...session.state.battle.stageAssignments,
-          'stage_5': <String>[merc.id, homo.id],
+          'stage_1': <String>[merc.id, homo.id],
         },
       ),
       characters: session.state.characters.copyWith(
@@ -86,7 +91,7 @@ void main() {
       ),
     );
 
-    controller.runAutoBattle('stage_5');
+    controller.runAutoBattle('stage_1');
 
     expect(
       session.state.characters.mercenaries.first.level,
@@ -102,7 +107,11 @@ void main() {
 
   test('equipped stats raise battle power and secure stage_5 clear', () {
     final SessionController session = buildSession();
-    final BattleController controller = buildController(session, battleSeed: 1);
+    final BattleController controller = buildController(
+      session,
+      battleSeed: 1,
+      encounterSeed: 17,
+    );
     final CharacterProgress merc = session.state.characters.mercenaries.first;
 
     session.state = session.state.copyWith(
@@ -121,9 +130,29 @@ void main() {
                 blueprintId: 'eq_1',
                 name: 'Bronze Sword',
                 slot: EquipmentSlot.weapon,
-                attack: 12,
+                attack: 28,
                 defense: 0,
                 health: 0,
+                createdAt: DateTime(2026, 1, 1, 10),
+              ),
+              armor: EquipmentInstance(
+                id: 'eq_instance_2',
+                blueprintId: 'eq_2',
+                name: 'Iron Buckler',
+                slot: EquipmentSlot.armor,
+                attack: 0,
+                defense: 22,
+                health: 64,
+                createdAt: DateTime(2026, 1, 1, 10),
+              ),
+              accessory: EquipmentInstance(
+                id: 'eq_instance_3',
+                blueprintId: 'eq_3',
+                name: 'Hunter Charm',
+                slot: EquipmentSlot.accessory,
+                attack: 12,
+                defense: 8,
+                health: 40,
                 createdAt: DateTime(2026, 1, 1, 10),
               ),
             ),
@@ -134,7 +163,7 @@ void main() {
 
     controller.runAutoBattle('stage_5');
 
-    expect(session.state.workshop.logs.first, contains('Battle 성공'));
+    expect(session.state.workshop.logs.first, contains('/ 성공 /'));
     expect(session.state.player.essence, 138);
   });
 
