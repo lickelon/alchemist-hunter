@@ -39,6 +39,12 @@ final Provider<List<WorkshopSkillNodeView>> workshopSkillNodeViewsProvider =
       final List<WorkshopSkillNode> nodes = ref.watch(
         workshopSkillNodesProvider,
       );
+      final Map<String, WorkshopSkillNode> nodeMap = <String, WorkshopSkillNode>{
+        for (final WorkshopSkillNode node in nodes) node.id: node,
+      };
+      final Map<String, TraitUnit> traitMap = <String, TraitUnit>{
+        for (final TraitUnit trait in ref.watch(traitsProvider)) trait.id: trait,
+      };
       const WorkshopSkillTreeService service = WorkshopSkillTreeService();
 
       return nodes
@@ -65,7 +71,7 @@ final Provider<List<WorkshopSkillNodeView>> workshopSkillNodeViewsProvider =
             } else if (!reqMet) {
               statusLabel = node.requirements.map((e) => e.label).join(', ');
             } else if (!affordable) {
-              statusLabel = '재화 부족';
+              statusLabel = _missingCostLabel(state, costs, traitMap);
             } else {
               statusLabel = '강화 가능';
             }
@@ -75,16 +81,16 @@ final Provider<List<WorkshopSkillNodeView>> workshopSkillNodeViewsProvider =
               name: node.name,
               description: node.description,
               depth: _depthForNode(node, nodes),
-              levelLabel: 'Lv $level/${node.maxLevel}',
+              levelLabel: '레벨 $level/${node.maxLevel}',
               costLabel: costs.isEmpty
                   ? '비용 없음'
                   : costs
                         .map((WorkshopSkillCost cost) {
                           return switch (cost.type) {
                             WorkshopSkillCostType.arcaneDust =>
-                              'ArcaneDust ${cost.amount}',
+                              '아케인 더스트 ${cost.amount}',
                             WorkshopSkillCostType.element =>
-                              '${cost.elementId ?? "Element"} ${cost.amount}',
+                              '${traitMap[cost.elementId]?.name ?? cost.elementId ?? "특성"} 특성 ${cost.amount}',
                           };
                         })
                         .join(' / '),
@@ -95,13 +101,46 @@ final Provider<List<WorkshopSkillNodeView>> workshopSkillNodeViewsProvider =
               ),
               prerequisiteLabel: node.prerequisiteNodeIds.isEmpty
                   ? '루트 노드'
-                  : '선행 ${node.prerequisiteNodeIds.join(", ")}',
+                  : '선행 ${_prerequisiteNames(node.prerequisiteNodeIds, nodeMap)}',
               statusLabel: statusLabel,
               upgradeable: upgradeable,
             );
           })
           .toList(growable: false);
     });
+
+String _prerequisiteNames(
+  List<String> prerequisiteNodeIds,
+  Map<String, WorkshopSkillNode> nodeMap,
+) {
+  return prerequisiteNodeIds
+      .map((String nodeId) => nodeMap[nodeId]?.name ?? nodeId)
+      .join(', ');
+}
+
+String _missingCostLabel(
+  SessionState state,
+  List<WorkshopSkillCost> costs,
+  Map<String, TraitUnit> traitMap,
+) {
+  for (final WorkshopSkillCost cost in costs) {
+    if (cost.type == WorkshopSkillCostType.arcaneDust &&
+        state.player.arcaneDust < cost.amount) {
+      return '아케인 더스트 부족';
+    }
+    if (cost.type == WorkshopSkillCostType.element) {
+      final String? elementId = cost.elementId;
+      if (elementId == null) {
+        return '특성 재료 부족';
+      }
+      if ((state.workshop.extractedTraitInventory[elementId] ?? 0) <
+          cost.amount) {
+        return '${traitMap[elementId]?.name ?? elementId} 특성 부족';
+      }
+    }
+  }
+  return '재화 부족';
+}
 
 int _depthForNode(WorkshopSkillNode node, List<WorkshopSkillNode> nodes) {
   if (node.prerequisiteNodeIds.isEmpty) {

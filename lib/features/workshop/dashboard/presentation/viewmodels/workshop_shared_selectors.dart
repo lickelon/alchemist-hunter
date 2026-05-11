@@ -119,8 +119,8 @@ final Provider<WorkshopDashboardSummaryView> workshopDashboardSummaryProvider =
       final int essence = ref.watch(workshopEssenceProvider);
       final int arcaneDust = ref.watch(workshopArcaneDustProvider);
       return WorkshopDashboardSummaryView(
-        essenceLabel: 'Essence $essence',
-        arcaneDustLabel: 'ArcaneDust $arcaneDust',
+        essenceLabel: '에센스 $essence',
+        arcaneDustLabel: '아케인 더스트 $arcaneDust',
       );
     });
 

@@ -12,11 +12,11 @@ void main() {
     expect(container.read(workshopUnlockedSkillNodeCountProvider), 1);
     expect(
       container.read(workshopDashboardSummaryProvider).essenceLabel,
-      'Essence 120',
+      '에센스 120',
     );
     expect(
       container.read(workshopDashboardSummaryProvider).arcaneDustLabel,
-      'ArcaneDust 2',
+      '아케인 더스트 2',
     );
     expect(
       container.read(workshopInventorySummaryProvider).description,

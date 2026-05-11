@@ -48,7 +48,7 @@ String? completedResultText(CraftQueueJob job) {
   }
   return switch (job.type) {
     WorkshopJobType.extraction =>
-      '추출 완료 / 특성 ${job.completedExtractedTraits.length}종 / ArcaneDust +${job.completedArcaneDust}',
+      '추출 완료 / 특성 ${job.completedExtractedTraits.length}종 / 아케인 더스트 +${job.completedArcaneDust}',
     WorkshopJobType.craft =>
       '제조 완료 / ${job.completedPotionStackKey ?? job.potionId ?? job.title} x${job.repeatCount}',
     WorkshopJobType.enchant =>

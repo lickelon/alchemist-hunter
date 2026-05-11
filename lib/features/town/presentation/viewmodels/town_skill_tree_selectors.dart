@@ -63,7 +63,7 @@ townSkillNodeViewsProvider = Provider<List<TownSkillNodeView>>((Ref ref) {
         } else if (!reqMet) {
           statusLabel = node.requirements.map((e) => e.label).join(', ');
         } else if (!affordable) {
-          statusLabel = '재화 부족';
+          statusLabel = _missingCostLabel(state, costs);
         } else {
           statusLabel = '강화 가능';
         }
@@ -107,6 +107,20 @@ String _prerequisiteNames(
   return prerequisiteNodeIds
       .map((String nodeId) => nodeMap[nodeId]?.name ?? nodeId)
       .join(', ');
+}
+
+String _missingCostLabel(SessionState state, List<TownSkillCost> costs) {
+  for (final TownSkillCost cost in costs) {
+    if (cost.type == TownSkillCostType.townInsight &&
+        state.player.townInsight < cost.amount) {
+      return '마을 통찰 부족';
+    }
+    if (cost.type == TownSkillCostType.gold &&
+        state.player.gold < cost.amount) {
+      return '골드 부족';
+    }
+  }
+  return '재화 부족';
 }
 
 int _depthForNode(TownSkillNode node, List<TownSkillNode> nodes) {

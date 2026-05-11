@@ -31,7 +31,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('작업실 스킬트리'), findsOneWidget);
-    expect(find.textContaining('Alembic Array'), findsOneWidget);
+    expect(find.textContaining('● Alembic Array (레벨 0/2)'), findsOneWidget);
     expect(find.textContaining('현재 효과 효과 없음'), findsWidgets);
     expect(find.textContaining('다음 효과 추출 수율 +8%'), findsOneWidget);
     expect(find.textContaining('↳ Queue Matrix'), findsOneWidget);
@@ -41,6 +41,6 @@ void main() {
 
     expect(session.state.player.arcaneDust, 1);
     expect(session.state.workshop.skillTree.nodeLevels['workshop_alembic'], 1);
-    expect(find.textContaining('Lv 1/2'), findsOneWidget);
+    expect(find.textContaining('레벨 1/2'), findsOneWidget);
   });
 }

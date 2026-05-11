@@ -29,7 +29,7 @@ class WorkshopHatchSheet extends ConsumerWidget {
             return AppSheetLayout(
               title: '호문쿨루스 부화',
               header: Text(
-                'Essence $essence / ArcaneDust $arcaneDust / 보유 호문쿨루스 $homunculusCount체',
+                '에센스 $essence / 아케인 더스트 $arcaneDust / 보유 호문쿨루스 $homunculusCount체',
               ),
               body: recipes.isEmpty
                   ? const Center(child: Text('부화 가능한 레시피가 없습니다'))
@@ -40,7 +40,7 @@ class WorkshopHatchSheet extends ConsumerWidget {
                               dense: true,
                               title: Text(recipe.name),
                               subtitle: Text(
-                                '${recipe.description}\n결과 ${recipe.resultName}\n역할 ${recipe.roleLabel}\n보조효과 ${recipe.supportEffectLabel}\n${recipe.costLabel}',
+                                '${recipe.description}\n결과 ${recipe.resultName}\n역할 ${recipe.roleLabel}\n보조효과 ${recipe.supportEffectLabel}\n${recipe.costLabel}\n${recipe.availabilityLabel}',
                               ),
                               trailing: FilledButton.tonal(
                                 onPressed: recipe.canHatch

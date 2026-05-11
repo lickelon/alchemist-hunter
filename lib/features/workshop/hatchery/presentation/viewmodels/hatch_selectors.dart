@@ -14,6 +14,7 @@ class HomunculusHatchRecipeView {
     required this.roleLabel,
     required this.supportEffectLabel,
     required this.costLabel,
+    required this.availabilityLabel,
     required this.canHatch,
   });
 
@@ -24,6 +25,7 @@ class HomunculusHatchRecipeView {
   final String roleLabel;
   final String supportEffectLabel;
   final String costLabel;
+  final String availabilityLabel;
   final bool canHatch;
 }
 
@@ -70,6 +72,19 @@ homunculusHatchRecipeViewsProvider = Provider<List<HomunculusHatchRecipeView>>((
               entry.value,
         );
 
+        final String availabilityLabel;
+        if (!enoughEssence) {
+          availabilityLabel = '에센스 부족';
+        } else if (!enoughDust) {
+          availabilityLabel = '아케인 더스트 부족';
+        } else if (!enoughMaterials) {
+          availabilityLabel = '재료 부족';
+        } else if (!enoughTraits) {
+          availabilityLabel = '특성 재료 부족';
+        } else {
+          availabilityLabel = '등록 가능';
+        }
+
         final String materialCostLabel = recipe.materialCosts.entries
             .map(
               (MapEntry<String, int> entry) =>
@@ -91,7 +106,8 @@ homunculusHatchRecipeViewsProvider = Provider<List<HomunculusHatchRecipeView>>((
           roleLabel: recipe.roleLabel,
           supportEffectLabel: recipe.supportEffectLabel,
           costLabel:
-              'Essence ${recipe.essenceCost} / ArcaneDust $arcaneDustCost${materialCostLabel.isEmpty ? "" : " / $materialCostLabel"}${traitCostLabel.isEmpty ? "" : " / $traitCostLabel"}',
+              '에센스 ${recipe.essenceCost} / 아케인 더스트 $arcaneDustCost${materialCostLabel.isEmpty ? "" : " / $materialCostLabel"}${traitCostLabel.isEmpty ? "" : " / $traitCostLabel"}',
+          availabilityLabel: availabilityLabel,
           canHatch:
               enoughEssence && enoughDust && enoughMaterials && enoughTraits,
         );
