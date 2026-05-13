@@ -1,4 +1,4 @@
-import '../character_models.dart';
+import 'character_progress.dart';
 
 class CharactersState {
   const CharactersState({required this.mercenaries, required this.homunculi});

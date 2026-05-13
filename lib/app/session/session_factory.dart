@@ -1,7 +1,5 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
-import 'package:alchemist_hunter/features/characters/domain/combat_jobs.dart';
-import 'package:alchemist_hunter/features/characters/domain/character_models.dart';
-import 'package:alchemist_hunter/features/characters/domain/models/characters_state.dart';
+import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/mercenary_template_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
