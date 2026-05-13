@@ -200,10 +200,10 @@ class EquipmentEnchantService {
         BattleStatModifier(
           type: BattleStatModifierType.critRate,
           mode: BattleModifierMode.flat,
-            value: 0.01,
-            sourceId: '${sourceId}_focus_crit',
-          ),
-        );
+          value: 0.01,
+          sourceId: '${sourceId}_focus_crit',
+        ),
+      );
     }
 
     return modifiers;
