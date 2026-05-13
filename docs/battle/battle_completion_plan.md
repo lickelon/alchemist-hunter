@@ -4,6 +4,8 @@
 - 이 문서는 `P1 전투 완성도`의 상세 실행 계획만 다룬다.
 - `docs/development_plan_v3.md`에는 우선순위만 유지하고, battle 세부 설계는 이 문서를 기준으로 관리한다.
 - 전투 스탯, modifier, passive 같은 세부 전투 설계는 `docs/battle/combat/combat_design.md`를 기준으로 참조한다.
+- 연속 run 전투 규칙은 `docs/battle/continuous_battle_design.md`를 기준으로 참조한다.
+- 전투 시트 구조는 `docs/battle/battle_sheet_design.md`를 기준으로 참조한다.
 
 ## 1. 현재 상태 요약
 
