@@ -13,8 +13,9 @@
 | --- | --- | --- |
 | 아군 전투 스탯 | `BattleCombatStats` + `BattleStatModifier` + `BattleModifier` + `BattlePassiveEffect` 구조 반영 | 성장 / 장비 / 인챈트 반영은 됐지만 loadout 보정은 아직 없다 |
 | 적 전투 스탯 | `BattleEnemyDefinition`과 stage / enemy set / encounter catalog 사용 | 보스 고유 규칙과 행동 패턴은 아직 더 깊게 확장할 여지가 있다 |
-| 전투 루프 | 속도, 명중, 치명, 물리/마법, 흡혈, 재생, 추가 공격 반영 | 상태이상 / 스킬 / loadout 개입은 아직 없다 |
-| 전투 결과 표시 | 최근 결과 시트와 실시간 전투 현황 시트 제공, 포션 fallback 사유 노출 | 해금 근거와 전투 외 성장 요약은 아직 없다 |
+| 전투 루프 | 속도, 명중, 치명, 물리/마법, 흡혈, 재생, 추가 공격 반영 | 상태이상 / 스킬 / 보스 전용 패턴은 아직 없다 |
+| 연속 run 구조 | 아군 HP와 생존 상태가 encounter 사이에 유지되고, 전멸 시 복구 후 재시작한다 | partial death 보상 규칙과 고급 revive 규칙은 아직 없다 |
+| 전투 결과 표시 | 최근 결과 시트와 실시간 전투 현황 시트 제공, 포션 fallback 사유 노출 | 해금 근거와 전투 외 성장 요약은 아직 더 보강할 수 있다 |
 | 결과 이력 | stage별 최근 로그 10개 보존, loadout fallback 사유 기록 | 해금 / 드롭 상세 근거는 아직 더 보강할 여지가 있다 |
 | 드롭 근거 | stage별 encounter 조합, 적별 드롭, 조합 확률 표시 가능 | 확률 자체의 밸런스 튜닝과 희소성 체감은 더 다듬을 수 있다 |
 | 스테이지 데이터 | stage / enemy set / encounter / enemy catalog 분리 완료, `clearedStageIds` 기반 해금 판정 반영 | clear 기반 unlock 자체는 임시 기준이라 추후 재설계 여지가 있다 |
@@ -274,6 +275,7 @@
 - unlock condition 판정
 - potion loadout 소비 / 부족 fallback
 - 다중 cycle sync 누적 처리
+- 연속 run / recovering 전환 / wipe 이후 재시작
 
 #### 프레젠테이션 테스트
 - 전투 결과 시트 렌더
@@ -288,7 +290,7 @@
    - 보스전 전용 규칙
    - 후반 적 조합의 역할 차별화
 3. H단계 테스트 확장
-   - 해금 / loadout / fallback / 소비 회귀 보강
+   - 연속 run / 복구 / 보스 패턴 회귀 보강
 
 ## 5. 남은 PR 분리 기준
 - 1차 PR
