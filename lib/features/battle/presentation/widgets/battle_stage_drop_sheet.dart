@@ -15,12 +15,17 @@ class BattleStageDropSheet extends ConsumerWidget {
     final BattleStageDropOverviewView overview = ref.watch(
       battleStageDropOverviewProvider(stageId),
     );
+    final currentEncounter = ref.watch(
+      battleStageCurrentEncounterProvider(stageId),
+    );
 
     return AppBottomSheet(
       child: AppSheetLayout(
         title: '${overview.stageName} 적 정보',
         header: Text(
-          '권장 전투력 ${overview.recommendedPower} / 조합 ${overview.encounterCount}종 / 적 ${overview.enemyCount}종',
+          currentEncounter == null
+              ? '권장 전투력 ${overview.recommendedPower} / 가능한 조합 ${overview.encounterCount}종 / 적 ${overview.enemyCount}종'
+              : '현재 조합 ${currentEncounter.encounterIndex}회 ${currentEncounter.encounterName} / 가능한 조합 ${overview.encounterCount}종 / 적 ${overview.enemyCount}종',
         ),
         body: ListView.separated(
           itemCount: overview.encounters.length,

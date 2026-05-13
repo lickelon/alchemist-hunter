@@ -62,11 +62,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('1단계 전투 현황'), findsOneWidget);
-    expect(find.text('현재 상태'), findsOneWidget);
-    expect(find.text('대기'), findsOneWidget);
-    expect(find.text('적 구성 / 드롭'), findsOneWidget);
-
-    await tester.tap(find.text('적 구성 / 드롭'));
+    expect(find.text('전투 상태판'), findsOneWidget);
+    expect(find.text('진행'), findsOneWidget);
+    expect(find.text('대기'), findsWidgets);
+    await tester.drag(find.byType(Scrollable).last, const Offset(0, -400));
+    await tester.pumpAndSettle();
+    expect(find.text('적 조합 / 드롭'), findsOneWidget);
+    await tester.tap(find.text('적 조합 / 드롭'));
     await tester.pumpAndSettle();
 
     expect(find.text('1단계 적 정보'), findsOneWidget);
@@ -113,6 +115,8 @@ void main() {
             recentLogs: <BattleLogEntry>[
               BattleLogEntry(
                 resolvedAt: DateTime(2026, 1, 1, 10, 13, 42),
+                encounterName: 'Scavenger Line',
+                encounterIndex: 1,
                 success: true,
                 gold: 35,
                 essence: 6,
@@ -156,12 +160,14 @@ void main() {
     await tester.tap(find.text('1단계'));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('포션 미적용'), findsWidgets);
-
-    await tester.tap(find.text('최근 결과').last);
+    expect(find.text('1단계 전투 현황'), findsOneWidget);
+    await tester.drag(find.byType(Scrollable).last, const Offset(0, -400));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('최근 기록').last);
     await tester.pumpAndSettle();
 
     expect(find.text('1단계 전투 기록'), findsOneWidget);
+    expect(find.textContaining('1회 Scavenger Line'), findsOneWidget);
     expect(find.text('포션 재고 부족으로 로드아웃이 적용되지 않았습니다.'), findsOneWidget);
     expect(find.textContaining('획득 재료: Emberroot x2'), findsOneWidget);
     expect(

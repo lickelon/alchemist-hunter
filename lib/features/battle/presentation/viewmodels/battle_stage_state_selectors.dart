@@ -1,8 +1,8 @@
-import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
+import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -87,11 +87,19 @@ final battleStageExpeditionStateProvider =
       );
     });
 
-final battleStageCurrentBattleProvider =
-    Provider.family<BattlePlaybackState?, String>((Ref ref, String stageId) {
-      return ref
-          .watch(battleStageExpeditionStateProvider(stageId))
-          .currentBattle;
+final battleStageRunStateProvider = Provider.family<BattleRunState?, String>((
+  Ref ref,
+  String stageId,
+) {
+  return ref.watch(battleStageExpeditionStateProvider(stageId)).runState;
+});
+
+final battleStageCurrentEncounterProvider =
+    Provider.family<BattleEncounterRuntimeState?, String>((
+      Ref ref,
+      String stageId,
+    ) {
+      return ref.watch(battleStageRunStateProvider(stageId))?.currentEncounter;
     });
 
 final battleStageRecentLogsProvider =
@@ -101,14 +109,10 @@ final battleStageRecentLogsProvider =
 
 final battleStageCurrentActionLogsProvider =
     Provider.family<List<BattleActionLog>, String>((Ref ref, String stageId) {
-      final BattleExpeditionState expedition = ref.watch(
-        battleStageExpeditionStateProvider(stageId),
-      );
-      final BattlePlaybackState? currentBattle = expedition.currentBattle;
-      if (currentBattle == null) {
-        return const <BattleActionLog>[];
-      }
-      return currentBattle.revealedActions(elapsed: expedition.phaseProgress);
+      return ref
+              .watch(battleStageCurrentEncounterProvider(stageId))
+              ?.recentActionLogs ??
+          const <BattleActionLog>[];
     });
 
 final battleStagePartyPowerProvider = Provider.family<int, String>((
@@ -138,14 +142,24 @@ final battleStageStatusLabelProvider = Provider.family<String, String>((
   final BattleStageDefinition stage = ref
       .watch(battleCatalogRepositoryProvider)
       .stageDefinition(stageId);
-  final BattlePlaybackState? currentBattle = expedition.currentBattle;
+  final BattleEncounterRuntimeState? currentEncounter = ref.watch(
+    battleStageCurrentEncounterProvider(stageId),
+  );
   return switch (expedition.status) {
     BattleExpeditionStatus.idle => '대기',
     BattleExpeditionStatus.searching =>
-      '적 탐색 중 / ${expedition.phaseProgress.inSeconds}초 / ${stage.searchDuration.inSeconds}초',
-    BattleExpeditionStatus.battling => '전투 진행 중',
-    BattleExpeditionStatus.paused =>
-      currentBattle == null ? '정지 / 적 탐색 보류' : '정지 / 전투 보류',
+      '적 탐색 중 / ${_formatSeconds(expedition.phaseProgress)} / ${stage.searchDuration.inSeconds}초',
+    BattleExpeditionStatus.battling =>
+      '전투 진행 중 / ${currentEncounter?.encounterName ?? '교전'}',
+    BattleExpeditionStatus.recovering =>
+      '복구 중 / ${_formatSeconds(stage.recoveryDuration - expedition.phaseProgress)} 남음',
+    BattleExpeditionStatus.paused => switch (expedition.pausedStatus ??
+        BattleExpeditionStatus.searching) {
+      BattleExpeditionStatus.searching => '정지 / 적 탐색 보류',
+      BattleExpeditionStatus.battling => '정지 / 전투 보류',
+      BattleExpeditionStatus.recovering => '정지 / 복구 보류',
+      BattleExpeditionStatus.idle || BattleExpeditionStatus.paused => '정지',
+    },
   };
 });
 
@@ -153,15 +167,15 @@ final battleStagePendingClaimLabelProvider = Provider.family<String, String>((
   Ref ref,
   String stageId,
 ) {
-  final BattleExpeditionState expedition = ref.watch(
-    battleStageExpeditionStateProvider(stageId),
+  final BattlePendingClaim claim = ref.watch(
+    battleStageExpeditionStateProvider(
+      stageId,
+    ).select((BattleExpeditionState expedition) => expedition.pendingClaim),
   );
-  final BattlePendingClaim claim = expedition.pendingClaim;
-  final int materialKinds = claim.materials.length;
   if (claim.isEmpty) {
     return '수령 대기 보상 없음';
   }
-  return '골드 ${battleSignedValueLabel(claim.gold)} / 에센스 ${battleSignedValueLabel(claim.essence)} / 재료 $materialKinds종 / 경험치 ${claim.characterXp.values.fold<int>(0, (int total, int value) => total + value)}';
+  return '골드 ${battleSignedValueLabel(claim.gold)} / 에센스 ${battleSignedValueLabel(claim.essence)} / 재료 ${claim.materials.length}종';
 });
 
 final battleStageLastResultLabelProvider = Provider.family<String, String>((
@@ -175,5 +189,15 @@ final battleStageLastResultLabelProvider = Provider.family<String, String>((
     return '최근 결과 없음';
   }
   final BattleLogEntry log = logs.first;
-  return '최근 결과 ${log.success ? '성공' : '실패'} / 골드 ${battleSignedValueLabel(log.gold)} / 재료 ${log.materials.length}종${log.usedLoadoutFallback ? ' / 포션 미적용' : ''}';
+  final String wipeLabel = log.wipedParty ? ' / 전멸' : '';
+  final String fallbackLabel = log.usedLoadoutFallback ? ' / 포션 미적용' : '';
+  return '${log.encounterIndex}회 ${log.encounterName} / ${log.success ? '성공' : '실패'}$wipeLabel / 골드 ${battleSignedValueLabel(log.gold)} / 재료 ${log.materials.length}종$fallbackLabel';
 });
+
+String _formatSeconds(Duration duration) {
+  if (duration <= Duration.zero) {
+    return '0.0초';
+  }
+  final double seconds = duration.inMilliseconds / 1000;
+  return '${seconds.toStringAsFixed(1)}초';
+}

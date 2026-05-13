@@ -1,7 +1,7 @@
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
-import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
@@ -25,6 +25,15 @@ class BattleStageStatusSheet extends ConsumerWidget {
     final BattleExpeditionState expedition = ref.watch(
       battleStageExpeditionStateProvider(stageId),
     );
+    final BattleRunState? runState = expedition.runState;
+    final BattleEncounterRuntimeState? currentEncounter =
+        runState?.currentEncounter;
+    final List<BattleActionLog> currentActions = ref.watch(
+      battleStageCurrentActionLogsProvider(stageId),
+    );
+    final List<BattleLogEntry> recentLogs = ref.watch(
+      battleStageRecentLogsProvider(stageId),
+    );
     final int assignedCount = ref
         .watch(battleStageAssignmentProvider(stageId))
         .length;
@@ -35,72 +44,116 @@ class BattleStageStatusSheet extends ConsumerWidget {
     final String pendingLabel = ref.watch(
       battleStagePendingClaimLabelProvider(stageId),
     );
-    final BattlePlaybackState? currentBattle = ref.watch(
-      battleStageCurrentBattleProvider(stageId),
-    );
-    final List<BattleActionLog> currentActions = ref.watch(
-      battleStageCurrentActionLogsProvider(stageId),
-    );
-    final List<BattleLogEntry> recentLogs = ref.watch(
-      battleStageRecentLogsProvider(stageId),
-    );
-    final String lastResultLabel = ref.watch(
-      battleStageLastResultLabelProvider(stageId),
-    );
-    final _StageProgressView progressView = _progressView(
-      expedition: expedition,
-      stage: stage,
-      assignedCount: assignedCount,
-      partyPower: partyPower,
-      statusLabel: statusLabel,
-      currentBattle: currentBattle,
-    );
+    final _PhaseProgressView progress = _buildProgress(expedition, stage);
 
     return AppBottomSheet(
       child: AppSheetLayout(
         title:
             '${battleStageDisplayName(stage.id, fallback: stage.name)} 전투 현황',
         header: Text(
-          '권장 전투력 ${stage.recommendedPower} / 조합 ${stage.encounters.length}종',
+          '권장 전투력 ${stage.recommendedPower} / 가능한 조합 ${stage.encounters.length}종',
         ),
         body: ListView(
           children: <Widget>[
-            _StageStatusBlock(
-              title: '현재 상태',
-              lines: progressView.lines,
-              footer: _SmoothProgressBar(
-                value: progressView.progressValue.clamp(0, 1),
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: <Widget>[
+                Chip(label: Text(_phaseLabel(expedition.status))),
+                Chip(
+                  label: Text(
+                    currentEncounter == null
+                        ? '교전 대기'
+                        : '${currentEncounter.encounterIndex}회 ${currentEncounter.encounterName}',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            _StatusCard(
+              title: '전투 상태판',
+              child: Column(
+                children: <Widget>[
+                  _UnitBoardSection(
+                    title: '아군',
+                    units: runState?.allies ?? const <BattleRunUnitState>[],
+                    emptyLabel: assignedCount == 0 ? '편성 없음' : '전투 시작 전',
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  _UnitBoardSection(
+                    title: '적',
+                    units:
+                        currentEncounter?.enemies ??
+                        const <BattleRunUnitState>[],
+                    emptyLabel: currentEncounter == null ? '현재 교전 없음' : '적 없음',
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            if (currentBattle != null) ...<Widget>[
-              _StageStatusBlock(
-                title: '실시간 전투',
-                lines: currentActions.isEmpty
-                    ? const <String>['첫 행동 대기 중']
-                    : currentActions
-                          .skip(
-                            currentActions.length > 6
-                                ? currentActions.length - 6
-                                : 0,
-                          )
-                          .map(_formatAction)
-                          .toList(growable: false),
+            _StatusCard(
+              title: '진행',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(statusLabel),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(progress.label),
+                  const SizedBox(height: AppSpacing.sm),
+                  _SmoothProgressBar(value: progress.value.clamp(0, 1)),
+                ],
               ),
-              const SizedBox(height: AppSpacing.lg),
-            ],
-            _StageStatusBlock(title: '수령 대기', lines: <String>[pendingLabel]),
+            ),
             const SizedBox(height: AppSpacing.lg),
-            _StageStatusBlock(
-              title: '최근 결과',
-              lines: recentLogs.isEmpty
-                  ? const <String>['최근 전투 기록 없음']
-                  : <String>[
-                      lastResultLabel,
-                      ...recentLogs.take(5).map((BattleLogEntry log) {
-                        return '${_formatTime(log.resolvedAt)} / ${log.success ? '성공' : '실패'} / 골드 ${battleSignedValueLabel(log.gold)} / 에센스 ${battleSignedValueLabel(log.essence)}${log.usedLoadoutFallback ? ' / 포션 미적용' : ''}';
-                      }),
-                    ],
+            _StatusCard(
+              title: '실시간 타임라인',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:
+                    _timelineLines(
+                          expedition: expedition,
+                          currentActions: currentActions,
+                        )
+                        .map((String line) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xs,
+                            ),
+                            child: Text(line),
+                          );
+                        })
+                        .toList(growable: false),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            _StatusCard(
+              title: '런 요약',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:
+                    <String>[
+                          '편성 $assignedCount명 / 전투력 $partyPower',
+                          pendingLabel,
+                          '누적 승리 ${runState?.victoryCount ?? 0} / 전멸 ${runState?.wipeCount ?? 0}',
+                          '누적 교전 ${runState?.encounterCount ?? 0}회',
+                          if (currentEncounter != null)
+                            '현재 조합 ${currentEncounter.encounterIndex}회 / ${currentEncounter.encounterName}',
+                          if (currentEncounter?.usedLoadoutFallback ?? false)
+                            '포션 부족으로 로드아웃 미적용',
+                          if (expedition.status ==
+                              BattleExpeditionStatus.recovering)
+                            '복구 완료까지 ${_formatRemaining(stage.recoveryDuration, expedition.phaseProgress)}',
+                        ]
+                        .map((String line) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xs,
+                            ),
+                            child: Text(line),
+                          );
+                        })
+                        .toList(growable: false),
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
             Wrap(
@@ -118,7 +171,7 @@ class BattleStageStatusSheet extends ConsumerWidget {
                     );
                   },
                   icon: const Icon(Icons.inventory_2_outlined),
-                  label: const Text('적 구성 / 드롭'),
+                  label: const Text('적 조합 / 드롭'),
                 ),
                 FilledButton.tonalIcon(
                   onPressed: recentLogs.isEmpty
@@ -133,7 +186,7 @@ class BattleStageStatusSheet extends ConsumerWidget {
                           );
                         },
                   icon: const Icon(Icons.history),
-                  label: const Text('최근 결과'),
+                  label: const Text('최근 기록'),
                 ),
               ],
             ),
@@ -143,79 +196,104 @@ class BattleStageStatusSheet extends ConsumerWidget {
     );
   }
 
-  String _formatTime(DateTime dateTime) {
-    final String hour = dateTime.hour.toString().padLeft(2, '0');
-    final String minute = dateTime.minute.toString().padLeft(2, '0');
-    final String second = dateTime.second.toString().padLeft(2, '0');
-    return '$hour:$minute:$second';
-  }
-
-  _StageProgressView _progressView({
-    required BattleExpeditionState expedition,
-    required BattleStageDefinition stage,
-    required int assignedCount,
-    required int partyPower,
-    required String statusLabel,
-    required BattlePlaybackState? currentBattle,
-  }) {
-    final List<String> baseLines = <String>[
-      statusLabel,
-      '편성 $assignedCount명 / 전투력 $partyPower',
-    ];
+  _PhaseProgressView _buildProgress(
+    BattleExpeditionState expedition,
+    BattleStageDefinition stage,
+  ) {
     switch (expedition.status) {
       case BattleExpeditionStatus.idle:
-        return _StageProgressView(progressValue: 0, lines: baseLines);
+        return const _PhaseProgressView(value: 0, label: '원정 시작 전');
       case BattleExpeditionStatus.searching:
-        return _StageProgressView(
-          progressValue: stage.searchDuration.inMilliseconds == 0
+        return _PhaseProgressView(
+          value: stage.searchDuration.inMilliseconds == 0
               ? 0
               : expedition.phaseProgress.inMilliseconds /
                     stage.searchDuration.inMilliseconds,
-          lines: <String>[
-            ...baseLines,
-            '다음 적 탐색까지 ${_formatRemaining(stage.searchDuration, expedition.phaseProgress)}',
-          ],
+          label:
+              '다음 적 탐색까지 ${_formatRemaining(stage.searchDuration, expedition.phaseProgress)}',
         );
       case BattleExpeditionStatus.battling:
         final Duration lifecycleElapsed = _currentLifecycleElapsed(
           expedition.phaseProgress,
         );
-        return _StageProgressView(
-          progressValue:
-              lifecycleElapsed.inMilliseconds /
-              battleActionInterval.inMilliseconds,
-          lines: <String>[
-            ...baseLines,
-            if (currentBattle?.usedLoadoutFallback ?? false) '포션 부족으로 로드아웃 미적용',
-            '다음 행동까지 ${_formatRemaining(battleActionInterval, lifecycleElapsed)}',
-          ],
+        return _PhaseProgressView(
+          value: battleActionInterval.inMilliseconds == 0
+              ? 0
+              : lifecycleElapsed.inMilliseconds /
+                    battleActionInterval.inMilliseconds,
+          label:
+              '다음 행동까지 ${_formatRemaining(battleActionInterval, lifecycleElapsed)}',
+        );
+      case BattleExpeditionStatus.recovering:
+        return _PhaseProgressView(
+          value: stage.recoveryDuration.inMilliseconds == 0
+              ? 0
+              : expedition.phaseProgress.inMilliseconds /
+                    stage.recoveryDuration.inMilliseconds,
+          label:
+              '복구 완료까지 ${_formatRemaining(stage.recoveryDuration, expedition.phaseProgress)}',
         );
       case BattleExpeditionStatus.paused:
-        if (currentBattle == null) {
-          return _StageProgressView(
-            progressValue: stage.searchDuration.inMilliseconds == 0
+        final BattleExpeditionStatus pausedStatus =
+            expedition.pausedStatus ?? BattleExpeditionStatus.searching;
+        if (pausedStatus == BattleExpeditionStatus.battling) {
+          final Duration lifecycleElapsed = _currentLifecycleElapsed(
+            expedition.phaseProgress,
+          );
+          return _PhaseProgressView(
+            value: battleActionInterval.inMilliseconds == 0
                 ? 0
-                : expedition.phaseProgress.inMilliseconds /
-                      stage.searchDuration.inMilliseconds,
-            lines: <String>[
-              ...baseLines,
-              '다음 적 탐색까지 ${_formatRemaining(stage.searchDuration, expedition.phaseProgress)}',
-            ],
+                : lifecycleElapsed.inMilliseconds /
+                      battleActionInterval.inMilliseconds,
+            label: '전투 일시정지',
           );
         }
-        final Duration lifecycleElapsed = _currentLifecycleElapsed(
-          expedition.phaseProgress,
-        );
-        return _StageProgressView(
-          progressValue:
-              lifecycleElapsed.inMilliseconds /
-              battleActionInterval.inMilliseconds,
-          lines: <String>[
-            ...baseLines,
-            if (currentBattle.usedLoadoutFallback) '포션 부족으로 로드아웃 미적용',
-          ],
+        if (pausedStatus == BattleExpeditionStatus.recovering) {
+          return _PhaseProgressView(
+            value: stage.recoveryDuration.inMilliseconds == 0
+                ? 0
+                : expedition.phaseProgress.inMilliseconds /
+                      stage.recoveryDuration.inMilliseconds,
+            label: '복구 일시정지',
+          );
+        }
+        return _PhaseProgressView(
+          value: stage.searchDuration.inMilliseconds == 0
+              ? 0
+              : expedition.phaseProgress.inMilliseconds /
+                    stage.searchDuration.inMilliseconds,
+          label: '탐색 일시정지',
         );
     }
+  }
+
+  List<String> _timelineLines({
+    required BattleExpeditionState expedition,
+    required List<BattleActionLog> currentActions,
+  }) {
+    if (currentActions.isNotEmpty) {
+      return currentActions
+          .skip(currentActions.length > 6 ? currentActions.length - 6 : 0)
+          .map(_formatAction)
+          .toList(growable: false);
+    }
+    return switch (expedition.status) {
+      BattleExpeditionStatus.searching => const <String>['적을 탐색 중입니다.'],
+      BattleExpeditionStatus.battling => const <String>['첫 행동 대기 중'],
+      BattleExpeditionStatus.recovering => const <String>['파티 복구 중입니다.'],
+      BattleExpeditionStatus.paused => const <String>['진행이 일시정지되었습니다.'],
+      BattleExpeditionStatus.idle => const <String>['진행 중인 전투가 없습니다.'],
+    };
+  }
+
+  String _phaseLabel(BattleExpeditionStatus status) {
+    return switch (status) {
+      BattleExpeditionStatus.idle => '대기',
+      BattleExpeditionStatus.searching => '탐색',
+      BattleExpeditionStatus.battling => '전투',
+      BattleExpeditionStatus.recovering => '복구',
+      BattleExpeditionStatus.paused => '정지',
+    };
   }
 
   Duration _currentLifecycleElapsed(Duration phaseProgress) {
@@ -246,16 +324,79 @@ class BattleStageStatusSheet extends ConsumerWidget {
     if (!action.hit) {
       return '${action.actorName} -> ${action.targetName ?? '대상'} 빗나감';
     }
-    final String criticalLabel = action.critical ? ' 치명타' : '';
+    final String criticalLabel = action.critical ? ' / 치명타' : '';
     return '${action.actorName} -> ${action.targetName ?? '대상'} ${action.damage} 피해$criticalLabel';
   }
 }
 
-class _StageProgressView {
-  const _StageProgressView({required this.progressValue, required this.lines});
+class _PhaseProgressView {
+  const _PhaseProgressView({required this.value, required this.label});
 
-  final double progressValue;
-  final List<String> lines;
+  final double value;
+  final String label;
+}
+
+class _UnitBoardSection extends StatelessWidget {
+  const _UnitBoardSection({
+    required this.title,
+    required this.units,
+    required this.emptyLabel,
+  });
+
+  final String title;
+  final List<BattleRunUnitState> units;
+  final String emptyLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(title, style: Theme.of(context).textTheme.titleSmall),
+        const SizedBox(height: AppSpacing.sm),
+        if (units.isEmpty)
+          Text(emptyLabel)
+        else
+          ...units.map((BattleRunUnitState unit) {
+            final double hpRatio = unit.maxHp == 0
+                ? 0
+                : unit.currentHp / unit.maxHp;
+            return Container(
+              margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(child: Text(unit.name)),
+                      if (!unit.isAlive)
+                        Text(
+                          '사망',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text('HP ${unit.currentHp} / ${unit.maxHp}'),
+                  const SizedBox(height: AppSpacing.xs),
+                  LinearProgressIndicator(
+                    value: hpRatio.clamp(0, 1),
+                    minHeight: 8,
+                  ),
+                ],
+              ),
+            );
+          }),
+      ],
+    );
+  }
 }
 
 class _SmoothProgressBar extends StatelessWidget {
@@ -276,35 +417,26 @@ class _SmoothProgressBar extends StatelessWidget {
   }
 }
 
-class _StageStatusBlock extends StatelessWidget {
-  const _StageStatusBlock({
-    required this.title,
-    required this.lines,
-    this.footer,
-  });
+class _StatusCard extends StatelessWidget {
+  const _StatusCard({required this.title, required this.child});
 
   final String title;
-  final List<String> lines;
-  final Widget? footer;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(title, style: Theme.of(context).textTheme.titleSmall),
-        const SizedBox(height: AppSpacing.sm),
-        ...lines.map((String line) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-            child: Text(line),
-          );
-        }),
-        if (footer != null) ...<Widget>[
-          const SizedBox(height: AppSpacing.sm),
-          footer!,
-        ],
-      ],
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(title, style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: AppSpacing.sm),
+            child,
+          ],
+        ),
+      ),
     );
   }
 }
