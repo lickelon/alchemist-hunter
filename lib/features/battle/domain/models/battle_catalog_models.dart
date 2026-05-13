@@ -78,6 +78,7 @@ class BattleStageDefinition {
     required this.name,
     required this.recommendedPower,
     required this.searchDuration,
+    this.recoveryDuration = const Duration(seconds: 10),
     required this.encounters,
     required this.goldSuccess,
     required this.goldFailurePenalty,
@@ -93,6 +94,7 @@ class BattleStageDefinition {
   final String name;
   final int recommendedPower;
   final Duration searchDuration;
+  final Duration recoveryDuration;
   final List<BattleStageEncounterDefinition> encounters;
   final int goldSuccess;
   final int goldFailurePenalty;

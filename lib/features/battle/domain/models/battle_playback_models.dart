@@ -46,3 +46,42 @@ class BattleActionLog {
   final int actorHpAfter;
   final int? targetHpAfter;
 }
+
+@immutable
+class BattleRunUnitState {
+  const BattleRunUnitState({
+    required this.unitId,
+    required this.name,
+    required this.team,
+    required this.faction,
+    required this.stats,
+    this.modifiers = const <BattleModifier>[],
+    this.passives = const <BattlePassiveEffect>[],
+    required this.currentHp,
+  });
+
+  final String unitId;
+  final String name;
+  final BattleTeam team;
+  final CombatFaction faction;
+  final BattleCombatStats stats;
+  final List<BattleModifier> modifiers;
+  final List<BattlePassiveEffect> passives;
+  final int currentHp;
+
+  int get maxHp => stats.maxHp;
+  bool get isAlive => currentHp > 0;
+
+  BattleRunUnitState copyWith({int? currentHp}) {
+    return BattleRunUnitState(
+      unitId: unitId,
+      name: name,
+      team: team,
+      faction: faction,
+      stats: stats,
+      modifiers: modifiers,
+      passives: passives,
+      currentHp: currentHp ?? this.currentHp,
+    );
+  }
+}

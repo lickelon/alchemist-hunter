@@ -104,6 +104,7 @@ class SessionProgressSyncUseCase {
         );
     return state.copyWith(
       battle: result.battle,
+      characters: result.characters,
       workshop: _battlePotionLoadoutService.consumeLoadout(
         workshop: state.workshop,
         appliedLoadout: result.consumedPotionStacks,

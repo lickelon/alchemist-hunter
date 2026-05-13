@@ -751,6 +751,7 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         name: '폐허 입구',
         recommendedPower: 210,
         searchDuration: Duration(seconds: 7),
+        recoveryDuration: Duration(seconds: 10),
         encounters: <BattleStageEncounterDefinition>[
           BattleStageEncounterDefinition(
             id: 'stage_1_patrol',
@@ -787,6 +788,7 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         name: '먼지 회랑',
         recommendedPower: 300,
         searchDuration: Duration(seconds: 9),
+        recoveryDuration: Duration(seconds: 12),
         encounters: <BattleStageEncounterDefinition>[
           BattleStageEncounterDefinition(
             id: 'stage_2_crossfire',
@@ -827,6 +829,7 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         name: '재의 공방',
         recommendedPower: 390,
         searchDuration: Duration(seconds: 11),
+        recoveryDuration: Duration(seconds: 14),
         encounters: <BattleStageEncounterDefinition>[
           BattleStageEncounterDefinition(
             id: 'stage_3_furnace',
@@ -867,6 +870,7 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         name: '폭풍 전시실',
         recommendedPower: 490,
         searchDuration: Duration(seconds: 14),
+        recoveryDuration: Duration(seconds: 16),
         encounters: <BattleStageEncounterDefinition>[
           BattleStageEncounterDefinition(
             id: 'stage_4_lattice',
@@ -907,6 +911,7 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         name: '문물의 핵',
         recommendedPower: 580,
         searchDuration: Duration(seconds: 15),
+        recoveryDuration: Duration(seconds: 18),
         encounters: <BattleStageEncounterDefinition>[
           BattleStageEncounterDefinition(
             id: 'stage_5_guarded',

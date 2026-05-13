@@ -6,7 +6,10 @@ import 'battle_playback_models.dart';
 class BattleLogEntry {
   const BattleLogEntry({
     required this.resolvedAt,
+    this.encounterName = '',
+    this.encounterIndex = 0,
     required this.success,
+    this.wipedParty = false,
     required this.gold,
     required this.essence,
     required this.materials,
@@ -16,7 +19,10 @@ class BattleLogEntry {
   });
 
   final DateTime resolvedAt;
+  final String encounterName;
+  final int encounterIndex;
   final bool success;
+  final bool wipedParty;
   final int gold;
   final int essence;
   final Map<String, int> materials;
@@ -48,35 +54,27 @@ class BattlePendingClaim {
     this.materials = const <String, int>{},
     this.gold = 0,
     this.essence = 0,
-    this.characterXp = const <String, int>{},
     this.hasSuccessfulBattle = false,
   });
 
   final Map<String, int> materials;
   final int gold;
   final int essence;
-  final Map<String, int> characterXp;
   final bool hasSuccessfulBattle;
 
   bool get isEmpty =>
-      materials.isEmpty &&
-      gold == 0 &&
-      essence == 0 &&
-      characterXp.isEmpty &&
-      !hasSuccessfulBattle;
+      materials.isEmpty && gold == 0 && essence == 0 && !hasSuccessfulBattle;
 
   BattlePendingClaim copyWith({
     Map<String, int>? materials,
     int? gold,
     int? essence,
-    Map<String, int>? characterXp,
     bool? hasSuccessfulBattle,
   }) {
     return BattlePendingClaim(
       materials: materials ?? this.materials,
       gold: gold ?? this.gold,
       essence: essence ?? this.essence,
-      characterXp: characterXp ?? this.characterXp,
       hasSuccessfulBattle: hasSuccessfulBattle ?? this.hasSuccessfulBattle,
     );
   }

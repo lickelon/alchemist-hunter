@@ -2,19 +2,13 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
-import 'package:alchemist_hunter/features/characters/domain/models.dart';
-import 'package:alchemist_hunter/features/characters/domain/services/character_progression_service.dart';
 
 class BattleExpeditionUseCase {
   const BattleExpeditionUseCase({
-    CharacterProgressionService characterProgressionService =
-        const CharacterProgressionService(),
     BattleProgressionService battleProgressionService =
         const BattleProgressionService(),
-  }) : _characterProgressionService = characterProgressionService,
-       _battleProgressionService = battleProgressionService;
+  }) : _battleProgressionService = battleProgressionService;
 
-  final CharacterProgressionService _characterProgressionService;
   final BattleProgressionService _battleProgressionService;
 
   SessionState startExpedition({
@@ -37,7 +31,10 @@ class BattleExpeditionUseCase {
     if (current.isActive) {
       return state;
     }
-    final BattleExpeditionStatus nextStatus = current.currentBattle == null
+    final BattleExpeditionStatus nextStatus =
+        current.status == BattleExpeditionStatus.paused
+        ? current.pausedStatus ?? BattleExpeditionStatus.searching
+        : current.runState?.currentEncounter == null
         ? BattleExpeditionStatus.searching
         : BattleExpeditionStatus.battling;
     final Map<String, BattleExpeditionState> nextExpeditions =
@@ -45,6 +42,7 @@ class BattleExpeditionUseCase {
     nextExpeditions[stageId] = current.copyWith(
       status: nextStatus,
       lastProgressedAt: now,
+      clearPausedStatus: true,
     );
     return state.copyWith(
       battle: state.battle.copyWith(stageExpeditions: nextExpeditions),
@@ -66,6 +64,7 @@ class BattleExpeditionUseCase {
     nextExpeditions[stageId] = current.copyWith(
       status: BattleExpeditionStatus.paused,
       lastProgressedAt: now,
+      pausedStatus: current.status,
     );
     return state.copyWith(
       battle: state.battle.copyWith(stageExpeditions: nextExpeditions),
@@ -104,11 +103,6 @@ class BattleExpeditionUseCase {
           success: success,
         );
 
-    final CharactersState nextCharacters = _characterProgressionService
-        .grantCharacterXpMap(
-          state: state.characters,
-          xpByCharacter: expedition.pendingClaim.characterXp,
-        );
     final Map<String, BattleExpeditionState> nextExpeditions =
         <String, BattleExpeditionState>{...state.battle.stageExpeditions};
     nextExpeditions[stageId] = expedition.copyWith(
@@ -125,7 +119,6 @@ class BattleExpeditionUseCase {
         stageExpeditions: nextExpeditions,
         progress: nextProgress,
       ),
-      characters: nextCharacters,
     );
   }
 }

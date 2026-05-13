@@ -10,13 +10,13 @@ import 'package:alchemist_hunter/features/battle/domain/services/battle_service.
 
 class BattleEncounterResolution {
   const BattleEncounterResolution({
-    required this.playback,
+    required this.runState,
     required this.summary,
     this.consumedPotionLoadout = const <String, int>{},
     this.usedLoadoutFallback = false,
   });
 
-  final BattlePlaybackState? playback;
+  final BattleRunState? runState;
   final String summary;
   final Map<String, int> consumedPotionLoadout;
   final bool usedLoadoutFallback;
@@ -26,7 +26,19 @@ abstract class BattleExpeditionResolver {
   BattleEncounterResolution resolveEncounter({
     required SessionState state,
     required String stageId,
+    BattleRunState? currentRunState,
     required BattleCatalogRepository battleCatalogRepository,
+  });
+
+  BattleEncounterStepResult runEncounterStep({
+    required List<BattleRunUnitState> allies,
+    required BattleEncounterRuntimeState encounter,
+    required int potionBoost,
+  });
+
+  Map<String, int> resolveRewards({
+    required bool success,
+    required BattleDropTable table,
   });
 }
 
@@ -56,14 +68,22 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
   BattleEncounterResolution resolveEncounter({
     required SessionState state,
     required String stageId,
+    BattleRunState? currentRunState,
     required BattleCatalogRepository battleCatalogRepository,
   }) {
+    final BattleExpeditionState currentExpedition =
+        state.battle.stageExpeditions[stageId] ??
+        const BattleExpeditionState(
+          status: BattleExpeditionStatus.idle,
+          lastProgressedAt: null,
+          phaseProgress: Duration.zero,
+        );
     final List<String> assignedCharacterIds =
         state.battle.stageAssignments[stageId] ?? const <String>[];
     final Map<String, int> requestedPotionLoadout =
         state.battle.stagePotionLoadouts[stageId] ?? const <String, int>{};
     if (assignedCharacterIds.isEmpty) {
-      return const BattleEncounterResolution(playback: null, summary: '편성 없음');
+      return const BattleEncounterResolution(runState: null, summary: '편성 없음');
     }
     final ResolvedBattlePotionLoadout resolvedLoadout =
         _battlePotionLoadoutService.resolveLoadout(
@@ -79,50 +99,59 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
           battleCatalogRepository: battleCatalogRepository,
           random: _random,
         );
-
-    final BattleResult result = _battleService.runAutoBattle(
-      config: AutoBattleConfig(
-        party: _battlePartyPowerService.buildParty(
-          state.characters,
-          assignedCharacterIds: assignedCharacterIds,
-        ),
-        potionLoadout: resolvedLoadout.appliedLoadout,
-        stageId: stageId,
-      ),
-      stage: stageDefinition,
-      enemies: encounter.enemies,
-      dropTable: encounter.dropTable,
+    final List<HeroProfile> party = _battlePartyPowerService.buildParty(
+      state.characters,
+      assignedCharacterIds: assignedCharacterIds,
     );
-
-    final Map<String, int> characterXp = result.success
-        ? <String, int>{
-            for (final String characterId in assignedCharacterIds)
-              characterId: stageDefinition.xpSuccessBase,
-          }
-        : const <String, int>{};
-    final int gold = result.success ? stageDefinition.goldSuccess : 0;
-    final int essence = result.success ? stageDefinition.essenceSuccess : 0;
-    final BattlePendingClaim pendingClaim = BattlePendingClaim(
-      materials: result.loot,
-      gold: gold,
-      essence: essence,
-      characterXp: characterXp,
-      hasSuccessfulBattle: result.success,
-    );
-    final BattlePlaybackState playback = BattlePlaybackState(
-      success: result.success,
-      turns: result.turns,
-      pendingClaim: pendingClaim,
-      actions: result.actions,
-      usedLoadoutFallback: resolvedLoadout.fallback,
+    final BattleRunState previousRunState =
+        currentRunState ?? currentExpedition.runState ?? const BattleRunState();
+    final List<BattleRunUnitState> allies = previousRunState.allies.isEmpty
+        ? _battleService.createRunAllies(party: party)
+        : previousRunState.allies;
+    final BattleEncounterRuntimeState runtimeEncounter =
+        BattleEncounterRuntimeState(
+          encounterId: encounter.definition.id,
+          encounterName: encounter.definition.name,
+          encounterIndex: previousRunState.encounterCount + 1,
+          enemySetId: encounter.definition.enemySetId,
+          enemies: _battleService.createEncounterEnemies(
+            enemies: encounter.enemies,
+          ),
+          appliedPotionLoadout: resolvedLoadout.appliedLoadout,
+          usedLoadoutFallback: resolvedLoadout.fallback,
+        );
+    final BattleRunState nextRunState = previousRunState.copyWith(
+      allies: allies,
+      currentEncounter: runtimeEncounter,
     );
 
     return BattleEncounterResolution(
-      playback: playback,
+      runState: nextRunState,
       summary:
-          '${encounter.definition.name} / ${playback.success ? '성공' : '실패'} / 골드 ${gold >= 0 ? '+' : ''}$gold / 에센스 ${essence >= 0 ? '+' : ''}$essence / 재료 ${pendingClaim.materials.length}종${resolvedLoadout.fallback ? ' / 포션 미적용' : ''}',
+          '${encounter.definition.name} 교전 시작${resolvedLoadout.fallback ? ' / 포션 미적용' : ''}',
       consumedPotionLoadout: resolvedLoadout.appliedLoadout,
       usedLoadoutFallback: resolvedLoadout.fallback,
     );
+  }
+
+  @override
+  BattleEncounterStepResult runEncounterStep({
+    required List<BattleRunUnitState> allies,
+    required BattleEncounterRuntimeState encounter,
+    required int potionBoost,
+  }) {
+    return _battleService.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: potionBoost,
+    );
+  }
+
+  @override
+  Map<String, int> resolveRewards({
+    required bool success,
+    required BattleDropTable table,
+  }) {
+    return _battleService.resolveRewards(success: success, table: table);
   }
 }
