@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import 'battle_models.dart';
+import 'battle_drop_models.dart';
 import 'combat_models.dart';
 
 @immutable

@@ -1,4 +1,5 @@
-import 'battle_models.dart';
+import 'battle_expedition_models.dart';
+import 'battle_progress_models.dart';
 
 class BattleState {
   const BattleState({

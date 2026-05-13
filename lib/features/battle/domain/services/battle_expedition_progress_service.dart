@@ -1,6 +1,7 @@
-import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/app/session/session_state.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_progress_helpers.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_resolver.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/services/character_progression_service.dart';
@@ -21,9 +22,13 @@ class BattleExpeditionProgressService {
   const BattleExpeditionProgressService({
     CharacterProgressionService characterProgressionService =
         const CharacterProgressionService(),
-  }) : _characterProgressionService = characterProgressionService;
+    BattleExpeditionProgressHelpers helpers =
+        const BattleExpeditionProgressHelpers(),
+  }) : _characterProgressionService = characterProgressionService,
+       _helpers = helpers;
 
   final CharacterProgressionService _characterProgressionService;
+  final BattleExpeditionProgressHelpers _helpers;
 
   BattleExpeditionSyncResult syncExpeditions({
     required SessionState state,
@@ -68,7 +73,7 @@ class BattleExpeditionProgressService {
 
       final BattleStageDefinition stageDefinition = battleCatalogRepository
           .stageDefinition(stageId);
-      final DateTime baseTime = _laterOf(
+      final DateTime baseTime = _helpers.laterOf(
         syncFrom,
         expedition.lastProgressedAt ?? syncFrom,
       );
@@ -82,7 +87,7 @@ class BattleExpeditionProgressService {
       BattleRunState? runState = expedition.runState;
       BattlePendingClaim pendingClaim = expedition.pendingClaim;
       List<BattleLogEntry> recentLogs = expedition.recentLogs;
-      Duration remainingElapsed = _scaledDuration(
+      Duration remainingElapsed = _helpers.scaledDuration(
         now.difference(baseTime),
         speedMultiplier,
       );
@@ -92,21 +97,21 @@ class BattleExpeditionProgressService {
         if (nextStatus == BattleExpeditionStatus.searching) {
           final Duration remainingSearch =
               stageDefinition.searchDuration - nextPhaseProgress;
-          final Duration consumed = _minDuration(
+          final Duration consumed = _helpers.minDuration(
             remainingElapsed,
             remainingSearch,
           );
           nextPhaseProgress += consumed;
           remainingElapsed -= consumed;
           cursorTime = cursorTime.add(
-            _unscaledDuration(consumed, speedMultiplier),
+            _helpers.unscaledDuration(consumed, speedMultiplier),
           );
           if (nextPhaseProgress < stageDefinition.searchDuration) {
             break;
           }
           if (runState != null && runState.allies.isNotEmpty) {
             runState = runState.copyWith(
-              allies: _applySearchRecovery(runState.allies),
+              allies: _helpers.applySearchRecovery(runState.allies),
             );
           }
           final BattleEncounterResolution resolution = battleExpeditionResolver
@@ -143,14 +148,14 @@ class BattleExpeditionProgressService {
             nextPhaseProgress = Duration.zero;
             continue;
           }
-          final Duration consumed = _minDuration(
+          final Duration consumed = _helpers.minDuration(
             remainingElapsed,
             battleActionInterval - nextPhaseProgress,
           );
           nextPhaseProgress += consumed;
           remainingElapsed -= consumed;
           cursorTime = cursorTime.add(
-            _unscaledDuration(consumed, speedMultiplier),
+            _helpers.unscaledDuration(consumed, speedMultiplier),
           );
           if (nextPhaseProgress < battleActionInterval) {
             break;
@@ -178,7 +183,7 @@ class BattleExpeditionProgressService {
                 );
             final Map<String, int> materials = battleExpeditionResolver
                 .resolveRewards(success: true, table: dropTable);
-            pendingClaim = _mergePendingClaim(
+            pendingClaim = _helpers.mergePendingClaim(
               pendingClaim,
               BattlePendingClaim(
                 materials: materials,
@@ -192,7 +197,7 @@ class BattleExpeditionProgressService {
               xpGain: stageDefinition.xpSuccessBase,
               participantIds: assignedCharacterIds,
             );
-            recentLogs = _mergeRecentLogs(
+            recentLogs = _helpers.mergeRecentLogs(
               recentLogs,
               BattleLogEntry(
                 resolvedAt: cursorTime,
@@ -216,7 +221,7 @@ class BattleExpeditionProgressService {
             nextStatus = BattleExpeditionStatus.searching;
             continue;
           }
-          recentLogs = _mergeRecentLogs(
+          recentLogs = _helpers.mergeRecentLogs(
             recentLogs,
             BattleLogEntry(
               resolvedAt: cursorTime,
@@ -248,14 +253,14 @@ class BattleExpeditionProgressService {
         if (nextStatus == BattleExpeditionStatus.recovering) {
           final Duration remainingRecovery =
               stageDefinition.recoveryDuration - nextPhaseProgress;
-          final Duration consumed = _minDuration(
+          final Duration consumed = _helpers.minDuration(
             remainingElapsed,
             remainingRecovery,
           );
           nextPhaseProgress += consumed;
           remainingElapsed -= consumed;
           cursorTime = cursorTime.add(
-            _unscaledDuration(consumed, speedMultiplier),
+            _helpers.unscaledDuration(consumed, speedMultiplier),
           );
           if (nextPhaseProgress < stageDefinition.recoveryDuration) {
             break;
@@ -302,70 +307,5 @@ class BattleExpeditionProgressService {
       characters: nextCharacters,
       consumedPotionStacks: consumedPotionStacks,
     );
-  }
-
-  BattlePendingClaim _mergePendingClaim(
-    BattlePendingClaim left,
-    BattlePendingClaim right,
-  ) {
-    final Map<String, int> mergedMaterials = <String, int>{...left.materials};
-    right.materials.forEach((String key, int value) {
-      mergedMaterials[key] = (mergedMaterials[key] ?? 0) + value;
-    });
-    return BattlePendingClaim(
-      materials: mergedMaterials,
-      gold: left.gold + right.gold,
-      essence: left.essence + right.essence,
-      hasSuccessfulBattle:
-          left.hasSuccessfulBattle || right.hasSuccessfulBattle,
-    );
-  }
-
-  List<BattleRunUnitState> _applySearchRecovery(
-    List<BattleRunUnitState> allies,
-  ) {
-    return allies
-        .map((BattleRunUnitState unit) {
-          if (!unit.isAlive) {
-            return unit;
-          }
-          final int healing = (unit.maxHp * (0.08 + unit.stats.regen)).ceil();
-          final int nextHp = (unit.currentHp + healing).clamp(0, unit.maxHp);
-          return unit.copyWith(currentHp: nextHp);
-        })
-        .toList(growable: false);
-  }
-
-  DateTime _laterOf(DateTime left, DateTime right) {
-    return left.isAfter(right) ? left : right;
-  }
-
-  Duration _scaledDuration(Duration source, double multiplier) {
-    if (multiplier <= 1) {
-      return source;
-    }
-    return Duration(microseconds: (source.inMicroseconds * multiplier).round());
-  }
-
-  Duration _unscaledDuration(Duration source, double multiplier) {
-    if (multiplier <= 1) {
-      return source;
-    }
-    return Duration(microseconds: (source.inMicroseconds / multiplier).round());
-  }
-
-  Duration _minDuration(Duration left, Duration right) {
-    return left <= right ? left : right;
-  }
-
-  List<BattleLogEntry> _mergeRecentLogs(
-    List<BattleLogEntry> current,
-    BattleLogEntry next,
-  ) {
-    final List<BattleLogEntry> merged = <BattleLogEntry>[next, ...current];
-    if (merged.length <= 10) {
-      return merged;
-    }
-    return merged.sublist(0, 10);
   }
 }

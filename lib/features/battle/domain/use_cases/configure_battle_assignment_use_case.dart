@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/app/session/session_state.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 
 class ConfigureBattleAssignmentUseCase {
@@ -22,11 +22,10 @@ class ConfigureBattleAssignmentUseCase {
     if (assigned) {
       currentAssignment.remove(characterId);
     } else {
-      final bool assignedToOtherStage = state.battle.stageAssignments.entries.any((
-        MapEntry<String, List<String>> entry,
-      ) {
-        return entry.key != stageId && entry.value.contains(characterId);
-      });
+      final bool assignedToOtherStage = state.battle.stageAssignments.entries
+          .any((MapEntry<String, List<String>> entry) {
+            return entry.key != stageId && entry.value.contains(characterId);
+          });
       if (assignedToOtherStage) {
         return state;
       }
@@ -44,8 +43,9 @@ class ConfigureBattleAssignmentUseCase {
       currentAssignment.add(characterId);
     }
 
-    final Map<String, List<String>> nextAssignments =
-        <String, List<String>>{...state.battle.stageAssignments};
+    final Map<String, List<String>> nextAssignments = <String, List<String>>{
+      ...state.battle.stageAssignments,
+    };
     if (currentAssignment.isEmpty) {
       nextAssignments.remove(stageId);
     } else {

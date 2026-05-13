@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/app/session/session_state.dart';
 
 class ConfigureBattlePotionLoadoutUseCase {
   const ConfigureBattlePotionLoadoutUseCase();
@@ -15,7 +15,9 @@ class ConfigureBattlePotionLoadoutUseCase {
         <String, Map<String, int>>{
           ...state.battle.stagePotionLoadouts.map(
             (String key, Map<String, int> value) =>
-                MapEntry<String, Map<String, int>>(key, <String, int>{...value}),
+                MapEntry<String, Map<String, int>>(key, <String, int>{
+                  ...value,
+                }),
           ),
         };
     final Map<String, int> stageLoadout = <String, int>{

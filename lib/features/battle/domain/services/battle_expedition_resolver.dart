@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/app/session/session_state.dart';
 import 'dart:math';
 
 import 'package:alchemist_hunter/features/battle/domain/models.dart';

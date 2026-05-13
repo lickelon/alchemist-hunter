@@ -68,7 +68,9 @@ class BattleAssignmentSheet extends ConsumerWidget {
               ...potions.map((BattleAssignmentPotionView potion) {
                 return ListTile(
                   title: Text(potion.label),
-                  subtitle: Text('보유 ${potion.ownedCount} / 선택 ${potion.selectedCount}'),
+                  subtitle: Text(
+                    '보유 ${potion.ownedCount} / 선택 ${potion.selectedCount}',
+                  ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
