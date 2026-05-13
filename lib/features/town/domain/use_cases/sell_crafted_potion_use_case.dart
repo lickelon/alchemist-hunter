@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/app/session/session_state.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';

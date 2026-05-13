@@ -44,7 +44,8 @@ class TownState {
       equipmentInventory: equipmentInventory ?? this.equipmentInventory,
       forgeQueue: forgeQueue ?? this.forgeQueue,
       mercenaryCandidates: mercenaryCandidates ?? this.mercenaryCandidates,
-      mercenaryRefreshCount: mercenaryRefreshCount ?? this.mercenaryRefreshCount,
+      mercenaryRefreshCount:
+          mercenaryRefreshCount ?? this.mercenaryRefreshCount,
       skillTree: skillTree ?? this.skillTree,
       potionSalesTotal: potionSalesTotal ?? this.potionSalesTotal,
       equipmentCraftCount: equipmentCraftCount ?? this.equipmentCraftCount,

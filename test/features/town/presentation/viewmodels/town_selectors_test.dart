@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_selectors.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_resource_selectors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -2,7 +2,11 @@ import 'package:flutter/foundation.dart';
 
 enum TownSkillCostType { townInsight, gold }
 
-enum TownSkillRequirementType { salesTotal, mercenaryCount, equipmentCraftCount }
+enum TownSkillRequirementType {
+  salesTotal,
+  mercenaryCount,
+  equipmentCraftCount,
+}
 
 enum TownSkillEffectType {
   shopRefreshDiscount,

@@ -35,6 +35,9 @@ void main() {
           if (target.contains('/data/')) {
             violations.add('$relativePath -> $target');
           }
+          if (target == 'app/session/app_session.dart') {
+            violations.add('$relativePath -> $target');
+          }
         }
       }
 
