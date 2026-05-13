@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class BattleUnitBoardSection extends StatelessWidget {
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainerLowest,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppRadius.interactive,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

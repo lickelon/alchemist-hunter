@@ -36,7 +36,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Homunculus Hatch'));
+    await tester.tap(find.text('호문쿨루스'));
     await tester.pumpAndSettle();
 
     expect(find.text('호문쿨루스 부화'), findsOneWidget);
@@ -100,7 +100,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Homunculus Hatch'));
+    await tester.tap(find.text('호문쿨루스'));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(FilledButton, '등록').first);
     await tester.pump();

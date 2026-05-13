@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
@@ -51,7 +52,7 @@ class CharacterGrowthSection extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(3),
+                  borderRadius: AppRadius.progress,
                   child: LinearProgressIndicator(value: xpRatio, minHeight: 6),
                 ),
               ),

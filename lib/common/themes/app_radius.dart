@@ -18,4 +18,6 @@ class AppRadius {
 
   /// 인터랙티브 탭 영역용 BorderRadius
   static const BorderRadius interactive = BorderRadius.all(Radius.circular(md));
+
+  static const BorderRadius progress = BorderRadius.all(Radius.circular(3.0));
 }

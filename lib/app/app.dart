@@ -58,6 +58,11 @@ class _HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
         (SessionState state) => state.player.timeAcceleration,
       ),
     );
+    final int diamonds = ref.watch(
+      sessionControllerProvider.select(
+        (SessionState state) => state.player.diamonds,
+      ),
+    );
     return AppBar(
       leading: const Icon(Icons.menu),
       title: const Text('Alchemist Hunter', overflow: TextOverflow.ellipsis),
@@ -85,10 +90,10 @@ class _HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: AppSpacing.lg),
           child: Row(
-            children: const <Widget>[
-              Text('Diamonds'),
-              SizedBox(width: AppSpacing.sm),
-              Icon(Icons.diamond),
+            children: <Widget>[
+              const Icon(Icons.diamond),
+              const SizedBox(width: AppSpacing.sm),
+              Text('$diamonds'),
             ],
           ),
         ),

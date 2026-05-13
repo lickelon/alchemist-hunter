@@ -17,7 +17,7 @@ class WorkshopCraftCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Craft',
+      name: '포션 제작',
       summary: craftableCount == 0
           ? '즉시 제작 가능한 포션 없음'
           : '즉시 제작 가능 $craftableCount종',

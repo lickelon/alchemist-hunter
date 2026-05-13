@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -53,7 +54,12 @@ class BattleAssignmentSheet extends ConsumerWidget {
             }),
             const Divider(),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.xl,
+                AppSpacing.md,
+                AppSpacing.xl,
+                AppSpacing.sm,
+              ),
               child: Text(
                 '포션 loadout',
                 style: Theme.of(context).textTheme.titleMedium,

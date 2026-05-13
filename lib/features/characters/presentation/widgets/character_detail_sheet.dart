@@ -60,7 +60,8 @@ class CharacterDetailSheet extends ConsumerWidget {
               powerLabel: item.combatPowerLabel,
               statPairs: item.combatStatPairs,
             ),
-            CharacterCombatEffectSection(effectLines: item.combatEffectLines),
+            if (item.combatEffectLines.isNotEmpty)
+              CharacterCombatEffectSection(effectLines: item.combatEffectLines),
             CharacterEquipmentSection(
               slots: item.equipmentSlots,
               onManage: (CharacterEquipmentSlotView slot) {

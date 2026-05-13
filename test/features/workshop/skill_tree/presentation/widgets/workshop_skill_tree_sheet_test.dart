@@ -27,7 +27,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Workshop Skill Tree'));
+    await tester.tap(find.text('스킬트리'));
     await tester.pumpAndSettle();
 
     expect(find.text('작업실 스킬트리'), findsOneWidget);

@@ -55,7 +55,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Enchant'));
+    await tester.tap(find.text('인챈트'));
     await tester.pumpAndSettle();
 
     expect(find.text('포션과 장비를 선택하면 인챈트 결과를 미리 볼 수 있습니다'), findsOneWidget);
@@ -141,7 +141,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Enchant'));
+    await tester.tap(find.text('인챈트'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(RadioListTile<String>).at(0));
@@ -246,7 +246,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Enchant'));
+    await tester.tap(find.text('인챈트'));
     await tester.pumpAndSettle();
     await tester.tap(find.byType(RadioListTile<String>).at(0));
     await tester.pumpAndSettle();

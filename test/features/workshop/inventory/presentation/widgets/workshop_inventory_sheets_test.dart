@@ -51,7 +51,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Inventory'));
+    await tester.tap(find.text('작업실 보관함'));
     await tester.pumpAndSettle();
 
     expect(find.text('작업실 인벤토리'), findsOneWidget);
@@ -99,7 +99,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.text('Extraction'));
+      await tester.tap(find.text('재료 추출'));
       await tester.pumpAndSettle();
 
       expect(find.text('보유 추출 특성'), findsOneWidget);
@@ -154,7 +154,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Extraction'));
+    await tester.tap(find.text('재료 추출'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('분석/추출'));
     await tester.pumpAndSettle();

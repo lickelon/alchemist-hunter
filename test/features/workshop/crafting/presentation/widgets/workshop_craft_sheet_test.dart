@@ -34,7 +34,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Craft'));
+    await tester.tap(find.text('포션 제작'));
     await tester.pumpAndSettle();
 
     expect(find.text('포션 제조'), findsOneWidget);
@@ -82,7 +82,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Craft'));
+    await tester.tap(find.text('포션 제작'));
     await tester.pumpAndSettle();
 
     expect(find.text('작업실 큐 가득 참 (4/4)'), findsOneWidget);

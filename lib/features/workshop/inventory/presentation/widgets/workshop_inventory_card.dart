@@ -22,7 +22,7 @@ class WorkshopInventoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Inventory',
+      name: '작업실 보관함',
       summary: potionStackCount > 0
           ? '보유 포션 $potionStackCount스택'
           : traitTypeCount > 0

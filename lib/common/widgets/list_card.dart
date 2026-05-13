@@ -22,7 +22,7 @@ class ListCard extends StatelessWidget {
         leading: Icon(icon),
         title: Text(name, maxLines: 1, overflow: TextOverflow.ellipsis),
         subtitle: Text(summary, maxLines: 1, overflow: TextOverflow.ellipsis),
-        trailing: const Icon(Icons.chevron_right),
+        trailing: onTap == null ? null : const Icon(Icons.chevron_right),
       ),
     );
   }

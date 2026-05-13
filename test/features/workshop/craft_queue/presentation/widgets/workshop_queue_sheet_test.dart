@@ -63,7 +63,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.text('Craft Queue'));
+      await tester.tap(find.text('제작 대기열'));
       await tester.pumpAndSettle();
 
       expect(find.text('Emberroot x2'), findsOneWidget);

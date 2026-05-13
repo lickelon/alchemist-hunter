@@ -34,7 +34,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Workshop Support'));
+    await tester.tap(find.text('작업실 지원'));
     await tester.pumpAndSettle();
 
     expect(find.text('작업실 보조 슬롯'), findsOneWidget);

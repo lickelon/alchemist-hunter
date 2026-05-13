@@ -11,7 +11,7 @@ class WorkshopExtractionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Extraction',
+      name: '재료 추출',
       summary: materialTypeCount == 0
           ? '추출 가능한 재료 없음'
           : '즉시 추출 재료 $materialTypeCount종',

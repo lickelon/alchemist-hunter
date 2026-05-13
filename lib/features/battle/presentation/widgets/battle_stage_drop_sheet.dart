@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
@@ -64,7 +65,7 @@ class BattleStageDropSheet extends ConsumerWidget {
                                 color: Theme.of(
                                   context,
                                 ).colorScheme.surfaceContainerHighest,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: AppRadius.interactive,
                               ),
                               child: Icon(
                                 Icons.pets_outlined,

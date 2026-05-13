@@ -17,7 +17,7 @@ class WorkshopSupportCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Workshop Support',
+      name: '작업실 지원',
       summary: assignedCount == 0
           ? '배치된 보조 없음'
           : '보조 배치 $assignedCount/$slotLimit명',

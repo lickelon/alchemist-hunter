@@ -11,7 +11,7 @@ class WorkshopQueueCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Craft Queue',
+      name: '제작 대기열',
       summary: jobCount == 0 ? '대기 중 작업 없음' : '대기 중 작업 $jobCount건',
       icon: Icons.playlist_add_check_circle_outlined,
       onTap: () => _showQueueSheet(context),

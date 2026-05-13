@@ -11,7 +11,7 @@ class WorkshopEnchantCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Enchant',
+      name: '인챈트',
       summary: canEnchant ? '즉시 인챈트 가능' : '인챈트 준비 필요',
       icon: Icons.auto_fix_high_outlined,
       onTap: () => _showEnchantSheet(context),
