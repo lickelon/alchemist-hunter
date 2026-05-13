@@ -23,85 +23,87 @@ class TownEquipmentSheet extends ConsumerWidget {
     return AppBottomSheet(
       child: AppSheetLayout(
         title: '대장간',
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        body: ListView(
           children: <Widget>[
-            const Text('장비 등록', style: TextStyle(fontWeight: FontWeight.w700)),
+            const _SheetSectionTitle('장비 등록'),
             const SizedBox(height: AppSpacing.md),
-            Expanded(
-              child: ListView(
-                children: blueprints.map((TownEquipmentBlueprintView entry) {
-                  return ListTile(
-                    dense: true,
-                    title: Text(entry.name),
-                    subtitle: Text(
-                      '${entry.slotLabel} / ${entry.statLabel}\n${entry.materialCostLabel}\n제작 시간 ${entry.durationLabel}',
-                    ),
-                    trailing: FilledButton.tonal(
-                      onPressed: entry.canCraft
-                          ? () {
-                              ref
-                                  .read(equipmentCraftControllerProvider)
-                                  .craftEquipment(entry.id);
-                            }
-                          : null,
-                      child: const Text('등록'),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
+            ...blueprints.map((TownEquipmentBlueprintView entry) {
+              return ListTile(
+                dense: true,
+                title: Text(entry.name),
+                subtitle: Text(
+                  '${entry.slotLabel} / ${entry.statLabel}\n${entry.materialCostLabel}\n제작 시간 ${entry.durationLabel}',
+                ),
+                trailing: FilledButton.tonal(
+                  onPressed: entry.canCraft
+                      ? () {
+                          ref
+                              .read(equipmentCraftControllerProvider)
+                              .craftEquipment(entry.id);
+                        }
+                      : null,
+                  child: const Text('등록'),
+                ),
+              );
+            }),
             const Divider(),
-            const Text('대장간 진행', style: TextStyle(fontWeight: FontWeight.w700)),
+            const _SheetSectionTitle('대장간 진행'),
             const SizedBox(height: AppSpacing.md),
-            Expanded(
-              child: forgeJobs.isEmpty
-                  ? const Center(child: Text('등록된 대장간 작업이 없습니다'))
-                  : ListView(
-                      children: forgeJobs.map((TownForgeJobView entry) {
-                        return ListTile(
-                          dense: true,
-                          title: Text(entry.name),
-                          subtitle: Text(
-                            '${entry.statusLabel} / ${entry.remainingLabel}',
-                          ),
-                          trailing: FilledButton.tonal(
-                            onPressed: entry.canClaim
-                                ? () {
-                                    ref
-                                        .read(equipmentCraftControllerProvider)
-                                        .claimCompleted(entry.id);
-                                  }
-                                : null,
-                            child: const Text('수령'),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-            ),
+            if (forgeJobs.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                child: Text('등록된 대장간 작업이 없습니다'),
+              )
+            else
+              ...forgeJobs.map((TownForgeJobView entry) {
+                return ListTile(
+                  dense: true,
+                  title: Text(entry.name),
+                  subtitle: Text(
+                    '${entry.statusLabel} / ${entry.remainingLabel}',
+                  ),
+                  trailing: FilledButton.tonal(
+                    onPressed: entry.canClaim
+                        ? () {
+                            ref
+                                .read(equipmentCraftControllerProvider)
+                                .claimCompleted(entry.id);
+                          }
+                        : null,
+                    child: const Text('수령'),
+                  ),
+                );
+              }),
             const Divider(),
-            const Text('보유 장비', style: TextStyle(fontWeight: FontWeight.w700)),
+            const _SheetSectionTitle('보유 장비'),
             const SizedBox(height: AppSpacing.md),
-            Expanded(
-              child: inventory.isEmpty
-                  ? const Center(child: Text('보유 장비가 없습니다'))
-                  : ListView(
-                      children: inventory.map((
-                        TownEquipmentInventoryView entry,
-                      ) {
-                        return ListTile(
-                          dense: true,
-                          title: Text(entry.name),
-                          subtitle: Text(
-                            '${entry.slotLabel} / ${entry.statLabel}',
-                          ),
-                        );
-                      }).toList(),
-                    ),
-            ),
+            if (inventory.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                child: Text('보유 장비가 없습니다'),
+              )
+            else
+              ...inventory.map((TownEquipmentInventoryView entry) {
+                return ListTile(
+                  dense: true,
+                  title: Text(entry.name),
+                  subtitle: Text('${entry.slotLabel} / ${entry.statLabel}'),
+                );
+              }),
           ],
         ),
       ),
     );
+  }
+}
+
+class _SheetSectionTitle extends StatelessWidget {
+  const _SheetSectionTitle(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(label, style: const TextStyle(fontWeight: FontWeight.w700));
   }
 }

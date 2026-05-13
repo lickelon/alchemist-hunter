@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/section_card.dart';
 import 'package:flutter/material.dart';
 
 class CharacterDetailSection extends StatelessWidget {
@@ -17,32 +18,15 @@ class CharacterDetailSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.md),
-      child: Card(
+      child: SectionCard(
         margin: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                  if (trailing != null) trailing!,
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              child,
-            ],
-          ),
+        title: title,
+        titleStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: Theme.of(context).colorScheme.primary,
         ),
+        trailing: trailing,
+        child: child,
       ),
     );
   }

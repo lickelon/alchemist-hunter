@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/widgets/app_screen_body.dart';
+import 'package:alchemist_hunter/common/widgets/info_card.dart';
 import 'package:alchemist_hunter/features/town/presentation/widgets/town_sections.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
@@ -29,12 +30,10 @@ class TownScreen extends ConsumerWidget {
 
     return AppScreenBody(
       children: <Widget>[
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.account_balance_wallet_outlined),
-            title: const Text('마을 경제'),
-            subtitle: Text('골드 $gold / 마을 통찰 $townInsight'),
-          ),
+        InfoCard(
+          title: '마을 경제',
+          subtitle: '골드 $gold / 마을 통찰 $townInsight',
+          icon: Icons.account_balance_wallet_outlined,
         ),
         TownShopCard(
           title: '일반 상점',

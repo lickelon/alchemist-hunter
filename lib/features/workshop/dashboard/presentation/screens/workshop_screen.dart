@@ -1,5 +1,5 @@
 import 'package:alchemist_hunter/common/widgets/app_screen_body.dart';
-import 'package:alchemist_hunter/common/widgets/list_card.dart';
+import 'package:alchemist_hunter/common/widgets/info_card.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_job_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/widgets/workshop_queue_card.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/craft_queue_option_selectors.dart';
@@ -59,9 +59,9 @@ class WorkshopScreen extends ConsumerWidget {
 
     return AppScreenBody(
       children: <Widget>[
-        ListCard(
-          name: '작업실 자원',
-          summary: '${dashboard.essenceLabel} / ${dashboard.arcaneDustLabel}',
+        InfoCard(
+          title: '작업실 자원',
+          subtitle: '${dashboard.essenceLabel} / ${dashboard.arcaneDustLabel}',
           icon: Icons.science_outlined,
         ),
         WorkshopQueueCard(jobCount: queueSummary.jobCount),

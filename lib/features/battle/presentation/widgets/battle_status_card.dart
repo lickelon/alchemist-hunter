@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/section_card.dart';
 import 'package:flutter/material.dart';
 
 class BattleStatusCard extends StatelessWidget {
@@ -9,18 +10,11 @@ class BattleStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(title, style: Theme.of(context).textTheme.titleSmall),
-            const SizedBox(height: AppSpacing.sm),
-            child,
-          ],
-        ),
-      ),
+    return SectionCard(
+      title: title,
+      titleStyle: Theme.of(context).textTheme.titleSmall,
+      titleSpacing: AppSpacing.sm,
+      child: child,
     );
   }
 }

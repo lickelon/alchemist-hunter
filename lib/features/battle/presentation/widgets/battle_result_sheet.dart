@@ -22,6 +22,7 @@ class BattleResultSheet extends ConsumerWidget {
     final MaterialCatalogRepository materialCatalog = ref.watch(
       materialCatalogRepositoryProvider,
     );
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return AppBottomSheet(
       child: AppSheetLayout(
@@ -50,8 +51,8 @@ class BattleResultSheet extends ConsumerWidget {
                                 : Icons.cancel_outlined,
                             size: 18,
                             color: log.success
-                                ? Colors.green.shade700
-                                : Colors.red.shade700,
+                                ? colorScheme.primary
+                                : colorScheme.error,
                           ),
                           const SizedBox(width: AppSpacing.sm),
                           Expanded(

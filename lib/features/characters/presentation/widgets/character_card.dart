@@ -28,7 +28,7 @@ class CharacterCard extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     return Card(
       child: InkWell(
-        borderRadius: AppRadius.interactive,
+        borderRadius: AppRadius.card,
         onTap: () => _showDetailSheet(context, character),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),

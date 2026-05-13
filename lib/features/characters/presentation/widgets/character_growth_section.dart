@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_detail_section.dart';
@@ -42,9 +43,9 @@ class CharacterGrowthSection extends StatelessWidget {
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
             children: <Widget>[
-              _GrowthBadge(label: 'Lv. ${character.level}'),
-              _GrowthBadge(label: '랭크 ${character.rank}'),
-              _GrowthBadge(label: '티어 ${character.tierIndex}'),
+              AppBadge(label: 'Lv. ${character.level}'),
+              AppBadge(label: '랭크 ${character.rank}'),
+              AppBadge(label: '티어 ${character.tierIndex}'),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
@@ -71,33 +72,6 @@ class CharacterGrowthSection extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _GrowthBadge extends StatelessWidget {
-  const _GrowthBadge({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(AppSpacing.sm),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSecondaryContainer,
-          fontWeight: FontWeight.w600,
-        ),
       ),
     );
   }

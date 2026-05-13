@@ -47,109 +47,97 @@ class _WorkshopMaterialExtractionDetailState
     }.where((int value) => value > 0).toList()..sort();
 
     return AppBottomSheet(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        resizeToAvoidBottomInset: false,
-        body: Builder(
-          builder: (BuildContext sheetContext) {
-            return AppSheetLayout(
-              title: detail.materialName,
-              header: Text('보유 ${detail.ownedQuantity}개'),
-              body: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Text(
-                      '추출 수량',
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    Wrap(
-                      spacing: AppSpacing.md,
-                      runSpacing: AppSpacing.md,
-                      children: quantityOptions.map((int quantity) {
-                        final bool selected = quantity == selectedQuantity;
-                        final String label = quantity == detail.ownedQuantity
-                            ? '최대'
-                            : 'x$quantity';
-                        return ChoiceChip(
-                          label: Text(label),
-                          selected: selected,
-                          onSelected: (_) {
-                            setState(() {
-                              _quantity = quantity;
-                            });
-                          },
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    const Text(
-                      '분석 결과',
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    Wrap(
-                      spacing: AppSpacing.md,
-                      runSpacing: AppSpacing.md,
-                      children: detail.traits.map((
-                        ExtractionTraitOptionView trait,
-                      ) {
-                        final bool selected = _selectedTraits.contains(
-                          trait.id,
-                        );
-                        return FilterChip(
-                          label: Text(
-                            '${trait.name} ${workshopTraitAmountLabel(trait.amount)}',
-                          ),
-                          selected: selected,
-                          onSelected: (bool value) {
-                            setState(() {
-                              if (value) {
-                                _selectedTraits.add(trait.id);
-                              } else {
-                                _selectedTraits.remove(trait.id);
-                              }
-                            });
-                          },
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    const Text(
-                      '추출 프로필',
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    WorkshopExtractionProfileList(
-                      profiles: detail.profiles,
-                      hasSelection: _selectedTraits.isNotEmpty,
-                      onExtract: (String profileId) {
-                        final WorkshopExtractionSubmitResult result = controller
-                            .extractMaterial(
-                              detail.materialId,
-                              profileId,
-                              quantity: selectedQuantity,
-                              selectedTraits: _selectedTraits.isEmpty
-                                  ? null
-                                  : _selectedTraits.toList(),
-                            );
-                        if (result == WorkshopExtractionSubmitResult.success) {
-                          Navigator.of(sheetContext).pop();
-                          return;
-                        }
-                        final String message =
-                            result == WorkshopExtractionSubmitResult.queueFull
-                            ? '작업실 큐가 가득 찼습니다'
-                            : '추출 등록에 실패했습니다';
-                        AppToast.show(sheetContext, message);
-                      },
-                    ),
-                  ],
-                ),
+      child: AppSheetLayout(
+        title: detail.materialName,
+        header: Text('보유 ${detail.ownedQuantity}개'),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Text(
+                '추출 수량',
+                style: TextStyle(fontWeight: FontWeight.w700),
               ),
-            );
-          },
+              const SizedBox(height: AppSpacing.md),
+              Wrap(
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.md,
+                children: quantityOptions.map((int quantity) {
+                  final bool selected = quantity == selectedQuantity;
+                  final String label = quantity == detail.ownedQuantity
+                      ? '최대'
+                      : 'x$quantity';
+                  return ChoiceChip(
+                    label: Text(label),
+                    selected: selected,
+                    onSelected: (_) {
+                      setState(() {
+                        _quantity = quantity;
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              const Text(
+                '분석 결과',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Wrap(
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.md,
+                children: detail.traits.map((ExtractionTraitOptionView trait) {
+                  final bool selected = _selectedTraits.contains(trait.id);
+                  return FilterChip(
+                    label: Text(
+                      '${trait.name} ${workshopTraitAmountLabel(trait.amount)}',
+                    ),
+                    selected: selected,
+                    onSelected: (bool value) {
+                      setState(() {
+                        if (value) {
+                          _selectedTraits.add(trait.id);
+                        } else {
+                          _selectedTraits.remove(trait.id);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              const Text(
+                '추출 프로필',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              WorkshopExtractionProfileList(
+                profiles: detail.profiles,
+                hasSelection: _selectedTraits.isNotEmpty,
+                onExtract: (String profileId) {
+                  final WorkshopExtractionSubmitResult result = controller
+                      .extractMaterial(
+                        detail.materialId,
+                        profileId,
+                        quantity: selectedQuantity,
+                        selectedTraits: _selectedTraits.isEmpty
+                            ? null
+                            : _selectedTraits.toList(),
+                      );
+                  if (result == WorkshopExtractionSubmitResult.success) {
+                    Navigator.of(context).pop();
+                    return;
+                  }
+                  final String message =
+                      result == WorkshopExtractionSubmitResult.queueFull
+                      ? '작업실 큐가 가득 찼습니다'
+                      : '추출 등록에 실패했습니다';
+                  AppToast.show(context, message);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

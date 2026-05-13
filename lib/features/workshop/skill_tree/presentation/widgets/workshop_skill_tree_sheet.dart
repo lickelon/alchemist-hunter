@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -39,8 +40,15 @@ class WorkshopSkillTreeSheet extends ConsumerWidget {
                   title: Text(
                     '${node.depth == 0 ? "●" : "↳"} ${node.name} (${node.levelLabel})',
                   ),
-                  subtitle: Text(
-                    '${node.description}\n현재 효과 ${node.currentEffectLabel}\n다음 효과 ${node.nextEffectLabel}\n${node.prerequisiteLabel}\n비용 ${node.costLabel}\n${node.statusLabel}',
+                  subtitle: DetailLines(
+                    description: node.description,
+                    lines: <String>[
+                      '현재 효과 ${node.currentEffectLabel}',
+                      '다음 효과 ${node.nextEffectLabel}',
+                      node.prerequisiteLabel,
+                      '비용 ${node.costLabel}',
+                      node.statusLabel,
+                    ],
                   ),
                   trailing: FilledButton.tonal(
                     onPressed: node.upgradeable

@@ -1,6 +1,8 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
+import 'package:alchemist_hunter/common/widgets/section_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,65 +33,52 @@ class WorkshopSupportSheet extends ConsumerWidget {
                 );
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            '${slot.slotLabel} 슬롯',
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          Text(
-                            '현재 ${slot.assignedCharacterName} / 효과 ${slot.effectLabel}',
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          Wrap(
-                            spacing: AppSpacing.md,
-                            runSpacing: AppSpacing.md,
-                            children: candidates
-                                .map((WorkshopSupportCandidateView item) {
-                                  final String label =
-                                      item.assignedToSlotLabel == null
-                                      ? item.name
-                                      : '${item.name} (${item.assignedToSlotLabel})';
-                                  return ChoiceChip(
-                                    selected: item.selectedForSlot,
-                                    onSelected: item.assignable
-                                        ? (_) {
-                                            ref
-                                                .read(
-                                                  workshopSupportControllerProvider,
-                                                )
-                                                .toggleAssignment(
-                                                  slot.slotId,
-                                                  item.id,
-                                                );
-                                          }
-                                        : null,
-                                    label: Text(label),
-                                  );
-                                })
-                                .toList(growable: false),
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          ...candidates.map((
-                            WorkshopSupportCandidateView item,
-                          ) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: AppSpacing.sm,
+                  child: SectionCard(
+                    title: '${slot.slotLabel} 슬롯',
+                    titleStyle: const TextStyle(fontWeight: FontWeight.w700),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          '현재 ${slot.assignedCharacterName} / 효과 ${slot.effectLabel}',
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        ...candidates.map((WorkshopSupportCandidateView item) {
+                          final String label = item.assignedToSlotLabel == null
+                              ? item.name
+                              : '${item.name} (${item.assignedToSlotLabel})';
+                          return Card.outlined(
+                            margin: const EdgeInsets.only(
+                              bottom: AppSpacing.sm,
+                            ),
+                            child: ListTile(
+                              dense: true,
+                              title: Text(label),
+                              subtitle: DetailLines(
+                                lines: <String>[
+                                  '역할 ${item.roleLabel}',
+                                  '보조효과 ${item.supportEffectLabel}',
+                                ],
                               ),
-                              child: Text(
-                                '${item.name} / 역할 ${item.roleLabel} / 보조효과 ${item.supportEffectLabel}',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
+                              trailing: item.selectedForSlot
+                                  ? const Icon(Icons.check_circle_outline)
+                                  : null,
+                              onTap: item.assignable
+                                  ? () {
+                                      ref
+                                          .read(
+                                            workshopSupportControllerProvider,
+                                          )
+                                          .toggleAssignment(
+                                            slot.slotId,
+                                            item.id,
+                                          );
+                                    }
+                                  : null,
+                            ),
+                          );
+                        }),
+                      ],
                     ),
                   ),
                 );
