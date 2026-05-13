@@ -1,121 +1,146 @@
 # UI/UX 검토 보고서
 
-> 검토 기준일: 2026-05-14
+> 최초 검토: 2026-05-14 / 2차 검토: 2026-05-14
+
+범례: ✅ 수정 완료 / ⚠️ 수정 필요 / 🔍 확인 필요
 
 ---
 
 ## 1. 불필요한 정보 표시
 
-### 1-1. AppBar 다이아몬드 — 수량 미표시
+### ✅ 1-1. AppBar 다이아몬드 — 수량 미표시
+- `lib/app/app.dart` — `state.player.diamonds` 바인딩으로 수정 완료
 
-- **파일**: `lib/app/app.dart:87-93`
-- **현상**: `Row([Text('Diamonds'), Icon(Icons.diamond)])` 형태로 라벨만 표시. 실제 보유 수량 없음.
-- **문제**: 게임 내 프리미엄 재화 UI인데 숫자가 없어 사용자에게 무의미한 정보.
-- **방향**: 실제 보유 수량을 표시하거나, 준비 전이라면 AppBar에서 제거.
+### ✅ 1-2. CharacterCombatEffectSection — 빈 상태 처리 없음
+- `lib/features/characters/presentation/widgets/character_detail_sheet.dart` — `effectLines.isNotEmpty` 조건 추가 완료
 
-### 1-2. CharacterCombatEffectSection — 빈 상태 처리 없음
-
-- **파일**: `lib/features/characters/presentation/widgets/character_detail_sheet.dart:61-63`
-- **현상**: `effectLines`가 빈 배열일 때도 `CharacterCombatEffectSection`이 항상 렌더링됨.
-- **문제**: "전투 효과" 제목만 있고 내용 없는 빈 카드 섹션이 표시될 수 있음.
-- **방향**: `effectLines.isEmpty` 시 섹션 자체를 숨김 처리.
-
-### 1-3. WorkshopLogCard — 화면에 미표시
-
-- **파일**: `lib/features/workshop/dashboard/presentation/widgets/workshop_log_card.dart`, `lib/features/workshop/dashboard/presentation/widgets/workshop_sections.dart:23`
-- **현상**: `WorkshopLogCard`는 구현·export 되어 있으나 `WorkshopScreen` 자식 목록에 없음.
-- **문제**: 데드코드인지 의도적 미노출인지 불명확.
-- **방향**: WorkshopScreen에 추가할지, 파일을 제거할지 결정 필요.
+### 🔍 1-3. WorkshopLogCard — 화면에 미표시
+- `lib/features/workshop/dashboard/presentation/widgets/workshop_log_card.dart`
+- 구현·export 되어 있으나 `WorkshopScreen` 자식 목록에 없음. 데드코드인지 의도적 미노출인지 불명확.
+- **방향**: WorkshopScreen에 추가할지 파일을 제거할지 결정 필요.
 
 ---
 
 ## 2. 디자인 시스템 위배
 
-### 2-1. Workshop 탭 카드 이름이 영어 (Town 탭은 한국어)
+### ✅ 2-1. Workshop 탭 카드 이름 영한 혼용
+- "Craft Queue" → "제작 대기열", "Craft" → "포션 제작" 등 한국어 통일 완료
 
-| 위치 | 현재 이름 |
+### ⚠️ 2-2. Scaffold 중첩 패턴 — 2곳 미수정
+`WorkshopEnqueueOptionsSheet`에서는 제거됐으나 두 곳이 남아 있음.
+
+| 파일 | `sheetContext` 용도 |
 |---|---|
-| `workshop_queue_card.dart:15` | `"Craft Queue"` |
-| `workshop_craft_card.dart:21` | `"Craft"` |
-| `workshop_extraction_card.dart:14` | `"Extraction"` |
-| `workshop_enchant_card.dart:14` | `"Enchant"` |
-| `workshop_hatch_card.dart:14` | `"Homunculus Hatch"` |
-| `workshop_inventory_card.dart:25` | `"Inventory"` |
-| `workshop_support_card.dart:21` | `"Workshop Support"` |
-| `workshop_skill_tree_card.dart:19` | `"Workshop Skill Tree"` |
-| `workshop_screen.dart:57` (리소스 카드) | `"Workshop Resources"` |
+| `workshop_enchant_sheet.dart:94` | `Navigator.of(sheetContext).pop()` + `AppToast.show` |
+| `workshop_hatch_sheet.dart:24` | `AppToast.show(sheetContext, …)` |
 
-- **문제**: Town 탭 카드("일반 상점", "용병 고용", "마을 스킬트리" 등)는 모두 한국어인데 Workshop 탭만 전부 영어. 앱 전체 언어 일관성 없음.
-- **방향**: Workshop 카드 이름을 한국어로 통일하거나, 앱 전체를 영어로 통일.
+두 파일 모두 `context`를 직접 사용하는 것으로 대체 가능. (`WorkshopEnchantSheet`는 `ConsumerStatefulWidget`, `WorkshopHatchSheet`는 `ConsumerWidget`)
 
-### 2-2. 하드코딩된 BorderRadius
+### ⚠️ 2-3. 작업실 자원 카드 — ListCard로 전환이 오히려 역효과
+- `lib/features/workshop/dashboard/presentation/screens/workshop_screen.dart:62`
+- 이전 수정에서 `Card + ListTile` → `ListCard(onTap: null)`로 전환했으나, chevron은 없어도 외형이 클릭 가능한 다른 카드들과 구분이 안 됨.
+- **방향**: 마을 경제 카드(`town_screen.dart:32-38`)와 동일하게 `Card + ListTile` 직접 구현으로 되돌리기.
 
+### ⚠️ 2-4. info-only 카드 패턴 미정의
+- `town_screen.dart:32-38` (마을 경제), `workshop_screen.dart:62` (작업실 자원)
+- 클릭 불가 정보 표시 전용 카드를 `Card(child: ListTile(…))` 직접 구현. 두 곳에서 동일하게 사용하지만 공용 컴포넌트가 없음.
+- **방향**: `InfoCard` 컴포넌트 정의 또는 현재 패턴을 관례로 문서화.
+
+### ✅ 2-5. ListCard trailing chevron 항상 표시
+- `list_card.dart` — `onTap == null ? null : const Icon(Icons.chevron_right)` 처리 완료
+
+### ⚠️ 2-6. CharacterCard — InkWell vs Card borderRadius 불일치
+- `character_card.dart:31`
+- `InkWell(borderRadius: AppRadius.interactive)` = 12pt, CardTheme의 card radius = `AppRadius.card` = 8pt
+- 리플 효과가 카드 테두리를 벗어날 수 있음.
+- **방향**: `InkWell`의 `borderRadius`를 `AppRadius.card`로 맞추기.
+
+### ⚠️ 2-7. BattleResultSheet — 색상 하드코딩
+- `battle_result_sheet.dart:52-55`
+- `Colors.green.shade700` / `Colors.red.shade700` 직접 사용.
+- **방향**: 성공/실패 의미의 색은 `colorScheme.primary` / `colorScheme.error` 계열로 교체.
+
+### ⚠️ 2-8. 하드코딩된 수치
 | 파일 | 코드 | 권장 |
 |---|---|---|
-| `battle_stage_status_sheet.dart:369` | `BorderRadius.circular(12)` | `AppRadius.interactive` |
-| `character_detail_sections.dart:102` | `BorderRadius.circular(3)` | 디자인 시스템에 3pt 없음 — 정의 추가 또는 기존 상수로 교체 |
-
-### 2-3. 하드코딩된 패딩
-
-- **파일**: `lib/features/battle/presentation/widgets/battle_assignment_sheet.dart:56`
-- **코드**: `EdgeInsets.fromLTRB(16, 8, 16, 4)`
-- **권장**: `EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.md, AppSpacing.xl, AppSpacing.sm)`
-
-### 2-4. WorkshopEnqueueOptionsSheet — Scaffold 중첩
-
-- **파일**: `lib/features/workshop/crafting/presentation/widgets/workshop_enqueue_options_sheet.dart:32-70`
-- **현상**: 다른 모든 시트는 `AppBottomSheet > AppSheetLayout > 내용` 구조. 이 시트만 `AppBottomSheet > Scaffold > Builder > AppSheetLayout > 내용` 구조.
-- **문제**: `Navigator.of(sheetContext).pop()` 호출을 위해 Scaffold로 context를 취득하는 비표준 패턴. 디자인 시스템에 정의 없음.
-- **방향**: pop context 취득을 다른 방법으로 처리하고 Scaffold 제거.
-
-### 2-5. 섹션 카드 패턴 중복 구현
-
-| 위젯 | 위치 | 특징 |
-|---|---|---|
-| `CharacterDetailSection` | `character_detail_sections.dart:7-51` | primary 색상 제목, trailing 지원 |
-| `_StatusCard` | `battle_stage_status_sheet.dart:420-442` | 단순 제목, trailing 없음 |
-
-- **문제**: 둘 다 "제목 있는 카드 섹션" 컨셉이지만 별도 구현.
-- **방향**: 하나로 통합하거나, 어느 쪽을 공용 컴포넌트로 승격할지 결정. `_StatusCard`를 `CharacterDetailSection`으로 교체 검토.
+| `battle_assignment_sheet.dart:56` | `EdgeInsets.fromLTRB(16, 8, 16, 4)` | `AppSpacing` 상수 사용 |
 
 ---
 
 ## 3. 디자인 시스템에 없는 UI 패턴
 
-### 3-1. 뱃지 컴포넌트 (`_GrowthBadge`)
+### ⚠️ 3-1. 섹션 카드 패턴 3중 중복 구현
+"제목 있는 카드 섹션" 컨셉이 세 곳에 각각 별도 구현되어 있음.
 
-- **파일**: `lib/features/characters/presentation/widgets/character_detail_sections.dart:125-150`
-- **현상**: `secondaryContainer` 색상 + `labelSmall` 텍스트 조합의 인라인 배지. private 위젯으로만 정의.
-- **문제**: 재사용 불가. 유사한 배지가 다른 화면에 필요할 때 별도 구현하게 됨.
-- **방향**: `AppBadge` 등의 이름으로 `common/widgets`에 공용 컴포넌트로 추출하거나, 디자인 시스템 문서에 패턴 정의.
+| 위젯 | 위치 | 특징 |
+|---|---|---|
+| `CharacterDetailSection` | `character_detail_section.dart` | primary 색상 제목, trailing 지원 |
+| `BattleStatusCard` | `battle_status_card.dart` | 단순 제목, trailing 없음 |
+| 슬롯 카드 (inline) | `workshop_support_sheet.dart:34` | Card + Padding + Column 직접 구현 |
 
-### 3-2. 탭 불가 요약 카드 (`Card + ListTile` 직접 사용)
+- **방향**: 공통 컴포넌트 하나로 통합하거나 `CharacterDetailSection`을 표준으로 지정하고 나머지 교체.
 
-- **파일**: `lib/features/town/presentation/screens/town_screen.dart:33-38`, `lib/features/workshop/dashboard/presentation/screens/workshop_screen.dart:54-61`
-- **현상**: 클릭 안 되는 정보 표시 전용 카드를 `Card(child: ListTile(...))` 패턴으로 직접 구현.
-- **문제**: `ListCard`는 항상 `chevron_right`를 표시하므로 탭 없는 카드에 사용 불가. "info-only 카드" 패턴이 디자인 시스템에 정의되어 있지 않음.
-- **방향**: `ListCard`에 `onTap: null`일 때 chevron을 숨기는 처리 추가, 또는 별도 `InfoCard` 컴포넌트 정의.
+### ⚠️ 3-2. 뱃지 컴포넌트 (`_GrowthBadge`) — private 위젯으로만 존재
+- `character_growth_section.dart:79-104`
+- `secondaryContainer` 색상 + `labelSmall` 텍스트의 배지. 재사용 불가.
+- **방향**: `common/widgets`에 공용 컴포넌트로 추출 검토.
 
-### 3-3. ListCard — trailing chevron 항상 표시
+---
 
-- **파일**: `lib/common/widgets/list_card.dart:26`
-- **코드**: `trailing: const Icon(Icons.chevron_right)` — `onTap` 유무와 무관하게 항상 표시.
-- **문제**: 비활성 상태를 지원하지 않는 컴포넌트 설계. `onTap: null` 전달 시 시각적으로 클릭 가능처럼 보임.
-- **방향**: `onTap == null ? null : const Icon(Icons.chevron_right)` 처리 추가.
+## 4. 과도한 정보 밀도
+
+### ⚠️ 4-1. 스킬트리 시트 — ListTile subtitle에 6줄 텍스트
+동일한 패턴이 두 파일에 존재.
+
+- `town_skill_tree_sheet.dart:40-45`
+- `workshop_skill_tree_sheet.dart:43`
+
+```
+description\n현재 효과\n다음 효과\n선행조건\n비용\n상태
+```
+
+ListTile subtitle은 단문 보조 텍스트 용도. 6개 항목을 `\n`으로 연결하면 시각 계층이 없어 읽기 어려움.
+
+### ⚠️ 4-2. 호문쿨루스 부화 시트 — ListTile subtitle에 6줄 텍스트
+- `workshop_hatch_sheet.dart:43`
+
+```
+description\n결과\n역할\n보조효과\n비용\n가용성
+```
+
+스킬트리와 동일한 문제.
+
+---
+
+## 5. 기타 UX
+
+### ⚠️ 5-1. TownEquipmentSheet — expandBody 암묵적 의존
+- `town_equipment_sheet.dart:28-105`
+- `AppSheetLayout`에 `expandBody` 미지정(기본값 `true`)인데, body로 `Column + Expanded 3개` 구조를 전달.
+- 세 섹션("장비 등록", "대장간 진행", "보유 장비")이 남은 공간을 항상 3등분. 각 섹션 아이템 수가 차이 날 경우 공간 낭비가 생길 수 있음.
+- **방향**: 의도적이라면 주석으로 명시. 비의도적이라면 각 섹션 높이를 콘텐츠에 맞게 조정.
+
+### ⚠️ 5-2. WorkshopSupportSheet — 후보 선택 UI 연결이 불명확
+- `workshop_support_sheet.dart:49-89`
+- ChoiceChip 목록(선택용)과 그 아래 텍스트 리스트(설명용)가 동일 candidates를 두 번 순회.
+- 선택한 칩과 해당 설명 텍스트의 시각적 연결이 없음.
+- **방향**: 칩과 설명을 같은 항목 내에 배치하거나, 선택된 항목의 설명만 표시하는 방식 검토.
 
 ---
 
 ## 우선순위 요약
 
-| 우선순위 | 이슈 | 이유 |
-|---|---|---|
-| 높음 | 2-1. Workshop 카드 이름 영한 혼용 | 사용자에게 직접 보이는 일관성 문제 |
-| 높음 | 1-2. 빈 전투 효과 섹션 | 실제로 빈 카드가 렌더링될 수 있음 |
-| 높음 | 2-4. Scaffold 중첩 | 비표준 패턴, 예상치 못한 동작 가능성 |
-| 중간 | 1-1. 다이아몬드 수량 미표시 | 기능 미완성 또는 불필요한 UI |
-| 중간 | 2-5. 섹션 카드 패턴 중복 | 유지보수 비용 증가 |
-| 중간 | 3-2. info-only 카드 패턴 미정의 | 동일 패턴 재사용 시 일관성 깨짐 |
-| 낮음 | 2-2, 2-3. 하드코딩된 수치 | 기능 영향은 없지만 시스템 일관성 |
-| 낮음 | 3-1. 뱃지 컴포넌트 미정의 | 현재는 한 곳에서만 사용 |
-| 낮음 | 3-3. ListCard chevron 항상 표시 | 현재 사용처에서는 실문제 없음 |
-| 확인 필요 | 1-3. WorkshopLogCard 미표시 | 의도적인지 여부 불명확 |
+| 우선순위 | 이슈 |
+|---|---|
+| 높음 | 2-2. Scaffold 중첩 2곳 미수정 |
+| 높음 | 2-3. 작업실 자원 카드 ListCard 전환 되돌리기 |
+| 높음 | 4-1/4-2. 스킬트리·부화 시트 6줄 subtitle |
+| 중간 | 2-6. CharacterCard InkWell borderRadius 불일치 |
+| 중간 | 2-7. BattleResultSheet 색상 하드코딩 |
+| 중간 | 3-1. 섹션 카드 패턴 3중 중복 |
+| 중간 | 5-1. TownEquipmentSheet expandBody 암묵적 의존 |
+| 낮음 | 2-4. info-only 카드 패턴 미정의 |
+| 낮음 | 2-8. 하드코딩된 패딩 |
+| 낮음 | 3-2. 뱃지 컴포넌트 미정의 |
+| 낮음 | 5-2. SupportSheet 선택 UX 불명확 |
+| 확인 필요 | 1-3. WorkshopLogCard 미표시 |
