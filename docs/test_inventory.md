@@ -8,7 +8,7 @@
 ## 2. 현재 규모
 - 기준 시점: 2026-05-14
 - 테스트 파일: 47개
-- 테스트 케이스: 118개
+- 테스트 케이스: 119개
 
 ## 3. 영역별 분포
 
@@ -17,7 +17,7 @@
 | `app` | 1 | 3 | 세션 sync와 시간 가속 |
 | `architecture` | 1 | 1 | import 경계 유지 |
 | `core` | 1 | 2 | 세션 상태 적용과 로그 처리 |
-| `features/battle` | 9 | 30 | 전투 계산, 해금, 자동전투, 편성 UI |
+| `features/battle` | 9 | 31 | 전투 계산, 해금, 자동전투, 편성 UI |
 | `features/characters` | 4 | 11 | 장비 장착, 승급, 힌트/상세 시트 |
 | `features/town` | 10 | 23 | 상점, 장비 제작, 용병 고용, 마을 스킬트리 |
 | `features/workshop` | 20 | 47 | 큐, 추출, 포션, 인챈트, 부화, 작업실 스킬트리 |
@@ -63,6 +63,7 @@
 #### `test/features/battle/domain/services/battle_service_test.dart`
 - `power`가 0이어도 실제 전투 스탯만으로 승패가 계산되는지 검증한다.
 - 과거처럼 높은 전투력 숫자만으로 자동 승리하지 않는지 확인한다.
+- 추가 공격 패시브가 추가 공격을 재귀적으로 다시 생성하지 않는지 확인한다.
 
 #### `test/features/battle/domain/use_cases/battle_expedition_use_case_test.dart`
 - 실패한 무보상 전투를 수령해도 다음 stage 해금이 열리지 않는지 검증한다.

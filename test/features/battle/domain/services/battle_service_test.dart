@@ -33,6 +33,50 @@ void main() {
     );
   }
 
+  BattleCombatStats stats({
+    required int maxHp,
+    required int speed,
+    int physicalAttack = 1,
+    int physicalDefense = 50,
+  }) {
+    return BattleCombatStats(
+      maxHp: maxHp,
+      physicalAttack: physicalAttack,
+      physicalDefense: physicalDefense,
+      magicalAttack: 0,
+      magicalDefense: physicalDefense,
+      speed: speed,
+      critChance: 0,
+      critDamage: 0.5,
+      accuracy: 1,
+      evasion: 0,
+      statusAccuracy: 0,
+      statusResistance: 0,
+      physicalPenetration: 0,
+      magicalPenetration: 0,
+      lifesteal: 0,
+      healingPower: 0,
+      regen: 0,
+    );
+  }
+
+  BattleRunUnitState unit({
+    required String id,
+    required BattleTeam team,
+    required int speed,
+    List<BattlePassiveEffect> passives = const <BattlePassiveEffect>[],
+  }) {
+    return BattleRunUnitState(
+      unitId: id,
+      name: id,
+      team: team,
+      faction: CombatFaction.homunculus,
+      stats: stats(maxHp: 200, speed: speed),
+      passives: passives,
+      currentHp: 200,
+    );
+  }
+
   test('battle result uses combat stats even when power is zero', () {
     final BattleService service = BattleService(random: Random(1));
 
@@ -237,5 +281,54 @@ void main() {
     expect(result.failurePenalty, 0);
     expect(result.loot, isEmpty);
     expect(result.actions, isNotEmpty);
+  });
+
+  test('extra attack does not recursively grant another extra attack', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(
+          id: 'enemy_stalker',
+          team: BattleTeam.enemy,
+          speed: 30,
+          passives: const <BattlePassiveEffect>[
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.afterAction,
+              type: BattlePassiveEffectType.extraAttack,
+              sourceId: 'stalker_flurry',
+              value: 1,
+            ),
+          ],
+        ),
+        unit(id: 'enemy_other', team: BattleTeam.enemy, speed: 20),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(id: 'ally', team: BattleTeam.ally, speed: 10),
+    ];
+
+    final BattleEncounterStepResult first = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult second = service.runEncounterStep(
+      allies: first.allies,
+      encounter: first.encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult third = service.runEncounterStep(
+      allies: second.allies,
+      encounter: second.encounter,
+      potionBoost: 0,
+    );
+
+    expect(first.lifecycleActions.single.actorId, 'enemy_stalker');
+    expect(second.lifecycleActions.single.actorId, 'enemy_stalker');
+    expect(third.lifecycleActions.single.actorId, 'enemy_other');
   });
 }

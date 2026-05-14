@@ -83,7 +83,10 @@ class BattleService {
         enemy.unitId: _toUnit(enemy),
     };
     List<String> pendingActorIds = encounter.pendingActorIds
-        .where((String unitId) => units[unitId]?.isAlive ?? false)
+        .where((String queueId) {
+          final String unitId = _queueActorId(queueId);
+          return units[unitId]?.isAlive ?? false;
+        })
         .toList(growable: true);
     if (pendingActorIds.isEmpty) {
       pendingActorIds = List<String>.of(_buildTurnOrder(units), growable: true);
@@ -100,7 +103,9 @@ class BattleService {
       );
     }
 
-    final String actorId = pendingActorIds.removeAt(0);
+    final String queuedActorId = pendingActorIds.removeAt(0);
+    final String actorId = _queueActorId(queuedActorId);
+    final bool extraAction = _isExtraQueueActorId(queuedActorId);
     final _BattleUnit? actor = units[actorId];
     if (actor == null || !actor.isAlive) {
       return BattleEncounterStepResult(
@@ -234,12 +239,12 @@ class BattleService {
 
     final bool success = _livingUnits(units, _BattleSide.enemy).isEmpty;
     final bool wiped = _livingUnits(units, _BattleSide.ally).isEmpty;
-    final int extraAttackCount = success || wiped
+    final int extraAttackCount = success || wiped || extraAction
         ? 0
         : _BattleModifierResolver.extraAttackCount(actor);
     if (extraAttackCount > 0 && actor.isAlive) {
       pendingActorIds = <String>[
-        ...List<String>.filled(extraAttackCount, actor.id),
+        ...List<String>.filled(extraAttackCount, _extraQueueActorId(actor.id)),
         ...pendingActorIds,
       ];
     }
@@ -379,6 +384,14 @@ class BattleService {
           });
     return living.map((_BattleUnit unit) => unit.id).toList(growable: false);
   }
+
+  bool _isExtraQueueActorId(String queueId) => queueId.startsWith('extra:');
+
+  String _queueActorId(String queueId) {
+    return _isExtraQueueActorId(queueId) ? queueId.substring(6) : queueId;
+  }
+
+  String _extraQueueActorId(String actorId) => 'extra:$actorId';
 
   List<_BattleUnit> _livingUnits(
     Map<String, _BattleUnit> units,
