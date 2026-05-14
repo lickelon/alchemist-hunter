@@ -820,7 +820,8 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         xpFailureBase: 0,
         unlockCondition: BattleStageUnlockCondition(
           requiredStageId: 'stage_1',
-          label: '잠금 조건: 1단계 클리어 필요',
+          requiredWinStreakCount: 3,
+          label: '잠금 조건: 1단계에서 실패 없이 3회 연속 승리',
         ),
         clearUnlockFlags: <String>{'stage_3'},
       ),
@@ -861,7 +862,8 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         xpFailureBase: 0,
         unlockCondition: BattleStageUnlockCondition(
           requiredStageId: 'stage_2',
-          label: '잠금 조건: 2단계 클리어 필요',
+          requiredWinStreakCount: 3,
+          label: '잠금 조건: 2단계에서 실패 없이 3회 연속 승리',
         ),
         clearUnlockFlags: <String>{'stage_4', 'potion_special_1'},
       ),
@@ -902,7 +904,8 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         xpFailureBase: 0,
         unlockCondition: BattleStageUnlockCondition(
           requiredStageId: 'stage_3',
-          label: '잠금 조건: 3단계 클리어 필요',
+          requiredWinStreakCount: 3,
+          label: '잠금 조건: 3단계에서 실패 없이 3회 연속 승리',
         ),
         clearUnlockFlags: <String>{'stage_5'},
       ),
@@ -943,7 +946,8 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         xpFailureBase: 0,
         unlockCondition: BattleStageUnlockCondition(
           requiredStageId: 'stage_4',
-          label: '잠금 조건: 4단계 클리어 필요',
+          requiredWinStreakCount: 3,
+          label: '잠금 조건: 4단계에서 실패 없이 3회 연속 승리',
         ),
         clearUnlockFlags: <String>{'potion_special_2'},
       ),

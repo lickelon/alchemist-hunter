@@ -5,6 +5,7 @@ import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_resolver.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_potion_loadout_service.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/use_cases/battle_expedition_use_case.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
@@ -34,6 +35,8 @@ class BattleAutoController {
   final BattleCatalogRepository _battleCatalogRepository;
   static const BattlePotionLoadoutService _battlePotionLoadoutService =
       BattlePotionLoadoutService();
+  static const BattleProgressionService _battleProgressionService =
+      BattleProgressionService();
 
   void runAutoBattle(String stageId) {
     final SessionState current = _session.snapshot();
@@ -90,6 +93,13 @@ class BattleAutoController {
         : const <String, int>{};
     final List<String> assignedCharacterIds =
         started.battle.stageAssignments[stageId] ?? const <String>[];
+    final ProgressState nextProgress = _battleProgressionService
+        .applyStageEncounterResult(
+          currentProgress: started.battle.progress,
+          stage: stage,
+          success: outcome.success,
+          battleCatalogRepository: _battleCatalogRepository,
+        );
     final SessionState rewardedState = started.copyWith(
       workshop: _battlePotionLoadoutService.consumeLoadout(
         workshop: started.workshop,
@@ -103,6 +113,7 @@ class BattleAutoController {
             )
           : started.characters,
       battle: started.battle.copyWith(
+        progress: nextProgress,
         stageExpeditions: <String, BattleExpeditionState>{
           ...started.battle.stageExpeditions,
           stageId: BattleExpeditionState(

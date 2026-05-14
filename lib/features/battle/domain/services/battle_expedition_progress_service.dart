@@ -3,6 +3,7 @@ import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_progress_helpers.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_resolver.dart';
+import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/services/character_progression_service.dart';
 
@@ -24,11 +25,15 @@ class BattleExpeditionProgressService {
         const CharacterProgressionService(),
     BattleExpeditionProgressHelpers helpers =
         const BattleExpeditionProgressHelpers(),
+    BattleProgressionService battleProgressionService =
+        const BattleProgressionService(),
   }) : _characterProgressionService = characterProgressionService,
-       _helpers = helpers;
+       _helpers = helpers,
+       _battleProgressionService = battleProgressionService;
 
   final CharacterProgressionService _characterProgressionService;
   final BattleExpeditionProgressHelpers _helpers;
+  final BattleProgressionService _battleProgressionService;
 
   BattleExpeditionSyncResult syncExpeditions({
     required SessionState state,
@@ -50,6 +55,7 @@ class BattleExpeditionProgressService {
         <String, BattleExpeditionState>{...state.battle.stageExpeditions};
     final Map<String, int> consumedPotionStacks = <String, int>{};
     CharactersState nextCharacters = state.characters;
+    ProgressState nextProgress = state.battle.progress;
 
     state.battle.stageExpeditions.forEach((
       String stageId,
@@ -197,6 +203,12 @@ class BattleExpeditionProgressService {
               xpGain: stageDefinition.xpSuccessBase,
               participantIds: assignedCharacterIds,
             );
+            nextProgress = _battleProgressionService.applyStageEncounterResult(
+              currentProgress: nextProgress,
+              stage: stageDefinition,
+              success: true,
+              battleCatalogRepository: battleCatalogRepository,
+            );
             recentLogs = _helpers.mergeRecentLogs(
               recentLogs,
               BattleLogEntry(
@@ -221,6 +233,12 @@ class BattleExpeditionProgressService {
             nextStatus = BattleExpeditionStatus.searching;
             continue;
           }
+          nextProgress = _battleProgressionService.applyStageEncounterResult(
+            currentProgress: nextProgress,
+            stage: stageDefinition,
+            success: false,
+            battleCatalogRepository: battleCatalogRepository,
+          );
           recentLogs = _helpers.mergeRecentLogs(
             recentLogs,
             BattleLogEntry(
@@ -303,7 +321,10 @@ class BattleExpeditionProgressService {
     });
 
     return BattleExpeditionSyncResult(
-      battle: state.battle.copyWith(stageExpeditions: nextExpeditions),
+      battle: state.battle.copyWith(
+        progress: nextProgress,
+        stageExpeditions: nextExpeditions,
+      ),
       characters: nextCharacters,
       consumedPotionStacks: consumedPotionStacks,
     );

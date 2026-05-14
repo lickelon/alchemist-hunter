@@ -54,10 +54,11 @@ final battleStageLockReasonProvider = Provider.family<String, String>((
   Ref ref,
   String stageId,
 ) {
+  final ProgressState progress = ref.watch(battleProgressProvider);
   final BattleStageDefinition stage = ref
       .watch(battleCatalogRepositoryProvider)
       .stageDefinition(stageId);
-  return const BattleProgressionService().lockReason(stage);
+  return const BattleProgressionService().lockReason(stage, progress: progress);
 });
 
 final battleStageAssignmentProvider = Provider.family<List<String>, String>((

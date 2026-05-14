@@ -47,10 +47,12 @@ class BattleEnemySetDefinition {
 class BattleStageUnlockCondition {
   const BattleStageUnlockCondition({
     required this.requiredStageId,
+    required this.requiredWinStreakCount,
     required this.label,
   });
 
   final String requiredStageId;
+  final int requiredWinStreakCount;
   final String label;
 }
 

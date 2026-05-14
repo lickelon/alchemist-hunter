@@ -56,6 +56,12 @@ void main() {
       true,
     );
     expect(session.state.battle.progress.clearedStageIds, contains('stage_1'));
+    expect(session.state.battle.progress.stageCurrentWinStreaks['stage_1'], 1);
+    expect(session.state.battle.progress.stageBestWinStreaks['stage_1'], 1);
+    expect(
+      session.state.battle.progress.unlockedStageIds,
+      isNot(contains('stage_2')),
+    );
     expect(
       session.state.battle.progress.unlockFlags,
       isNot(contains('stage_2')),
