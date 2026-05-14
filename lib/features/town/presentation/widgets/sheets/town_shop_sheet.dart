@@ -31,10 +31,10 @@ class TownShopSheet extends ConsumerWidget {
           onPressed: () {
             ref.read(shopControllerProvider).forceRefresh(shopType);
           },
-          child: Text('강제 갱신 ($refreshCost)'),
+          child: Text('강제 갱신 (골드 $refreshCost)'),
         ),
         body: shop.items.isEmpty
-            ? const Center(child: Text('판매 아이템이 없습니다'))
+            ? const Center(child: Text('판매 재료가 없습니다'))
             : ListView.builder(
                 itemCount: shop.items.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -42,7 +42,7 @@ class TownShopSheet extends ConsumerWidget {
                   return ListTile(
                     dense: true,
                     title: Text('${item.name} (${item.quantity})'),
-                    subtitle: Text('가격 ${item.price}'),
+                    subtitle: Text('가격 골드 ${item.price}'),
                     trailing: FilledButton.tonal(
                       onPressed: () {
                         if (shopType == ShopType.general) {

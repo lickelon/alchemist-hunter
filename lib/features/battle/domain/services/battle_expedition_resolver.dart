@@ -128,7 +128,7 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
     return BattleEncounterResolution(
       runState: nextRunState,
       summary:
-          '${encounter.definition.name} 교전 시작${resolvedLoadout.fallback ? ' / 포션 미적용' : ''}',
+          '${encounter.definition.name} 교전 시작${resolvedLoadout.fallback ? ' / 포션 부족' : ''}',
       consumedPotionLoadout: resolvedLoadout.appliedLoadout,
       usedLoadoutFallback: resolvedLoadout.fallback,
     );

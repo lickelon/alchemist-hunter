@@ -116,7 +116,7 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
       maxCraftableCount: unlocked ? maxCraftableCount : 0,
       materialHint: !unlocked
           ? lockReason(potion)
-          : (craftableNow ? '최대 $maxCraftableCount회 제작 가능' : '추출 특성 부족'),
+          : (craftableNow ? '최대 $maxCraftableCount회 제작 가능' : '원소 부족'),
       queueFull: queueFull,
     );
   }).toList();

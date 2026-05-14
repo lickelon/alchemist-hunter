@@ -92,7 +92,7 @@ final Provider<List<MaterialInventoryView>> materialInventoryViewsProvider =
       return inventory.map((MapEntry<String, int> entry) {
         final MaterialEntity? material = materialMap[entry.key];
         final String traitSummary = material == null
-            ? '특성 정보 없음'
+            ? '원소 정보 없음'
             : material.traits.map((TraitUnit trait) => trait.name).join(' / ');
         return MaterialInventoryView(
           id: entry.key,

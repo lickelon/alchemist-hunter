@@ -93,7 +93,7 @@ class _HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
             children: <Widget>[
               const Icon(Icons.diamond),
               const SizedBox(width: AppSpacing.sm),
-              Text('$diamonds'),
+              Text('다이아 $diamonds'),
             ],
           ),
         ),

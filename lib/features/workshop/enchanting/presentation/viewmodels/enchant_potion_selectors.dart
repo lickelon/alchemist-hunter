@@ -65,7 +65,7 @@ enchantPotionViewsProvider = Provider<List<EnchantPotionView>>((Ref ref) {
       name: potion?.name ?? entry.key,
       quantity: entry.value,
       qualityLabel: detail?.qualityGrade.name.toUpperCase() ?? '-',
-      traitsLabel: traitsLabel.isEmpty ? '특성 정보 없음' : traitsLabel,
+      traitsLabel: traitsLabel.isEmpty ? '원소 정보 없음' : traitsLabel,
     );
   }).toList();
 

@@ -22,7 +22,7 @@ class PotionDisplayService {
     final List<MapEntry<String, double>> entries =
         detail?.traits.entries.toList() ?? <MapEntry<String, double>>[];
     if (entries.isEmpty) {
-      return '특성 정보 없음';
+      return '원소 정보 없음';
     }
     entries.sort((
       MapEntry<String, double> left,

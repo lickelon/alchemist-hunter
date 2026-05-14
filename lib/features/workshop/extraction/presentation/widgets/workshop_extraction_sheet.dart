@@ -28,7 +28,7 @@ class WorkshopExtractionSheet extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const Text(
-              '보유 추출 특성',
+              '보유 추출 원소',
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -47,7 +47,7 @@ class WorkshopExtractionSheet extends ConsumerWidget {
                     dense: true,
                     title: Text(entry.name),
                     subtitle: Text(
-                      '${workshopMaterialRarityLabel(entry.rarity)} / ${entry.traitSummary}',
+                      '${workshopMaterialRarityLabel(entry.rarity)} / 원소 ${entry.traitSummary}',
                     ),
                     trailing: FilledButton.tonal(
                       onPressed: () {

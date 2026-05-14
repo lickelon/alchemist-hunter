@@ -168,7 +168,7 @@ void main() {
 
     expect(find.text('1단계 전투 기록'), findsOneWidget);
     expect(find.textContaining('1회 Scavenger Line'), findsOneWidget);
-    expect(find.text('포션 재고 부족으로 로드아웃이 적용되지 않았습니다.'), findsOneWidget);
+    expect(find.text('포션 부족으로 로드아웃이 적용되지 않았습니다.'), findsOneWidget);
     expect(find.textContaining('획득 재료: Emberroot x2'), findsOneWidget);
     expect(
       find.textContaining('Rookie Swordsman -> Ruin Scavenger 물리 12'),

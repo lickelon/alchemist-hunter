@@ -13,14 +13,14 @@ class WorkshopTraitInventoryStrip extends StatelessWidget {
     return SizedBox(
       height: 72,
       child: traits.isEmpty
-          ? const Center(child: Text('추출된 특성이 없습니다'))
+          ? const Center(child: Text('추출된 원소가 없습니다'))
           : ListView.separated(
               scrollDirection: Axis.horizontal,
               itemBuilder: (BuildContext context, int index) {
                 final ExtractedTraitInventoryView entry = traits[index];
                 return Chip(
                   label: Text(
-                    '${entry.name} ${workshopTraitAmountLabel(entry.amount)}',
+                    '${entry.name} 원소 ${workshopTraitAmountLabel(entry.amount)}',
                   ),
                 );
               },

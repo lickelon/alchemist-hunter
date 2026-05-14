@@ -79,7 +79,7 @@ townSkillNodeViewsProvider = Provider<List<TownSkillNodeView>>((Ref ref) {
               : costs
                     .map((TownSkillCost cost) {
                       final String label = switch (cost.type) {
-                        TownSkillCostType.townInsight => '마을 통찰',
+                        TownSkillCostType.townInsight => '명성',
                         TownSkillCostType.gold => '골드',
                       };
                       return '$label ${cost.amount}';
@@ -113,14 +113,14 @@ String _missingCostLabel(SessionState state, List<TownSkillCost> costs) {
   for (final TownSkillCost cost in costs) {
     if (cost.type == TownSkillCostType.townInsight &&
         state.player.townInsight < cost.amount) {
-      return '마을 통찰 부족';
+      return '명성 부족';
     }
     if (cost.type == TownSkillCostType.gold &&
         state.player.gold < cost.amount) {
       return '골드 부족';
     }
   }
-  return '재화 부족';
+  return '비용 부족';
 }
 
 int _depthForNode(TownSkillNode node, List<TownSkillNode> nodes) {

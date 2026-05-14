@@ -61,7 +61,7 @@ void main() {
     );
   });
 
-  test('hatchHomunculus applies hatch slot arcane dust discount', () {
+  test('hatchHomunculus applies hatch slot arcane discount', () {
     final SessionState state =
         createInitialSessionState(DateTime(2026, 1, 1, 10)).copyWith(
           player: createInitialSessionState(DateTime(2026, 1, 1, 10)).player

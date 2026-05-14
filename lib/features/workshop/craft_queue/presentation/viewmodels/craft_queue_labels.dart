@@ -23,12 +23,12 @@ String formatTraitRequirements(
   Map<String, String> traitNames,
 ) {
   if (requirements == null || requirements.isEmpty) {
-    return '필요 특성 없음';
+    return '필요 원소 없음';
   }
   return requirements.entries
       .map(
         (MapEntry<String, double> entry) =>
-            '${traitNames[entry.key] ?? entry.key} ${entry.value.toStringAsFixed(2)}',
+            '${traitNames[entry.key] ?? entry.key} 원소 ${entry.value.toStringAsFixed(2)}',
       )
       .join(', ');
 }
@@ -48,7 +48,7 @@ String? completedResultText(CraftQueueJob job) {
   }
   return switch (job.type) {
     WorkshopJobType.extraction =>
-      '추출 완료 / 특성 ${job.completedExtractedTraits.length}종 / 아케인 더스트 +${job.completedArcaneDust}',
+      '추출 완료 / 원소 ${job.completedExtractedTraits.length}종 / 신비 +${job.completedArcaneDust}',
     WorkshopJobType.craft =>
       '제조 완료 / ${job.completedPotionStackKey ?? job.potionId ?? job.title} x${job.repeatCount}',
     WorkshopJobType.enchant =>

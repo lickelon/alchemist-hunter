@@ -33,81 +33,77 @@ class WorkshopSkillNodeView {
   final bool upgradeable;
 }
 
-final Provider<List<WorkshopSkillNodeView>> workshopSkillNodeViewsProvider =
-    Provider<List<WorkshopSkillNodeView>>((Ref ref) {
-      final SessionState state = ref.watch(sessionControllerProvider);
-      final List<WorkshopSkillNode> nodes = ref.watch(
-        workshopSkillNodesProvider,
-      );
-      final Map<String, WorkshopSkillNode> nodeMap = <String, WorkshopSkillNode>{
-        for (final WorkshopSkillNode node in nodes) node.id: node,
-      };
-      final Map<String, TraitUnit> traitMap = <String, TraitUnit>{
-        for (final TraitUnit trait in ref.watch(traitsProvider)) trait.id: trait,
-      };
-      const WorkshopSkillTreeService service = WorkshopSkillTreeService();
+final Provider<List<WorkshopSkillNodeView>>
+workshopSkillNodeViewsProvider = Provider<List<WorkshopSkillNodeView>>((
+  Ref ref,
+) {
+  final SessionState state = ref.watch(sessionControllerProvider);
+  final List<WorkshopSkillNode> nodes = ref.watch(workshopSkillNodesProvider);
+  final Map<String, WorkshopSkillNode> nodeMap = <String, WorkshopSkillNode>{
+    for (final WorkshopSkillNode node in nodes) node.id: node,
+  };
+  final Map<String, TraitUnit> traitMap = <String, TraitUnit>{
+    for (final TraitUnit trait in ref.watch(traitsProvider)) trait.id: trait,
+  };
+  const WorkshopSkillTreeService service = WorkshopSkillTreeService();
 
-      return nodes
-          .map((WorkshopSkillNode node) {
-            final int level = service.levelOf(
-              state.workshop.skillTree,
-              node.id,
-            );
-            final bool prereqMet = service.prerequisitesMet(state, node);
-            final bool reqMet = service.requirementsMet(state, node);
-            final List<WorkshopSkillCost> costs = service.costsForNextLevel(
-              node,
-              level,
-            );
-            final bool affordable = service.canAfford(state, costs);
-            final bool upgradeable =
-                level < node.maxLevel && prereqMet && reqMet && affordable;
+  return nodes
+      .map((WorkshopSkillNode node) {
+        final int level = service.levelOf(state.workshop.skillTree, node.id);
+        final bool prereqMet = service.prerequisitesMet(state, node);
+        final bool reqMet = service.requirementsMet(state, node);
+        final List<WorkshopSkillCost> costs = service.costsForNextLevel(
+          node,
+          level,
+        );
+        final bool affordable = service.canAfford(state, costs);
+        final bool upgradeable =
+            level < node.maxLevel && prereqMet && reqMet && affordable;
 
-            final String statusLabel;
-            if (level >= node.maxLevel) {
-              statusLabel = '최대 레벨';
-            } else if (!prereqMet) {
-              statusLabel = '선행 노드 필요';
-            } else if (!reqMet) {
-              statusLabel = node.requirements.map((e) => e.label).join(', ');
-            } else if (!affordable) {
-              statusLabel = _missingCostLabel(state, costs, traitMap);
-            } else {
-              statusLabel = '강화 가능';
-            }
+        final String statusLabel;
+        if (level >= node.maxLevel) {
+          statusLabel = '최대 레벨';
+        } else if (!prereqMet) {
+          statusLabel = '선행 노드 필요';
+        } else if (!reqMet) {
+          statusLabel = node.requirements.map((e) => e.label).join(', ');
+        } else if (!affordable) {
+          statusLabel = _missingCostLabel(state, costs, traitMap);
+        } else {
+          statusLabel = '강화 가능';
+        }
 
-            return WorkshopSkillNodeView(
-              id: node.id,
-              name: node.name,
-              description: node.description,
-              depth: _depthForNode(node, nodes),
-              levelLabel: '레벨 $level/${node.maxLevel}',
-              costLabel: costs.isEmpty
-                  ? '비용 없음'
-                  : costs
-                        .map((WorkshopSkillCost cost) {
-                          return switch (cost.type) {
-                            WorkshopSkillCostType.arcaneDust =>
-                              '아케인 더스트 ${cost.amount}',
-                            WorkshopSkillCostType.element =>
-                              '${traitMap[cost.elementId]?.name ?? cost.elementId ?? "특성"} 특성 ${cost.amount}',
-                          };
-                        })
-                        .join(' / '),
-              currentEffectLabel: _effectPreview(node.effects, level),
-              nextEffectLabel: _effectPreview(
-                node.effects,
-                level < node.maxLevel ? level + 1 : level,
-              ),
-              prerequisiteLabel: node.prerequisiteNodeIds.isEmpty
-                  ? '루트 노드'
-                  : '선행 ${_prerequisiteNames(node.prerequisiteNodeIds, nodeMap)}',
-              statusLabel: statusLabel,
-              upgradeable: upgradeable,
-            );
-          })
-          .toList(growable: false);
-    });
+        return WorkshopSkillNodeView(
+          id: node.id,
+          name: node.name,
+          description: node.description,
+          depth: _depthForNode(node, nodes),
+          levelLabel: '레벨 $level/${node.maxLevel}',
+          costLabel: costs.isEmpty
+              ? '비용 없음'
+              : costs
+                    .map((WorkshopSkillCost cost) {
+                      return switch (cost.type) {
+                        WorkshopSkillCostType.arcaneDust => '신비 ${cost.amount}',
+                        WorkshopSkillCostType.element =>
+                          '${traitMap[cost.elementId]?.name ?? cost.elementId ?? "원소"} 원소 ${cost.amount}',
+                      };
+                    })
+                    .join(' / '),
+          currentEffectLabel: _effectPreview(node.effects, level),
+          nextEffectLabel: _effectPreview(
+            node.effects,
+            level < node.maxLevel ? level + 1 : level,
+          ),
+          prerequisiteLabel: node.prerequisiteNodeIds.isEmpty
+              ? '루트 노드'
+              : '선행 ${_prerequisiteNames(node.prerequisiteNodeIds, nodeMap)}',
+          statusLabel: statusLabel,
+          upgradeable: upgradeable,
+        );
+      })
+      .toList(growable: false);
+});
 
 String _prerequisiteNames(
   List<String> prerequisiteNodeIds,
@@ -126,20 +122,20 @@ String _missingCostLabel(
   for (final WorkshopSkillCost cost in costs) {
     if (cost.type == WorkshopSkillCostType.arcaneDust &&
         state.player.arcaneDust < cost.amount) {
-      return '아케인 더스트 부족';
+      return '신비 부족';
     }
     if (cost.type == WorkshopSkillCostType.element) {
       final String? elementId = cost.elementId;
       if (elementId == null) {
-        return '특성 재료 부족';
+        return '원소 부족';
       }
       if ((state.workshop.extractedTraitInventory[elementId] ?? 0) <
           cost.amount) {
-        return '${traitMap[elementId]?.name ?? elementId} 특성 부족';
+        return '${traitMap[elementId]?.name ?? elementId} 원소 부족';
       }
     }
   }
-  return '재화 부족';
+  return '비용 부족';
 }
 
 int _depthForNode(WorkshopSkillNode node, List<WorkshopSkillNode> nodes) {

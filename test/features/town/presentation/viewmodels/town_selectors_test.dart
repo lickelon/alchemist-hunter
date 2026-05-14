@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('town skill selectors expose insight and node counts', () {
+  test('town skill selectors expose fame and node counts', () {
     final ProviderContainer container = ProviderContainer();
     addTearDown(container.dispose);
 

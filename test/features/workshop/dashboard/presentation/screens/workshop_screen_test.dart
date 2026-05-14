@@ -17,8 +17,6 @@ void main() {
     expect(find.text('제작 대기열'), findsOneWidget);
     expect(find.text('재료 추출'), findsOneWidget);
     expect(find.text('포션 제작'), findsOneWidget);
-    expect(find.text('Items'), findsNothing);
-    expect(find.text('Crafted Potions'), findsNothing);
     expect(find.text('Logs'), findsNothing);
 
     final double queueY = tester.getTopLeft(find.text('제작 대기열')).dy;

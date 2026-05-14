@@ -32,7 +32,7 @@ class TownScreen extends ConsumerWidget {
       children: <Widget>[
         InfoCard(
           title: '마을 경제',
-          subtitle: '골드 $gold / 마을 통찰 $townInsight',
+          subtitle: '골드 $gold / 명성 $townInsight',
           icon: Icons.account_balance_wallet_outlined,
         ),
         TownShopCard(

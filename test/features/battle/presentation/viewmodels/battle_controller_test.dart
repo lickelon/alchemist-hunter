@@ -216,7 +216,7 @@ void main() {
         session.state.battle.stageExpeditions['stage_1'];
     expect(expedition, isNotNull);
     expect(expedition!.recentLogs.first.usedLoadoutFallback, isTrue);
-    expect(session.state.workshop.logs.first, contains('포션 미적용'));
+    expect(session.state.workshop.logs.first, contains('포션 부족'));
   });
 
   test('toggleStageAssignment stores assignment per stage', () {

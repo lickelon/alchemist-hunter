@@ -175,7 +175,7 @@ final battleStagePendingClaimLabelProvider = Provider.family<String, String>((
   if (claim.isEmpty) {
     return '수령 대기 보상 없음';
   }
-  return '골드 ${battleSignedValueLabel(claim.gold)} / 에센스 ${battleSignedValueLabel(claim.essence)} / 재료 ${claim.materials.length}종';
+  return '골드 ${battleSignedValueLabel(claim.gold)} / 정수 ${battleSignedValueLabel(claim.essence)} / 재료 ${claim.materials.length}종';
 });
 
 final battleStageLastResultLabelProvider = Provider.family<String, String>((
@@ -190,8 +190,8 @@ final battleStageLastResultLabelProvider = Provider.family<String, String>((
   }
   final BattleLogEntry log = logs.first;
   final String wipeLabel = log.wipedParty ? ' / 전멸' : '';
-  final String fallbackLabel = log.usedLoadoutFallback ? ' / 포션 미적용' : '';
-  return '${log.encounterIndex}회 ${log.encounterName} / ${log.success ? '성공' : '실패'}$wipeLabel / 골드 ${battleSignedValueLabel(log.gold)} / 재료 ${log.materials.length}종$fallbackLabel';
+  final String fallbackLabel = log.usedLoadoutFallback ? ' / 포션 부족' : '';
+  return '${log.encounterIndex}회 ${log.encounterName} / ${log.success ? '성공' : '실패'}$wipeLabel / 골드 ${battleSignedValueLabel(log.gold)} / 정수 ${battleSignedValueLabel(log.essence)} / 재료 ${log.materials.length}종$fallbackLabel';
 });
 
 String _formatSeconds(Duration duration) {

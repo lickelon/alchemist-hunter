@@ -119,8 +119,8 @@ final Provider<WorkshopDashboardSummaryView> workshopDashboardSummaryProvider =
       final int essence = ref.watch(workshopEssenceProvider);
       final int arcaneDust = ref.watch(workshopArcaneDustProvider);
       return WorkshopDashboardSummaryView(
-        essenceLabel: '에센스 $essence',
-        arcaneDustLabel: '아케인 더스트 $arcaneDust',
+        essenceLabel: '정수 $essence',
+        arcaneDustLabel: '신비 $arcaneDust',
       );
     });
 
@@ -147,6 +147,6 @@ workshopInventorySummaryProvider = Provider<WorkshopInventorySummaryView>((
     traitTypeCount: traits.length,
     potionStackCount: potionStacks.length,
     description:
-        '재료 ${materials.length}종 / 특성 ${traits.length}종 / 포션 ${potionStacks.length}스택',
+        '재료 ${materials.length}종 / 원소 ${traits.length}종 / 포션 ${potionStacks.length}스택',
   );
 });

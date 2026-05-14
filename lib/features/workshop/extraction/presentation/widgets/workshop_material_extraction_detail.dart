@@ -91,7 +91,7 @@ class _WorkshopMaterialExtractionDetailState
                   final bool selected = _selectedTraits.contains(trait.id);
                   return FilterChip(
                     label: Text(
-                      '${trait.name} ${workshopTraitAmountLabel(trait.amount)}',
+                      '${trait.name} 원소 ${workshopTraitAmountLabel(trait.amount)}',
                     ),
                     selected: selected,
                     onSelected: (bool value) {

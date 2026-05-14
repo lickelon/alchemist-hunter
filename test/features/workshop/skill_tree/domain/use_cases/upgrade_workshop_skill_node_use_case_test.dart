@@ -7,7 +7,7 @@ import 'package:alchemist_hunter/features/workshop/skill_tree/domain/use_cases/u
 
 void main() {
   test(
-    'upgrade workshop root node consumes arcane dust and increases level',
+    'upgrade workshop root node consumes arcane resource and increases level',
     () {
       final useCase = UpgradeWorkshopSkillNodeUseCase();
       final state = createInitialSessionState(DateTime(2026, 1, 1, 10));

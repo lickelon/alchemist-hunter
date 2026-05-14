@@ -22,7 +22,7 @@ class TownSkillTreeSheet extends ConsumerWidget {
     return AppBottomSheet(
       child: AppSheetLayout(
         title: '마을 스킬트리',
-        header: Text('마을 통찰 $townInsight / 골드 $gold'),
+        header: Text('명성 $townInsight / 골드 $gold'),
         body: ListView(
           children: nodes.map((TownSkillNodeView node) {
             final int clampedDepth = node.depth.clamp(0, _kMaxDepth);

@@ -19,10 +19,10 @@ class WorkshopMaterialCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Items',
+      name: '재료',
       summary: materialTypeCount == 0
-          ? '보유 아이템 없음'
-          : '보유 아이템 $materialTypeCount종',
+          ? '보유 재료 없음'
+          : '보유 재료 $materialTypeCount종',
       icon: Icons.inventory_2_outlined,
       onTap: () => _showItemList(context),
     );
@@ -50,9 +50,9 @@ class _WorkshopMaterialSheet extends ConsumerWidget {
 
     return AppBottomSheet(
       child: AppSheetLayout(
-        title: '보유 아이템 목록',
+        title: '보유 재료 목록',
         body: materials.isEmpty
-            ? const Center(child: Text('보유 아이템이 없습니다'))
+            ? const Center(child: Text('보유 재료가 없습니다'))
             : ListView.builder(
                 itemCount: materials.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -61,7 +61,7 @@ class _WorkshopMaterialSheet extends ConsumerWidget {
                     dense: true,
                     title: Text(entry.name),
                     subtitle: Text(
-                      '${workshopMaterialRarityLabel(entry.rarity)} / ${entry.traitSummary}',
+                      '${workshopMaterialRarityLabel(entry.rarity)} / 원소 ${entry.traitSummary}',
                     ),
                     trailing: Text('x${entry.quantity}'),
                   );

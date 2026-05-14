@@ -25,7 +25,7 @@ class WorkshopSkillTreeSheet extends ConsumerWidget {
     return AppBottomSheet(
       child: AppSheetLayout(
         title: '작업실 스킬트리',
-        header: Text('아케인 더스트 $arcaneDust'),
+        header: Text('신비 $arcaneDust'),
         body: ListView(
           children: nodes.map((WorkshopSkillNodeView node) {
             final int clampedDepth = node.depth.clamp(0, _kMaxDepth);

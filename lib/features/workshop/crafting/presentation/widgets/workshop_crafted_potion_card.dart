@@ -14,7 +14,7 @@ class WorkshopCraftedPotionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListCard(
-      name: 'Crafted Potions',
+      name: '완성 포션',
       summary: stackCount == 0 ? '완성 포션 없음' : '포션 스택 $stackCount개',
       icon: Icons.local_drink_outlined,
       onTap: () => _showPotionSheet(context),
@@ -56,7 +56,7 @@ class _WorkshopCraftedPotionSheet extends ConsumerWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.md),
                         child: Text(
-                          '점수 ${entry.scoreLabel} / 특성 ${entry.traitsLabel}',
+                          '점수 ${entry.scoreLabel} / 원소 ${entry.traitsLabel}',
                         ),
                       ),
                     ],

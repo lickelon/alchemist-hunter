@@ -31,7 +31,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('마을 스킬트리'), findsWidgets);
-    expect(find.text('마을 통찰 2 / 골드 1500'), findsOneWidget);
+    expect(find.text('명성 2 / 골드 1500'), findsOneWidget);
     expect(find.textContaining('● Trade Ledger (레벨 0/2)'), findsOneWidget);
     expect(find.textContaining('현재 효과 효과 없음'), findsWidgets);
     expect(find.textContaining('다음 효과 포션 판매가 +5%'), findsOneWidget);

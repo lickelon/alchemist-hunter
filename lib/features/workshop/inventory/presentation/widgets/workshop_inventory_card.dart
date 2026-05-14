@@ -26,7 +26,7 @@ class WorkshopInventoryCard extends StatelessWidget {
       summary: potionStackCount > 0
           ? '보유 포션 $potionStackCount스택'
           : traitTypeCount > 0
-          ? '보유 특성 $traitTypeCount종'
+          ? '보유 원소 $traitTypeCount종'
           : materialTypeCount > 0
           ? '보유 재료 $materialTypeCount종'
           : '보관 중인 자원 없음',
@@ -69,7 +69,7 @@ class WorkshopInventorySheet extends ConsumerWidget {
           header: const TabBar(
             tabs: <Widget>[
               Tab(text: '재료'),
-              Tab(text: '특성'),
+              Tab(text: '원소'),
               Tab(text: '포션'),
             ],
           ),
@@ -105,7 +105,7 @@ class _InventoryMaterialTab extends StatelessWidget {
           contentPadding: EdgeInsets.zero,
           title: Text(entry.name),
           subtitle: Text(
-            '${workshopMaterialRarityLabel(entry.rarity)} / ${entry.traitSummary}',
+            '${workshopMaterialRarityLabel(entry.rarity)} / 원소 ${entry.traitSummary}',
           ),
           trailing: Text('x${entry.quantity}'),
         );
@@ -122,7 +122,7 @@ class _InventoryTraitTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (traits.isEmpty) {
-      return const Center(child: Text('보유 추출 특성이 없습니다'));
+      return const Center(child: Text('보유 추출 원소가 없습니다'));
     }
     return ListView.builder(
       itemCount: traits.length,
@@ -158,7 +158,7 @@ class _InventoryPotionTab extends StatelessWidget {
           contentPadding: EdgeInsets.zero,
           title: Text('${entry.name} x${entry.quantity}'),
           subtitle: Text(
-            '품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}\n특성 ${entry.traitsLabel}',
+            '품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}\n원소 ${entry.traitsLabel}',
           ),
         );
       },

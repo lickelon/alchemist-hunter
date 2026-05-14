@@ -40,7 +40,7 @@ class WorkshopEnchantPotionSelector extends StatelessWidget {
                         value: potion.stackKey,
                         title: Text('${potion.name} x${potion.quantity}'),
                         subtitle: Text(
-                          '품질 ${potion.qualityLabel} / ${potion.traitsLabel}',
+                          '품질 ${potion.qualityLabel} / 원소 ${potion.traitsLabel}',
                         ),
                       );
                     }).toList(),

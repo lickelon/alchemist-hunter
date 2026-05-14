@@ -6,7 +6,7 @@ import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_s
 import 'package:alchemist_hunter/features/town/domain/use_cases/upgrade_town_skill_node_use_case.dart';
 
 void main() {
-  test('upgrade town root node consumes insight and increases level', () {
+  test('upgrade town root node consumes fame and increases level', () {
     final useCase = UpgradeTownSkillNodeUseCase();
     final state = createInitialSessionState(DateTime(2026, 1, 1, 10));
 

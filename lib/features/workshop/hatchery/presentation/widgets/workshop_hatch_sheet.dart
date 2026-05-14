@@ -25,7 +25,7 @@ class WorkshopHatchSheet extends ConsumerWidget {
       child: AppSheetLayout(
         title: '호문쿨루스 부화',
         header: Text(
-          '에센스 $essence / 아케인 더스트 $arcaneDust / 보유 호문쿨루스 $homunculusCount체',
+          '정수 $essence / 신비 $arcaneDust / 보유 호문쿨루스 $homunculusCount체',
         ),
         body: recipes.isEmpty
             ? const Center(child: Text('부화 가능한 레시피가 없습니다'))

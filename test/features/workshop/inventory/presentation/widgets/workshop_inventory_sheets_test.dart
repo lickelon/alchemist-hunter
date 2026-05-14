@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('workshop inventory sheet shows materials traits and potions', (
+  testWidgets('workshop inventory sheet shows materials elements and potions', (
     WidgetTester tester,
   ) async {
     final ProviderContainer container = ProviderContainer();
@@ -56,10 +56,10 @@ void main() {
 
     expect(find.text('작업실 인벤토리'), findsOneWidget);
     expect(find.text('Emberroot'), findsOneWidget);
-    expect(find.text('일반 / Vital / Swift'), findsOneWidget);
+    expect(find.text('일반 / 원소 Vital / Swift'), findsOneWidget);
     expect(find.text('x2'), findsOneWidget);
 
-    await tester.tap(find.text('특성'));
+    await tester.tap(find.text('원소'));
     await tester.pumpAndSettle();
 
     expect(find.text('Vital'), findsOneWidget);
@@ -69,11 +69,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('활력 포션 x1'), findsOneWidget);
-    expect(find.textContaining('특성 Aggro 70%, Vital 30%'), findsOneWidget);
+    expect(find.textContaining('원소 Aggro 70%, Vital 30%'), findsOneWidget);
   });
 
   testWidgets(
-    'workshop extraction sheet shows trait stock and extraction actions',
+    'workshop extraction sheet shows element stock and extraction actions',
     (WidgetTester tester) async {
       final ProviderContainer container = ProviderContainer();
       addTearDown(container.dispose);
@@ -102,8 +102,8 @@ void main() {
       await tester.tap(find.text('재료 추출'));
       await tester.pumpAndSettle();
 
-      expect(find.text('보유 추출 특성'), findsOneWidget);
-      expect(find.textContaining('Vital +0.85'), findsOneWidget);
+      expect(find.text('보유 추출 원소'), findsOneWidget);
+      expect(find.textContaining('Vital 원소 +0.85'), findsOneWidget);
       expect(find.text('분석/추출'), findsOneWidget);
 
       await tester.tap(find.text('분석/추출'));

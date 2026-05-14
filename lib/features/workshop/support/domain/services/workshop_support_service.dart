@@ -84,7 +84,7 @@ class WorkshopSupportService {
       case enchantSlot:
         return '인챈트 강화량 +5%';
       case hatchSlot:
-        return '부화 아케인 더스트 -1';
+        return '부화 신비 -1';
     }
     return '효과 없음';
   }
