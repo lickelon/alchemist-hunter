@@ -6,6 +6,7 @@
 - 전투 스탯, modifier, passive 같은 세부 전투 설계는 `docs/battle/combat/combat_design.md`를 기준으로 참조한다.
 - 연속 run 전투 규칙은 `docs/battle/continuous_battle_design.md`를 기준으로 참조한다.
 - 전투 시트 구조는 `docs/battle/battle_sheet_design.md`를 기준으로 참조한다.
+- stage 해금 규칙 재설계는 `docs/battle/stage_unlock_design.md`를 기준으로 참조한다.
 
 ## 1. 현재 상태 요약
 
@@ -18,7 +19,7 @@
 | 전투 결과 표시 | 최근 결과 시트와 실시간 전투 현황 시트 제공, 포션 fallback 사유 노출 | 해금 근거와 전투 외 성장 요약은 아직 더 보강할 수 있다 |
 | 결과 이력 | stage별 최근 로그 10개 보존, loadout fallback 사유 기록 | 해금 / 드롭 상세 근거는 아직 더 보강할 여지가 있다 |
 | 드롭 근거 | stage별 encounter 조합, 적별 드롭, 조합 확률 표시 가능 | 확률 자체의 밸런스 튜닝과 희소성 체감은 더 다듬을 수 있다 |
-| 스테이지 데이터 | stage / enemy set / encounter / enemy catalog 분리 완료, `clearedStageIds` 기반 해금 판정 반영 | clear 기반 unlock 자체는 임시 기준이라 추후 재설계 여지가 있다 |
+| 스테이지 데이터 | stage / enemy set / encounter / enemy catalog 분리 완료, 이전 stage 무실패 연속 승리 기반 해금 반영 | streak 요구 횟수는 밸런스 튜닝 여지가 있다 |
 | 적 정보 | 상세 스탯 / 특수 효과 / 드롭 표시 가능 | 행동 패턴과 보스 고유 기믹은 아직 얕다 |
 | 적별 드롭 | stage 전용 재료 분배와 상점 재료의 battle 획득 경로 반영 완료 | 후반 드롭 가치와 반복 파밍 동기는 더 조정할 수 있다 |
 | 포션 loadout | stage별 저장 / 편성 UI / 실제 소비 / fallback 반영 완료 | 부분 적용 규칙과 loadout별 세분 효과는 아직 없다 |
@@ -194,30 +195,26 @@
 - 해금 문자열 하드코딩을 제거하고, Stage 3~5 확장이 가능한 구조를 만든다.
 
 #### 현재 메모
-- 현재 구현은 `이전 stage 클리어` 기반 unlock catalog까지 반영된 상태다.
-- 이 규칙은 재료 의존 하드코딩을 제거하기 위한 임시 기준이다.
-- 추후에는 `clearedStageIds` 전용 상태, 세션 진행도, stage별 별도 해금 조건을 다시 설계할 여지가 있다.
-- 즉 지금 기준은 "하드코딩 제거와 stage progression 정리"를 우선 달성한 상태로 본다.
+- 현재 구현은 [Stage Unlock 설계](./stage_unlock_design.md)에 따른 `이전 stage 무실패 연속 승리 N회` 기반 영구 해금이다.
+- `ProgressState.unlockedStageIds`가 영구 해금 stage를 기록한다.
+- `ProgressState.stageCurrentWinStreaks`는 현재 연속 승리 수를 기록한다.
+- `ProgressState.stageBestWinStreaks`는 최고 연속 승리 수를 기록한다.
+- 재료 기반 해금은 계속 금지한다.
 
 #### 작업
-- `StageUnlockCondition` 모델 추가
-- 권장 필드:
-  - `stageId`
-  - `requiredMaterialId`
-  - `requiredMaterialCount`
-  - `requiredStageId`
-  - `label`
-- stage unlock catalog 정의
-- `ProgressState`에 `clearedStageIds` 또는 동등한 진행 추적 상태 추가
-- `BattleExpeditionUseCase.claimStageRewards()`의 직접 하드코딩 해금 처리 제거
-- battle 전용 unlock service 또는 use case로 이동
-- `DungeonScreen._lockedReason()` 제거 또는 selector 기반으로 대체
-- stage 정의와 unlock 조건이 같은 catalog 축을 사용하도록 정리
+- `BattleStageUnlockCondition.requiredWinStreakCount` 추가
+- `ProgressState.unlockedStageIds` 추가
+- `ProgressState.stageCurrentWinStreaks` 추가
+- `ProgressState.stageBestWinStreaks` 추가
+- encounter 성공 시 현재/최고 streak 갱신
+- encounter 실패 시 현재 streak 초기화
+- 요구 streak 달성 시 다음 stage 영구 해금
+- 잠금 문구에 현재 streak 진행도 표시
 
 #### 완료 기준
 - Stage 2~5 잠금 조건이 데이터로 표현된다.
 - UI 문구와 실제 해금 판정이 같은 규칙을 사용한다.
-- `ProgressState.clearedStageIds`가 stage progression의 기준이 된다.
+- 이전 stage 무실패 연속 승리 수가 stage progression의 기준이 된다.
 
 ### 3.6 F단계: 포션 loadout 상태와 UI [완료]
 
@@ -285,21 +282,16 @@
 - stage별 잠금 문구 표시
 
 ## 4. 권장 다음 순서
-1. clear 기반 unlock 이후의 차기 해금 규칙 재설계 메모 정리
-2. 적 행동 패턴 / 보스 규칙 확장
+1. 적 행동 패턴 / 보스 규칙 확장
    - 보스전 전용 규칙
    - 후반 적 조합의 역할 차별화
-3. H단계 테스트 확장
-   - 연속 run / 복구 / 보스 패턴 회귀 보강
+2. 보스 패턴 구현 이후 보스 회귀 테스트 보강
 
 ## 5. 남은 PR 분리 기준
 - 1차 PR
-  - clear 기반 unlock 이후의 차기 해금 규칙 재설계
-  - 목적: 임시 progression 규칙 탈피
-- 2차 PR
   - 적 행동 패턴 / 보스 규칙 확장
   - 목적: 후반 전투 체감 차별화
-- 3차 PR
+- 2차 PR
   - 회귀 / 보강 테스트
 
 ## 6. 보류 판단
