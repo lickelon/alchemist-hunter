@@ -197,7 +197,7 @@
 - [ ] 연속 run / 복구 / 보스 패턴 회귀 테스트 보강
 
 ### 7.2 P2 재화 UX 정리
-- [ ] `Gold / Essence / TownInsight / ArcaneDust / Element` 부족 메시지 분리
+- [ ] [재화 UX 정리](./currency_ux_guidelines.md) 기준으로 `골드 / 정수 / 명성 / 신비 / 원소` 부족 메시지 분리
 - [ ] 수급 / 소비 가이드를 UI 문구와 일치시킴
 - [ ] 다이아는 플레이스홀더 유지 또는 실제 sink 설계 중 하나로 정리
 
