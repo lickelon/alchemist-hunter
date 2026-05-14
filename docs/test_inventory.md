@@ -7,8 +7,8 @@
 
 ## 2. 현재 규모
 - 기준 시점: 2026-05-14
-- 테스트 파일: 46개
-- 테스트 케이스: 109개
+- 테스트 파일: 47개
+- 테스트 케이스: 118개
 
 ## 3. 영역별 분포
 
@@ -17,7 +17,7 @@
 | `app` | 1 | 3 | 세션 sync와 시간 가속 |
 | `architecture` | 1 | 1 | import 경계 유지 |
 | `core` | 1 | 2 | 세션 상태 적용과 로그 처리 |
-| `features/battle` | 8 | 21 | 전투 계산, 해금, 자동전투, 편성 UI |
+| `features/battle` | 9 | 30 | 전투 계산, 해금, 자동전투, 편성 UI |
 | `features/characters` | 4 | 11 | 장비 장착, 승급, 힌트/상세 시트 |
 | `features/town` | 10 | 23 | 상점, 장비 제작, 용병 고용, 마을 스킬트리 |
 | `features/workshop` | 20 | 47 | 큐, 추출, 포션, 인챈트, 부화, 작업실 스킬트리 |
@@ -49,8 +49,16 @@
 - `jobId`가 바뀌면 전투 스탯 프로필도 달라지는지 확인한다.
 
 #### `test/features/battle/domain/services/battle_progression_service_test.dart`
-- stage 해금 판정이 `unlockFlags`가 아니라 `clearedStageIds`를 기준으로 동작하는지 확인한다.
-- stage clear 시 `clearedStageIds`와 비stage 해금 flag만 갱신되는지 확인한다.
+- stage 해금 판정이 `unlockFlags`가 아니라 이전 stage의 최고 연속 승리 수를 기준으로 동작하는지 확인한다.
+- stage 성공 encounter가 현재/최고 연속 승리 수, `clearedStageIds`, 비stage 해금 flag를 갱신하는지 확인한다.
+
+#### `test/features/battle/domain/services/battle_expedition_progress_service_test.dart`
+- 성공 encounter 이후 아군 HP가 다음 탐색까지 유지되는지 확인한다.
+- 탐색 회복이 살아있는 아군에게만 적용되고 사망 아군은 사망 상태로 유지되는지 검증한다.
+- 전멸 시 `recovering`으로 전환되고 기존 pending claim이 유지되는지 확인한다.
+- recovery 완료 후 아군이 풀 HP로 초기화되는지 검증한다.
+- 성공 encounter XP가 즉시 반영되고 수령 시 중복 반영되지 않는지 확인한다.
+- 포션 부족 fallback이 현재 encounter와 최근 로그에 남는지 검증한다.
 
 #### `test/features/battle/domain/services/battle_service_test.dart`
 - `power`가 0이어도 실제 전투 스탯만으로 승패가 계산되는지 검증한다.
@@ -69,7 +77,7 @@
 - 최근 기록 시트에서 encounter 이름, 재료명, 행동 로그가 올바르게 보이는지 확인한다.
 
 #### `test/features/battle/presentation/viewmodels/battle_controller_test.dart`
-- 즉시 전투 후 골드, 에센스, 재료, 즉시 XP, 최근 로그가 함께 갱신되는지 검증한다.
+- 즉시 전투 후 골드, 정수, 재료, 즉시 XP, 최근 로그가 함께 갱신되는지 검증한다.
 - 랭크 최대 레벨 구간에서 XP overflow가 나지 않는지 확인한다.
 - 장비 스탯 강화 후 Stage 5 클리어 가능성이 실제로 올라가는지 확인한다.
 - stage별 포션 loadout이 있으면 즉시 전투에서 실제로 소비되는지 검증한다.
