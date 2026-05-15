@@ -184,7 +184,9 @@ List<String> _enemyEffectLines(BattleEnemyDefinition enemy) {
 }
 
 String _skillLabel(BattleSkillDefinition skill) {
-  return '스킬: ${skill.name} / MP 최대 시 전량 소비';
+  final String effectLabel = _skillEffectLabel(skill);
+  final String targetLabel = _skillTargetLabel(skill.targetType);
+  return '스킬: ${skill.name} / $targetLabel / $effectLabel / MP 최대 시 전량 소비 / ${skill.summary}';
 }
 
 String _modifierLabel(BattleModifier modifier) {
@@ -207,15 +209,24 @@ String _modifierLabel(BattleModifier modifier) {
 }
 
 String _passiveLabel(BattlePassiveEffect passive) {
-  return switch (passive.type) {
-    BattlePassiveEffectType.alwaysHit => '패시브: 필중',
-    BattlePassiveEffectType.extraAttack => '패시브: 추가 공격 +${passive.value ?? 1}회',
-    BattlePassiveEffectType.firstStrike => '패시브: 선공',
-    BattlePassiveEffectType.counterAttack => '패시브: 반격 +${passive.value ?? 1}회',
-    BattlePassiveEffectType.grantModifier => '패시브: 버프/디버프 부여',
-    BattlePassiveEffectType.grantStatus => '패시브: 상태이상 부여',
-    BattlePassiveEffectType.grantShield => '패시브: 보호막 부여',
+  final String triggerLabel = _passiveTriggerLabel(passive.trigger);
+  final String effectLabel = switch (passive.type) {
+    BattlePassiveEffectType.alwaysHit => '필중',
+    BattlePassiveEffectType.extraAttack => '추가 공격 +${passive.value ?? 1}회',
+    BattlePassiveEffectType.firstStrike => '선공',
+    BattlePassiveEffectType.counterAttack => '반격 +${passive.value ?? 1}회',
+    BattlePassiveEffectType.grantModifier =>
+      passive.modifier == null
+          ? '버프/디버프 부여'
+          : '버프/디버프 부여: ${_modifierLabel(passive.modifier!)}',
+    BattlePassiveEffectType.grantStatus =>
+      '상태이상 부여: ${_statusLabel(passive.statusType)}'
+          '${passive.value == null ? '' : ' ${passive.value}'}'
+          ' / ${passive.durationLifecycles}행동',
+    BattlePassiveEffectType.grantShield =>
+      '보호막 +${passive.value ?? 0} / ${passive.durationLifecycles}행동',
   };
+  return '패시브: $triggerLabel / $effectLabel';
 }
 
 String _signedChanceLabel(double value) {
@@ -224,4 +235,62 @@ String _signedChanceLabel(double value) {
     return '+$percent%';
   }
   return '$percent%';
+}
+
+String _skillTargetLabel(BattleSkillTargetType targetType) {
+  return switch (targetType) {
+    BattleSkillTargetType.randomEnemy => '대상: 무작위 적 1명',
+    BattleSkillTargetType.self => '대상: 자신',
+    BattleSkillTargetType.randomAlly => '대상: 무작위 아군 1명',
+    BattleSkillTargetType.allEnemies => '대상: 모든 적',
+    BattleSkillTargetType.allAllies => '대상: 모든 아군',
+  };
+}
+
+String _skillEffectLabel(BattleSkillDefinition skill) {
+  return switch (skill.effectType) {
+    BattleSkillEffectType.damage =>
+      '효과: ${_damageSchoolLabel(skill.school)} 피해 x${skill.powerMultiplier.toStringAsFixed(2)}',
+    BattleSkillEffectType.heal => '효과: 회복 +${skill.flatPower}',
+    BattleSkillEffectType.grantModifier =>
+      skill.modifier == null
+          ? '효과: 버프/디버프 부여'
+          : '효과: ${_modifierLabel(skill.modifier!)} / ${skill.durationLifecycles}행동',
+    BattleSkillEffectType.grantStatus =>
+      '효과: ${_statusLabel(skill.statusType)}'
+          '${skill.flatPower <= 0 ? '' : ' ${skill.flatPower}'}'
+          ' / ${skill.durationLifecycles}행동',
+    BattleSkillEffectType.grantShield =>
+      '효과: 보호막 +${skill.shieldValue > 0 ? skill.shieldValue : skill.flatPower}',
+  };
+}
+
+String _damageSchoolLabel(DamageSchool school) {
+  return switch (school) {
+    DamageSchool.any => '일반',
+    DamageSchool.physical => '물리',
+    DamageSchool.magical => '마법',
+  };
+}
+
+String _statusLabel(BattleStatusType? statusType) {
+  return switch (statusType) {
+    BattleStatusType.poison => '중독',
+    BattleStatusType.stun => '기절',
+    null => '상태이상',
+  };
+}
+
+String _passiveTriggerLabel(BattlePassiveTrigger trigger) {
+  return switch (trigger) {
+    BattlePassiveTrigger.battleStart => '전투 시작',
+    BattlePassiveTrigger.beforeAction => '행동 전',
+    BattlePassiveTrigger.beforeHitCheck => '명중 판정 전',
+    BattlePassiveTrigger.beforeDamage => '피해 계산 전',
+    BattlePassiveTrigger.afterHit => '적중 후',
+    BattlePassiveTrigger.afterAction => '행동 후',
+    BattlePassiveTrigger.turnEnd => '턴 종료',
+    BattlePassiveTrigger.onDamaged => '피격 시',
+    BattlePassiveTrigger.onDefeat => '사망 시',
+  };
 }
