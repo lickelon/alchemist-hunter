@@ -77,6 +77,7 @@ void main() {
     int mpRegen = 0,
     double accuracy = 1,
     double evasion = 0,
+    int physicalAttack = 1,
     List<BattlePassiveEffect> passives = const <BattlePassiveEffect>[],
     List<BattleSkillDefinition> skills = const <BattleSkillDefinition>[],
   }) {
@@ -90,6 +91,7 @@ void main() {
         maxMp: maxMp,
         mpRegen: mpRegen,
         speed: speed,
+        physicalAttack: physicalAttack,
         accuracy: accuracy,
         evasion: evasion,
       ),
@@ -501,6 +503,75 @@ void main() {
     expect(second.lifecycleActions.single.actorId, 'enemy_fast');
     expect(third.lifecycleActions.single.actorId, 'enemy_fast');
   });
+
+  test(
+    'grant modifier passive applies debuff and expires on owner turn end',
+    () {
+      final BattleService service = BattleService(random: Random(1));
+      final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+        encounterId: 'encounter_1',
+        encounterName: 'Encounter 1',
+        encounterIndex: 1,
+        enemySetId: 'enemy_set_1',
+        enemies: <BattleRunUnitState>[
+          unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+        ],
+      );
+      final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+        unit(
+          id: 'debuffer',
+          team: BattleTeam.ally,
+          speed: 30,
+          passives: const <BattlePassiveEffect>[
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.afterHit,
+              type: BattlePassiveEffectType.grantModifier,
+              sourceId: 'mark',
+              durationLifecycles: 1,
+              modifier: BattleModifier(
+                type: BattleModifierType.damageTaken,
+                mode: BattleModifierMode.percent,
+                value: 1,
+                sourceId: 'mark_damage_taken',
+              ),
+            ),
+          ],
+        ),
+        unit(
+          id: 'striker',
+          team: BattleTeam.ally,
+          speed: 20,
+          physicalAttack: 40,
+        ),
+      ];
+
+      final BattleEncounterStepResult first = service.runEncounterStep(
+        allies: allies,
+        encounter: encounter,
+        potionBoost: 0,
+      );
+      final BattleEncounterStepResult second = service.runEncounterStep(
+        allies: first.allies,
+        encounter: first.encounter,
+        potionBoost: 0,
+      );
+      final BattleEncounterStepResult third = service.runEncounterStep(
+        allies: second.allies,
+        encounter: second.encounter,
+        potionBoost: 0,
+      );
+
+      expect(first.encounter.enemies.single.activeModifiers, hasLength(1));
+      expect(
+        first.lifecycleActions.any(
+          (BattleActionLog action) => action.type == BattleActionType.modifier,
+        ),
+        isTrue,
+      );
+      expect(second.lifecycleActions.single.damage, greaterThan(10));
+      expect(third.encounter.enemies.single.activeModifiers, isEmpty);
+    },
+  );
 
   test('always hit only applies on before hit check trigger', () {
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(

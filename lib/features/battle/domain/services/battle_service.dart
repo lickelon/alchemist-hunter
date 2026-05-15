@@ -188,7 +188,9 @@ class BattleService {
       );
     }
 
-    _applyBeforeActionHooks(context);
+    final List<BattleActionLog> actions = <BattleActionLog>[
+      ..._applyBeforeActionHooks(context),
+    ];
     final BattleSkillDefinition? skill = _selectBaseAction(context.actor);
     final List<_BattleUnit> targets = _selectActionTargets(
       context.actor,
@@ -213,7 +215,6 @@ class BattleService {
       context.actor.skillCooldowns = _tickSkillCooldowns(context.actor);
     }
 
-    final List<BattleActionLog> actions = <BattleActionLog>[];
     _applyBeforeHitCheckHooks(context, target);
     final bool hit = _resolveHitCheck(context, target);
     if (!hit) {
@@ -238,7 +239,7 @@ class BattleService {
         ),
       );
     } else {
-      _applyBeforeDamageHooks(context, target);
+      actions.addAll(_applyBeforeDamageHooks(context, target));
       final bool critical = _BattleAttackResolver(random: _random).rollCritical(
         attacker: context.actor,
         defender: target,
@@ -275,7 +276,7 @@ class BattleService {
           targetHpAfter: target.currentHp,
         ),
       );
-      _applyAfterHitHooks(context, target);
+      actions.addAll(_applyAfterHitHooks(context, target, critical: critical));
       onDamagedRequests = _applyOnDamagedHooks(
         context,
         target,
@@ -317,7 +318,7 @@ class BattleService {
           potionBoost: potionBoost,
         );
     actions.addAll(derivedResult.actions);
-    _applyTurnEndHooks(context);
+    actions.addAll(_applyTurnEndHooks(context));
     return _buildActionLifecycleResult(
       actions: actions,
       nextLifecycle: derivedResult.nextLifecycle,
@@ -341,7 +342,17 @@ class BattleService {
     );
   }
 
-  void _applyBeforeActionHooks(_ActionLifecycleContext context) {}
+  List<BattleActionLog> _applyBeforeActionHooks(
+    _ActionLifecycleContext context,
+  ) {
+    return _applyGrantModifierPassives(
+      trigger: BattlePassiveTrigger.beforeAction,
+      context: context,
+      target: context.actor,
+      recipient: context.actor,
+      critical: false,
+    );
+  }
 
   BattleSkillDefinition? _selectBaseAction(_BattleUnit actor) {
     if (!actor.isAlive || actor.maxMp <= 0 || actor.currentMp < actor.maxMp) {
@@ -385,10 +396,18 @@ class BattleService {
     );
   }
 
-  void _applyBeforeDamageHooks(
+  List<BattleActionLog> _applyBeforeDamageHooks(
     _ActionLifecycleContext context,
     _BattleUnit target,
-  ) {}
+  ) {
+    return _applyGrantModifierPassives(
+      trigger: BattlePassiveTrigger.beforeDamage,
+      context: context,
+      target: target,
+      recipient: context.actor,
+      critical: false,
+    );
+  }
 
   _DamageRoll _resolveActionEffect({
     required _ActionLifecycleContext context,
@@ -412,10 +431,19 @@ class BattleService {
     target.currentHp = max(0, target.currentHp - damageRoll.damage);
   }
 
-  void _applyAfterHitHooks(
+  List<BattleActionLog> _applyAfterHitHooks(
     _ActionLifecycleContext context,
-    _BattleUnit target,
-  ) {}
+    _BattleUnit target, {
+    required bool critical,
+  }) {
+    return _applyGrantModifierPassives(
+      trigger: BattlePassiveTrigger.afterHit,
+      context: context,
+      target: target,
+      recipient: target,
+      critical: critical,
+    );
+  }
 
   List<_DerivedActionRequest> _applyOnDamagedHooks(
     _ActionLifecycleContext context,
@@ -553,7 +581,99 @@ class BattleService {
     );
   }
 
-  void _applyTurnEndHooks(_ActionLifecycleContext context) {}
+  List<BattleActionLog> _applyTurnEndHooks(_ActionLifecycleContext context) {
+    final List<BattleActionLog> actions = _applyGrantModifierPassives(
+      trigger: BattlePassiveTrigger.turnEnd,
+      context: context,
+      target: context.actor,
+      recipient: context.actor,
+      critical: false,
+    );
+    context.actor.activeModifiers = context.actor.activeModifiers
+        .map(
+          (BattleTimedModifier modifier) => modifier.copyWith(
+            remainingLifecycles: modifier.remainingLifecycles - 1,
+          ),
+        )
+        .where(
+          (BattleTimedModifier modifier) => modifier.remainingLifecycles > 0,
+        )
+        .toList(growable: false);
+    return actions;
+  }
+
+  List<BattleActionLog> _applyGrantModifierPassives({
+    required BattlePassiveTrigger trigger,
+    required _ActionLifecycleContext context,
+    required _BattleUnit target,
+    required _BattleUnit recipient,
+    required bool critical,
+  }) {
+    final List<BattleActionLog> actions = <BattleActionLog>[];
+    for (final BattlePassiveEffect passive in context.actor.passives) {
+      if (passive.trigger != trigger ||
+          passive.type != BattlePassiveEffectType.grantModifier ||
+          passive.modifier == null ||
+          !_passiveConditionMatches(
+            passive,
+            actor: context.actor,
+            target: target,
+            critical: critical,
+          )) {
+        continue;
+      }
+      recipient.activeModifiers = <BattleTimedModifier>[
+        ...recipient.activeModifiers,
+        BattleTimedModifier(
+          modifier: passive.modifier!,
+          remainingLifecycles: max(1, passive.durationLifecycles),
+        ),
+      ];
+      actions.add(
+        BattleActionLog(
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
+          type: BattleActionType.modifier,
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
+          targetId: recipient.id,
+          targetName: recipient.name,
+          targetTeam: _toBattleTeam(recipient.side),
+          actorHpAfter: context.actor.currentHp,
+          actorMpAfter: context.actor.currentMp,
+          targetHpAfter: recipient.currentHp,
+          message: 'modifier:${passive.sourceId}',
+        ),
+      );
+    }
+    return actions;
+  }
+
+  bool _passiveConditionMatches(
+    BattlePassiveEffect passive, {
+    required _BattleUnit actor,
+    required _BattleUnit target,
+    required bool critical,
+  }) {
+    final BattlePassiveCondition condition = passive.condition;
+    return switch (condition.type) {
+      BattlePassiveConditionType.always => true,
+      BattlePassiveConditionType.actorHpBelow =>
+        actor.currentHp / max(actor.maxHp, 1) <= condition.threshold,
+      BattlePassiveConditionType.actorHpAbove =>
+        actor.currentHp / max(actor.maxHp, 1) >= condition.threshold,
+      BattlePassiveConditionType.targetFaction =>
+        condition.faction == null || target.faction == condition.faction,
+      BattlePassiveConditionType.targetHasStatus =>
+        condition.statusType == null ||
+            target.statuses.any(
+              (BattleStatusEffect status) =>
+                  status.type == condition.statusType,
+            ),
+      BattlePassiveConditionType.criticalHit => critical,
+    };
+  }
 
   _ActionLifecycleResult _buildActionLifecycleResult({
     required List<BattleActionLog> actions,
