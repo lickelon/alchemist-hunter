@@ -23,4 +23,13 @@ class _BattleRecoveryResolver {
     unit.currentHp = min(unit.maxHp, unit.currentHp + healing);
     return unit.currentHp - previousHp;
   }
+
+  int applyMpRegen(_BattleUnit unit) {
+    if (!unit.isAlive || unit.maxMp <= 0 || unit.stats.mpRegen <= 0) {
+      return 0;
+    }
+    final int previousMp = unit.currentMp;
+    unit.currentMp = min(unit.maxMp, unit.currentMp + unit.stats.mpRegen);
+    return unit.currentMp - previousMp;
+  }
 }

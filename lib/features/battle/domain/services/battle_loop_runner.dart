@@ -23,7 +23,10 @@ class _BattleLoopRunner {
             stats: profile.stats,
             modifiers: profile.modifiers,
             passives: profile.passives,
+            skills: profile.skills,
             currentHp: profile.stats.maxHp,
+            currentMp: 0,
+            skillCooldowns: const <String, int>{},
           ),
         )
         .toList(growable: false);
@@ -37,7 +40,10 @@ class _BattleLoopRunner {
             stats: enemy.stats,
             modifiers: enemy.modifiers,
             passives: enemy.passives,
+            skills: enemy.skills,
             currentHp: enemy.stats.maxHp,
+            currentMp: 0,
+            skillCooldowns: const <String, int>{},
           ),
         )
         .toList(growable: false);
@@ -92,10 +98,19 @@ class _BattleLoopRunner {
           break;
         }
 
+        final BattleSkillDefinition? skill = _selectSkill(actor);
+        final bool usesSkill = skill != null;
+        final int mpSpent = usesSkill ? actor.currentMp : 0;
+        if (usesSkill) {
+          actor.currentMp = 0;
+          actor.skillCooldowns = _startSkillCooldowns(actor, skill);
+        } else {
+          actor.skillCooldowns = _tickSkillCooldowns(actor);
+        }
         final int extraAttackCount = _BattleModifierResolver.extraAttackCount(
           actor,
         );
-        final int attackCount = 1 + extraAttackCount;
+        final int attackCount = usesSkill ? 1 : 1 + extraAttackCount;
         for (int attackIndex = 0; attackIndex < attackCount; attackIndex++) {
           if (!actor.isAlive) {
             break;
@@ -119,15 +134,21 @@ class _BattleLoopRunner {
               BattleActionLog(
                 lifecycle: lifecycle,
                 turn: turns,
-                type: BattleActionType.attack,
+                type: usesSkill
+                    ? BattleActionType.skill
+                    : BattleActionType.attack,
                 actorId: actor.id,
                 actorName: actor.name,
                 actorTeam: _toBattleTeam(actor.side),
                 targetId: currentTarget.id,
                 targetName: currentTarget.name,
                 targetTeam: _toBattleTeam(currentTarget.side),
+                skillId: skill?.id,
+                skillName: skill?.name,
                 hit: false,
+                mpSpent: attackIndex == 0 ? mpSpent : 0,
                 actorHpAfter: actor.currentHp,
+                actorMpAfter: actor.currentMp,
                 targetHpAfter: currentTarget.currentHp,
               ),
             );
@@ -138,6 +159,15 @@ class _BattleLoopRunner {
               actions: actions,
               recoveryResolver: recoveryResolver,
             );
+            if (!usesSkill) {
+              _applyMpRegen(
+                actor,
+                lifecycle: lifecycle,
+                turn: turns,
+                actions: actions,
+                recoveryResolver: recoveryResolver,
+              );
+            }
             continue;
           }
 
@@ -151,6 +181,7 @@ class _BattleLoopRunner {
             defender: currentTarget,
             critical: critical,
             potionBoost: actor.side == _BattleSide.ally ? potionBoost : 0,
+            skill: attackIndex == 0 ? skill : null,
           );
           currentTarget.currentHp = max(
             0,
@@ -166,18 +197,24 @@ class _BattleLoopRunner {
             BattleActionLog(
               lifecycle: lifecycle,
               turn: turns,
-              type: BattleActionType.attack,
+              type: usesSkill && attackIndex == 0
+                  ? BattleActionType.skill
+                  : BattleActionType.attack,
               actorId: actor.id,
               actorName: actor.name,
               actorTeam: _toBattleTeam(actor.side),
               targetId: currentTarget.id,
               targetName: currentTarget.name,
               targetTeam: _toBattleTeam(currentTarget.side),
+              skillId: attackIndex == 0 ? skill?.id : null,
+              skillName: attackIndex == 0 ? skill?.name : null,
               school: damageRoll.school,
               hit: true,
               critical: critical,
               damage: damageRoll.damage,
+              mpSpent: attackIndex == 0 ? mpSpent : 0,
               actorHpAfter: actorHpBeforeRecovery,
+              actorMpAfter: actor.currentMp,
               targetHpAfter: currentTarget.currentHp,
             ),
           );
@@ -206,6 +243,15 @@ class _BattleLoopRunner {
             actions: actions,
             recoveryResolver: recoveryResolver,
           );
+          if (!usesSkill) {
+            _applyMpRegen(
+              actor,
+              lifecycle: lifecycle,
+              turn: turns,
+              actions: actions,
+              recoveryResolver: recoveryResolver,
+            );
+          }
           target = currentTarget;
         }
 
@@ -264,6 +310,82 @@ class _BattleLoopRunner {
         actorHpAfter: unit.currentHp,
       ),
     );
+  }
+
+  void _applyMpRegen(
+    _BattleUnit unit, {
+    required int lifecycle,
+    required int turn,
+    required List<BattleActionLog> actions,
+    required _BattleRecoveryResolver recoveryResolver,
+  }) {
+    final int mpRegen = recoveryResolver.applyMpRegen(unit);
+    if (mpRegen == 0) {
+      return;
+    }
+    actions.add(
+      BattleActionLog(
+        lifecycle: lifecycle,
+        turn: turn,
+        type: BattleActionType.mpRegen,
+        actorId: unit.id,
+        actorName: unit.name,
+        actorTeam: _toBattleTeam(unit.side),
+        healing: mpRegen,
+        actorHpAfter: unit.currentHp,
+        actorMpAfter: unit.currentMp,
+      ),
+    );
+  }
+
+  BattleSkillDefinition? _selectSkill(_BattleUnit actor) {
+    if (!actor.isAlive || actor.maxMp <= 0 || actor.currentMp < actor.maxMp) {
+      return null;
+    }
+    final List<BattleSkillDefinition> available = actor.skills
+        .where(
+          (BattleSkillDefinition skill) =>
+              _isSupportedActiveSkill(skill) &&
+              (actor.skillCooldowns[skill.id] ?? 0) <= 0,
+        )
+        .toList(growable: false);
+    if (available.isEmpty) {
+      return null;
+    }
+    return available.reduce(
+      (BattleSkillDefinition left, BattleSkillDefinition right) =>
+          right.priority > left.priority ? right : left,
+    );
+  }
+
+  bool _isSupportedActiveSkill(BattleSkillDefinition skill) {
+    return skill.effectType == BattleSkillEffectType.damage &&
+        skill.targetType == BattleSkillTargetType.randomEnemy;
+  }
+
+  Map<String, int> _tickSkillCooldowns(_BattleUnit actor) {
+    if (actor.skillCooldowns.isEmpty) {
+      return <String, int>{};
+    }
+    final Map<String, int> next = <String, int>{};
+    actor.skillCooldowns.forEach((String skillId, int remaining) {
+      final int ticked = remaining - 1;
+      if (ticked > 0) {
+        next[skillId] = ticked;
+      }
+    });
+    return next;
+  }
+
+  Map<String, int> _startSkillCooldowns(
+    _BattleUnit actor,
+    BattleSkillDefinition skill,
+  ) {
+    final Map<String, int> next = _tickSkillCooldowns(actor);
+    if (skill.cooldownLifecycles > 0) {
+      next[skill.id] = skill.cooldownLifecycles;
+    }
+    return next;
   }
 
   BattleTeam _toBattleTeam(_BattleSide side) {

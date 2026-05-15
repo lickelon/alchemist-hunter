@@ -167,6 +167,7 @@ List<String> _enemyStatLines(BattleCombatStats stats) {
     '상태적중 ${_chanceLabel(stats.statusAccuracy)} / 상태저항 ${_chanceLabel(stats.statusResistance)}',
     '물관 ${_chanceLabel(stats.physicalPenetration)} / 마관 ${_chanceLabel(stats.magicalPenetration)}',
     '흡혈 ${_chanceLabel(stats.lifesteal)} / 회복력 ${_chanceLabel(stats.healingPower)} / 재생 ${_chanceLabel(stats.regen)}',
+    'MP ${stats.maxMp} / MP재생 ${stats.mpRegen}',
   ];
 }
 
@@ -174,11 +175,16 @@ List<String> _enemyEffectLines(BattleEnemyDefinition enemy) {
   final List<String> lines = <String>[
     ...enemy.modifiers.map(_modifierLabel),
     ...enemy.passives.map(_passiveLabel),
+    ...enemy.skills.map(_skillLabel),
   ];
   if (lines.isEmpty) {
     return const <String>['특수 효과 없음'];
   }
   return lines;
+}
+
+String _skillLabel(BattleSkillDefinition skill) {
+  return '스킬: ${skill.name} / MP 최대 시 전량 소비';
 }
 
 String _modifierLabel(BattleModifier modifier) {

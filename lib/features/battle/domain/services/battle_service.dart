@@ -25,7 +25,9 @@ class BattleService {
             stats: profile.stats,
             modifiers: profile.modifiers,
             passives: profile.passives,
+            skills: profile.skills,
             currentHp: profile.stats.maxHp,
+            currentMp: 0,
           ),
         )
         .toList(growable: false);
@@ -48,7 +50,9 @@ class BattleService {
             stats: enemy.stats,
             modifiers: enemy.modifiers,
             passives: enemy.passives,
+            skills: enemy.skills,
             currentHp: enemy.stats.maxHp,
+            currentMp: 0,
           ),
         )
         .toList(growable: false);
@@ -141,6 +145,15 @@ class BattleService {
     const _BattleRecoveryResolver recoveryResolver = _BattleRecoveryResolver();
     final int lifecycle = encounter.turnInEncounter + 1;
     final List<BattleActionLog> actions = <BattleActionLog>[];
+    final BattleSkillDefinition? skill = _selectSkill(actor);
+    final bool usesSkill = skill != null;
+    final int mpSpent = usesSkill ? actor.currentMp : 0;
+    if (usesSkill) {
+      actor.currentMp = 0;
+      actor.skillCooldowns = _startSkillCooldowns(actor, skill);
+    } else {
+      actor.skillCooldowns = _tickSkillCooldowns(actor);
+    }
 
     final bool hit = attackResolver.rollHit(
       attacker: actor,
@@ -152,15 +165,19 @@ class BattleService {
         BattleActionLog(
           lifecycle: lifecycle,
           turn: lifecycle,
-          type: BattleActionType.attack,
+          type: usesSkill ? BattleActionType.skill : BattleActionType.attack,
           actorId: actor.id,
           actorName: actor.name,
           actorTeam: _toBattleTeam(actor.side),
           targetId: target.id,
           targetName: target.name,
           targetTeam: _toBattleTeam(target.side),
+          skillId: skill?.id,
+          skillName: skill?.name,
           hit: false,
+          mpSpent: mpSpent,
           actorHpAfter: actor.currentHp,
+          actorMpAfter: actor.currentMp,
           targetHpAfter: target.currentHp,
         ),
       );
@@ -175,6 +192,7 @@ class BattleService {
         defender: target,
         critical: critical,
         potionBoost: actor.side == _BattleSide.ally ? potionBoost : 0,
+        skill: skill,
       );
       target.currentHp = max(0, target.currentHp - damageRoll.damage);
       final int actorHpBeforeRecovery = actor.currentHp;
@@ -186,18 +204,22 @@ class BattleService {
         BattleActionLog(
           lifecycle: lifecycle,
           turn: lifecycle,
-          type: BattleActionType.attack,
+          type: usesSkill ? BattleActionType.skill : BattleActionType.attack,
           actorId: actor.id,
           actorName: actor.name,
           actorTeam: _toBattleTeam(actor.side),
           targetId: target.id,
           targetName: target.name,
           targetTeam: _toBattleTeam(target.side),
+          skillId: skill?.id,
+          skillName: skill?.name,
           school: damageRoll.school,
           hit: true,
           critical: critical,
           damage: damageRoll.damage,
+          mpSpent: mpSpent,
           actorHpAfter: actorHpBeforeRecovery,
+          actorMpAfter: actor.currentMp,
           targetHpAfter: target.currentHp,
         ),
       );
@@ -233,6 +255,22 @@ class BattleService {
           actorTeam: _toBattleTeam(actor.side),
           healing: regenHealing,
           actorHpAfter: actor.currentHp,
+        ),
+      );
+    }
+    final int mpRegen = usesSkill ? 0 : recoveryResolver.applyMpRegen(actor);
+    if (mpRegen > 0) {
+      actions.add(
+        BattleActionLog(
+          lifecycle: lifecycle,
+          turn: lifecycle,
+          type: BattleActionType.mpRegen,
+          actorId: actor.id,
+          actorName: actor.name,
+          actorTeam: _toBattleTeam(actor.side),
+          healing: mpRegen,
+          actorHpAfter: actor.currentHp,
+          actorMpAfter: actor.currentMp,
         ),
       );
     }
@@ -332,7 +370,10 @@ class BattleService {
       stats: unit.stats,
       modifiers: unit.modifiers,
       passives: unit.passives,
+      skills: unit.skills,
       currentHp: unit.currentHp,
+      currentMp: unit.currentMp,
+      skillCooldowns: unit.skillCooldowns,
     );
   }
 
@@ -359,7 +400,10 @@ class BattleService {
             stats: unit.stats,
             modifiers: unit.modifiers,
             passives: unit.passives,
+            skills: unit.skills,
             currentHp: unit.currentHp,
+            currentMp: unit.currentMp,
+            skillCooldowns: unit.skillCooldowns,
           ),
         )
         .toList(growable: false);
@@ -392,6 +436,56 @@ class BattleService {
   }
 
   String _extraQueueActorId(String actorId) => 'extra:$actorId';
+
+  BattleSkillDefinition? _selectSkill(_BattleUnit actor) {
+    if (!actor.isAlive || actor.maxMp <= 0 || actor.currentMp < actor.maxMp) {
+      return null;
+    }
+    final List<BattleSkillDefinition> available = actor.skills
+        .where(
+          (BattleSkillDefinition skill) =>
+              _isSupportedActiveSkill(skill) &&
+              (actor.skillCooldowns[skill.id] ?? 0) <= 0,
+        )
+        .toList(growable: false);
+    if (available.isEmpty) {
+      return null;
+    }
+    return available.reduce(
+      (BattleSkillDefinition left, BattleSkillDefinition right) =>
+          right.priority > left.priority ? right : left,
+    );
+  }
+
+  bool _isSupportedActiveSkill(BattleSkillDefinition skill) {
+    return skill.effectType == BattleSkillEffectType.damage &&
+        skill.targetType == BattleSkillTargetType.randomEnemy;
+  }
+
+  Map<String, int> _tickSkillCooldowns(_BattleUnit actor) {
+    if (actor.skillCooldowns.isEmpty) {
+      return <String, int>{};
+    }
+    final Map<String, int> next = <String, int>{};
+    actor.skillCooldowns.forEach((String skillId, int remaining) {
+      final int ticked = remaining - 1;
+      if (ticked > 0) {
+        next[skillId] = ticked;
+      }
+    });
+    return next;
+  }
+
+  Map<String, int> _startSkillCooldowns(
+    _BattleUnit actor,
+    BattleSkillDefinition skill,
+  ) {
+    final Map<String, int> next = _tickSkillCooldowns(actor);
+    if (skill.cooldownLifecycles > 0) {
+      next[skill.id] = skill.cooldownLifecycles;
+    }
+    return next;
+  }
 
   List<_BattleUnit> _livingUnits(
     Map<String, _BattleUnit> units,

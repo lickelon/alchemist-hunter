@@ -38,9 +38,13 @@ class _BattleAttackResolver {
     required _BattleUnit defender,
     required bool critical,
     required int potionBoost,
+    BattleSkillDefinition? skill,
   }) {
-    final bool useMagic =
-        attacker.stats.magicalAttack > attacker.stats.physicalAttack;
+    final bool useMagic = skill?.school == DamageSchool.magical
+        ? true
+        : skill?.school == DamageSchool.physical
+        ? false
+        : attacker.stats.magicalAttack > attacker.stats.physicalAttack;
     final int attack = useMagic
         ? attacker.stats.magicalAttack
         : attacker.stats.physicalAttack;
@@ -59,6 +63,9 @@ class _BattleAttackResolver {
 
     if (attacker.side == _BattleSide.ally && potionBoost > 0) {
       damage *= 1 + (potionBoost * 0.08);
+    }
+    if (skill != null) {
+      damage = (damage * skill.powerMultiplier) + skill.flatPower;
     }
     if (critical) {
       damage *= 1 + attacker.stats.critDamage;

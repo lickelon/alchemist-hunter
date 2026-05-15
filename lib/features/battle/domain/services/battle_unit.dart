@@ -11,7 +11,10 @@ class _BattleUnit {
     required this.stats,
     required this.modifiers,
     required this.passives,
+    required this.skills,
     required this.currentHp,
+    required this.currentMp,
+    required this.skillCooldowns,
   });
 
   final String id;
@@ -21,9 +24,13 @@ class _BattleUnit {
   final BattleCombatStats stats;
   final List<BattleModifier> modifiers;
   final List<BattlePassiveEffect> passives;
+  final List<BattleSkillDefinition> skills;
   int currentHp;
+  int currentMp;
+  Map<String, int> skillCooldowns;
 
   int get maxHp => stats.maxHp;
+  int get maxMp => stats.maxMp;
   bool get isAlive => currentHp > 0;
 }
 
