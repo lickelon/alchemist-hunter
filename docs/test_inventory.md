@@ -7,8 +7,8 @@
 
 ## 2. 현재 규모
 - 기준 시점: 2026-05-14
-- 테스트 파일: 48개
-- 테스트 케이스: 135개
+- 테스트 파일: 49개
+- 테스트 케이스: 136개
 
 ## 3. 영역별 분포
 
@@ -17,7 +17,7 @@
 | `app` | 1 | 3 | 세션 sync와 시간 가속 |
 | `architecture` | 1 | 1 | import 경계 유지 |
 | `core` | 1 | 2 | 세션 상태 적용과 로그 처리 |
-| `features/battle` | 10 | 47 | 전투 계산, 해금, 자동전투, 편성 UI |
+| `features/battle` | 11 | 48 | 전투 계산, 해금, 자동전투, 편성 UI |
 | `features/characters` | 4 | 11 | 장비 장착, 승급, 힌트/상세 시트 |
 | `features/town` | 10 | 23 | 상점, 장비 제작, 용병 고용, 마을 스킬트리 |
 | `features/workshop` | 20 | 47 | 큐, 추출, 포션, 인챈트, 부화, 작업실 스킬트리 |
@@ -106,6 +106,9 @@
 #### `test/features/battle/presentation/widgets/battle_assignment_sheet_test.dart`
 - 편성 시트에서 캐릭터 선택 토글이 실제 stage 배치 상태에 반영되는지 확인한다.
 - 편성 시트에서 포션 수량 증감이 `stagePotionLoadouts`에 저장되는지 검증한다.
+
+#### `test/features/battle/presentation/widgets/battle_unit_board_section_test.dart`
+- 전투 현황 유닛 카드가 현재 MP, 보호막, 상태이상, active modifier를 표시하는지 확인한다.
 
 ### 4.3 Characters
 
