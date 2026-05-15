@@ -252,8 +252,8 @@
   - HP 차감
 
 현재 구현:
-- `beforeDamage` trigger는 모델만 있고 아직 실행되지 않는다.
-- 피해 배율 자체는 `BattleModifier`와 스킬 배율로 계산된다.
+- `grantModifier` passive는 `beforeDamage`에서 행동자에게 임시 modifier를 부여할 수 있다.
+- 피해 배율 자체는 상시 / 임시 `BattleModifier`와 스킬 배율로 계산된다.
 
 ### 4.9 `resolveActionEffect`
 - 물리 / 마법 공격 중 사용할 school을 정한다.
@@ -302,7 +302,7 @@
   - 피격자 반격
 
 현재 구현:
-- `afterHit` trigger는 모델만 있고 아직 실행되지 않는다.
+- `grantModifier` passive는 `afterHit`에서 대상에게 임시 modifier를 부여할 수 있다.
 
 ### 4.12 `applyOnDamagedHooks`
 - 대상이 피해를 받은 직후 피격자 기준으로 실행되는 훅이다.
@@ -397,7 +397,8 @@
   - 드롭 / 보상 계산
 
 현재 구현:
-- `turnEnd` trigger는 모델만 있고 아직 실행되지 않는다.
+- `grantModifier` passive는 `turnEnd`에서 행동자에게 임시 modifier를 부여할 수 있다.
+- 행동자에게 걸린 임시 modifier의 남은 lifecycle을 감소시킨다.
 
 ### 4.17 `buildActionLifecycleResult`
 - 행동 로그, 변경된 유닛 상태, 파생 action lifecycle 로그, 종료 후보 상태를 묶어 반환한다.
@@ -447,9 +448,9 @@
 | 부활 | Encounter Cycle | On Defeat / 종료 판정 | 사망 결과 변경 |
 
 ## 7. 구현 우선순위
-1. `beforeAction`, `beforeDamage`, `afterHit`, `turnEnd` 실제 효과 연결
-2. 조건부 `grantModifier` 구현
-3. 상태이상 최소 모델 추가
+1. 상태이상 최소 모델 연결
+2. 보호막 연결
+3. 회복형 / 광역 / 아군 대상 스킬 확장
 4. 보스 전용 스킬 / 패턴 구현
 
 ## 8. 주의점
