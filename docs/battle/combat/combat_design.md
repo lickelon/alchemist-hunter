@@ -18,6 +18,8 @@
   - 수치 보정 효과, 피해 증감, 버프/디버프, modifier 계산 순서
 - `docs/battle/combat/combat_passive_design.md`
   - 필중, 2회 공격, 선공, 반격 같은 판정 규칙 변경 효과
+- `docs/battle/combat/combat_cycle_design.md`
+  - 1회 행동 lifecycle 단계와 기능별 배치 기준
 - `docs/battle/combat/combat_equipment_design.md`
   - 장비 기본 6스탯, 특수 능력 분리, 장비의 전투 반영 기준
 
@@ -25,6 +27,7 @@
 - 기본 몸값과 성장 규칙을 정할 때는 `combat_stat_design.md`를 본다.
 - 수치를 더하거나 빼는 효과를 설계할 때는 `combat_modifier_design.md`를 본다.
 - 판정 절차를 건너뛰거나 행동 규칙을 추가하는 효과를 설계할 때는 `combat_passive_design.md`를 본다.
+- 기능을 combat lifecycle의 어느 단계에 넣을지 판단할 때는 `combat_cycle_design.md`를 본다.
 - 장비 스탯 구조나 장비 특수 옵션 기준을 정할 때는 `combat_equipment_design.md`를 본다.
 - MP를 전부 소비하는 능동 행동은 `BattleSkillDefinition` 모델로 다루고, passive와 분리한다.
 

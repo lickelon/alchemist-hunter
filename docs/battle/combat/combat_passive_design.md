@@ -4,6 +4,7 @@
 - 이 문서는 전투 중 `판정 규칙 자체를 바꾸는 효과`의 기준을 정리한다.
 - `docs/battle/combat/combat_stat_design.md`는 기본 전투 스탯 기준이다.
 - `docs/battle/combat/combat_modifier_design.md`는 수치 보정 효과 기준이다.
+- `docs/battle/combat/combat_cycle_design.md`는 passive가 끼어드는 lifecycle 단계 기준이다.
 - 이 문서는 그 둘로 처리할 수 없는 `전투 규칙 효과`의 source of truth다.
 
 ## 1. Passive가 필요한 이유
@@ -94,6 +95,11 @@ class BattlePassiveEffect {
 - `condition`: 특정 조건에서만 발동할 때의 필터
 
 ## 4. 트리거 훅
+
+### 4.0 현재 구현 상태
+- `BattlePassiveTrigger` 모델은 `battleStart`, `beforeAction`, `beforeHitCheck`, `beforeDamage`, `afterHit`, `afterAction`, `turnEnd`, `onDamaged`, `onDefeat`를 가진다.
+- 현재 실제 효과가 연결된 훅은 `beforeHitCheck`의 `alwaysHit`, `afterAction`의 `extraAttack`이다.
+- 나머지 훅은 후속 `counterAttack`, 조건부 modifier, 상태이상 구현을 위한 예약 지점이다.
 
 ### 4.1 초기 필수 훅
 1. `battleStart`
