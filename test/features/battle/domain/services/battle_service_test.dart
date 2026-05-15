@@ -573,6 +573,60 @@ void main() {
     },
   );
 
+  test('status passive applies poison damage and expires on turn end', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'poisoner',
+        team: BattleTeam.ally,
+        speed: 20,
+        passives: const <BattlePassiveEffect>[
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.afterHit,
+            type: BattlePassiveEffectType.grantStatus,
+            sourceId: 'poison_blade',
+            statusType: BattleStatusType.poison,
+            durationLifecycles: 1,
+            value: 7,
+          ),
+        ],
+      ),
+    ];
+
+    final BattleEncounterStepResult first = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult second = service.runEncounterStep(
+      allies: first.allies,
+      encounter: first.encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      first.encounter.enemies.single.statuses.single.type,
+      BattleStatusType.poison,
+    );
+    expect(
+      second.lifecycleActions.any(
+        (BattleActionLog action) =>
+            action.type == BattleActionType.status && action.damage == 7,
+      ),
+      isTrue,
+    );
+    expect(second.encounter.enemies.single.statuses, isEmpty);
+  });
+
   test('always hit only applies on before hit check trigger', () {
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',

@@ -191,6 +191,26 @@ class BattleService {
     final List<BattleActionLog> actions = <BattleActionLog>[
       ..._applyBeforeActionHooks(context),
     ];
+    if (_isActionBlockedByStatus(context)) {
+      actions.add(
+        BattleActionLog(
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
+          type: BattleActionType.status,
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
+          actorHpAfter: context.actor.currentHp,
+          actorMpAfter: context.actor.currentMp,
+          message: 'status:stun',
+        ),
+      );
+      actions.addAll(_applyTurnEndHooks(context));
+      return _buildActionLifecycleResult(
+        actions: actions,
+        nextLifecycle: context.lifecycle + 1,
+      );
+    }
     final BattleSkillDefinition? skill = _selectBaseAction(context.actor);
     final List<_BattleUnit> targets = _selectActionTargets(
       context.actor,
@@ -345,13 +365,22 @@ class BattleService {
   List<BattleActionLog> _applyBeforeActionHooks(
     _ActionLifecycleContext context,
   ) {
-    return _applyGrantModifierPassives(
-      trigger: BattlePassiveTrigger.beforeAction,
-      context: context,
-      target: context.actor,
-      recipient: context.actor,
-      critical: false,
-    );
+    return <BattleActionLog>[
+      ..._applyGrantModifierPassives(
+        trigger: BattlePassiveTrigger.beforeAction,
+        context: context,
+        target: context.actor,
+        recipient: context.actor,
+        critical: false,
+      ),
+      ..._applyGrantStatusPassives(
+        trigger: BattlePassiveTrigger.beforeAction,
+        context: context,
+        target: context.actor,
+        recipient: context.actor,
+        critical: false,
+      ),
+    ];
   }
 
   BattleSkillDefinition? _selectBaseAction(_BattleUnit actor) {
@@ -436,13 +465,22 @@ class BattleService {
     _BattleUnit target, {
     required bool critical,
   }) {
-    return _applyGrantModifierPassives(
-      trigger: BattlePassiveTrigger.afterHit,
-      context: context,
-      target: target,
-      recipient: target,
-      critical: critical,
-    );
+    return <BattleActionLog>[
+      ..._applyGrantModifierPassives(
+        trigger: BattlePassiveTrigger.afterHit,
+        context: context,
+        target: target,
+        recipient: target,
+        critical: critical,
+      ),
+      ..._applyGrantStatusPassives(
+        trigger: BattlePassiveTrigger.afterHit,
+        context: context,
+        target: target,
+        recipient: target,
+        critical: critical,
+      ),
+    ];
   }
 
   List<_DerivedActionRequest> _applyOnDamagedHooks(
@@ -582,13 +620,9 @@ class BattleService {
   }
 
   List<BattleActionLog> _applyTurnEndHooks(_ActionLifecycleContext context) {
-    final List<BattleActionLog> actions = _applyGrantModifierPassives(
-      trigger: BattlePassiveTrigger.turnEnd,
-      context: context,
-      target: context.actor,
-      recipient: context.actor,
-      critical: false,
-    );
+    final List<BattleActionLog> actions = <BattleActionLog>[
+      ..._applyStatusTurnEndEffects(context),
+    ];
     context.actor.activeModifiers = context.actor.activeModifiers
         .map(
           (BattleTimedModifier modifier) => modifier.copyWith(
@@ -599,6 +633,66 @@ class BattleService {
           (BattleTimedModifier modifier) => modifier.remainingLifecycles > 0,
         )
         .toList(growable: false);
+    context.actor.statuses = context.actor.statuses
+        .map(
+          (BattleStatusEffect status) => status.copyWith(
+            remainingLifecycles: status.remainingLifecycles - 1,
+          ),
+        )
+        .where((BattleStatusEffect status) => status.remainingLifecycles > 0)
+        .toList(growable: false);
+    actions.addAll(
+      _applyGrantModifierPassives(
+        trigger: BattlePassiveTrigger.turnEnd,
+        context: context,
+        target: context.actor,
+        recipient: context.actor,
+        critical: false,
+      ),
+    );
+    actions.addAll(
+      _applyGrantStatusPassives(
+        trigger: BattlePassiveTrigger.turnEnd,
+        context: context,
+        target: context.actor,
+        recipient: context.actor,
+        critical: false,
+      ),
+    );
+    return actions;
+  }
+
+  bool _isActionBlockedByStatus(_ActionLifecycleContext context) {
+    return context.actor.statuses.any(
+      (BattleStatusEffect status) => status.type == BattleStatusType.stun,
+    );
+  }
+
+  List<BattleActionLog> _applyStatusTurnEndEffects(
+    _ActionLifecycleContext context,
+  ) {
+    final List<BattleActionLog> actions = <BattleActionLog>[];
+    for (final BattleStatusEffect status in context.actor.statuses) {
+      if (status.type != BattleStatusType.poison || status.power <= 0) {
+        continue;
+      }
+      final int damage = min(context.actor.currentHp, status.power);
+      context.actor.currentHp = max(0, context.actor.currentHp - damage);
+      actions.add(
+        BattleActionLog(
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
+          type: BattleActionType.status,
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
+          damage: damage,
+          actorHpAfter: context.actor.currentHp,
+          actorMpAfter: context.actor.currentMp,
+          message: 'status:poison',
+        ),
+      );
+    }
     return actions;
   }
 
@@ -644,6 +738,56 @@ class BattleService {
           actorMpAfter: context.actor.currentMp,
           targetHpAfter: recipient.currentHp,
           message: 'modifier:${passive.sourceId}',
+        ),
+      );
+    }
+    return actions;
+  }
+
+  List<BattleActionLog> _applyGrantStatusPassives({
+    required BattlePassiveTrigger trigger,
+    required _ActionLifecycleContext context,
+    required _BattleUnit target,
+    required _BattleUnit recipient,
+    required bool critical,
+  }) {
+    final List<BattleActionLog> actions = <BattleActionLog>[];
+    for (final BattlePassiveEffect passive in context.actor.passives) {
+      if (passive.trigger != trigger ||
+          passive.type != BattlePassiveEffectType.grantStatus ||
+          passive.statusType == null ||
+          !_passiveConditionMatches(
+            passive,
+            actor: context.actor,
+            target: target,
+            critical: critical,
+          )) {
+        continue;
+      }
+      recipient.statuses = <BattleStatusEffect>[
+        ...recipient.statuses,
+        BattleStatusEffect(
+          type: passive.statusType!,
+          sourceId: passive.sourceId,
+          remainingLifecycles: max(1, passive.durationLifecycles),
+          power: passive.value ?? 0,
+        ),
+      ];
+      actions.add(
+        BattleActionLog(
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
+          type: BattleActionType.status,
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
+          targetId: recipient.id,
+          targetName: recipient.name,
+          targetTeam: _toBattleTeam(recipient.side),
+          actorHpAfter: context.actor.currentHp,
+          actorMpAfter: context.actor.currentMp,
+          targetHpAfter: recipient.currentHp,
+          message: 'status:${passive.sourceId}',
         ),
       );
     }
