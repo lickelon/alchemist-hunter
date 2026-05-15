@@ -237,10 +237,90 @@ class BattleService {
 
     int totalDamage = 0;
     final _BattleUnit recoveryTarget = targets.first;
-    for (final _BattleUnit target in targets) {
-      _applyBeforeHitCheckHooks(context, target);
-      final bool hit = _resolveHitCheck(context, target);
-      if (!hit) {
+    if (skill?.effectType == BattleSkillEffectType.heal) {
+      actions.addAll(
+        _applyHealSkill(
+          context: context,
+          skill: skill!,
+          targets: targets,
+          mpSpent: mpSpent,
+        ),
+      );
+    } else if (skill?.effectType == BattleSkillEffectType.grantModifier) {
+      actions.addAll(
+        _applySkillModifier(
+          context: context,
+          skill: skill!,
+          targets: targets,
+          mpSpent: mpSpent,
+        ),
+      );
+    } else if (skill?.effectType == BattleSkillEffectType.grantStatus) {
+      actions.addAll(
+        _applySkillStatus(
+          context: context,
+          skill: skill!,
+          targets: targets,
+          mpSpent: mpSpent,
+        ),
+      );
+    } else if (skill?.effectType == BattleSkillEffectType.grantShield) {
+      actions.addAll(
+        _applySkillShield(
+          context: context,
+          skill: skill!,
+          targets: targets,
+          mpSpent: mpSpent,
+        ),
+      );
+    } else {
+      for (final _BattleUnit target in targets) {
+        _applyBeforeHitCheckHooks(context, target);
+        final bool hit = _resolveHitCheck(context, target);
+        if (!hit) {
+          actions.add(
+            BattleActionLog(
+              lifecycle: context.lifecycle,
+              turn: context.lifecycle,
+              type: usesSkill
+                  ? BattleActionType.skill
+                  : BattleActionType.attack,
+              actorId: context.actor.id,
+              actorName: context.actor.name,
+              actorTeam: _toBattleTeam(context.actor.side),
+              targetId: target.id,
+              targetName: target.name,
+              targetTeam: _toBattleTeam(target.side),
+              skillId: skill?.id,
+              skillName: skill?.name,
+              hit: false,
+              mpSpent: mpSpent,
+              actorHpAfter: context.actor.currentHp,
+              actorMpAfter: context.actor.currentMp,
+              targetHpAfter: target.currentHp,
+            ),
+          );
+          continue;
+        }
+        actions.addAll(_applyBeforeDamageHooks(context, target));
+        final bool critical = _BattleAttackResolver(random: _random)
+            .rollCritical(
+              attacker: context.actor,
+              defender: target,
+              potionBoost: context.potionBoost,
+            );
+        final _DamageRoll damageRoll = _resolveActionEffect(
+          context: context,
+          target: target,
+          critical: critical,
+          skill: skill,
+        );
+        final int damage = _applyActionEffect(
+          target: target,
+          damageRoll: damageRoll,
+        );
+        totalDamage += damage;
+        final int actorHpBeforeRecovery = context.actor.currentHp;
         actions.add(
           BattleActionLog(
             lifecycle: context.lifecycle,
@@ -254,72 +334,46 @@ class BattleService {
             targetTeam: _toBattleTeam(target.side),
             skillId: skill?.id,
             skillName: skill?.name,
-            hit: false,
+            school: damageRoll.school,
+            hit: true,
+            critical: critical,
+            damage: damage,
             mpSpent: mpSpent,
-            actorHpAfter: context.actor.currentHp,
+            actorHpAfter: actorHpBeforeRecovery,
             actorMpAfter: context.actor.currentMp,
             targetHpAfter: target.currentHp,
+            targetShieldAfter: target.shield,
           ),
         );
-        continue;
+        actions.addAll(
+          _applyAfterHitHooks(context, target, critical: critical),
+        );
+        onDamagedRequests = <_DerivedActionRequest>[
+          ...onDamagedRequests,
+          ..._applyOnDamagedHooks(context, target, damage: damage),
+        ];
       }
-      actions.addAll(_applyBeforeDamageHooks(context, target));
-      final bool critical = _BattleAttackResolver(random: _random).rollCritical(
-        attacker: context.actor,
-        defender: target,
-        potionBoost: context.potionBoost,
-      );
-      final _DamageRoll damageRoll = _resolveActionEffect(
-        context: context,
-        target: target,
-        critical: critical,
-        skill: skill,
-      );
-      final int damage = _applyActionEffect(
-        target: target,
-        damageRoll: damageRoll,
-      );
-      totalDamage += damage;
-      final int actorHpBeforeRecovery = context.actor.currentHp;
-      actions.add(
-        BattleActionLog(
-          lifecycle: context.lifecycle,
-          turn: context.lifecycle,
-          type: usesSkill ? BattleActionType.skill : BattleActionType.attack,
-          actorId: context.actor.id,
-          actorName: context.actor.name,
-          actorTeam: _toBattleTeam(context.actor.side),
-          targetId: target.id,
-          targetName: target.name,
-          targetTeam: _toBattleTeam(target.side),
-          skillId: skill?.id,
-          skillName: skill?.name,
-          school: damageRoll.school,
-          hit: true,
-          critical: critical,
-          damage: damage,
-          mpSpent: mpSpent,
-          actorHpAfter: actorHpBeforeRecovery,
-          actorMpAfter: context.actor.currentMp,
-          targetHpAfter: target.currentHp,
-          targetShieldAfter: target.shield,
-        ),
-      );
-      actions.addAll(_applyAfterHitHooks(context, target, critical: critical));
-      onDamagedRequests = <_DerivedActionRequest>[
-        ...onDamagedRequests,
-        ..._applyOnDamagedHooks(context, target, damage: damage),
-      ];
     }
 
-    actions.addAll(
-      _applyPostActionRecovery(
-        context: context,
-        target: recoveryTarget,
-        damage: totalDamage,
-        usesSkill: usesSkill,
-      ),
-    );
+    if (skill?.effectType == BattleSkillEffectType.damage || skill == null) {
+      actions.addAll(
+        _applyPostActionRecovery(
+          context: context,
+          target: recoveryTarget,
+          damage: totalDamage,
+          usesSkill: usesSkill,
+        ),
+      );
+    } else {
+      actions.addAll(
+        _applyPostActionRecovery(
+          context: context,
+          target: recoveryTarget,
+          damage: 0,
+          usesSkill: usesSkill,
+        ),
+      );
+    }
 
     final List<_DerivedActionRequest> derivedRequests = <_DerivedActionRequest>[
       ...onDamagedRequests,
@@ -520,6 +574,173 @@ class BattleService {
         critical: critical,
       ),
     ];
+  }
+
+  List<BattleActionLog> _applyHealSkill({
+    required _ActionLifecycleContext context,
+    required BattleSkillDefinition skill,
+    required List<_BattleUnit> targets,
+    required int mpSpent,
+  }) {
+    final List<BattleActionLog> actions = <BattleActionLog>[];
+    for (final _BattleUnit target in targets) {
+      final int healing = _resolveHealing(context.actor, skill);
+      final int previousHp = target.currentHp;
+      target.currentHp = min(target.maxHp, target.currentHp + healing);
+      final int appliedHealing = target.currentHp - previousHp;
+      actions.add(
+        BattleActionLog(
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
+          type: BattleActionType.heal,
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
+          targetId: target.id,
+          targetName: target.name,
+          targetTeam: _toBattleTeam(target.side),
+          skillId: skill.id,
+          skillName: skill.name,
+          healing: appliedHealing,
+          mpSpent: mpSpent,
+          actorHpAfter: context.actor.currentHp,
+          actorMpAfter: context.actor.currentMp,
+          targetHpAfter: target.currentHp,
+        ),
+      );
+    }
+    return actions;
+  }
+
+  List<BattleActionLog> _applySkillModifier({
+    required _ActionLifecycleContext context,
+    required BattleSkillDefinition skill,
+    required List<_BattleUnit> targets,
+    required int mpSpent,
+  }) {
+    if (skill.modifier == null) {
+      return const <BattleActionLog>[];
+    }
+    final List<BattleActionLog> actions = <BattleActionLog>[];
+    for (final _BattleUnit target in targets) {
+      target.activeModifiers = <BattleTimedModifier>[
+        ...target.activeModifiers,
+        BattleTimedModifier(
+          modifier: skill.modifier!,
+          remainingLifecycles: max(1, skill.durationLifecycles),
+        ),
+      ];
+      actions.add(
+        BattleActionLog(
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
+          type: BattleActionType.modifier,
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
+          targetId: target.id,
+          targetName: target.name,
+          targetTeam: _toBattleTeam(target.side),
+          skillId: skill.id,
+          skillName: skill.name,
+          mpSpent: mpSpent,
+          actorHpAfter: context.actor.currentHp,
+          actorMpAfter: context.actor.currentMp,
+          targetHpAfter: target.currentHp,
+          message: 'modifier:${skill.id}',
+        ),
+      );
+    }
+    return actions;
+  }
+
+  List<BattleActionLog> _applySkillStatus({
+    required _ActionLifecycleContext context,
+    required BattleSkillDefinition skill,
+    required List<_BattleUnit> targets,
+    required int mpSpent,
+  }) {
+    if (skill.statusType == null) {
+      return const <BattleActionLog>[];
+    }
+    final List<BattleActionLog> actions = <BattleActionLog>[];
+    for (final _BattleUnit target in targets) {
+      target.statuses = <BattleStatusEffect>[
+        ...target.statuses,
+        BattleStatusEffect(
+          type: skill.statusType!,
+          sourceId: skill.id,
+          remainingLifecycles: max(1, skill.durationLifecycles),
+          power: skill.flatPower,
+        ),
+      ];
+      actions.add(
+        BattleActionLog(
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
+          type: BattleActionType.status,
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
+          targetId: target.id,
+          targetName: target.name,
+          targetTeam: _toBattleTeam(target.side),
+          skillId: skill.id,
+          skillName: skill.name,
+          mpSpent: mpSpent,
+          actorHpAfter: context.actor.currentHp,
+          actorMpAfter: context.actor.currentMp,
+          targetHpAfter: target.currentHp,
+          message: 'status:${skill.id}',
+        ),
+      );
+    }
+    return actions;
+  }
+
+  List<BattleActionLog> _applySkillShield({
+    required _ActionLifecycleContext context,
+    required BattleSkillDefinition skill,
+    required List<_BattleUnit> targets,
+    required int mpSpent,
+  }) {
+    final int shield = max(skill.shieldValue, skill.flatPower);
+    if (shield <= 0) {
+      return const <BattleActionLog>[];
+    }
+    final List<BattleActionLog> actions = <BattleActionLog>[];
+    for (final _BattleUnit target in targets) {
+      target.shield += shield;
+      actions.add(
+        BattleActionLog(
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
+          type: BattleActionType.shield,
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
+          targetId: target.id,
+          targetName: target.name,
+          targetTeam: _toBattleTeam(target.side),
+          skillId: skill.id,
+          skillName: skill.name,
+          healing: shield,
+          mpSpent: mpSpent,
+          actorHpAfter: context.actor.currentHp,
+          actorMpAfter: context.actor.currentMp,
+          targetHpAfter: target.currentHp,
+          targetShieldAfter: target.shield,
+          message: 'shield:${skill.id}',
+        ),
+      );
+    }
+    return actions;
+  }
+
+  int _resolveHealing(_BattleUnit actor, BattleSkillDefinition skill) {
+    final double baseHealing =
+        (actor.stats.magicalAttack * skill.powerMultiplier) + skill.flatPower;
+    return max(1, (baseHealing * (1 + actor.stats.healingPower)).round());
   }
 
   List<_DerivedActionRequest> _applyOnDamagedHooks(
@@ -1076,7 +1297,15 @@ class BattleService {
       BattleSkillTargetType.allEnemies ||
       BattleSkillTargetType.allAllies => true,
     };
-    return supportedTarget && skill.effectType == BattleSkillEffectType.damage;
+    final bool supportedEffect = switch (skill.effectType) {
+      BattleSkillEffectType.damage => true,
+      BattleSkillEffectType.heal => true,
+      BattleSkillEffectType.grantModifier => skill.modifier != null,
+      BattleSkillEffectType.grantStatus => skill.statusType != null,
+      BattleSkillEffectType.grantShield =>
+        skill.shieldValue > 0 || skill.flatPower > 0,
+    };
+    return supportedTarget && supportedEffect;
   }
 
   Map<String, int> _tickSkillCooldowns(_BattleUnit actor) {

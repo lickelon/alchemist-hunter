@@ -73,6 +73,7 @@ void main() {
     required BattleTeam team,
     required int speed,
     int maxMp = 0,
+    int currentHp = 200,
     int currentMp = 0,
     int mpRegen = 0,
     double accuracy = 1,
@@ -80,6 +81,8 @@ void main() {
     int physicalAttack = 1,
     List<BattlePassiveEffect> passives = const <BattlePassiveEffect>[],
     List<BattleSkillDefinition> skills = const <BattleSkillDefinition>[],
+    List<BattleStatusEffect> statuses = const <BattleStatusEffect>[],
+    int shield = 0,
   }) {
     return BattleRunUnitState(
       unitId: id,
@@ -97,7 +100,9 @@ void main() {
       ),
       passives: passives,
       skills: skills,
-      currentHp: 200,
+      statuses: statuses,
+      shield: shield,
+      currentHp: currentHp,
       currentMp: currentMp,
     );
   }
@@ -861,6 +866,201 @@ void main() {
       ),
       isTrue,
     );
+  });
+
+  test('ally heal skill restores all ally targets', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_mend',
+      name: 'Mend',
+      summary: '전체 회복',
+      targetType: BattleSkillTargetType.allAllies,
+      effectType: BattleSkillEffectType.heal,
+      flatPower: 25,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'healer',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        currentHp: 150,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+      unit(id: 'wounded', team: BattleTeam.ally, speed: 10, currentHp: 120),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.heal,
+          )
+          .map((BattleActionLog action) => action.targetId),
+      <String>['healer', 'wounded'],
+    );
+    expect(result.allies.first.currentHp, 175);
+    expect(result.allies.last.currentHp, 145);
+  });
+
+  test('modifier skill grants active modifier to enemy target', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleModifier modifier = BattleModifier(
+      type: BattleModifierType.damageTaken,
+      mode: BattleModifierMode.percent,
+      value: 0.25,
+      sourceId: 'skill_weaken',
+    );
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_weaken',
+      name: 'Weaken',
+      summary: '방어 약화',
+      effectType: BattleSkillEffectType.grantModifier,
+      modifier: modifier,
+      durationLifecycles: 2,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'ally',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(result.lifecycleActions.single.type, BattleActionType.modifier);
+    expect(
+      result.encounter.enemies.single.activeModifiers.single.modifier.sourceId,
+      'skill_weaken',
+    );
+  });
+
+  test('status skill grants status to enemy target', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_poison',
+      name: 'Poison',
+      summary: '독 부여',
+      effectType: BattleSkillEffectType.grantStatus,
+      statusType: BattleStatusType.poison,
+      flatPower: 7,
+      durationLifecycles: 2,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'ally',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(result.lifecycleActions.single.type, BattleActionType.status);
+    expect(
+      result.encounter.enemies.single.statuses.single.type,
+      BattleStatusType.poison,
+    );
+    expect(result.encounter.enemies.single.statuses.single.power, 7);
+  });
+
+  test('shield skill grants shield to all ally targets', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_barrier',
+      name: 'Barrier',
+      summary: '전체 보호막',
+      targetType: BattleSkillTargetType.allAllies,
+      effectType: BattleSkillEffectType.grantShield,
+      shieldValue: 30,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'caster',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+      unit(id: 'ally', team: BattleTeam.ally, speed: 10),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.shield,
+          )
+          .map((BattleActionLog action) => action.targetId),
+      <String>['caster', 'ally'],
+    );
+    expect(result.allies.map((BattleRunUnitState ally) => ally.shield), <int>[
+      30,
+      30,
+    ]);
   });
 }
 
