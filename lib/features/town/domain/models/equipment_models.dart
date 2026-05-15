@@ -122,6 +122,9 @@ String _passiveLabel(BattlePassiveEffect passive) {
     BattlePassiveEffectType.extraAttack => '패시브: 추가 공격 +${passive.value ?? 1}회',
     BattlePassiveEffectType.firstStrike => '패시브: 선공',
     BattlePassiveEffectType.counterAttack => '패시브: 반격 +${passive.value ?? 1}회',
+    BattlePassiveEffectType.grantModifier => '패시브: 버프/디버프 부여',
+    BattlePassiveEffectType.grantStatus => '패시브: 상태이상 부여',
+    BattlePassiveEffectType.grantShield => '패시브: 보호막 부여',
   };
 }
 

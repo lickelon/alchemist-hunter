@@ -10,6 +10,17 @@ enum BattleModifierMode { flat, percent }
 
 enum DamageSchool { any, physical, magical }
 
+enum BattleStatusType { poison, stun }
+
+enum BattlePassiveConditionType {
+  always,
+  actorHpBelow,
+  actorHpAbove,
+  targetFaction,
+  targetHasStatus,
+  criticalHit,
+}
+
 enum BattleStatModifierType {
   maxHp,
   maxMp,
@@ -49,6 +60,9 @@ enum BattlePassiveEffectType {
   extraAttack,
   firstStrike,
   counterAttack,
+  grantModifier,
+  grantStatus,
+  grantShield,
 }
 
 enum BattleSkillTargetType {
@@ -59,7 +73,13 @@ enum BattleSkillTargetType {
   allAllies,
 }
 
-enum BattleSkillEffectType { damage, heal, grantModifier }
+enum BattleSkillEffectType {
+  damage,
+  heal,
+  grantModifier,
+  grantStatus,
+  grantShield,
+}
 
 @immutable
 class BattleModifier {
@@ -81,6 +101,48 @@ class BattleModifier {
 }
 
 @immutable
+class BattleTimedModifier {
+  const BattleTimedModifier({
+    required this.modifier,
+    required this.remainingLifecycles,
+  });
+
+  final BattleModifier modifier;
+  final int remainingLifecycles;
+
+  BattleTimedModifier copyWith({int? remainingLifecycles}) {
+    return BattleTimedModifier(
+      modifier: modifier,
+      remainingLifecycles: remainingLifecycles ?? this.remainingLifecycles,
+    );
+  }
+}
+
+@immutable
+class BattleStatusEffect {
+  const BattleStatusEffect({
+    required this.type,
+    required this.sourceId,
+    required this.remainingLifecycles,
+    this.power = 0,
+  });
+
+  final BattleStatusType type;
+  final String sourceId;
+  final int remainingLifecycles;
+  final int power;
+
+  BattleStatusEffect copyWith({int? remainingLifecycles}) {
+    return BattleStatusEffect(
+      type: type,
+      sourceId: sourceId,
+      remainingLifecycles: remainingLifecycles ?? this.remainingLifecycles,
+      power: power,
+    );
+  }
+}
+
+@immutable
 class BattleStatModifier {
   const BattleStatModifier({
     required this.type,
@@ -96,18 +158,41 @@ class BattleStatModifier {
 }
 
 @immutable
+class BattlePassiveCondition {
+  const BattlePassiveCondition({
+    this.type = BattlePassiveConditionType.always,
+    this.threshold = 0,
+    this.faction,
+    this.statusType,
+  });
+
+  final BattlePassiveConditionType type;
+  final double threshold;
+  final CombatFaction? faction;
+  final BattleStatusType? statusType;
+}
+
+@immutable
 class BattlePassiveEffect {
   const BattlePassiveEffect({
     required this.trigger,
     required this.type,
     required this.sourceId,
     this.value,
+    this.durationLifecycles = 1,
+    this.modifier,
+    this.statusType,
+    this.condition = const BattlePassiveCondition(),
   });
 
   final BattlePassiveTrigger trigger;
   final BattlePassiveEffectType type;
   final String sourceId;
   final int? value;
+  final int durationLifecycles;
+  final BattleModifier? modifier;
+  final BattleStatusType? statusType;
+  final BattlePassiveCondition condition;
 }
 
 @immutable
@@ -123,6 +208,10 @@ class BattleSkillDefinition {
     this.school = DamageSchool.any,
     this.powerMultiplier = 1,
     this.flatPower = 0,
+    this.durationLifecycles = 1,
+    this.modifier,
+    this.statusType,
+    this.shieldValue = 0,
   });
 
   final String id;
@@ -135,6 +224,10 @@ class BattleSkillDefinition {
   final DamageSchool school;
   final double powerMultiplier;
   final int flatPower;
+  final int durationLifecycles;
+  final BattleModifier? modifier;
+  final BattleStatusType? statusType;
+  final int shieldValue;
 }
 
 @immutable

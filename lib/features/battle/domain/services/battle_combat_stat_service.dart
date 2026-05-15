@@ -144,6 +144,9 @@ class BattleCombatStatService {
             BattlePassiveEffectType.extraAttack => 14 * (passive.value ?? 1),
             BattlePassiveEffectType.firstStrike => 8 * (passive.value ?? 1),
             BattlePassiveEffectType.counterAttack => 12 * (passive.value ?? 1),
+            BattlePassiveEffectType.grantModifier => 8,
+            BattlePassiveEffectType.grantStatus => 8,
+            BattlePassiveEffectType.grantShield => 8,
           };
     });
     return modifierPower + passivePower;

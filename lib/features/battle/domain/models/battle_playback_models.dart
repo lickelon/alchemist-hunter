@@ -6,7 +6,18 @@ const Duration battleActionInterval = Duration(seconds: 1);
 
 enum BattleTeam { ally, enemy }
 
-enum BattleActionType { attack, skill, lifesteal, regen, mpRegen }
+enum BattleActionType {
+  attack,
+  skill,
+  heal,
+  lifesteal,
+  regen,
+  mpRegen,
+  modifier,
+  status,
+  shield,
+  passive,
+}
 
 @immutable
 class BattleActionLog {
@@ -31,6 +42,8 @@ class BattleActionLog {
     this.actorHpAfter = 0,
     this.actorMpAfter = 0,
     this.targetHpAfter,
+    this.targetShieldAfter,
+    this.message,
   });
 
   final int lifecycle;
@@ -53,6 +66,8 @@ class BattleActionLog {
   final int actorHpAfter;
   final int actorMpAfter;
   final int? targetHpAfter;
+  final int? targetShieldAfter;
+  final String? message;
 }
 
 @immutable
@@ -66,6 +81,9 @@ class BattleRunUnitState {
     this.modifiers = const <BattleModifier>[],
     this.passives = const <BattlePassiveEffect>[],
     this.skills = const <BattleSkillDefinition>[],
+    this.activeModifiers = const <BattleTimedModifier>[],
+    this.statuses = const <BattleStatusEffect>[],
+    this.shield = 0,
     required this.currentHp,
     this.currentMp = 0,
     this.skillCooldowns = const <String, int>{},
@@ -79,6 +97,9 @@ class BattleRunUnitState {
   final List<BattleModifier> modifiers;
   final List<BattlePassiveEffect> passives;
   final List<BattleSkillDefinition> skills;
+  final List<BattleTimedModifier> activeModifiers;
+  final List<BattleStatusEffect> statuses;
+  final int shield;
   final int currentHp;
   final int currentMp;
   final Map<String, int> skillCooldowns;
@@ -99,6 +120,9 @@ class BattleRunUnitState {
     int? currentHp,
     int? currentMp,
     Map<String, int>? skillCooldowns,
+    List<BattleTimedModifier>? activeModifiers,
+    List<BattleStatusEffect>? statuses,
+    int? shield,
   }) {
     return BattleRunUnitState(
       unitId: unitId,
@@ -109,6 +133,9 @@ class BattleRunUnitState {
       modifiers: modifiers,
       passives: passives,
       skills: skills,
+      activeModifiers: activeModifiers ?? this.activeModifiers,
+      statuses: statuses ?? this.statuses,
+      shield: shield ?? this.shield,
       currentHp: currentHp ?? this.currentHp,
       currentMp: currentMp ?? this.currentMp,
       skillCooldowns: skillCooldowns ?? this.skillCooldowns,

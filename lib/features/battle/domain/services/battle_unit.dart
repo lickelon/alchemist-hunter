@@ -9,9 +9,12 @@ class _BattleUnit {
     required this.side,
     required this.faction,
     required this.stats,
-    required this.modifiers,
+    required this.baseModifiers,
     required this.passives,
     required this.skills,
+    required this.activeModifiers,
+    required this.statuses,
+    required this.shield,
     required this.currentHp,
     required this.currentMp,
     required this.skillCooldowns,
@@ -22,9 +25,12 @@ class _BattleUnit {
   final _BattleSide side;
   final CombatFaction faction;
   final BattleCombatStats stats;
-  final List<BattleModifier> modifiers;
+  final List<BattleModifier> baseModifiers;
   final List<BattlePassiveEffect> passives;
   final List<BattleSkillDefinition> skills;
+  List<BattleTimedModifier> activeModifiers;
+  List<BattleStatusEffect> statuses;
+  int shield;
   int currentHp;
   int currentMp;
   Map<String, int> skillCooldowns;
@@ -32,6 +38,10 @@ class _BattleUnit {
   int get maxHp => stats.maxHp;
   int get maxMp => stats.maxMp;
   bool get isAlive => currentHp > 0;
+  List<BattleModifier> get modifiers => <BattleModifier>[
+    ...baseModifiers,
+    ...activeModifiers.map((BattleTimedModifier entry) => entry.modifier),
+  ];
 }
 
 class _BattleLoopResult {
