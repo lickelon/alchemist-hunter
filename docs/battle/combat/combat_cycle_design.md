@@ -89,7 +89,7 @@
   - 추가 공격 / 반격 삽입
 
 현재 구현:
-- `extra:` 큐 마커 방식이 남아 있으나, 목표 구조에서는 제거 대상이다.
+- encounter 행동 큐에는 기본 행동자 ID만 남긴다.
 
 ### 3.5 Action Lifecycle 실행
 - 선택된 행동자가 1회 행동을 수행한다.
@@ -357,7 +357,7 @@
   - encounter 행동 큐 변경
 
 현재 구현:
-- `extraAttack`은 현재 큐 앞에 추가 행동을 넣지만, 목표 구조에서는 `resolveDerivedActionLifecycles`로 이동한다.
+- `extraAttack`은 `derived action request`를 생성하고 `resolveDerivedActionLifecycles`에서 즉시 실행한다.
 
 ### 4.15 `resolveDerivedActionLifecycles`
 - `applyAfterActionHooks`나 `applyOnDamagedHooks`에서 생성된 `derived action request`를 별도 action lifecycle로 즉시 실행한다.
@@ -382,8 +382,8 @@
   - 드롭 / 보상 계산
 
 현재 구현:
-- 아직 별도 함수로 구현되어 있지 않다.
-- 기존 `extra:` 큐 마커를 이 단계로 교체해야 한다.
+- `extraAttack` 파생 lifecycle 실행이 구현되어 있다.
+- `counterAttack`은 아직 연결되어 있지 않다.
 
 ### 4.16 `applyTurnEndHooks`
 - lifecycle의 마지막 정리 단계다.
@@ -447,13 +447,11 @@
 | 부활 | Encounter Cycle | On Defeat / 종료 판정 | 사망 결과 변경 |
 
 ## 7. 구현 우선순위
-1. action lifecycle을 4.1의 함수 단계로 분리
-2. 기존 `extra:` 큐 마커를 `resolveDerivedActionLifecycles`로 교체
-3. `beforeAction`, `beforeDamage`, `afterHit`, `onDamaged`, `turnEnd` 실행 지점 추가
-4. `counterAttack` 구현
-5. 조건부 `grantModifier` 구현
-6. 상태이상 최소 모델 추가
-7. 보스 전용 스킬 / 패턴 구현
+1. `beforeAction`, `beforeDamage`, `afterHit`, `onDamaged`, `turnEnd` 실제 효과 연결
+2. `counterAttack` 구현
+3. 조건부 `grantModifier` 구현
+4. 상태이상 최소 모델 추가
+5. 보스 전용 스킬 / 패턴 구현
 
 ## 8. 주의점
 - 모든 행동은 하나의 action lifecycle 안에서 완료되어야 한다.

@@ -87,10 +87,7 @@ class BattleService {
         enemy.unitId: _toUnit(enemy),
     };
     List<String> pendingActorIds = encounter.pendingActorIds
-        .where((String queueId) {
-          final String unitId = _queueActorId(queueId);
-          return units[unitId]?.isAlive ?? false;
-        })
+        .where((String unitId) => units[unitId]?.isAlive ?? false)
         .toList(growable: true);
     if (pendingActorIds.isEmpty) {
       pendingActorIds = List<String>.of(_buildTurnOrder(units), growable: true);
@@ -107,9 +104,7 @@ class BattleService {
       );
     }
 
-    final String queuedActorId = pendingActorIds.removeAt(0);
-    final String actorId = _queueActorId(queuedActorId);
-    final bool extraAction = _isExtraQueueActorId(queuedActorId);
+    final String actorId = pendingActorIds.removeAt(0);
     final _BattleUnit? actor = units[actorId];
     if (actor == null || !actor.isAlive) {
       return BattleEncounterStepResult(
@@ -138,37 +133,95 @@ class BattleService {
       );
     }
 
-    final _BattleUnit target = targets[_random.nextInt(targets.length)];
-    final _BattleAttackResolver attackResolver = _BattleAttackResolver(
-      random: _random,
+    final _ActionLifecycleResult lifecycleResult = _runActionLifecycle(
+      units: units,
+      actor: actor,
+      startLifecycle: encounter.turnInEncounter + 1,
+      potionBoost: potionBoost,
+      allowDerivedActions: true,
     );
-    const _BattleRecoveryResolver recoveryResolver = _BattleRecoveryResolver();
-    final int lifecycle = encounter.turnInEncounter + 1;
-    final List<BattleActionLog> actions = <BattleActionLog>[];
-    final BattleSkillDefinition? skill = _selectSkill(actor);
-    final bool usesSkill = skill != null;
-    final int mpSpent = usesSkill ? actor.currentMp : 0;
-    if (usesSkill) {
-      actor.currentMp = 0;
-      actor.skillCooldowns = _startSkillCooldowns(actor, skill);
-    } else {
-      actor.skillCooldowns = _tickSkillCooldowns(actor);
+    final List<BattleActionLog> actions = lifecycleResult.actions;
+    final bool success = _livingUnits(units, _BattleSide.enemy).isEmpty;
+    final bool wiped = _livingUnits(units, _BattleSide.ally).isEmpty;
+
+    return BattleEncounterStepResult(
+      allies: _extractUnits(units, BattleTeam.ally),
+      encounter: encounter.copyWith(
+        enemies: _extractUnits(units, BattleTeam.enemy),
+        pendingActorIds: pendingActorIds,
+        recentActionLogs: <BattleActionLog>[
+          ...encounter.recentActionLogs,
+          ...actions,
+        ],
+        turnInEncounter: max(
+          encounter.turnInEncounter,
+          lifecycleResult.nextLifecycle - 1,
+        ),
+      ),
+      ended: success || wiped,
+      success: success,
+      wiped: wiped,
+      lifecycleActions: actions,
+    );
+  }
+
+  _ActionLifecycleResult _runActionLifecycle({
+    required Map<String, _BattleUnit> units,
+    required _BattleUnit actor,
+    required int startLifecycle,
+    required int potionBoost,
+    required bool allowDerivedActions,
+  }) {
+    final _ActionLifecycleContext? context = _prepareActionContext(
+      actor: actor,
+      lifecycle: startLifecycle,
+      potionBoost: potionBoost,
+      allowDerivedActions: allowDerivedActions,
+    );
+    if (context == null) {
+      return _buildActionLifecycleResult(
+        actions: const <BattleActionLog>[],
+        nextLifecycle: startLifecycle,
+      );
     }
 
-    final bool hit = attackResolver.rollHit(
-      attacker: actor,
-      defender: target,
-      potionBoost: actor.side == _BattleSide.ally ? potionBoost : 0,
+    _applyBeforeActionHooks(context);
+    final BattleSkillDefinition? skill = _selectBaseAction(context.actor);
+    final List<_BattleUnit> targets = _selectActionTargets(
+      context.actor,
+      units,
     );
+    if (targets.isEmpty) {
+      return _buildActionLifecycleResult(
+        actions: const <BattleActionLog>[],
+        nextLifecycle: startLifecycle,
+      );
+    }
+
+    final _BattleUnit target = targets[_random.nextInt(targets.length)];
+    final bool usesSkill = skill != null;
+    final int mpSpent = usesSkill ? context.actor.currentMp : 0;
+    List<_DerivedActionRequest> onDamagedRequests =
+        const <_DerivedActionRequest>[];
+    if (usesSkill) {
+      context.actor.currentMp = 0;
+      context.actor.skillCooldowns = _startSkillCooldowns(context.actor, skill);
+    } else {
+      context.actor.skillCooldowns = _tickSkillCooldowns(context.actor);
+    }
+
+    final List<BattleActionLog> actions = <BattleActionLog>[];
+    _applyBeforeHitCheckHooks(context, target);
+    final bool hit = _resolveHitCheck(context, target);
     if (!hit) {
       actions.add(
         BattleActionLog(
-          lifecycle: lifecycle,
-          turn: lifecycle,
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
           type: usesSkill ? BattleActionType.skill : BattleActionType.attack,
-          actorId: actor.id,
-          actorName: actor.name,
-          actorTeam: _toBattleTeam(actor.side),
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
           targetId: target.id,
           targetName: target.name,
           targetTeam: _toBattleTeam(target.side),
@@ -176,38 +229,34 @@ class BattleService {
           skillName: skill?.name,
           hit: false,
           mpSpent: mpSpent,
-          actorHpAfter: actor.currentHp,
-          actorMpAfter: actor.currentMp,
+          actorHpAfter: context.actor.currentHp,
+          actorMpAfter: context.actor.currentMp,
           targetHpAfter: target.currentHp,
         ),
       );
     } else {
-      final bool critical = attackResolver.rollCritical(
-        attacker: actor,
+      _applyBeforeDamageHooks(context, target);
+      final bool critical = _BattleAttackResolver(random: _random).rollCritical(
+        attacker: context.actor,
         defender: target,
-        potionBoost: actor.side == _BattleSide.ally ? potionBoost : 0,
+        potionBoost: context.potionBoost,
       );
-      final _DamageRoll damageRoll = attackResolver.rollDamage(
-        attacker: actor,
-        defender: target,
+      final _DamageRoll damageRoll = _resolveActionEffect(
+        context: context,
+        target: target,
         critical: critical,
-        potionBoost: actor.side == _BattleSide.ally ? potionBoost : 0,
         skill: skill,
       );
-      target.currentHp = max(0, target.currentHp - damageRoll.damage);
-      final int actorHpBeforeRecovery = actor.currentHp;
-      final int lifestealHealing = recoveryResolver.applyLifesteal(
-        actor: actor,
-        damage: damageRoll.damage,
-      );
+      _applyActionEffect(target: target, damageRoll: damageRoll);
+      final int actorHpBeforeRecovery = context.actor.currentHp;
       actions.add(
         BattleActionLog(
-          lifecycle: lifecycle,
-          turn: lifecycle,
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
           type: usesSkill ? BattleActionType.skill : BattleActionType.attack,
-          actorId: actor.id,
-          actorName: actor.name,
-          actorTeam: _toBattleTeam(actor.side),
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
           targetId: target.id,
           targetName: target.name,
           targetTeam: _toBattleTeam(target.side),
@@ -219,90 +268,286 @@ class BattleService {
           damage: damageRoll.damage,
           mpSpent: mpSpent,
           actorHpAfter: actorHpBeforeRecovery,
-          actorMpAfter: actor.currentMp,
+          actorMpAfter: context.actor.currentMp,
           targetHpAfter: target.currentHp,
         ),
       );
-      if (lifestealHealing > 0) {
-        actions.add(
-          BattleActionLog(
-            lifecycle: lifecycle,
-            turn: lifecycle,
-            type: BattleActionType.lifesteal,
-            actorId: actor.id,
-            actorName: actor.name,
-            actorTeam: _toBattleTeam(actor.side),
-            targetId: target.id,
-            targetName: target.name,
-            targetTeam: _toBattleTeam(target.side),
-            healing: lifestealHealing,
-            actorHpAfter: actor.currentHp,
-            targetHpAfter: target.currentHp,
-          ),
-        );
-      }
+      _applyAfterHitHooks(context, target);
+      onDamagedRequests = _applyOnDamagedHooks(context, target);
+      actions.addAll(
+        _applyPostActionRecovery(
+          context: context,
+          target: target,
+          damage: damageRoll.damage,
+          usesSkill: usesSkill,
+        ),
+      );
     }
 
-    final int regenHealing = recoveryResolver.applyRegen(actor);
+    if (!hit) {
+      actions.addAll(
+        _applyPostActionRecovery(
+          context: context,
+          target: target,
+          damage: 0,
+          usesSkill: usesSkill,
+        ),
+      );
+    }
+
+    final List<_DerivedActionRequest> derivedRequests = <_DerivedActionRequest>[
+      ...onDamagedRequests,
+      ..._applyAfterActionHooks(
+        context,
+        encounterEnded: _encounterEnded(units),
+      ),
+    ];
+    final _ActionLifecycleResult derivedResult =
+        _resolveDerivedActionLifecycles(
+          units: units,
+          requests: derivedRequests,
+          startLifecycle: context.lifecycle + 1,
+          potionBoost: potionBoost,
+        );
+    actions.addAll(derivedResult.actions);
+    _applyTurnEndHooks(context);
+    return _buildActionLifecycleResult(
+      actions: actions,
+      nextLifecycle: derivedResult.nextLifecycle,
+    );
+  }
+
+  _ActionLifecycleContext? _prepareActionContext({
+    required _BattleUnit actor,
+    required int lifecycle,
+    required int potionBoost,
+    required bool allowDerivedActions,
+  }) {
+    if (!actor.isAlive) {
+      return null;
+    }
+    return _ActionLifecycleContext(
+      actor: actor,
+      lifecycle: lifecycle,
+      potionBoost: actor.side == _BattleSide.ally ? potionBoost : 0,
+      allowDerivedActions: allowDerivedActions,
+    );
+  }
+
+  void _applyBeforeActionHooks(_ActionLifecycleContext context) {}
+
+  BattleSkillDefinition? _selectBaseAction(_BattleUnit actor) {
+    if (!actor.isAlive || actor.maxMp <= 0 || actor.currentMp < actor.maxMp) {
+      return null;
+    }
+    final List<BattleSkillDefinition> available = actor.skills
+        .where(
+          (BattleSkillDefinition skill) =>
+              _isSupportedActiveSkill(skill) &&
+              (actor.skillCooldowns[skill.id] ?? 0) <= 0,
+        )
+        .toList(growable: false);
+    if (available.isEmpty) {
+      return null;
+    }
+    return available.reduce(
+      (BattleSkillDefinition left, BattleSkillDefinition right) =>
+          right.priority > left.priority ? right : left,
+    );
+  }
+
+  List<_BattleUnit> _selectActionTargets(
+    _BattleUnit actor,
+    Map<String, _BattleUnit> units,
+  ) {
+    return actor.side == _BattleSide.ally
+        ? _livingUnits(units, _BattleSide.enemy)
+        : _livingUnits(units, _BattleSide.ally);
+  }
+
+  void _applyBeforeHitCheckHooks(
+    _ActionLifecycleContext context,
+    _BattleUnit target,
+  ) {}
+
+  bool _resolveHitCheck(_ActionLifecycleContext context, _BattleUnit target) {
+    return _BattleAttackResolver(random: _random).rollHit(
+      attacker: context.actor,
+      defender: target,
+      potionBoost: context.potionBoost,
+    );
+  }
+
+  void _applyBeforeDamageHooks(
+    _ActionLifecycleContext context,
+    _BattleUnit target,
+  ) {}
+
+  _DamageRoll _resolveActionEffect({
+    required _ActionLifecycleContext context,
+    required _BattleUnit target,
+    required bool critical,
+    BattleSkillDefinition? skill,
+  }) {
+    return _BattleAttackResolver(random: _random).rollDamage(
+      attacker: context.actor,
+      defender: target,
+      critical: critical,
+      potionBoost: context.potionBoost,
+      skill: skill,
+    );
+  }
+
+  void _applyActionEffect({
+    required _BattleUnit target,
+    required _DamageRoll damageRoll,
+  }) {
+    target.currentHp = max(0, target.currentHp - damageRoll.damage);
+  }
+
+  void _applyAfterHitHooks(
+    _ActionLifecycleContext context,
+    _BattleUnit target,
+  ) {}
+
+  List<_DerivedActionRequest> _applyOnDamagedHooks(
+    _ActionLifecycleContext context,
+    _BattleUnit target,
+  ) {
+    return const <_DerivedActionRequest>[];
+  }
+
+  List<BattleActionLog> _applyPostActionRecovery({
+    required _ActionLifecycleContext context,
+    required _BattleUnit target,
+    required int damage,
+    required bool usesSkill,
+  }) {
+    const _BattleRecoveryResolver recoveryResolver = _BattleRecoveryResolver();
+    final List<BattleActionLog> actions = <BattleActionLog>[];
+    final int lifestealHealing = recoveryResolver.applyLifesteal(
+      actor: context.actor,
+      damage: damage,
+    );
+    if (lifestealHealing > 0) {
+      actions.add(
+        BattleActionLog(
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
+          type: BattleActionType.lifesteal,
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
+          targetId: target.id,
+          targetName: target.name,
+          targetTeam: _toBattleTeam(target.side),
+          healing: lifestealHealing,
+          actorHpAfter: context.actor.currentHp,
+          targetHpAfter: target.currentHp,
+        ),
+      );
+    }
+
+    final int regenHealing = recoveryResolver.applyRegen(context.actor);
     if (regenHealing > 0) {
       actions.add(
         BattleActionLog(
-          lifecycle: lifecycle,
-          turn: lifecycle,
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
           type: BattleActionType.regen,
-          actorId: actor.id,
-          actorName: actor.name,
-          actorTeam: _toBattleTeam(actor.side),
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
           healing: regenHealing,
-          actorHpAfter: actor.currentHp,
+          actorHpAfter: context.actor.currentHp,
         ),
       );
     }
-    final int mpRegen = usesSkill ? 0 : recoveryResolver.applyMpRegen(actor);
+    final int mpRegen = usesSkill
+        ? 0
+        : recoveryResolver.applyMpRegen(context.actor);
     if (mpRegen > 0) {
       actions.add(
         BattleActionLog(
-          lifecycle: lifecycle,
-          turn: lifecycle,
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
           type: BattleActionType.mpRegen,
-          actorId: actor.id,
-          actorName: actor.name,
-          actorTeam: _toBattleTeam(actor.side),
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
           healing: mpRegen,
-          actorHpAfter: actor.currentHp,
-          actorMpAfter: actor.currentMp,
+          actorHpAfter: context.actor.currentHp,
+          actorMpAfter: context.actor.currentMp,
         ),
       );
     }
+    return actions;
+  }
 
-    final bool success = _livingUnits(units, _BattleSide.enemy).isEmpty;
-    final bool wiped = _livingUnits(units, _BattleSide.ally).isEmpty;
-    final int extraAttackCount = success || wiped || extraAction
-        ? 0
-        : _BattleModifierResolver.extraAttackCount(actor);
-    if (extraAttackCount > 0 && actor.isAlive) {
-      pendingActorIds = <String>[
-        ...List<String>.filled(extraAttackCount, _extraQueueActorId(actor.id)),
-        ...pendingActorIds,
-      ];
+  List<_DerivedActionRequest> _applyAfterActionHooks(
+    _ActionLifecycleContext context, {
+    required bool encounterEnded,
+  }) {
+    if (!context.allowDerivedActions ||
+        encounterEnded ||
+        !context.actor.isAlive) {
+      return const <_DerivedActionRequest>[];
     }
-
-    return BattleEncounterStepResult(
-      allies: _extractUnits(units, BattleTeam.ally),
-      encounter: encounter.copyWith(
-        enemies: _extractUnits(units, BattleTeam.enemy),
-        pendingActorIds: pendingActorIds,
-        recentActionLogs: <BattleActionLog>[
-          ...encounter.recentActionLogs,
-          ...actions,
-        ],
-        turnInEncounter: lifecycle,
-      ),
-      ended: success || wiped,
-      success: success,
-      wiped: wiped,
-      lifecycleActions: actions,
+    final int extraAttackCount = _BattleModifierResolver.extraAttackCount(
+      context.actor,
     );
+    if (extraAttackCount <= 0) {
+      return const <_DerivedActionRequest>[];
+    }
+    return List<_DerivedActionRequest>.filled(
+      extraAttackCount,
+      _DerivedActionRequest(actor: context.actor),
+    );
+  }
+
+  _ActionLifecycleResult _resolveDerivedActionLifecycles({
+    required Map<String, _BattleUnit> units,
+    required List<_DerivedActionRequest> requests,
+    required int startLifecycle,
+    required int potionBoost,
+  }) {
+    final List<BattleActionLog> actions = <BattleActionLog>[];
+    int nextLifecycle = startLifecycle;
+    for (final _DerivedActionRequest request in requests) {
+      if (_encounterEnded(units) || !request.actor.isAlive) {
+        break;
+      }
+      final _ActionLifecycleResult result = _runActionLifecycle(
+        units: units,
+        actor: request.actor,
+        startLifecycle: nextLifecycle,
+        potionBoost: potionBoost,
+        allowDerivedActions: false,
+      );
+      actions.addAll(result.actions);
+      nextLifecycle = result.nextLifecycle;
+    }
+    return _buildActionLifecycleResult(
+      actions: actions,
+      nextLifecycle: nextLifecycle,
+    );
+  }
+
+  void _applyTurnEndHooks(_ActionLifecycleContext context) {}
+
+  _ActionLifecycleResult _buildActionLifecycleResult({
+    required List<BattleActionLog> actions,
+    required int nextLifecycle,
+  }) {
+    return _ActionLifecycleResult(
+      actions: actions,
+      nextLifecycle: nextLifecycle,
+    );
+  }
+
+  bool _encounterEnded(Map<String, _BattleUnit> units) {
+    return _livingUnits(units, _BattleSide.enemy).isEmpty ||
+        _livingUnits(units, _BattleSide.ally).isEmpty;
   }
 
   BattleEncounterOutcome runEncounterToCompletion({
@@ -429,34 +674,6 @@ class BattleService {
     return living.map((_BattleUnit unit) => unit.id).toList(growable: false);
   }
 
-  bool _isExtraQueueActorId(String queueId) => queueId.startsWith('extra:');
-
-  String _queueActorId(String queueId) {
-    return _isExtraQueueActorId(queueId) ? queueId.substring(6) : queueId;
-  }
-
-  String _extraQueueActorId(String actorId) => 'extra:$actorId';
-
-  BattleSkillDefinition? _selectSkill(_BattleUnit actor) {
-    if (!actor.isAlive || actor.maxMp <= 0 || actor.currentMp < actor.maxMp) {
-      return null;
-    }
-    final List<BattleSkillDefinition> available = actor.skills
-        .where(
-          (BattleSkillDefinition skill) =>
-              _isSupportedActiveSkill(skill) &&
-              (actor.skillCooldowns[skill.id] ?? 0) <= 0,
-        )
-        .toList(growable: false);
-    if (available.isEmpty) {
-      return null;
-    }
-    return available.reduce(
-      (BattleSkillDefinition left, BattleSkillDefinition right) =>
-          right.priority > left.priority ? right : left,
-    );
-  }
-
   bool _isSupportedActiveSkill(BattleSkillDefinition skill) {
     return skill.effectType == BattleSkillEffectType.damage &&
         skill.targetType == BattleSkillTargetType.randomEnemy;
@@ -495,6 +712,36 @@ class BattleService {
         .where((_BattleUnit unit) => unit.side == side && unit.isAlive)
         .toList(growable: false);
   }
+}
+
+class _ActionLifecycleContext {
+  const _ActionLifecycleContext({
+    required this.actor,
+    required this.lifecycle,
+    required this.potionBoost,
+    required this.allowDerivedActions,
+  });
+
+  final _BattleUnit actor;
+  final int lifecycle;
+  final int potionBoost;
+  final bool allowDerivedActions;
+}
+
+class _ActionLifecycleResult {
+  const _ActionLifecycleResult({
+    required this.actions,
+    required this.nextLifecycle,
+  });
+
+  final List<BattleActionLog> actions;
+  final int nextLifecycle;
+}
+
+class _DerivedActionRequest {
+  const _DerivedActionRequest({required this.actor});
+
+  final _BattleUnit actor;
 }
 
 class BattleEncounterStepResult {

@@ -98,7 +98,7 @@ class BattlePassiveEffect {
 
 ### 4.0 현재 구현 상태
 - `BattlePassiveTrigger` 모델은 `battleStart`, `beforeAction`, `beforeHitCheck`, `beforeDamage`, `afterHit`, `afterAction`, `turnEnd`, `onDamaged`, `onDefeat`를 가진다.
-- 현재 실제 효과가 연결된 훅은 `beforeHitCheck`의 `alwaysHit`, `afterAction`의 `extraAttack`이다.
+- 현재 실제 효과가 연결된 훅은 `beforeHitCheck`의 `alwaysHit`, `afterAction`의 `extraAttack` 파생 lifecycle 실행이다.
 - 나머지 훅은 후속 `counterAttack`, 조건부 modifier, 상태이상 구현을 위한 예약 지점이다.
 
 ### 4.1 초기 필수 훅

@@ -376,15 +376,25 @@ void main() {
       encounter: first.encounter,
       potionBoost: 0,
     );
-    final BattleEncounterStepResult third = service.runEncounterStep(
-      allies: second.allies,
-      encounter: second.encounter,
-      potionBoost: 0,
-    );
 
-    expect(first.lifecycleActions.single.actorId, 'enemy_stalker');
-    expect(second.lifecycleActions.single.actorId, 'enemy_stalker');
-    expect(third.lifecycleActions.single.actorId, 'enemy_other');
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.actorId),
+      <String>['enemy_stalker', 'enemy_stalker'],
+    );
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.lifecycle),
+      <int>[1, 2],
+    );
+    expect(first.encounter.pendingActorIds, <String>['enemy_other', 'ally']);
+    expect(second.lifecycleActions.single.actorId, 'enemy_other');
   });
 
   test('always hit only applies on before hit check trigger', () {
