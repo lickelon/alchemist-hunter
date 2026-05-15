@@ -44,6 +44,7 @@
 
 #### `test/features/battle/data/catalogs/battle_tables_test.dart`
 - stage별 적 카탈로그에 실제 실행 가능한 액티브 스킬이 배치되어 있고, 스킬을 가진 적이 `최대MP`와 `MP재생`을 함께 갖는지 확인한다.
+- stage별 encounter 풀이 최소 4개 이상이고, 실제 등장 가능한 적 종류가 최소 5종 이상이며, encounter 확률 합계가 1.0으로 유지되는지 확인한다.
 - 적 액티브 스킬 카탈로그가 피해, 회복, modifier 부여, 상태이상 부여, 보호막 부여 역할과 주요 target type을 모두 포함하는지 검증한다.
 
 #### `test/features/battle/domain/services/battle_party_power_service_test.dart`

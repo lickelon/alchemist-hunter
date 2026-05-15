@@ -28,6 +28,38 @@ void main() {
     }
   });
 
+  test('stage enemy catalog keeps diversified encounter pools', () {
+    for (final String stageId in <String>[
+      'stage_1',
+      'stage_2',
+      'stage_3',
+      'stage_4',
+      'stage_5',
+    ]) {
+      final BattleStageDefinition stage = repository.stageDefinition(stageId);
+      final Set<String> enemyIds = repository
+          .enemyDefinitionsForStage(stageId)
+          .map((BattleEnemyDefinition enemy) => enemy.id)
+          .toSet();
+      final double totalChance = stage.encounters.fold<double>(
+        0,
+        (double total, BattleStageEncounterDefinition encounter) =>
+            total + encounter.chance,
+      );
+
+      expect(stage.encounters.length, greaterThanOrEqualTo(4), reason: stageId);
+      expect(enemyIds.length, greaterThanOrEqualTo(5), reason: stageId);
+      expect(totalChance, closeTo(1, 0.001), reason: stageId);
+      for (final BattleStageEncounterDefinition encounter in stage.encounters) {
+        expect(
+          repository.enemyDefinitionsForSet(encounter.enemySetId),
+          isNotEmpty,
+          reason: encounter.id,
+        );
+      }
+    }
+  });
+
   test('enemy active skills cover damage support status and shield roles', () {
     final List<BattleEnemyDefinition> enemies = <String>[
       'stage_1',
