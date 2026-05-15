@@ -47,7 +47,11 @@ void main() {
             total + encounter.chance,
       );
 
-      expect(stage.encounters.length, greaterThanOrEqualTo(4), reason: stageId);
+      expect(
+        stage.encounters.length,
+        greaterThanOrEqualTo(10),
+        reason: stageId,
+      );
       expect(enemyIds.length, greaterThanOrEqualTo(5), reason: stageId);
       expect(totalChance, closeTo(1, 0.001), reason: stageId);
       for (final BattleStageEncounterDefinition encounter in stage.encounters) {
