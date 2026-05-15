@@ -215,6 +215,7 @@ class BattleService {
     final List<_BattleUnit> targets = _selectActionTargets(
       context.actor,
       units,
+      skill,
     );
     if (targets.isEmpty) {
       return _buildActionLifecycleResult(
@@ -223,7 +224,6 @@ class BattleService {
       );
     }
 
-    final _BattleUnit target = targets[_random.nextInt(targets.length)];
     final bool usesSkill = skill != null;
     final int mpSpent = usesSkill ? context.actor.currentMp : 0;
     List<_DerivedActionRequest> onDamagedRequests =
@@ -235,30 +235,34 @@ class BattleService {
       context.actor.skillCooldowns = _tickSkillCooldowns(context.actor);
     }
 
-    _applyBeforeHitCheckHooks(context, target);
-    final bool hit = _resolveHitCheck(context, target);
-    if (!hit) {
-      actions.add(
-        BattleActionLog(
-          lifecycle: context.lifecycle,
-          turn: context.lifecycle,
-          type: usesSkill ? BattleActionType.skill : BattleActionType.attack,
-          actorId: context.actor.id,
-          actorName: context.actor.name,
-          actorTeam: _toBattleTeam(context.actor.side),
-          targetId: target.id,
-          targetName: target.name,
-          targetTeam: _toBattleTeam(target.side),
-          skillId: skill?.id,
-          skillName: skill?.name,
-          hit: false,
-          mpSpent: mpSpent,
-          actorHpAfter: context.actor.currentHp,
-          actorMpAfter: context.actor.currentMp,
-          targetHpAfter: target.currentHp,
-        ),
-      );
-    } else {
+    int totalDamage = 0;
+    final _BattleUnit recoveryTarget = targets.first;
+    for (final _BattleUnit target in targets) {
+      _applyBeforeHitCheckHooks(context, target);
+      final bool hit = _resolveHitCheck(context, target);
+      if (!hit) {
+        actions.add(
+          BattleActionLog(
+            lifecycle: context.lifecycle,
+            turn: context.lifecycle,
+            type: usesSkill ? BattleActionType.skill : BattleActionType.attack,
+            actorId: context.actor.id,
+            actorName: context.actor.name,
+            actorTeam: _toBattleTeam(context.actor.side),
+            targetId: target.id,
+            targetName: target.name,
+            targetTeam: _toBattleTeam(target.side),
+            skillId: skill?.id,
+            skillName: skill?.name,
+            hit: false,
+            mpSpent: mpSpent,
+            actorHpAfter: context.actor.currentHp,
+            actorMpAfter: context.actor.currentMp,
+            targetHpAfter: target.currentHp,
+          ),
+        );
+        continue;
+      }
       actions.addAll(_applyBeforeDamageHooks(context, target));
       final bool critical = _BattleAttackResolver(random: _random).rollCritical(
         attacker: context.actor,
@@ -275,6 +279,7 @@ class BattleService {
         target: target,
         damageRoll: damageRoll,
       );
+      totalDamage += damage;
       final int actorHpBeforeRecovery = context.actor.currentHp;
       actions.add(
         BattleActionLog(
@@ -301,27 +306,20 @@ class BattleService {
         ),
       );
       actions.addAll(_applyAfterHitHooks(context, target, critical: critical));
-      onDamagedRequests = _applyOnDamagedHooks(context, target, damage: damage);
-      actions.addAll(
-        _applyPostActionRecovery(
-          context: context,
-          target: target,
-          damage: damage,
-          usesSkill: usesSkill,
-        ),
-      );
+      onDamagedRequests = <_DerivedActionRequest>[
+        ...onDamagedRequests,
+        ..._applyOnDamagedHooks(context, target, damage: damage),
+      ];
     }
 
-    if (!hit) {
-      actions.addAll(
-        _applyPostActionRecovery(
-          context: context,
-          target: target,
-          damage: 0,
-          usesSkill: usesSkill,
-        ),
-      );
-    }
+    actions.addAll(
+      _applyPostActionRecovery(
+        context: context,
+        target: recoveryTarget,
+        damage: totalDamage,
+        usesSkill: usesSkill,
+      ),
+    );
 
     final List<_DerivedActionRequest> derivedRequests = <_DerivedActionRequest>[
       ...onDamagedRequests,
@@ -413,10 +411,33 @@ class BattleService {
   List<_BattleUnit> _selectActionTargets(
     _BattleUnit actor,
     Map<String, _BattleUnit> units,
+    BattleSkillDefinition? skill,
   ) {
-    return actor.side == _BattleSide.ally
+    final List<_BattleUnit> enemies = actor.side == _BattleSide.ally
         ? _livingUnits(units, _BattleSide.enemy)
         : _livingUnits(units, _BattleSide.ally);
+    final List<_BattleUnit> allies = actor.side == _BattleSide.ally
+        ? _livingUnits(units, _BattleSide.ally)
+        : _livingUnits(units, _BattleSide.enemy);
+    if (skill == null) {
+      if (enemies.isEmpty) {
+        return const <_BattleUnit>[];
+      }
+      return <_BattleUnit>[enemies[_random.nextInt(enemies.length)]];
+    }
+    return switch (skill.targetType) {
+      BattleSkillTargetType.randomEnemy =>
+        enemies.isEmpty
+            ? const <_BattleUnit>[]
+            : <_BattleUnit>[enemies[_random.nextInt(enemies.length)]],
+      BattleSkillTargetType.self => <_BattleUnit>[actor],
+      BattleSkillTargetType.randomAlly =>
+        allies.isEmpty
+            ? const <_BattleUnit>[]
+            : <_BattleUnit>[allies[_random.nextInt(allies.length)]],
+      BattleSkillTargetType.allEnemies => enemies,
+      BattleSkillTargetType.allAllies => allies,
+    };
   }
 
   void _applyBeforeHitCheckHooks(
@@ -1048,8 +1069,14 @@ class BattleService {
   }
 
   bool _isSupportedActiveSkill(BattleSkillDefinition skill) {
-    return skill.effectType == BattleSkillEffectType.damage &&
-        skill.targetType == BattleSkillTargetType.randomEnemy;
+    final bool supportedTarget = switch (skill.targetType) {
+      BattleSkillTargetType.randomEnemy ||
+      BattleSkillTargetType.self ||
+      BattleSkillTargetType.randomAlly ||
+      BattleSkillTargetType.allEnemies ||
+      BattleSkillTargetType.allAllies => true,
+    };
+    return supportedTarget && skill.effectType == BattleSkillEffectType.damage;
   }
 
   Map<String, int> _tickSkillCooldowns(_BattleUnit actor) {

@@ -808,6 +808,60 @@ void main() {
       isFalse,
     );
   });
+
+  test('area damage skill hits all enemies in one lifecycle', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_sweep',
+      name: 'Sweep',
+      summary: '전체 공격',
+      targetType: BattleSkillTargetType.allEnemies,
+      effectType: BattleSkillEffectType.damage,
+      powerMultiplier: 1.5,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy_a', team: BattleTeam.enemy, speed: 1),
+        unit(id: 'enemy_b', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'ally',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        physicalAttack: 40,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.skill,
+          )
+          .map((BattleActionLog action) => action.targetId),
+      <String>['enemy_a', 'enemy_b'],
+    );
+    expect(
+      result.encounter.enemies.every(
+        (BattleRunUnitState enemy) => enemy.currentHp < 200,
+      ),
+      isTrue,
+    );
+  });
 }
 
 class _FixedRandom implements Random {
