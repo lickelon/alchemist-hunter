@@ -271,7 +271,10 @@ class BattleService {
         critical: critical,
         skill: skill,
       );
-      _applyActionEffect(target: target, damageRoll: damageRoll);
+      final int damage = _applyActionEffect(
+        target: target,
+        damageRoll: damageRoll,
+      );
       final int actorHpBeforeRecovery = context.actor.currentHp;
       actions.add(
         BattleActionLog(
@@ -289,24 +292,21 @@ class BattleService {
           school: damageRoll.school,
           hit: true,
           critical: critical,
-          damage: damageRoll.damage,
+          damage: damage,
           mpSpent: mpSpent,
           actorHpAfter: actorHpBeforeRecovery,
           actorMpAfter: context.actor.currentMp,
           targetHpAfter: target.currentHp,
+          targetShieldAfter: target.shield,
         ),
       );
       actions.addAll(_applyAfterHitHooks(context, target, critical: critical));
-      onDamagedRequests = _applyOnDamagedHooks(
-        context,
-        target,
-        damage: damageRoll.damage,
-      );
+      onDamagedRequests = _applyOnDamagedHooks(context, target, damage: damage);
       actions.addAll(
         _applyPostActionRecovery(
           context: context,
           target: target,
-          damage: damageRoll.damage,
+          damage: damage,
           usesSkill: usesSkill,
         ),
       );
@@ -374,6 +374,13 @@ class BattleService {
         critical: false,
       ),
       ..._applyGrantStatusPassives(
+        trigger: BattlePassiveTrigger.beforeAction,
+        context: context,
+        target: context.actor,
+        recipient: context.actor,
+        critical: false,
+      ),
+      ..._applyGrantShieldPassives(
         trigger: BattlePassiveTrigger.beforeAction,
         context: context,
         target: context.actor,
@@ -453,11 +460,15 @@ class BattleService {
     );
   }
 
-  void _applyActionEffect({
+  int _applyActionEffect({
     required _BattleUnit target,
     required _DamageRoll damageRoll,
   }) {
-    target.currentHp = max(0, target.currentHp - damageRoll.damage);
+    final int blocked = min(target.shield, damageRoll.damage);
+    target.shield -= blocked;
+    final int hpDamage = damageRoll.damage - blocked;
+    target.currentHp = max(0, target.currentHp - hpDamage);
+    return hpDamage;
   }
 
   List<BattleActionLog> _applyAfterHitHooks(
@@ -478,6 +489,13 @@ class BattleService {
         context: context,
         target: target,
         recipient: target,
+        critical: critical,
+      ),
+      ..._applyGrantShieldPassives(
+        trigger: BattlePassiveTrigger.afterHit,
+        context: context,
+        target: target,
+        recipient: context.actor,
         critical: critical,
       ),
     ];
@@ -659,6 +677,15 @@ class BattleService {
         critical: false,
       ),
     );
+    actions.addAll(
+      _applyGrantShieldPassives(
+        trigger: BattlePassiveTrigger.turnEnd,
+        context: context,
+        target: context.actor,
+        recipient: context.actor,
+        critical: false,
+      ),
+    );
     return actions;
   }
 
@@ -788,6 +815,50 @@ class BattleService {
           actorMpAfter: context.actor.currentMp,
           targetHpAfter: recipient.currentHp,
           message: 'status:${passive.sourceId}',
+        ),
+      );
+    }
+    return actions;
+  }
+
+  List<BattleActionLog> _applyGrantShieldPassives({
+    required BattlePassiveTrigger trigger,
+    required _ActionLifecycleContext context,
+    required _BattleUnit target,
+    required _BattleUnit recipient,
+    required bool critical,
+  }) {
+    final List<BattleActionLog> actions = <BattleActionLog>[];
+    for (final BattlePassiveEffect passive in context.actor.passives) {
+      if (passive.trigger != trigger ||
+          passive.type != BattlePassiveEffectType.grantShield ||
+          (passive.value ?? 0) <= 0 ||
+          !_passiveConditionMatches(
+            passive,
+            actor: context.actor,
+            target: target,
+            critical: critical,
+          )) {
+        continue;
+      }
+      recipient.shield += passive.value ?? 0;
+      actions.add(
+        BattleActionLog(
+          lifecycle: context.lifecycle,
+          turn: context.lifecycle,
+          type: BattleActionType.shield,
+          actorId: context.actor.id,
+          actorName: context.actor.name,
+          actorTeam: _toBattleTeam(context.actor.side),
+          targetId: recipient.id,
+          targetName: recipient.name,
+          targetTeam: _toBattleTeam(recipient.side),
+          healing: passive.value ?? 0,
+          actorHpAfter: context.actor.currentHp,
+          actorMpAfter: context.actor.currentMp,
+          targetHpAfter: recipient.currentHp,
+          targetShieldAfter: recipient.shield,
+          message: 'shield:${passive.sourceId}',
         ),
       );
     }

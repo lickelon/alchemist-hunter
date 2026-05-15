@@ -627,6 +627,50 @@ void main() {
     expect(second.encounter.enemies.single.statuses, isEmpty);
   });
 
+  test('shield passive absorbs incoming hp damage before health', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(
+          id: 'enemy_guard',
+          team: BattleTeam.enemy,
+          speed: 20,
+          passives: const <BattlePassiveEffect>[
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.beforeAction,
+              type: BattlePassiveEffectType.grantShield,
+              sourceId: 'guard',
+              value: 50,
+            ),
+          ],
+        ),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(id: 'ally', team: BattleTeam.ally, speed: 10, physicalAttack: 40),
+    ];
+
+    final BattleEncounterStepResult first = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult second = service.runEncounterStep(
+      allies: first.allies,
+      encounter: first.encounter,
+      potionBoost: 0,
+    );
+
+    expect(first.encounter.enemies.single.shield, greaterThan(0));
+    expect(second.lifecycleActions.single.damage, 0);
+    expect(second.encounter.enemies.single.currentHp, 200);
+    expect(second.encounter.enemies.single.shield, lessThan(50));
+  });
+
   test('always hit only applies on before hit check trigger', () {
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
