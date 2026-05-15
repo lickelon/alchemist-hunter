@@ -142,6 +142,7 @@ class BattleCombatStatService {
           switch (passive.type) {
             BattlePassiveEffectType.alwaysHit => 10,
             BattlePassiveEffectType.extraAttack => 14 * (passive.value ?? 1),
+            BattlePassiveEffectType.firstStrike => 8 * (passive.value ?? 1),
             BattlePassiveEffectType.counterAttack => 12 * (passive.value ?? 1),
           };
     });

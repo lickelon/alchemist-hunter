@@ -90,7 +90,10 @@ class BattleService {
         .where((String unitId) => units[unitId]?.isAlive ?? false)
         .toList(growable: true);
     if (pendingActorIds.isEmpty) {
-      pendingActorIds = List<String>.of(_buildTurnOrder(units), growable: true);
+      pendingActorIds = List<String>.of(
+        _buildTurnOrder(units, firstTurn: encounter.turnInEncounter == 0),
+        growable: true,
+      );
     }
     if (pendingActorIds.isEmpty) {
       return BattleEncounterStepResult(
@@ -671,12 +674,24 @@ class BattleService {
         .toList(growable: false);
   }
 
-  List<String> _buildTurnOrder(Map<String, _BattleUnit> units) {
+  List<String> _buildTurnOrder(
+    Map<String, _BattleUnit> units, {
+    required bool firstTurn,
+  }) {
     final List<_BattleUnit> living =
         units.values
             .where((_BattleUnit unit) => unit.isAlive)
             .toList(growable: false)
           ..sort((_BattleUnit left, _BattleUnit right) {
+            if (firstTurn) {
+              final int firstStrikeCompare =
+                  _BattleModifierResolver.firstStrikePriority(right).compareTo(
+                    _BattleModifierResolver.firstStrikePriority(left),
+                  );
+              if (firstStrikeCompare != 0) {
+                return firstStrikeCompare;
+              }
+            }
             final int speedCompare = right.stats.speed.compareTo(
               left.stats.speed,
             );

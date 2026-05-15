@@ -37,6 +37,18 @@ class _BattleModifierResolver {
         });
   }
 
+  static int firstStrikePriority(_BattleUnit unit) {
+    return unit.passives
+        .where(
+          (BattlePassiveEffect passive) =>
+              passive.type == BattlePassiveEffectType.firstStrike &&
+              passive.trigger == BattlePassiveTrigger.battleStart,
+        )
+        .fold<int>(0, (int total, BattlePassiveEffect passive) {
+          return total + (passive.value ?? 1);
+        });
+  }
+
   static double percentModifierTotal(
     _BattleUnit unit,
     BattleModifierType type, {

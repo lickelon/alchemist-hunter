@@ -180,6 +180,7 @@ String _combatPassiveLabel(BattlePassiveEffect passive) {
   return switch (passive.type) {
     BattlePassiveEffectType.alwaysHit => '패시브: 필중',
     BattlePassiveEffectType.extraAttack => '패시브: 추가 공격 +${passive.value ?? 1}회',
+    BattlePassiveEffectType.firstStrike => '패시브: 선공',
     BattlePassiveEffectType.counterAttack => '패시브: 반격 +${passive.value ?? 1}회',
   };
 }

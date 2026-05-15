@@ -455,6 +455,53 @@ void main() {
     expect(second.lifecycleActions.single.actorId, 'enemy_counter');
   });
 
+  test('first strike only changes initial encounter turn order', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy_fast', team: BattleTeam.enemy, speed: 30),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'ally_slow',
+        team: BattleTeam.ally,
+        speed: 1,
+        passives: const <BattlePassiveEffect>[
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.battleStart,
+            type: BattlePassiveEffectType.firstStrike,
+            sourceId: 'opening_move',
+          ),
+        ],
+      ),
+    ];
+
+    final BattleEncounterStepResult first = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult second = service.runEncounterStep(
+      allies: first.allies,
+      encounter: first.encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult third = service.runEncounterStep(
+      allies: second.allies,
+      encounter: second.encounter,
+      potionBoost: 0,
+    );
+
+    expect(first.lifecycleActions.single.actorId, 'ally_slow');
+    expect(second.lifecycleActions.single.actorId, 'enemy_fast');
+    expect(third.lifecycleActions.single.actorId, 'enemy_fast');
+  });
+
   test('always hit only applies on before hit check trigger', () {
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
