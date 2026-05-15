@@ -7,8 +7,8 @@
 
 ## 2. 현재 규모
 - 기준 시점: 2026-05-14
-- 테스트 파일: 47개
-- 테스트 케이스: 133개
+- 테스트 파일: 48개
+- 테스트 케이스: 135개
 
 ## 3. 영역별 분포
 
@@ -17,7 +17,7 @@
 | `app` | 1 | 3 | 세션 sync와 시간 가속 |
 | `architecture` | 1 | 1 | import 경계 유지 |
 | `core` | 1 | 2 | 세션 상태 적용과 로그 처리 |
-| `features/battle` | 9 | 45 | 전투 계산, 해금, 자동전투, 편성 UI |
+| `features/battle` | 10 | 47 | 전투 계산, 해금, 자동전투, 편성 UI |
 | `features/characters` | 4 | 11 | 장비 장착, 승급, 힌트/상세 시트 |
 | `features/town` | 10 | 23 | 상점, 장비 제작, 용병 고용, 마을 스킬트리 |
 | `features/workshop` | 20 | 47 | 큐, 추출, 포션, 인챈트, 부화, 작업실 스킬트리 |
@@ -41,6 +41,10 @@
 - 같은 로그가 연속으로 들어올 때 중복 추가를 막는지 확인한다.
 
 ### 4.2 Battle
+
+#### `test/features/battle/data/catalogs/battle_tables_test.dart`
+- stage별 적 카탈로그에 실제 실행 가능한 액티브 스킬이 배치되어 있고, 스킬을 가진 적이 `최대MP`와 `MP재생`을 함께 갖는지 확인한다.
+- 적 액티브 스킬 카탈로그가 피해, 회복, modifier 부여, 상태이상 부여, 보호막 부여 역할과 주요 target type을 모두 포함하는지 검증한다.
 
 #### `test/features/battle/domain/services/battle_party_power_service_test.dart`
 - 장비 기본 스탯이 파티 전투력 합산에 반영되는지 검증한다.

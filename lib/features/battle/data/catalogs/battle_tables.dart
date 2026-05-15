@@ -9,6 +9,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '잔해를 주워 버티는 전열형',
         stats: BattleCombatStats(
           maxHp: 46,
+          maxMp: 6,
           physicalAttack: 10,
           physicalDefense: 9,
           magicalAttack: 4,
@@ -25,6 +26,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0,
           regen: 0.01,
+          mpRegen: 2,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -32,6 +34,16 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             mode: BattleModifierMode.percent,
             value: -0.05,
             sourceId: 'enemy_scavenger_hide',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_scavenger_scrap_guard',
+            name: 'Scrap Guard',
+            summary: '잔해를 끌어모아 자신에게 보호막을 부여한다.',
+            targetType: BattleSkillTargetType.self,
+            effectType: BattleSkillEffectType.grantShield,
+            shieldValue: 12,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -45,6 +57,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '희귀 촉매를 품은 부유체',
         stats: BattleCombatStats(
           maxHp: 38,
+          maxMp: 6,
           physicalAttack: 4,
           physicalDefense: 5,
           magicalAttack: 12,
@@ -61,7 +74,18 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0.02,
           regen: 0.01,
+          mpRegen: 3,
         ),
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_wisp_lunar_mend',
+            name: 'Lunar Mend',
+            summary: '달빛 촉매로 모든 아군을 회복한다.',
+            targetType: BattleSkillTargetType.allAllies,
+            effectType: BattleSkillEffectType.heal,
+            flatPower: 10,
+          ),
+        ],
         normalDrops: <BattleDropEntry>[
           BattleDropEntry(materialId: 'm_2', min: 1, max: 2, chance: 0.74),
         ],
@@ -76,6 +100,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '빠르게 파고드는 군체형',
         stats: BattleCombatStats(
           maxHp: 34,
+          maxMp: 4,
           physicalAttack: 8,
           physicalDefense: 4,
           magicalAttack: 3,
@@ -92,7 +117,19 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0,
           regen: 0,
+          mpRegen: 2,
         ),
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_mite_ash_venom',
+            name: 'Ash Venom',
+            summary: '잿빛 독을 묻혀 적 하나에게 중독을 부여한다.',
+            effectType: BattleSkillEffectType.grantStatus,
+            statusType: BattleStatusType.poison,
+            flatPower: 4,
+            durationLifecycles: 2,
+          ),
+        ],
         normalDrops: <BattleDropEntry>[
           BattleDropEntry(materialId: 'm_1', min: 1, max: 2, chance: 0.7),
           BattleDropEntry(materialId: 'm_2', min: 1, max: 1, chance: 0.32),
@@ -105,6 +142,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '견제 사격 중심의 정찰병',
         stats: BattleCombatStats(
           maxHp: 44,
+          maxMp: 6,
           physicalAttack: 12,
           physicalDefense: 6,
           magicalAttack: 4,
@@ -121,7 +159,19 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0,
           regen: 0.01,
+          mpRegen: 3,
         ),
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_scout_crossfire',
+            name: 'Crossfire',
+            summary: '넓게 견제 사격을 가해 모든 적에게 물리 피해를 준다.',
+            targetType: BattleSkillTargetType.allEnemies,
+            effectType: BattleSkillEffectType.damage,
+            school: DamageSchool.physical,
+            powerMultiplier: 0.85,
+          ),
+        ],
         normalDrops: <BattleDropEntry>[
           BattleDropEntry(materialId: 'm_3', min: 1, max: 2, chance: 0.78),
         ],
@@ -172,6 +222,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '느리지만 묵직하게 압박하는 근접형',
         stats: BattleCombatStats(
           maxHp: 58,
+          maxMp: 8,
           physicalAttack: 15,
           physicalDefense: 9,
           magicalAttack: 3,
@@ -188,6 +239,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0,
           regen: 0.01,
+          mpRegen: 3,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -195,6 +247,16 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             mode: BattleModifierMode.percent,
             value: 0.08,
             sourceId: 'enemy_bruiser_overhead_swing',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_bruiser_staggering_blow',
+            name: 'Staggering Blow',
+            summary: '묵직한 타격으로 적 하나에게 기절을 부여한다.',
+            effectType: BattleSkillEffectType.grantStatus,
+            statusType: BattleStatusType.stun,
+            durationLifecycles: 1,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -208,6 +270,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '짧은 교전 뒤 파고드는 돌격형',
         stats: BattleCombatStats(
           maxHp: 50,
+          maxMp: 6,
           physicalAttack: 14,
           physicalDefense: 7,
           magicalAttack: 4,
@@ -224,6 +287,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0.01,
           healingPower: 0,
           regen: 0.01,
+          mpRegen: 3,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -232,6 +296,21 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             value: 0.06,
             school: DamageSchool.physical,
             sourceId: 'enemy_raider_lunge',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_raider_expose',
+            name: 'Expose',
+            summary: '적 하나의 방어 자세를 무너뜨려 받는 피해를 증가시킨다.',
+            effectType: BattleSkillEffectType.grantModifier,
+            modifier: BattleModifier(
+              type: BattleModifierType.damageTaken,
+              mode: BattleModifierMode.percent,
+              value: 0.12,
+              sourceId: 'enemy_raider_expose',
+            ),
+            durationLifecycles: 2,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -246,6 +325,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '마력 증폭형 견습 연금술사',
         stats: BattleCombatStats(
           maxHp: 52,
+          maxMp: 8,
           physicalAttack: 5,
           physicalDefense: 7,
           magicalAttack: 15,
@@ -262,6 +342,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0.03,
           regen: 0.01,
+          mpRegen: 4,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -270,6 +351,17 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             value: 0.12,
             school: DamageSchool.magical,
             sourceId: 'enemy_apprentice_arcane_surge',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_apprentice_ash_burst',
+            name: 'Ash Burst',
+            summary: '잿빛 마력을 터뜨려 모든 적에게 마법 피해를 준다.',
+            targetType: BattleSkillTargetType.allEnemies,
+            effectType: BattleSkillEffectType.damage,
+            school: DamageSchool.magical,
+            powerMultiplier: 0.95,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -286,6 +378,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '달궈진 몸체로 밀어붙이는 돌진형',
         stats: BattleCombatStats(
           maxHp: 66,
+          maxMp: 8,
           physicalAttack: 16,
           physicalDefense: 11,
           magicalAttack: 8,
@@ -302,6 +395,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0,
           regen: 0.015,
+          mpRegen: 3,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -309,6 +403,16 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             mode: BattleModifierMode.percent,
             value: -0.08,
             sourceId: 'enemy_crucible_molten_hide',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_crucible_molten_charge',
+            name: 'Molten Charge',
+            summary: '가열된 돌진으로 적 하나에게 강한 물리 피해를 준다.',
+            effectType: BattleSkillEffectType.damage,
+            school: DamageSchool.physical,
+            powerMultiplier: 1.45,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -322,6 +426,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '장갑형 자동 수호기',
         stats: BattleCombatStats(
           maxHp: 60,
+          maxMp: 8,
           physicalAttack: 14,
           physicalDefense: 12,
           magicalAttack: 6,
@@ -338,6 +443,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0,
           regen: 0.015,
+          mpRegen: 4,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -345,6 +451,16 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             mode: BattleModifierMode.percent,
             value: -0.12,
             sourceId: 'enemy_sentinel_plating',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_sentinel_guard_field',
+            name: 'Guard Field',
+            summary: '모든 아군에게 보호막을 펼친다.',
+            targetType: BattleSkillTargetType.allAllies,
+            effectType: BattleSkillEffectType.grantShield,
+            shieldValue: 14,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -358,6 +474,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '잔열을 돌려 화력을 키우는 후열형',
         stats: BattleCombatStats(
           maxHp: 56,
+          maxMp: 8,
           physicalAttack: 6,
           physicalDefense: 7,
           magicalAttack: 16,
@@ -374,6 +491,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0.05,
           regen: 0.02,
+          mpRegen: 4,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -382,6 +500,23 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             value: 0.1,
             school: DamageSchool.magical,
             sourceId: 'enemy_distiller_heat_cycle',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_distiller_catalyze',
+            name: 'Catalyze',
+            summary: '모든 아군의 주는 마법 피해를 잠시 증가시킨다.',
+            targetType: BattleSkillTargetType.allAllies,
+            effectType: BattleSkillEffectType.grantModifier,
+            modifier: BattleModifier(
+              type: BattleModifierType.damageDealt,
+              mode: BattleModifierMode.percent,
+              value: 0.1,
+              school: DamageSchool.magical,
+              sourceId: 'enemy_distiller_catalyze',
+            ),
+            durationLifecycles: 2,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -395,6 +530,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '필중 사격 중심의 저격수',
         stats: BattleCombatStats(
           maxHp: 54,
+          maxMp: 8,
           physicalAttack: 16,
           physicalDefense: 8,
           magicalAttack: 5,
@@ -411,12 +547,23 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0,
           regen: 0.01,
+          mpRegen: 4,
         ),
         passives: <BattlePassiveEffect>[
           BattlePassiveEffect(
             trigger: BattlePassiveTrigger.beforeHitCheck,
             type: BattlePassiveEffectType.alwaysHit,
             sourceId: 'enemy_sniper_true_shot',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_sniper_pin_shot',
+            name: 'Pin Shot',
+            summary: '정밀 사격으로 적 하나에게 큰 물리 피해를 준다.',
+            effectType: BattleSkillEffectType.damage,
+            school: DamageSchool.physical,
+            powerMultiplier: 1.55,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -430,6 +577,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '포자를 흩뿌리는 후열형',
         stats: BattleCombatStats(
           maxHp: 58,
+          maxMp: 8,
           physicalAttack: 7,
           physicalDefense: 8,
           magicalAttack: 17,
@@ -446,6 +594,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0.04,
           regen: 0.01,
+          mpRegen: 4,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -454,6 +603,18 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             value: 0.1,
             school: DamageSchool.magical,
             sourceId: 'enemy_weaver_spore_burst',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_weaver_spore_cloud',
+            name: 'Spore Cloud',
+            summary: '포자 구름으로 모든 적에게 중독을 부여한다.',
+            targetType: BattleSkillTargetType.allEnemies,
+            effectType: BattleSkillEffectType.grantStatus,
+            statusType: BattleStatusType.poison,
+            flatPower: 6,
+            durationLifecycles: 2,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -470,6 +631,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '질주 후 연속 주문을 엮는 기동형',
         stats: BattleCombatStats(
           maxHp: 62,
+          maxMp: 6,
           physicalAttack: 9,
           physicalDefense: 8,
           magicalAttack: 18,
@@ -486,6 +648,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0.03,
           regen: 0.01,
+          mpRegen: 3,
         ),
         passives: <BattlePassiveEffect>[
           BattlePassiveEffect(
@@ -493,6 +656,17 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             type: BattlePassiveEffectType.extraAttack,
             sourceId: 'enemy_tempest_chain_cast',
             value: 1,
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_tempest_chain_arc',
+            name: 'Chain Arc',
+            summary: '연쇄 번개로 모든 적에게 마법 피해를 준다.',
+            targetType: BattleSkillTargetType.allEnemies,
+            effectType: BattleSkillEffectType.damage,
+            school: DamageSchool.magical,
+            powerMultiplier: 0.9,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -506,6 +680,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '회피와 견제를 반복하는 교란형',
         stats: BattleCombatStats(
           maxHp: 56,
+          maxMp: 6,
           physicalAttack: 10,
           physicalDefense: 7,
           magicalAttack: 14,
@@ -522,6 +697,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0.02,
           regen: 0.01,
+          mpRegen: 3,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -529,6 +705,16 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             mode: BattleModifierMode.percent,
             value: -0.07,
             sourceId: 'enemy_mirage_distortion',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_mirage_false_opening',
+            name: 'False Opening',
+            summary: '허상을 남겨 자신에게 보호막을 만든다.',
+            targetType: BattleSkillTargetType.self,
+            effectType: BattleSkillEffectType.grantShield,
+            shieldValue: 18,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -543,6 +729,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '흡혈과 압박을 겸한 보스형',
         stats: BattleCombatStats(
           maxHp: 72,
+          maxMp: 10,
           physicalAttack: 15,
           physicalDefense: 12,
           magicalAttack: 8,
@@ -559,6 +746,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0.01,
           healingPower: 0,
           regen: 0.01,
+          mpRegen: 4,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -566,6 +754,17 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             mode: BattleModifierMode.percent,
             value: 0.08,
             sourceId: 'enemy_chimera_fury',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_chimera_rending_howl',
+            name: 'Rending Howl',
+            summary: '찢는 포효로 모든 적에게 물리 피해를 준다.',
+            targetType: BattleSkillTargetType.allEnemies,
+            effectType: BattleSkillEffectType.damage,
+            school: DamageSchool.physical,
+            powerMultiplier: 1.0,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -582,6 +781,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '보스의 틈을 벌리는 고속 보조형',
         stats: BattleCombatStats(
           maxHp: 68,
+          maxMp: 8,
           physicalAttack: 12,
           physicalDefense: 10,
           magicalAttack: 17,
@@ -598,6 +798,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0.04,
           regen: 0.01,
+          mpRegen: 4,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -606,6 +807,22 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             value: 0.1,
             school: DamageSchool.magical,
             sourceId: 'enemy_herald_core_signal',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_herald_core_signal',
+            name: 'Core Signal',
+            summary: '모든 아군의 주는 피해를 잠시 증가시킨다.',
+            targetType: BattleSkillTargetType.allAllies,
+            effectType: BattleSkillEffectType.grantModifier,
+            modifier: BattleModifier(
+              type: BattleModifierType.damageDealt,
+              mode: BattleModifierMode.percent,
+              value: 0.12,
+              sourceId: 'enemy_herald_core_signal',
+            ),
+            durationLifecycles: 2,
           ),
         ],
         normalDrops: <BattleDropEntry>[
@@ -619,6 +836,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
         summary: '핵심을 지키는 중장갑 호위체',
         stats: BattleCombatStats(
           maxHp: 82,
+          maxMp: 10,
           physicalAttack: 13,
           physicalDefense: 14,
           magicalAttack: 6,
@@ -635,6 +853,7 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
           lifesteal: 0,
           healingPower: 0,
           regen: 0.02,
+          mpRegen: 4,
         ),
         modifiers: <BattleModifier>[
           BattleModifier(
@@ -642,6 +861,16 @@ const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
             mode: BattleModifierMode.percent,
             value: -0.12,
             sourceId: 'enemy_warden_core_shell',
+          ),
+        ],
+        skills: <BattleSkillDefinition>[
+          BattleSkillDefinition(
+            id: 'enemy_warden_moonvault_barrier',
+            name: 'Moonvault Barrier',
+            summary: '모든 아군에게 두꺼운 보호막을 부여한다.',
+            targetType: BattleSkillTargetType.allAllies,
+            effectType: BattleSkillEffectType.grantShield,
+            shieldValue: 20,
           ),
         ],
         normalDrops: <BattleDropEntry>[
