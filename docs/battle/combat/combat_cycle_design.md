@@ -303,6 +303,8 @@
 
 현재 구현:
 - `grantModifier` passive는 `afterHit`에서 대상에게 임시 modifier를 부여할 수 있다.
+- `grantStatus` passive는 `afterHit`에서 대상에게 상태이상을 부여할 수 있다.
+- `grantShield` passive는 `afterHit`에서 행동자에게 보호막을 부여할 수 있다.
 
 ### 4.12 `applyOnDamagedHooks`
 - 대상이 피해를 받은 직후 피격자 기준으로 실행되는 훅이다.
@@ -399,6 +401,7 @@
 현재 구현:
 - `grantModifier` passive는 `turnEnd`에서 행동자에게 임시 modifier를 부여할 수 있다.
 - 행동자에게 걸린 임시 modifier의 남은 lifecycle을 감소시킨다.
+- 독 상태이상은 `turnEnd`에서 피해를 주고, 상태이상의 남은 lifecycle을 감소시킨다.
 
 ### 4.17 `buildActionLifecycleResult`
 - 행동 로그, 변경된 유닛 상태, 파생 action lifecycle 로그, 종료 후보 상태를 묶어 반환한다.
@@ -448,10 +451,8 @@
 | 부활 | Encounter Cycle | On Defeat / 종료 판정 | 사망 결과 변경 |
 
 ## 7. 구현 우선순위
-1. 상태이상 최소 모델 연결
-2. 보호막 연결
-3. 회복형 / 광역 / 아군 대상 스킬 확장
-4. 보스 전용 스킬 / 패턴 구현
+1. 회복형 / 광역 / 아군 대상 스킬 확장
+2. 보스 전용 스킬 / 패턴 구현
 
 ## 8. 주의점
 - 모든 행동은 하나의 action lifecycle 안에서 완료되어야 한다.
