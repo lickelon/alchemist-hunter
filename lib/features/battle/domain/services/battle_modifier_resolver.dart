@@ -25,6 +25,18 @@ class _BattleModifierResolver {
         });
   }
 
+  static int counterAttackCount(_BattleUnit unit) {
+    return unit.passives
+        .where(
+          (BattlePassiveEffect passive) =>
+              passive.type == BattlePassiveEffectType.counterAttack &&
+              passive.trigger == BattlePassiveTrigger.onDamaged,
+        )
+        .fold<int>(0, (int total, BattlePassiveEffect passive) {
+          return total + (passive.value ?? 1);
+        });
+  }
+
   static double percentModifierTotal(
     _BattleUnit unit,
     BattleModifierType type, {

@@ -44,7 +44,7 @@ enum BattlePassiveTrigger {
   onDefeat,
 }
 
-enum BattlePassiveEffectType { alwaysHit, extraAttack }
+enum BattlePassiveEffectType { alwaysHit, extraAttack, counterAttack }
 
 enum BattleSkillTargetType {
   randomEnemy,

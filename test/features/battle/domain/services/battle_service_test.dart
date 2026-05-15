@@ -397,6 +397,64 @@ void main() {
     expect(second.lifecycleActions.single.actorId, 'enemy_other');
   });
 
+  test('counter attack runs as derived lifecycle without queue insert', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(
+          id: 'enemy_counter',
+          team: BattleTeam.enemy,
+          speed: 10,
+          passives: const <BattlePassiveEffect>[
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.onDamaged,
+              type: BattlePassiveEffectType.counterAttack,
+              sourceId: 'counter_guard',
+              value: 1,
+            ),
+          ],
+        ),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(id: 'ally', team: BattleTeam.ally, speed: 20),
+    ];
+
+    final BattleEncounterStepResult first = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult second = service.runEncounterStep(
+      allies: first.allies,
+      encounter: first.encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.actorId),
+      <String>['ally', 'enemy_counter'],
+    );
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.lifecycle),
+      <int>[1, 2],
+    );
+    expect(first.encounter.pendingActorIds, <String>['enemy_counter']);
+    expect(second.lifecycleActions.single.actorId, 'enemy_counter');
+  });
+
   test('always hit only applies on before hit check trigger', () {
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',

@@ -273,7 +273,11 @@ class BattleService {
         ),
       );
       _applyAfterHitHooks(context, target);
-      onDamagedRequests = _applyOnDamagedHooks(context, target);
+      onDamagedRequests = _applyOnDamagedHooks(
+        context,
+        target,
+        damage: damageRoll.damage,
+      );
       actions.addAll(
         _applyPostActionRecovery(
           context: context,
@@ -412,9 +416,22 @@ class BattleService {
 
   List<_DerivedActionRequest> _applyOnDamagedHooks(
     _ActionLifecycleContext context,
-    _BattleUnit target,
-  ) {
-    return const <_DerivedActionRequest>[];
+    _BattleUnit target, {
+    required int damage,
+  }) {
+    if (!context.allowDerivedActions || damage <= 0 || !target.isAlive) {
+      return const <_DerivedActionRequest>[];
+    }
+    final int counterAttackCount = _BattleModifierResolver.counterAttackCount(
+      target,
+    );
+    if (counterAttackCount <= 0) {
+      return const <_DerivedActionRequest>[];
+    }
+    return List<_DerivedActionRequest>.filled(
+      counterAttackCount,
+      _DerivedActionRequest(actor: target),
+    );
   }
 
   List<BattleActionLog> _applyPostActionRecovery({

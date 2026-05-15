@@ -383,7 +383,7 @@
 
 현재 구현:
 - `extraAttack` 파생 lifecycle 실행이 구현되어 있다.
-- `counterAttack`은 아직 연결되어 있지 않다.
+- `counterAttack` 파생 lifecycle 실행이 구현되어 있다.
 
 ### 4.16 `applyTurnEndHooks`
 - lifecycle의 마지막 정리 단계다.
@@ -447,11 +447,10 @@
 | 부활 | Encounter Cycle | On Defeat / 종료 판정 | 사망 결과 변경 |
 
 ## 7. 구현 우선순위
-1. `beforeAction`, `beforeDamage`, `afterHit`, `onDamaged`, `turnEnd` 실제 효과 연결
-2. `counterAttack` 구현
-3. 조건부 `grantModifier` 구현
-4. 상태이상 최소 모델 추가
-5. 보스 전용 스킬 / 패턴 구현
+1. `beforeAction`, `beforeDamage`, `afterHit`, `turnEnd` 실제 효과 연결
+2. 조건부 `grantModifier` 구현
+3. 상태이상 최소 모델 추가
+4. 보스 전용 스킬 / 패턴 구현
 
 ## 8. 주의점
 - 모든 행동은 하나의 action lifecycle 안에서 완료되어야 한다.
