@@ -12,6 +12,7 @@ enum DamageSchool { any, physical, magical }
 
 enum BattleStatModifierType {
   maxHp,
+  maxMp,
   physicalAttack,
   physicalDefense,
   magicalAttack,
@@ -28,11 +29,22 @@ enum BattleStatModifierType {
   lifesteal,
   healingPower,
   regen,
+  mpRegen,
 }
 
 enum BattlePassiveTrigger { battleStart, beforeHitCheck, afterAction }
 
 enum BattlePassiveEffectType { alwaysHit, extraAttack }
+
+enum BattleSkillTargetType {
+  randomEnemy,
+  self,
+  randomAlly,
+  allEnemies,
+  allAllies,
+}
+
+enum BattleSkillEffectType { damage, heal, grantModifier }
 
 @immutable
 class BattleModifier {
@@ -84,9 +96,37 @@ class BattlePassiveEffect {
 }
 
 @immutable
+class BattleSkillDefinition {
+  const BattleSkillDefinition({
+    required this.id,
+    required this.name,
+    required this.summary,
+    this.cooldownLifecycles = 0,
+    this.priority = 0,
+    this.targetType = BattleSkillTargetType.randomEnemy,
+    this.effectType = BattleSkillEffectType.damage,
+    this.school = DamageSchool.any,
+    this.powerMultiplier = 1,
+    this.flatPower = 0,
+  });
+
+  final String id;
+  final String name;
+  final String summary;
+  final int cooldownLifecycles;
+  final int priority;
+  final BattleSkillTargetType targetType;
+  final BattleSkillEffectType effectType;
+  final DamageSchool school;
+  final double powerMultiplier;
+  final int flatPower;
+}
+
+@immutable
 class BattleCombatStats {
   const BattleCombatStats({
     required this.maxHp,
+    this.maxMp = 0,
     required this.physicalAttack,
     required this.physicalDefense,
     required this.magicalAttack,
@@ -103,10 +143,12 @@ class BattleCombatStats {
     required this.lifesteal,
     required this.healingPower,
     required this.regen,
+    this.mpRegen = 0,
   });
 
   const BattleCombatStats.zero()
     : maxHp = 0,
+      maxMp = 0,
       physicalAttack = 0,
       physicalDefense = 0,
       magicalAttack = 0,
@@ -122,9 +164,11 @@ class BattleCombatStats {
       magicalPenetration = 0,
       lifesteal = 0,
       healingPower = 0,
-      regen = 0;
+      regen = 0,
+      mpRegen = 0;
 
   final int maxHp;
+  final int maxMp;
   final int physicalAttack;
   final int physicalDefense;
   final int magicalAttack;
@@ -141,10 +185,12 @@ class BattleCombatStats {
   final double lifesteal;
   final double healingPower;
   final double regen;
+  final int mpRegen;
 
   BattleCombatStats operator +(BattleCombatStats other) {
     return BattleCombatStats(
       maxHp: maxHp + other.maxHp,
+      maxMp: maxMp + other.maxMp,
       physicalAttack: physicalAttack + other.physicalAttack,
       physicalDefense: physicalDefense + other.physicalDefense,
       magicalAttack: magicalAttack + other.magicalAttack,
@@ -161,6 +207,7 @@ class BattleCombatStats {
       lifesteal: lifesteal + other.lifesteal,
       healingPower: healingPower + other.healingPower,
       regen: regen + other.regen,
+      mpRegen: mpRegen + other.mpRegen,
     );
   }
 
@@ -170,6 +217,7 @@ class BattleCombatStats {
     }
     return BattleCombatStats(
       maxHp: maxHp * multiplier,
+      maxMp: maxMp * multiplier,
       physicalAttack: physicalAttack * multiplier,
       physicalDefense: physicalDefense * multiplier,
       magicalAttack: magicalAttack * multiplier,
@@ -186,6 +234,7 @@ class BattleCombatStats {
       lifesteal: lifesteal * multiplier,
       healingPower: healingPower * multiplier,
       regen: regen * multiplier,
+      mpRegen: mpRegen * multiplier,
     );
   }
 }

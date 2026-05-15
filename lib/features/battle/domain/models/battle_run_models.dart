@@ -13,6 +13,7 @@ class HeroProfile {
     required this.stats,
     this.modifiers = const <BattleModifier>[],
     this.passives = const <BattlePassiveEffect>[],
+    this.skills = const <BattleSkillDefinition>[],
     required this.power,
   });
 
@@ -24,6 +25,7 @@ class HeroProfile {
   final BattleCombatStats stats;
   final List<BattleModifier> modifiers;
   final List<BattlePassiveEffect> passives;
+  final List<BattleSkillDefinition> skills;
   final int power;
 }
 

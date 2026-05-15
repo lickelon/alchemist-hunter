@@ -77,6 +77,7 @@ class BattleCombatStatService {
         rankGrowth.scale(character.rankInCurrentTier - 1) +
         BattleCombatStats(
           maxHp: hpGrowth * (character.level - 1),
+          maxMp: 0,
           physicalAttack: 0,
           physicalDefense: 0,
           magicalAttack: 0,
@@ -93,6 +94,7 @@ class BattleCombatStatService {
           lifesteal: 0,
           healingPower: 0,
           regen: 0,
+          mpRegen: 0,
         ) +
         _equipmentStatService.statsForLoadout(character.equipment) +
         _equipmentStatService.statModifiersForLoadout(character.equipment);
@@ -103,6 +105,7 @@ class BattleCombatStatService {
         (stats.physicalAttack * 2) + (stats.magicalAttack * 2) + stats.speed;
     final int defense = stats.physicalDefense + stats.magicalDefense;
     final int health = stats.maxHp ~/ 4;
+    final int resource = (stats.maxMp ~/ 5) + (stats.mpRegen * 2);
     final int utility =
         (stats.critChance * 100).round() +
         (stats.critDamage * 80).round() +
@@ -115,7 +118,7 @@ class BattleCombatStatService {
         (stats.lifesteal * 120).round() +
         (stats.healingPower * 100).round() +
         (stats.regen * 100).round();
-    return health + offense + defense + utility;
+    return health + resource + offense + defense + utility;
   }
 
   int summaryPowerForEffects(

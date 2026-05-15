@@ -69,6 +69,7 @@ class BattleEquipmentStatService {
 
     return switch (modifier.type) {
       BattleStatModifierType.maxHp => _stats(maxHp: intValue),
+      BattleStatModifierType.maxMp => _stats(maxMp: intValue),
       BattleStatModifierType.physicalAttack => _stats(physicalAttack: intValue),
       BattleStatModifierType.physicalDefense => _stats(
         physicalDefense: intValue,
@@ -93,11 +94,13 @@ class BattleEquipmentStatService {
       BattleStatModifierType.lifesteal => _stats(lifesteal: value),
       BattleStatModifierType.healingPower => _stats(healingPower: value),
       BattleStatModifierType.regen => _stats(regen: value),
+      BattleStatModifierType.mpRegen => _stats(mpRegen: intValue),
     };
   }
 
   BattleCombatStats _stats({
     int maxHp = 0,
+    int maxMp = 0,
     int physicalAttack = 0,
     int physicalDefense = 0,
     int magicalAttack = 0,
@@ -114,9 +117,11 @@ class BattleEquipmentStatService {
     double lifesteal = 0,
     double healingPower = 0,
     double regen = 0,
+    int mpRegen = 0,
   }) {
     return BattleCombatStats(
       maxHp: maxHp,
+      maxMp: maxMp,
       physicalAttack: physicalAttack,
       physicalDefense: physicalDefense,
       magicalAttack: magicalAttack,
@@ -133,6 +138,7 @@ class BattleEquipmentStatService {
       lifesteal: lifesteal,
       healingPower: healingPower,
       regen: regen,
+      mpRegen: mpRegen,
     );
   }
 }

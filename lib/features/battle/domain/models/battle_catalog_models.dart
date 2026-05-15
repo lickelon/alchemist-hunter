@@ -13,6 +13,7 @@ class BattleEnemyDefinition {
     required this.stats,
     this.modifiers = const <BattleModifier>[],
     this.passives = const <BattlePassiveEffect>[],
+    this.skills = const <BattleSkillDefinition>[],
     this.normalDrops = const <BattleDropEntry>[],
     this.specialDrops = const <BattleDropEntry>[],
   });
@@ -24,6 +25,7 @@ class BattleEnemyDefinition {
   final BattleCombatStats stats;
   final List<BattleModifier> modifiers;
   final List<BattlePassiveEffect> passives;
+  final List<BattleSkillDefinition> skills;
   final List<BattleDropEntry> normalDrops;
   final List<BattleDropEntry> specialDrops;
 }

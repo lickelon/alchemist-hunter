@@ -78,6 +78,7 @@ String _statModifierLabel(BattleStatModifier modifier) {
       : _signedValue(modifier.value.round());
   return switch (modifier.type) {
     BattleStatModifierType.maxHp => '체력 $valueLabel',
+    BattleStatModifierType.maxMp => 'MP $valueLabel',
     BattleStatModifierType.physicalAttack => '물공 $valueLabel',
     BattleStatModifierType.physicalDefense => '물방 $valueLabel',
     BattleStatModifierType.magicalAttack => '마공 $valueLabel',
@@ -94,6 +95,7 @@ String _statModifierLabel(BattleStatModifier modifier) {
     BattleStatModifierType.lifesteal => '흡혈 $valueLabel',
     BattleStatModifierType.healingPower => '회복력 $valueLabel',
     BattleStatModifierType.regen => '재생 $valueLabel',
+    BattleStatModifierType.mpRegen => 'MP재생 $valueLabel',
   };
 }
 
@@ -132,6 +134,7 @@ String _signedPercent(double value) {
 bool _battleStatModifierUsesPercent(BattleStatModifierType type) {
   return switch (type) {
     BattleStatModifierType.maxHp ||
+    BattleStatModifierType.maxMp ||
     BattleStatModifierType.physicalAttack ||
     BattleStatModifierType.physicalDefense ||
     BattleStatModifierType.magicalAttack ||
@@ -148,6 +151,7 @@ bool _battleStatModifierUsesPercent(BattleStatModifierType type) {
     BattleStatModifierType.lifesteal ||
     BattleStatModifierType.healingPower ||
     BattleStatModifierType.regen => true,
+    BattleStatModifierType.mpRegen => false,
   };
 }
 

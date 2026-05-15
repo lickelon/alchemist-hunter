@@ -6,7 +6,7 @@ const Duration battleActionInterval = Duration(seconds: 1);
 
 enum BattleTeam { ally, enemy }
 
-enum BattleActionType { attack, lifesteal, regen }
+enum BattleActionType { attack, skill, lifesteal, regen, mpRegen }
 
 @immutable
 class BattleActionLog {
@@ -20,12 +20,16 @@ class BattleActionLog {
     this.targetId,
     this.targetName,
     this.targetTeam,
+    this.skillId,
+    this.skillName,
     this.school = DamageSchool.any,
     this.hit = true,
     this.critical = false,
     this.damage = 0,
     this.healing = 0,
+    this.mpSpent = 0,
     this.actorHpAfter = 0,
+    this.actorMpAfter = 0,
     this.targetHpAfter,
   });
 
@@ -38,12 +42,16 @@ class BattleActionLog {
   final String? targetId;
   final String? targetName;
   final BattleTeam? targetTeam;
+  final String? skillId;
+  final String? skillName;
   final DamageSchool school;
   final bool hit;
   final bool critical;
   final int damage;
   final int healing;
+  final int mpSpent;
   final int actorHpAfter;
+  final int actorMpAfter;
   final int? targetHpAfter;
 }
 
@@ -57,7 +65,10 @@ class BattleRunUnitState {
     required this.stats,
     this.modifiers = const <BattleModifier>[],
     this.passives = const <BattlePassiveEffect>[],
+    this.skills = const <BattleSkillDefinition>[],
     required this.currentHp,
+    this.currentMp = 0,
+    this.skillCooldowns = const <String, int>{},
   });
 
   final String unitId;
@@ -67,12 +78,28 @@ class BattleRunUnitState {
   final BattleCombatStats stats;
   final List<BattleModifier> modifiers;
   final List<BattlePassiveEffect> passives;
+  final List<BattleSkillDefinition> skills;
   final int currentHp;
+  final int currentMp;
+  final Map<String, int> skillCooldowns;
 
   int get maxHp => stats.maxHp;
+  int get maxMp => stats.maxMp;
   bool get isAlive => currentHp > 0;
+  bool get hasUsableSkill {
+    return isAlive &&
+        maxMp > 0 &&
+        currentMp >= maxMp &&
+        skills.any(
+          (BattleSkillDefinition skill) => (skillCooldowns[skill.id] ?? 0) <= 0,
+        );
+  }
 
-  BattleRunUnitState copyWith({int? currentHp}) {
+  BattleRunUnitState copyWith({
+    int? currentHp,
+    int? currentMp,
+    Map<String, int>? skillCooldowns,
+  }) {
     return BattleRunUnitState(
       unitId: unitId,
       name: name,
@@ -81,7 +108,10 @@ class BattleRunUnitState {
       stats: stats,
       modifiers: modifiers,
       passives: passives,
+      skills: skills,
       currentHp: currentHp ?? this.currentHp,
+      currentMp: currentMp ?? this.currentMp,
+      skillCooldowns: skillCooldowns ?? this.skillCooldowns,
     );
   }
 }
