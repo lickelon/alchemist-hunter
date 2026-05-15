@@ -165,6 +165,22 @@ class BattleResultSheet extends ConsumerWidget {
     if (action.type == BattleActionType.lifesteal) {
       return 'T${action.turn} ${action.actorName} 흡혈 +${action.healing} / HP ${action.actorHpAfter}';
     }
+    if (action.type == BattleActionType.heal) {
+      return 'T${action.turn} ${action.actorName} 회복 +${action.healing} / HP ${action.targetHpAfter ?? action.actorHpAfter}';
+    }
+    if (action.type == BattleActionType.modifier) {
+      return 'T${action.turn} ${action.actorName} -> ${action.targetName ?? action.actorName} 효과 부여';
+    }
+    if (action.type == BattleActionType.status) {
+      final String valueLabel = action.damage > 0 ? ' ${action.damage} 피해' : '';
+      return 'T${action.turn} ${action.actorName} 상태효과$valueLabel / HP ${action.actorHpAfter}';
+    }
+    if (action.type == BattleActionType.shield) {
+      return 'T${action.turn} ${action.actorName} -> ${action.targetName ?? action.actorName} 보호막 +${action.healing} / 보호막 ${action.targetShieldAfter ?? 0}';
+    }
+    if (action.type == BattleActionType.passive) {
+      return 'T${action.turn} ${action.actorName} 패시브 발동';
+    }
     final String skillLabel = action.type == BattleActionType.skill
         ? ' ${action.skillName ?? '스킬'}'
         : '';

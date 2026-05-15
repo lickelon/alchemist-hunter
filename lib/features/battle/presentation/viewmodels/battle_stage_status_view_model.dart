@@ -141,6 +141,22 @@ String _formatBattleAction(BattleActionLog action) {
   if (action.type == BattleActionType.lifesteal) {
     return '${action.actorName} 흡혈 +${action.healing}';
   }
+  if (action.type == BattleActionType.heal) {
+    return '${action.actorName} 회복 +${action.healing}';
+  }
+  if (action.type == BattleActionType.modifier) {
+    return '${action.actorName} 효과 부여';
+  }
+  if (action.type == BattleActionType.status) {
+    final String valueLabel = action.damage > 0 ? ' ${action.damage} 피해' : '';
+    return '${action.actorName} 상태효과$valueLabel';
+  }
+  if (action.type == BattleActionType.shield) {
+    return '${action.actorName} 보호막 +${action.healing}';
+  }
+  if (action.type == BattleActionType.passive) {
+    return '${action.actorName} 패시브 발동';
+  }
   final String skillLabel = action.type == BattleActionType.skill
       ? ' ${action.skillName ?? '스킬'}'
       : '';
