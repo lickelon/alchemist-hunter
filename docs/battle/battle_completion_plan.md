@@ -14,7 +14,7 @@
 | --- | --- | --- |
 | 아군 전투 스탯 | `BattleCombatStats` + `BattleStatModifier` + `BattleModifier` + `BattlePassiveEffect` 구조 반영 | 성장 / 장비 / 인챈트 반영은 됐지만 loadout 보정은 아직 없다 |
 | 적 전투 스탯 | `BattleEnemyDefinition`과 stage / enemy set / encounter catalog 사용 | 보스 고유 규칙과 행동 패턴은 아직 더 깊게 확장할 여지가 있다 |
-| 전투 루프 | 속도, 명중, 치명, 물리/마법, 흡혈, 재생, 추가 공격 반영 | 상태이상 / 스킬 / 보스 전용 패턴은 아직 없다 |
+| 전투 루프 | 속도, 명중, 치명, 물리/마법, 흡혈, 재생, 추가 공격 반영, MP/스킬 모델 기반 추가 | 스킬 발동 로직 / 상태이상 / 보스 전용 패턴은 아직 없다 |
 | 연속 run 구조 | 아군 HP와 생존 상태가 encounter 사이에 유지되고, 전멸 시 복구 후 재시작한다 | partial death 보상 규칙과 고급 revive 규칙은 아직 없다 |
 | 전투 결과 표시 | 최근 결과 시트와 실시간 전투 현황 시트 제공, 포션 fallback 사유 노출 | 해금 근거와 전투 외 성장 요약은 아직 더 보강할 수 있다 |
 | 결과 이력 | stage별 최근 로그 10개 보존, loadout fallback 사유 기록 | 해금 / 드롭 상세 근거는 아직 더 보강할 여지가 있다 |

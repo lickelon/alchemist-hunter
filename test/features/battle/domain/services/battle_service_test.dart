@@ -19,6 +19,7 @@ void main() {
     required int power,
     List<BattleModifier> modifiers = const <BattleModifier>[],
     List<BattlePassiveEffect> passives = const <BattlePassiveEffect>[],
+    List<BattleSkillDefinition> skills = const <BattleSkillDefinition>[],
   }) {
     return HeroProfile(
       id: id,
@@ -29,6 +30,7 @@ void main() {
       stats: stats,
       modifiers: modifiers,
       passives: passives,
+      skills: skills,
       power: power,
     );
   }
@@ -36,11 +38,14 @@ void main() {
   BattleCombatStats stats({
     required int maxHp,
     required int speed,
+    int maxMp = 0,
+    int mpRegen = 0,
     int physicalAttack = 1,
     int physicalDefense = 50,
   }) {
     return BattleCombatStats(
       maxHp: maxHp,
+      maxMp: maxMp,
       physicalAttack: physicalAttack,
       physicalDefense: physicalDefense,
       magicalAttack: 0,
@@ -57,6 +62,7 @@ void main() {
       lifesteal: 0,
       healingPower: 0,
       regen: 0,
+      mpRegen: mpRegen,
     );
   }
 
@@ -64,18 +70,56 @@ void main() {
     required String id,
     required BattleTeam team,
     required int speed,
+    int maxMp = 0,
+    int currentMp = 0,
+    int mpRegen = 0,
     List<BattlePassiveEffect> passives = const <BattlePassiveEffect>[],
+    List<BattleSkillDefinition> skills = const <BattleSkillDefinition>[],
   }) {
     return BattleRunUnitState(
       unitId: id,
       name: id,
       team: team,
       faction: CombatFaction.homunculus,
-      stats: stats(maxHp: 200, speed: speed),
+      stats: stats(maxHp: 200, maxMp: maxMp, mpRegen: mpRegen, speed: speed),
       passives: passives,
+      skills: skills,
       currentHp: 200,
+      currentMp: currentMp,
     );
   }
+
+  test('run unit state carries mp and skills from hero profile', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_firebolt',
+      name: 'Firebolt',
+      summary: '단일 마법 피해',
+      cooldownLifecycles: 2,
+      targetType: BattleSkillTargetType.randomEnemy,
+      effectType: BattleSkillEffectType.damage,
+      school: DamageSchool.magical,
+      powerMultiplier: 1.4,
+    );
+
+    final List<BattleRunUnitState> allies = service.createRunAllies(
+      party: <HeroProfile>[
+        hero(
+          id: 'hero_1',
+          faction: CombatFaction.mercenary,
+          discipline: CombatDiscipline.mage,
+          stats: stats(maxHp: 100, maxMp: 40, speed: 10),
+          skills: const <BattleSkillDefinition>[skill],
+          power: 1,
+        ),
+      ],
+    );
+
+    expect(allies.single.maxMp, 40);
+    expect(allies.single.currentMp, 0);
+    expect(allies.single.skills.single.id, 'skill_firebolt');
+    expect(allies.single.hasUsableSkill, isFalse);
+  });
 
   test('battle result uses combat stats even when power is zero', () {
     final BattleService service = BattleService(random: Random(1));
@@ -330,5 +374,89 @@ void main() {
     expect(first.lifecycleActions.single.actorId, 'enemy_stalker');
     expect(second.lifecycleActions.single.actorId, 'enemy_stalker');
     expect(third.lifecycleActions.single.actorId, 'enemy_other');
+  });
+
+  test('normal attack restores fixed mp regen after lifecycle', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(id: 'ally', team: BattleTeam.ally, speed: 20, maxMp: 10, mpRegen: 4),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(result.allies.single.currentMp, 4);
+    expect(
+      result.lifecycleActions.map((BattleActionLog action) => action.type),
+      containsAllInOrder(<BattleActionType>[
+        BattleActionType.attack,
+        BattleActionType.mpRegen,
+      ]),
+    );
+    expect(result.lifecycleActions.last.healing, 4);
+    expect(result.lifecycleActions.last.actorMpAfter, 4);
+  });
+
+  test('unit at max mp uses active skill and spends all mp', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_burst',
+      name: 'Burst',
+      summary: '강한 단일 공격',
+      cooldownLifecycles: 2,
+      powerMultiplier: 2,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'ally',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        mpRegen: 4,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleActionLog skillAction = result.lifecycleActions.first;
+
+    expect(skillAction.type, BattleActionType.skill);
+    expect(skillAction.skillId, 'skill_burst');
+    expect(skillAction.mpSpent, 10);
+    expect(skillAction.actorMpAfter, 0);
+    expect(result.allies.single.currentMp, 0);
+    expect(result.allies.single.skillCooldowns['skill_burst'], 2);
+    expect(
+      result.lifecycleActions.any(
+        (BattleActionLog action) => action.type == BattleActionType.mpRegen,
+      ),
+      isFalse,
+    );
   });
 }

@@ -26,6 +26,7 @@
 - 수치를 더하거나 빼는 효과를 설계할 때는 `combat_modifier_design.md`를 본다.
 - 판정 절차를 건너뛰거나 행동 규칙을 추가하는 효과를 설계할 때는 `combat_passive_design.md`를 본다.
 - 장비 스탯 구조나 장비 특수 옵션 기준을 정할 때는 `combat_equipment_design.md`를 본다.
+- MP를 전부 소비하는 능동 행동은 `BattleSkillDefinition` 모델로 다루고, passive와 분리한다.
 
 ## 4. 책임 분리
 - `BattleCombatStats`
@@ -36,5 +37,7 @@
   - 최종 스탯으로 환원되지 않는 전투 배율 / 조건부 효과
 - `BattlePassiveEffect`
   - 전투 판정 규칙 변경
+- `BattleSkillDefinition`
+  - MP를 소비하는 능동 행동 정의
 
-이 4층 분리를 combat 설계의 기본 원칙으로 유지한다.
+이 5층 분리를 combat 설계의 기본 원칙으로 유지한다.
