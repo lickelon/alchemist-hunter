@@ -13,6 +13,7 @@ class _BattleAttackResolver {
     if (_BattleModifierResolver.hasPassive(
       attacker,
       BattlePassiveEffectType.alwaysHit,
+      trigger: BattlePassiveTrigger.beforeHitCheck,
     )) {
       return true;
     }

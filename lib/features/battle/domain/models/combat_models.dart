@@ -32,7 +32,17 @@ enum BattleStatModifierType {
   mpRegen,
 }
 
-enum BattlePassiveTrigger { battleStart, beforeHitCheck, afterAction }
+enum BattlePassiveTrigger {
+  battleStart,
+  beforeAction,
+  beforeHitCheck,
+  beforeDamage,
+  afterHit,
+  afterAction,
+  turnEnd,
+  onDamaged,
+  onDefeat,
+}
 
 enum BattlePassiveEffectType { alwaysHit, extraAttack }
 

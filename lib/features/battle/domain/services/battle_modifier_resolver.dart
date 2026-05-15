@@ -1,9 +1,15 @@
 part of 'battle_service.dart';
 
 class _BattleModifierResolver {
-  static bool hasPassive(_BattleUnit unit, BattlePassiveEffectType type) {
+  static bool hasPassive(
+    _BattleUnit unit,
+    BattlePassiveEffectType type, {
+    BattlePassiveTrigger? trigger,
+  }) {
     return unit.passives.any(
-      (BattlePassiveEffect passive) => passive.type == type,
+      (BattlePassiveEffect passive) =>
+          passive.type == type &&
+          (trigger == null || passive.trigger == trigger),
     );
   }
 

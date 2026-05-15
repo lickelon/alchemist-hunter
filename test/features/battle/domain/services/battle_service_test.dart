@@ -42,6 +42,8 @@ void main() {
     int mpRegen = 0,
     int physicalAttack = 1,
     int physicalDefense = 50,
+    double accuracy = 1,
+    double evasion = 0,
   }) {
     return BattleCombatStats(
       maxHp: maxHp,
@@ -53,8 +55,8 @@ void main() {
       speed: speed,
       critChance: 0,
       critDamage: 0.5,
-      accuracy: 1,
-      evasion: 0,
+      accuracy: accuracy,
+      evasion: evasion,
       statusAccuracy: 0,
       statusResistance: 0,
       physicalPenetration: 0,
@@ -73,6 +75,8 @@ void main() {
     int maxMp = 0,
     int currentMp = 0,
     int mpRegen = 0,
+    double accuracy = 1,
+    double evasion = 0,
     List<BattlePassiveEffect> passives = const <BattlePassiveEffect>[],
     List<BattleSkillDefinition> skills = const <BattleSkillDefinition>[],
   }) {
@@ -81,7 +85,14 @@ void main() {
       name: id,
       team: team,
       faction: CombatFaction.homunculus,
-      stats: stats(maxHp: 200, maxMp: maxMp, mpRegen: mpRegen, speed: speed),
+      stats: stats(
+        maxHp: 200,
+        maxMp: maxMp,
+        mpRegen: mpRegen,
+        speed: speed,
+        accuracy: accuracy,
+        evasion: evasion,
+      ),
       passives: passives,
       skills: skills,
       currentHp: 200,
@@ -376,6 +387,60 @@ void main() {
     expect(third.lifecycleActions.single.actorId, 'enemy_other');
   });
 
+  test('always hit only applies on before hit check trigger', () {
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterName: 'Encounter 1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1, evasion: 1),
+      ],
+    );
+    final BattleRunUnitState wrongTriggerAlly = unit(
+      id: 'ally',
+      team: BattleTeam.ally,
+      speed: 20,
+      accuracy: 0,
+      passives: const <BattlePassiveEffect>[
+        BattlePassiveEffect(
+          trigger: BattlePassiveTrigger.beforeAction,
+          type: BattlePassiveEffectType.alwaysHit,
+          sourceId: 'wrong_hook',
+        ),
+      ],
+    );
+    final BattleRunUnitState correctTriggerAlly = unit(
+      id: 'ally',
+      team: BattleTeam.ally,
+      speed: 20,
+      accuracy: 0,
+      passives: const <BattlePassiveEffect>[
+        BattlePassiveEffect(
+          trigger: BattlePassiveTrigger.beforeHitCheck,
+          type: BattlePassiveEffectType.alwaysHit,
+          sourceId: 'right_hook',
+        ),
+      ],
+    );
+
+    final BattleEncounterStepResult wrongTriggerResult =
+        BattleService(random: _FixedRandom(0.99)).runEncounterStep(
+          allies: <BattleRunUnitState>[wrongTriggerAlly],
+          encounter: encounter,
+          potionBoost: 0,
+        );
+    final BattleEncounterStepResult correctTriggerResult =
+        BattleService(random: _FixedRandom(0.99)).runEncounterStep(
+          allies: <BattleRunUnitState>[correctTriggerAlly],
+          encounter: encounter,
+          potionBoost: 0,
+        );
+
+    expect(wrongTriggerResult.lifecycleActions.first.hit, isFalse);
+    expect(correctTriggerResult.lifecycleActions.first.hit, isTrue);
+  });
+
   test('normal attack restores fixed mp regen after lifecycle', () {
     final BattleService service = BattleService(random: Random(1));
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
@@ -459,4 +524,25 @@ void main() {
       isFalse,
     );
   });
+}
+
+class _FixedRandom implements Random {
+  const _FixedRandom(this.value);
+
+  final double value;
+
+  @override
+  bool nextBool() {
+    return value < 0.5;
+  }
+
+  @override
+  double nextDouble() {
+    return value;
+  }
+
+  @override
+  int nextInt(int max) {
+    return 0;
+  }
 }
