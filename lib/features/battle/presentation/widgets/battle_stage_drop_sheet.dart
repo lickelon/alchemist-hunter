@@ -26,7 +26,7 @@ class BattleStageDropSheet extends ConsumerWidget {
         header: Text(
           currentEncounter == null
               ? '권장 전투력 ${overview.recommendedPower} / 가능한 조합 ${overview.encounterCount}종 / 적 ${overview.enemyCount}종'
-              : '현재 조합 ${currentEncounter.encounterIndex}회 ${currentEncounter.encounterName} / 가능한 조합 ${overview.encounterCount}종 / 적 ${overview.enemyCount}종',
+              : '현재 교전 ${currentEncounter.encounterIndex}회 / 가능한 조합 ${overview.encounterCount}종 / 적 ${overview.enemyCount}종',
         ),
         body: ListView.separated(
           itemCount: overview.encounters.length,
@@ -41,7 +41,7 @@ class BattleStageDropSheet extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '${encounter.name} / ${encounter.chanceLabel}',
+                      '등장 확률 ${encounter.chanceLabel}',
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: AppSpacing.xs),

@@ -55,11 +55,7 @@ class BattleResultSheet extends ConsumerWidget {
                                 : colorScheme.error,
                           ),
                           const SizedBox(width: AppSpacing.sm),
-                          Expanded(
-                            child: Text(
-                              '${log.encounterIndex}회 ${log.encounterName.isEmpty ? '교전 기록' : log.encounterName}',
-                            ),
-                          ),
+                          Expanded(child: Text('${log.encounterIndex}회 교전 기록')),
                           if (log.wipedParty)
                             Text(
                               '전멸',

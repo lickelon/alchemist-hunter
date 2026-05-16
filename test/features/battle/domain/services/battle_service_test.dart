@@ -182,7 +182,6 @@ void main() {
         encounters: <BattleStageEncounterDefinition>[
           BattleStageEncounterDefinition(
             id: 'encounter_1',
-            name: 'Encounter 1',
             enemySetId: 'enemy_set_1',
             summary: '기본 조합',
             chance: 1,
@@ -280,7 +279,6 @@ void main() {
         encounters: <BattleStageEncounterDefinition>[
           BattleStageEncounterDefinition(
             id: 'encounter_5',
-            name: 'Encounter 5',
             enemySetId: 'enemy_set_5',
             summary: '보스 조합',
             chance: 1,
@@ -349,7 +347,6 @@ void main() {
     final BattleService service = BattleService(random: Random(1));
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -408,7 +405,6 @@ void main() {
     final BattleService service = BattleService(random: Random(1));
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -466,7 +462,6 @@ void main() {
     final BattleService service = BattleService(random: Random(1));
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -515,7 +510,6 @@ void main() {
       final BattleService service = BattleService(random: Random(1));
       final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
         encounterId: 'encounter_1',
-        encounterName: 'Encounter 1',
         encounterIndex: 1,
         enemySetId: 'enemy_set_1',
         enemies: <BattleRunUnitState>[
@@ -582,7 +576,6 @@ void main() {
     final BattleService service = BattleService(random: Random(1));
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -636,7 +629,6 @@ void main() {
     final BattleService service = BattleService(random: Random(1));
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -679,7 +671,6 @@ void main() {
   test('always hit only applies on before hit check trigger', () {
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -734,7 +725,6 @@ void main() {
     final BattleService service = BattleService(random: Random(1));
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -774,7 +764,6 @@ void main() {
     );
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -826,7 +815,6 @@ void main() {
     );
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -880,7 +868,6 @@ void main() {
     );
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -936,7 +923,6 @@ void main() {
     );
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -980,7 +966,6 @@ void main() {
     );
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[
@@ -1024,7 +1009,6 @@ void main() {
     );
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
-      encounterName: 'Encounter 1',
       encounterIndex: 1,
       enemySetId: 'enemy_set_1',
       enemies: <BattleRunUnitState>[

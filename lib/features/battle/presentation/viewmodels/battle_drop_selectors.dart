@@ -37,13 +37,11 @@ class BattleEnemyDropView {
 
 class BattleStageEncounterDropView {
   const BattleStageEncounterDropView({
-    required this.name,
     required this.summary,
     required this.chanceLabel,
     required this.enemies,
   });
 
-  final String name;
   final String summary;
   final String chanceLabel;
   final List<BattleEnemyDropView> enemies;
@@ -94,7 +92,6 @@ final battleStageDropOverviewProvider =
               final List<BattleEnemyDefinition> enemies = battleCatalog
                   .enemyDefinitionsForSet(encounter.enemySetId);
               return BattleStageEncounterDropView(
-                name: encounter.name,
                 summary: encounter.summary,
                 chanceLabel: _chanceLabel(encounter.chance),
                 enemies: enemies

@@ -9,7 +9,6 @@ enum BattleExpeditionStatus { idle, searching, battling, recovering, paused }
 class BattleEncounterRuntimeState {
   const BattleEncounterRuntimeState({
     required this.encounterId,
-    required this.encounterName,
     required this.encounterIndex,
     required this.enemySetId,
     required this.enemies,
@@ -21,7 +20,6 @@ class BattleEncounterRuntimeState {
   });
 
   final String encounterId;
-  final String encounterName;
   final int encounterIndex;
   final String enemySetId;
   final List<BattleRunUnitState> enemies;
@@ -41,7 +39,6 @@ class BattleEncounterRuntimeState {
   }) {
     return BattleEncounterRuntimeState(
       encounterId: encounterId,
-      encounterName: encounterName,
       encounterIndex: encounterIndex,
       enemySetId: enemySetId,
       enemies: enemies ?? this.enemies,

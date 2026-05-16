@@ -6,7 +6,6 @@ import 'battle_playback_models.dart';
 class BattleLogEntry {
   const BattleLogEntry({
     required this.resolvedAt,
-    this.encounterName = '',
     this.encounterIndex = 0,
     required this.success,
     this.wipedParty = false,
@@ -19,7 +18,6 @@ class BattleLogEntry {
   });
 
   final DateTime resolvedAt;
-  final String encounterName;
   final int encounterIndex;
   final bool success;
   final bool wipedParty;

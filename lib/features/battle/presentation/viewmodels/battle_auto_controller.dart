@@ -129,7 +129,6 @@ class BattleAutoController {
             recentLogs: <BattleLogEntry>[
               BattleLogEntry(
                 resolvedAt: _session.now(),
-                encounterName: outcome.encounter.encounterName,
                 encounterIndex: outcome.encounter.encounterIndex,
                 success: outcome.success,
                 wipedParty: outcome.wiped,
@@ -155,7 +154,7 @@ class BattleAutoController {
         );
     _session.applyState(claimedState);
     _session.appendLog(
-      'Battle ${battleStageDisplayName(stageId)} / ${outcome.success ? '성공' : '실패'} / ${encounter.encounterName}${encounter.usedLoadoutFallback ? ' / 포션 부족' : ''}',
+      'Battle ${battleStageDisplayName(stageId)} / ${outcome.success ? '성공' : '실패'} / ${encounter.encounterIndex}회 교전${encounter.usedLoadoutFallback ? ' / 포션 부족' : ''}',
     );
   }
 }

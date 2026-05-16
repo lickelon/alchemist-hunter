@@ -150,7 +150,7 @@ class _BattleStageStatusHeader extends StatelessWidget {
           label: Text(
             currentEncounter == null
                 ? '교전 대기'
-                : '${currentEncounter!.encounterIndex}회 ${currentEncounter!.encounterName}',
+                : '${currentEncounter!.encounterIndex}회 교전',
           ),
         ),
       ],
@@ -230,7 +230,7 @@ class _BattleStageSummaryBody extends StatelessWidget {
       '누적 승리 ${runState?.victoryCount ?? 0} / 전멸 ${runState?.wipeCount ?? 0}',
       '누적 교전 ${runState?.encounterCount ?? 0}회',
       if (currentEncounter != null)
-        '현재 조합 ${currentEncounter!.encounterIndex}회 / ${currentEncounter!.encounterName}',
+        '현재 교전 ${currentEncounter!.encounterIndex}회',
       if (currentEncounter?.usedLoadoutFallback ?? false) '포션 부족으로 로드아웃 미적용',
       if (expedition.status == BattleExpeditionStatus.recovering)
         '복구 완료까지 ${formatBattleStageRemaining(stage.recoveryDuration, expedition.phaseProgress)}',

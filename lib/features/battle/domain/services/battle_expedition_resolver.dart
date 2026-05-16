@@ -111,7 +111,6 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
     final BattleEncounterRuntimeState runtimeEncounter =
         BattleEncounterRuntimeState(
           encounterId: encounter.definition.id,
-          encounterName: encounter.definition.name,
           encounterIndex: previousRunState.encounterCount + 1,
           enemySetId: encounter.definition.enemySetId,
           enemies: _battleService.createEncounterEnemies(
@@ -128,7 +127,7 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
     return BattleEncounterResolution(
       runState: nextRunState,
       summary:
-          '${encounter.definition.name} 교전 시작${resolvedLoadout.fallback ? ' / 포션 부족' : ''}',
+          '${runtimeEncounter.encounterIndex}회 교전 시작${resolvedLoadout.fallback ? ' / 포션 부족' : ''}',
       consumedPotionLoadout: resolvedLoadout.appliedLoadout,
       usedLoadoutFallback: resolvedLoadout.fallback,
     );

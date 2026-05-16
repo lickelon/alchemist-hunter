@@ -213,7 +213,6 @@ class BattleExpeditionProgressService {
               recentLogs,
               BattleLogEntry(
                 resolvedAt: cursorTime,
-                encounterName: step.encounter.encounterName,
                 encounterIndex: step.encounter.encounterIndex,
                 success: true,
                 wipedParty: false,
@@ -243,7 +242,6 @@ class BattleExpeditionProgressService {
             recentLogs,
             BattleLogEntry(
               resolvedAt: cursorTime,
-              encounterName: step.encounter.encounterName,
               encounterIndex: step.encounter.encounterIndex,
               success: false,
               wipedParty: step.wiped,

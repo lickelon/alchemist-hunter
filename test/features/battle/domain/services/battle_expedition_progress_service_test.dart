@@ -297,7 +297,6 @@ class _FakeBattleCatalogRepository implements BattleCatalogRepository {
       encounters: <BattleStageEncounterDefinition>[
         BattleStageEncounterDefinition(
           id: 'encounter_1',
-          name: 'Encounter 1',
           enemySetId: 'enemy_set_1',
           summary: 'test',
           chance: 1,
@@ -472,7 +471,6 @@ BattleRunState _runState({
 BattleEncounterRuntimeState _encounter({bool usedLoadoutFallback = false}) {
   return BattleEncounterRuntimeState(
     encounterId: 'encounter_1',
-    encounterName: 'Encounter 1',
     encounterIndex: 1,
     enemySetId: 'enemy_set_1',
     enemies: <BattleRunUnitState>[_enemy('enemy_1')],
