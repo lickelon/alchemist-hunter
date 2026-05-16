@@ -13,7 +13,7 @@
 | 항목 | 현재 상태 | 문제 |
 | --- | --- | --- |
 | 아군 전투 스탯 | `BattleCombatStats` + `BattleStatModifier` + `BattleModifier` + `BattlePassiveEffect` 구조 반영 | 성장 / 장비 / 인챈트 반영은 됐지만 loadout 보정은 아직 없다 |
-| 적 전투 스탯 | `BattleEnemyDefinition`과 stage / enemy set / encounter catalog 사용 | 적별 액티브 스킬과 패시브 개성은 더 채워야 한다 |
+| 적 전투 스탯 | `BattleEnemyDefinition`과 stage / enemy set / encounter catalog 사용 | 일반 적별 액티브 스킬과 패시브 개성은 확장됐고, 보스 전용 패턴은 아직 없다 |
 | 전투 루프 | 속도, 명중, 치명, 물리/마법, 흡혈, 재생, 보호막, 상태이상, 추가 공격, MP/스킬, passive trigger 모델 반영 | 보스 전용 패턴은 아직 없다 |
 | 연속 run 구조 | 아군 HP와 생존 상태가 encounter 사이에 유지되고, 전멸 시 복구 후 재시작한다 | partial death 보상 규칙과 고급 revive 규칙은 아직 없다 |
 | 전투 결과 표시 | 최근 결과 시트와 실시간 전투 현황 시트 제공, 포션 fallback 사유 노출 | 해금 근거와 전투 외 성장 요약은 아직 더 보강할 수 있다 |
@@ -287,6 +287,7 @@
    - stage별 고유 일반 몬스터 수를 늘리고, enemy set / encounter 조합을 함께 확장한다.
    - 신규 몬스터는 기존 stage 재료 드롭 범위 안에서만 보상을 가진다.
 2. 적별 행동 패턴 확장
+   - 완료됨.
    - 일반 적의 액티브 스킬 / 패시브 / 상태이상 / 보호막 역할을 enemy id 기준으로 구체화한다.
    - 후반 적 조합의 체감 차별화를 이어간다.
 3. 전투 현황 시트 보강
@@ -303,6 +304,7 @@
   - 목적: 후반 전투 체감 차별화
 - 2차 PR
   - 적별 행동 패턴 / 전투 현황 시트 보강
+  - 상태: 적별 행동 패턴 완료, 전투 현황 시트 보강 미완료
 - 3차 PR
   - 보스 전용 패턴 모델 / 구현
 - 4차 PR

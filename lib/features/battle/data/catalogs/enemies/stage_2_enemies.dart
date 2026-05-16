@@ -28,6 +28,14 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 3,
         ),
+        passives: <BattlePassiveEffect>[
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.battleStart,
+            type: BattlePassiveEffectType.firstStrike,
+            sourceId: 'enemy_scout_quick_draw',
+            value: 1,
+          ),
+        ],
         skills: <BattleSkillDefinition>[
           BattleSkillDefinition(
             id: 'enemy_scout_crossfire',
@@ -114,6 +122,14 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
             mode: BattleModifierMode.percent,
             value: 0.08,
             sourceId: 'enemy_bruiser_overhead_swing',
+          ),
+        ],
+        passives: <BattlePassiveEffect>[
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.onDamaged,
+            type: BattlePassiveEffectType.counterAttack,
+            sourceId: 'enemy_bruiser_backhand',
+            value: 1,
           ),
         ],
         skills: <BattleSkillDefinition>[
@@ -267,9 +283,21 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
             id: 'enemy_dust_mender_quick_patch',
             name: 'Quick Patch',
             summary: '모든 아군의 HP를 즉시 회복한다.',
+            cooldownLifecycles: 3,
+            priority: 2,
             targetType: BattleSkillTargetType.allAllies,
             effectType: BattleSkillEffectType.heal,
             flatPower: 12,
+          ),
+          BattleSkillDefinition(
+            id: 'enemy_dust_mender_dust_ward',
+            name: 'Dust Ward',
+            summary: '먼지 장막으로 모든 아군에게 얕은 보호막을 부여한다.',
+            cooldownLifecycles: 2,
+            priority: 1,
+            targetType: BattleSkillTargetType.allAllies,
+            effectType: BattleSkillEffectType.grantShield,
+            shieldValue: 10,
           ),
         ],
         normalDrops: <BattleDropEntry>[

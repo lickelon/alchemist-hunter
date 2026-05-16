@@ -89,6 +89,16 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             sourceId: 'enemy_crucible_molten_hide',
           ),
         ],
+        passives: <BattlePassiveEffect>[
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.afterHit,
+            type: BattlePassiveEffectType.grantStatus,
+            sourceId: 'enemy_crucible_scorch',
+            value: 4,
+            durationLifecycles: 2,
+            statusType: BattleStatusType.poison,
+          ),
+        ],
         skills: <BattleSkillDefinition>[
           BattleSkillDefinition(
             id: 'enemy_crucible_molten_charge',
@@ -135,6 +145,14 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             mode: BattleModifierMode.percent,
             value: -0.12,
             sourceId: 'enemy_sentinel_plating',
+          ),
+        ],
+        passives: <BattlePassiveEffect>[
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.onDamaged,
+            type: BattlePassiveEffectType.counterAttack,
+            sourceId: 'enemy_sentinel_guard_protocol',
+            value: 1,
           ),
         ],
         skills: <BattleSkillDefinition>[
@@ -191,6 +209,8 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             id: 'enemy_distiller_catalyze',
             name: 'Catalyze',
             summary: '모든 아군의 주는 마법 피해를 잠시 증가시킨다.',
+            cooldownLifecycles: 3,
+            priority: 2,
             targetType: BattleSkillTargetType.allAllies,
             effectType: BattleSkillEffectType.grantModifier,
             modifier: BattleModifier(
@@ -201,6 +221,16 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
               sourceId: 'enemy_distiller_catalyze',
             ),
             durationLifecycles: 2,
+          ),
+          BattleSkillDefinition(
+            id: 'enemy_distiller_soot_mend',
+            name: 'Soot Mend',
+            summary: '그을음 촉매로 무작위 아군 하나를 회복한다.',
+            cooldownLifecycles: 2,
+            priority: 1,
+            targetType: BattleSkillTargetType.randomAlly,
+            effectType: BattleSkillEffectType.heal,
+            flatPower: 14,
           ),
         ],
         normalDrops: <BattleDropEntry>[

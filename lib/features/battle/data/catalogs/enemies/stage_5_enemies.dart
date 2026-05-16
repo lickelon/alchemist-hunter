@@ -94,6 +94,8 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             id: 'enemy_herald_core_signal',
             name: 'Core Signal',
             summary: '모든 아군의 주는 피해를 잠시 증가시킨다.',
+            cooldownLifecycles: 3,
+            priority: 2,
             targetType: BattleSkillTargetType.allAllies,
             effectType: BattleSkillEffectType.grantModifier,
             modifier: BattleModifier(
@@ -101,6 +103,22 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
               mode: BattleModifierMode.percent,
               value: 0.12,
               sourceId: 'enemy_herald_core_signal',
+            ),
+            durationLifecycles: 2,
+          ),
+          BattleSkillDefinition(
+            id: 'enemy_herald_core_fracture',
+            name: 'Core Fracture',
+            summary: '핵 신호를 흔들어 모든 적의 받는 피해를 증가시킨다.',
+            cooldownLifecycles: 2,
+            priority: 1,
+            targetType: BattleSkillTargetType.allEnemies,
+            effectType: BattleSkillEffectType.grantModifier,
+            modifier: BattleModifier(
+              type: BattleModifierType.damageTaken,
+              mode: BattleModifierMode.percent,
+              value: 0.08,
+              sourceId: 'enemy_herald_core_fracture',
             ),
             durationLifecycles: 2,
           ),
@@ -143,6 +161,14 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             sourceId: 'enemy_warden_core_shell',
           ),
         ],
+        passives: <BattlePassiveEffect>[
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.onDamaged,
+            type: BattlePassiveEffectType.counterAttack,
+            sourceId: 'enemy_warden_guard_retaliation',
+            value: 1,
+          ),
+        ],
         skills: <BattleSkillDefinition>[
           BattleSkillDefinition(
             id: 'enemy_warden_moonvault_barrier',
@@ -183,6 +209,21 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
           regen: 0.015,
           mpRegen: 5,
         ),
+        passives: <BattlePassiveEffect>[
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.afterHit,
+            type: BattlePassiveEffectType.grantModifier,
+            sourceId: 'enemy_core_siphon_mana_wound',
+            durationLifecycles: 2,
+            modifier: BattleModifier(
+              type: BattleModifierType.damageTaken,
+              mode: BattleModifierMode.percent,
+              value: 0.1,
+              school: DamageSchool.magical,
+              sourceId: 'enemy_core_siphon_mana_wound',
+            ),
+          ),
+        ],
         skills: <BattleSkillDefinition>[
           BattleSkillDefinition(
             id: 'enemy_core_siphon_mana_rend',

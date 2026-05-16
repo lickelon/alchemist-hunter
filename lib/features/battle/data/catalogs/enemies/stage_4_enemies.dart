@@ -34,6 +34,19 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             type: BattlePassiveEffectType.alwaysHit,
             sourceId: 'enemy_sniper_true_shot',
           ),
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.beforeDamage,
+            type: BattlePassiveEffectType.grantModifier,
+            sourceId: 'enemy_sniper_precise_aim',
+            durationLifecycles: 1,
+            modifier: BattleModifier(
+              type: BattleModifierType.damageDealt,
+              mode: BattleModifierMode.percent,
+              value: 0.08,
+              school: DamageSchool.physical,
+              sourceId: 'enemy_sniper_precise_aim',
+            ),
+          ),
         ],
         skills: <BattleSkillDefinition>[
           BattleSkillDefinition(
@@ -186,6 +199,14 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             sourceId: 'enemy_mirage_distortion',
           ),
         ],
+        passives: <BattlePassiveEffect>[
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.battleStart,
+            type: BattlePassiveEffectType.firstStrike,
+            sourceId: 'enemy_mirage_blink_in',
+            value: 1,
+          ),
+        ],
         skills: <BattleSkillDefinition>[
           BattleSkillDefinition(
             id: 'enemy_mirage_false_opening',
@@ -276,6 +297,8 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             id: 'enemy_gale_channeler_storm_rite',
             name: 'Storm Rite',
             summary: '폭풍 술식으로 모든 아군의 마법 피해를 증가시킨다.',
+            cooldownLifecycles: 3,
+            priority: 2,
             targetType: BattleSkillTargetType.allAllies,
             effectType: BattleSkillEffectType.grantModifier,
             modifier: BattleModifier(
@@ -286,6 +309,16 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
               sourceId: 'enemy_gale_channeler_storm_rite',
             ),
             durationLifecycles: 2,
+          ),
+          BattleSkillDefinition(
+            id: 'enemy_gale_channeler_gale_ward',
+            name: 'Gale Ward',
+            summary: '휘감기는 바람으로 모든 아군에게 보호막을 부여한다.',
+            cooldownLifecycles: 2,
+            priority: 1,
+            targetType: BattleSkillTargetType.allAllies,
+            effectType: BattleSkillEffectType.grantShield,
+            shieldValue: 14,
           ),
         ],
         normalDrops: <BattleDropEntry>[
