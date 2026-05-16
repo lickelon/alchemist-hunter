@@ -94,7 +94,7 @@
 #### `test/features/battle/presentation/dungeon_screen_test.dart`
 - 잠긴 stage의 잠금 사유 문구가 화면에 보이는지 검증한다.
 - 연속 run 기준 전투 현황 시트, 적 조합/드롭 시트, 최근 기록 시트까지 실제 UI 진입 흐름을 확인한다.
-- 최근 기록 시트에서 encounter 이름, 재료명, 행동 로그가 올바르게 보이는지 확인한다.
+- 최근 기록 시트에서 교전 번호, 재료명, 행동 로그가 올바르게 보이는지 확인한다.
 
 #### `test/features/battle/presentation/viewmodels/battle_controller_test.dart`
 - 즉시 전투 후 골드, 정수, 재료, 즉시 XP, 최근 로그가 함께 갱신되는지 검증한다.
