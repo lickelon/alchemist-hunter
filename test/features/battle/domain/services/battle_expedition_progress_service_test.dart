@@ -298,7 +298,6 @@ class _FakeBattleCatalogRepository implements BattleCatalogRepository {
         BattleStageEncounterDefinition(
           id: 'encounter_1',
           enemySetId: 'enemy_set_1',
-          summary: 'test',
           chance: 1,
         ),
       ],

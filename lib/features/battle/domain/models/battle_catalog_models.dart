@@ -36,13 +36,11 @@ class BattleEnemySetDefinition {
     required this.id,
     required this.name,
     required this.enemyIds,
-    required this.summary,
   });
 
   final String id;
   final String name;
   final List<String> enemyIds;
-  final String summary;
 }
 
 @immutable
@@ -63,13 +61,11 @@ class BattleStageEncounterDefinition {
   const BattleStageEncounterDefinition({
     required this.id,
     required this.enemySetId,
-    required this.summary,
     required this.chance,
   });
 
   final String id;
   final String enemySetId;
-  final String summary;
   final double chance;
 }
 

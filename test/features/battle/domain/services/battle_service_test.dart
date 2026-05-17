@@ -183,7 +183,6 @@ void main() {
           BattleStageEncounterDefinition(
             id: 'encounter_1',
             enemySetId: 'enemy_set_1',
-            summary: '기본 조합',
             chance: 1,
           ),
         ],
@@ -280,7 +279,6 @@ void main() {
           BattleStageEncounterDefinition(
             id: 'encounter_5',
             enemySetId: 'enemy_set_5',
-            summary: '보스 조합',
             chance: 1,
           ),
         ],
