@@ -57,9 +57,7 @@ class BattleStageStatusSheet extends ConsumerWidget {
       child: AppSheetLayout(
         title:
             '${battleStageDisplayName(stage.id, fallback: stage.name)} 전투 현황',
-        header: Text(
-          '권장 전투력 ${stage.recommendedPower} / 가능한 조합 ${stage.encounters.length}종',
-        ),
+        header: Text('권장 전투력 ${stage.recommendedPower}'),
         body: ListView(
           children: <Widget>[
             _BattleStageStatusHeader(
