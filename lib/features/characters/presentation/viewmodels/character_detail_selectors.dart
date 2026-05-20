@@ -104,6 +104,10 @@ List<String> characterCombatEffectLines(HeroProfile hero) {
   final List<String> lines = <String>[
     ...hero.modifiers.map(_combatModifierLabel),
     ...hero.passives.map(_combatPassiveLabel),
+    ...hero.skills.map(
+      (BattleSkillDefinition skill) =>
+          _combatSkillLabel(skill, manaCost: hero.stats.maxMp),
+    ),
   ];
   if (lines.isEmpty) {
     return const <String>['전투 효과 없음'];
@@ -185,6 +189,57 @@ String _combatPassiveLabel(BattlePassiveEffect passive) {
     BattlePassiveEffectType.grantModifier => '패시브: 버프/디버프 부여',
     BattlePassiveEffectType.grantStatus => '패시브: 상태이상 부여',
     BattlePassiveEffectType.grantShield => '패시브: 보호막 부여',
+  };
+}
+
+String _combatSkillLabel(BattleSkillDefinition skill, {required int manaCost}) {
+  final String targetLabel = _skillTargetLabel(skill.targetType);
+  final String effectLabel = _skillEffectLabel(skill);
+  return '스킬: ${skill.name} / 마나 소모 $manaCost / $targetLabel / $effectLabel';
+}
+
+String _skillTargetLabel(BattleSkillTargetType targetType) {
+  return switch (targetType) {
+    BattleSkillTargetType.randomEnemy => '무작위 적 1명',
+    BattleSkillTargetType.self => '자신',
+    BattleSkillTargetType.randomAlly => '무작위 아군 1명',
+    BattleSkillTargetType.allEnemies => '모든 적',
+    BattleSkillTargetType.allAllies => '모든 아군',
+  };
+}
+
+String _skillEffectLabel(BattleSkillDefinition skill) {
+  return switch (skill.effectType) {
+    BattleSkillEffectType.damage =>
+      '${_damageSchoolLabel(skill.school)} 피해 x${skill.powerMultiplier.toStringAsFixed(2)}'
+          '${skill.flatPower == 0 ? '' : ' +${skill.flatPower}'}',
+    BattleSkillEffectType.heal => '회복 +${skill.flatPower}',
+    BattleSkillEffectType.grantModifier =>
+      skill.modifier == null
+          ? '버프/디버프 부여'
+          : '${_combatModifierLabel(skill.modifier!)} / ${skill.durationLifecycles}행동',
+    BattleSkillEffectType.grantStatus =>
+      '${_statusLabel(skill.statusType)}'
+          '${skill.flatPower <= 0 ? '' : ' ${skill.flatPower}'}'
+          ' / ${skill.durationLifecycles}행동',
+    BattleSkillEffectType.grantShield =>
+      '보호막 +${skill.shieldValue > 0 ? skill.shieldValue : skill.flatPower}',
+  };
+}
+
+String _damageSchoolLabel(DamageSchool school) {
+  return switch (school) {
+    DamageSchool.any => '기본',
+    DamageSchool.physical => '물리',
+    DamageSchool.magical => '마법',
+  };
+}
+
+String _statusLabel(BattleStatusType? statusType) {
+  return switch (statusType) {
+    BattleStatusType.poison => '독',
+    BattleStatusType.stun => '기절',
+    null => '상태이상',
   };
 }
 

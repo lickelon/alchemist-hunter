@@ -116,7 +116,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('전투 효과'), findsOneWidget);
-    expect(find.text('전투 효과 없음'), findsOneWidget);
+    expect(find.textContaining('스킬: 방패 강타'), findsOneWidget);
+    expect(find.textContaining('마나 소모 ${expectedStats.maxMp}'), findsOneWidget);
     await tester.scrollUntilVisible(
       find.text('배치 변경은 전투/작업실 화면에서 진행'),
       200,
