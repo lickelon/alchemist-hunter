@@ -15,101 +15,195 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const double _unitBoardCardHeight = 360;
+const double _unitBoardMinHeight = 220;
+const double _compactLayoutReserveHeight = 250;
 const double _progressCardHeight = 44;
-const double _timelineCardHeight = 150;
-const int _timelineSlotCount = 6;
+const double _timelineLineHeight = 24;
 
-class BattleStageStatusSheet extends ConsumerWidget {
+class BattleStageStatusSheet extends ConsumerStatefulWidget {
   const BattleStageStatusSheet({super.key, required this.stageId});
 
   final String stageId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BattleStageStatusSheet> createState() =>
+      _BattleStageStatusSheetState();
+}
+
+class _BattleStageStatusSheetState
+    extends ConsumerState<BattleStageStatusSheet> {
+  final List<String> _timelineLines = <String>[];
+  final Set<String> _timelineKeys = <String>{};
+  final ScrollController _timelineScrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _timelineScrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final BattleCatalogRepository battleCatalog = ref.watch(
       battleCatalogRepositoryProvider,
     );
-    final BattleStageDefinition stage = battleCatalog.stageDefinition(stageId);
+    final BattleStageDefinition stage = battleCatalog.stageDefinition(
+      widget.stageId,
+    );
     final BattleExpeditionState expedition = ref.watch(
-      battleStageExpeditionStateProvider(stageId),
+      battleStageExpeditionStateProvider(widget.stageId),
     );
     final BattleRunState? runState = expedition.runState;
     final BattleEncounterRuntimeState? currentEncounter =
         runState?.currentEncounter;
     final List<BattleActionLog> currentActions = ref.watch(
-      battleStageCurrentActionLogsProvider(stageId),
+      battleStageCurrentActionLogsProvider(widget.stageId),
     );
     final List<BattleLogEntry> recentLogs = ref.watch(
-      battleStageRecentLogsProvider(stageId),
+      battleStageRecentLogsProvider(widget.stageId),
     );
     final String statusLabel = ref.watch(
-      battleStageStatusLabelProvider(stageId),
+      battleStageStatusLabelProvider(widget.stageId),
     );
     final BattleStagePhaseProgress progress = buildBattleStagePhaseProgress(
       expedition: expedition,
       stage: stage,
       battleActionInterval: battleActionInterval,
     );
+    _appendTimelineActions(currentEncounter, currentActions);
+    final List<String> timelineLines = _timelineLines.isEmpty
+        ? battleStageTimelineLines(
+            expedition: expedition,
+            currentActions: const <BattleActionLog>[],
+          )
+        : _timelineLines;
 
     return AppBottomSheet(
       child: AppSheetLayout(
         title:
             '${battleStageDisplayName(stage.id, fallback: stage.name)} 전투 현황',
-        body: ListView(
-          children: <Widget>[
-            BattleStatusCard(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              child: SizedBox(
-                height: _unitBoardCardHeight,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      BattleUnitBoardSection(
-                        units: runState?.allies ?? const <BattleRunUnitState>[],
+        body: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            final double unitBoardHeight =
+                (constraints.maxHeight - _compactLayoutReserveHeight).clamp(
+                  _unitBoardMinHeight,
+                  _unitBoardCardHeight,
+                );
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                BattleStatusCard(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  child: SizedBox(
+                    height: unitBoardHeight,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          BattleUnitBoardSection(
+                            units:
+                                runState?.allies ??
+                                const <BattleRunUnitState>[],
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          BattleUnitBoardSection(
+                            units:
+                                currentEncounter?.enemies ??
+                                const <BattleRunUnitState>[],
+                            enemy: true,
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: AppSpacing.md),
-                      BattleUnitBoardSection(
-                        units:
-                            currentEncounter?.enemies ??
-                            const <BattleRunUnitState>[],
-                        enemy: true,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            BattleStatusCard(
-              child: SizedBox(
-                height: _progressCardHeight,
-                child: _BattleStageProgressBody(
-                  statusLabel: statusLabel,
-                  progress: progress,
-                ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            BattleStageStatusActions(
-              stageId: stageId,
-              hasRecentLogs: recentLogs.isNotEmpty,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            BattleStatusCard(
-              child: SizedBox(
-                height: _timelineCardHeight,
-                child: _BattleStageTimelineBody(
-                  lines: battleStageTimelineLines(
-                    expedition: expedition,
-                    currentActions: currentActions,
+                const SizedBox(height: AppSpacing.lg),
+                BattleStatusCard(
+                  child: SizedBox(
+                    height: _progressCardHeight,
+                    child: _BattleStageProgressBody(
+                      statusLabel: statusLabel,
+                      progress: progress,
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ],
+                const SizedBox(height: AppSpacing.lg),
+                BattleStageStatusActions(
+                  stageId: widget.stageId,
+                  hasRecentLogs: recentLogs.isNotEmpty,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Expanded(
+                  child: BattleStatusCard(
+                    child: _BattleStageTimelineBody(
+                      controller: _timelineScrollController,
+                      lines: timelineLines,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
+  }
+
+  void _appendTimelineActions(
+    BattleEncounterRuntimeState? encounter,
+    List<BattleActionLog> actions,
+  ) {
+    if (encounter == null || actions.isEmpty) {
+      return;
+    }
+
+    final bool shouldFollow =
+        !_timelineScrollController.hasClients ||
+        _timelineScrollController.position.pixels >=
+            _timelineScrollController.position.maxScrollExtent - 12;
+    bool appended = false;
+    for (final BattleActionLog action in actions) {
+      final String key = _timelineActionKey(encounter, action);
+      if (_timelineKeys.add(key)) {
+        _timelineLines.add(battleActionTimelineLabel(action));
+        appended = true;
+      }
+    }
+    if (appended && shouldFollow) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!_timelineScrollController.hasClients) {
+          return;
+        }
+        _timelineScrollController.jumpTo(
+          _timelineScrollController.position.maxScrollExtent,
+        );
+      });
+    }
+  }
+
+  String _timelineActionKey(
+    BattleEncounterRuntimeState encounter,
+    BattleActionLog action,
+  ) {
+    return <Object?>[
+      encounter.encounterId,
+      encounter.encounterIndex,
+      action.lifecycle,
+      action.turn,
+      action.type,
+      action.actorId,
+      action.targetId,
+      action.skillId,
+      action.hit,
+      action.critical,
+      action.damage,
+      action.healing,
+      action.mpSpent,
+      action.actorHpAfter,
+      action.actorMpAfter,
+      action.targetHpAfter,
+      action.targetShieldAfter,
+      action.message,
+    ].join('|');
   }
 }
 
@@ -136,31 +230,30 @@ class _BattleStageProgressBody extends StatelessWidget {
 }
 
 class _BattleStageTimelineBody extends StatelessWidget {
-  const _BattleStageTimelineBody({required this.lines});
+  const _BattleStageTimelineBody({
+    required this.controller,
+    required this.lines,
+  });
 
+  final ScrollController controller;
   final List<String> lines;
 
   @override
   Widget build(BuildContext context) {
-    final List<String> visibleLines = lines.length > _timelineSlotCount
-        ? lines.skip(lines.length - _timelineSlotCount).toList(growable: false)
-        : lines;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: List<Widget>.generate(_timelineSlotCount, (int index) {
-        final String? line = index < visibleLines.length
-            ? visibleLines[index]
-            : null;
-        return SizedBox(
-          height: 24,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: line == null
-                ? const SizedBox.shrink()
-                : Text(line, maxLines: 1, overflow: TextOverflow.ellipsis),
+    return ListView.builder(
+      controller: controller,
+      itemExtent: _timelineLineHeight,
+      itemCount: lines.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            lines[index],
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         );
-      }),
+      },
     );
   }
 }

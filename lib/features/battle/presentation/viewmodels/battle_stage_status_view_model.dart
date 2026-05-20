@@ -48,8 +48,7 @@ List<String> battleStageTimelineLines({
 }) {
   if (currentActions.isNotEmpty) {
     return currentActions
-        .skip(currentActions.length > 6 ? currentActions.length - 6 : 0)
-        .map(_formatBattleAction)
+        .map(battleActionTimelineLabel)
         .toList(growable: false);
   }
   return switch (expedition.status) {
@@ -81,7 +80,7 @@ Duration _currentLifecycleElapsed(
   return Duration(microseconds: remainder);
 }
 
-String _formatBattleAction(BattleActionLog action) {
+String battleActionTimelineLabel(BattleActionLog action) {
   if (action.type == BattleActionType.regen) {
     return '${action.actorName} 재생 +${action.healing}';
   }
