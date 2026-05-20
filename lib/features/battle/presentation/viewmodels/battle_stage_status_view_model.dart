@@ -85,7 +85,7 @@ String battleActionTimelineLabel(BattleActionLog action) {
     return '${action.actorName} 재생 +${action.healing}';
   }
   if (action.type == BattleActionType.mpRegen) {
-    return '${action.actorName} MP 회복 +${action.healing}';
+    return '${action.actorName} 마나 회복 +${action.healing}';
   }
   if (action.type == BattleActionType.lifesteal) {
     return '${action.actorName} 흡혈 +${action.healing}';
@@ -113,6 +113,6 @@ String battleActionTimelineLabel(BattleActionLog action) {
     return '${action.actorName}$skillLabel -> ${action.targetName ?? '대상'} 빗나감';
   }
   final String criticalLabel = action.critical ? ' / 치명타' : '';
-  final String mpLabel = action.mpSpent > 0 ? ' / MP -${action.mpSpent}' : '';
+  final String mpLabel = action.mpSpent > 0 ? ' / 마나 -${action.mpSpent}' : '';
   return '${action.actorName}$skillLabel -> ${action.targetName ?? '대상'} ${action.damage} 피해$criticalLabel$mpLabel';
 }

@@ -94,6 +94,8 @@ void main() {
     );
     expect(find.text('체력'), findsOneWidget);
     expect(find.text('${expectedStats.maxHp}'), findsAtLeastNWidgets(1));
+    expect(find.text('마나'), findsNothing);
+    expect(find.text('마나재생'), findsNothing);
     expect(find.text('물공'), findsOneWidget);
     expect(
       find.text('${expectedStats.physicalAttack}'),

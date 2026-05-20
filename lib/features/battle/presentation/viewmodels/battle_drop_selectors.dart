@@ -133,7 +133,7 @@ List<String> _enemyStatLines(BattleCombatStats stats) {
     '상태적중 ${_chanceLabel(stats.statusAccuracy)} / 상태저항 ${_chanceLabel(stats.statusResistance)}',
     '물관 ${_chanceLabel(stats.physicalPenetration)} / 마관 ${_chanceLabel(stats.magicalPenetration)}',
     '흡혈 ${_chanceLabel(stats.lifesteal)} / 회복력 ${_chanceLabel(stats.healingPower)} / 재생 ${_chanceLabel(stats.regen)}',
-    'MP ${stats.maxMp} / MP재생 ${stats.mpRegen}',
+    '마나 ${stats.maxMp} / 마나재생 ${stats.mpRegen}',
   ];
 }
 
@@ -141,7 +141,10 @@ List<String> _enemyEffectLines(BattleEnemyDefinition enemy) {
   final List<String> lines = <String>[
     ...enemy.modifiers.map(_modifierLabel),
     ...enemy.passives.map(_passiveLabel),
-    ...enemy.skills.map(_skillLabel),
+    ...enemy.skills.map(
+      (BattleSkillDefinition skill) =>
+          _skillLabel(skill, manaCost: enemy.stats.maxMp),
+    ),
   ];
   if (lines.isEmpty) {
     return const <String>['특수 효과 없음'];
@@ -149,10 +152,10 @@ List<String> _enemyEffectLines(BattleEnemyDefinition enemy) {
   return lines;
 }
 
-String _skillLabel(BattleSkillDefinition skill) {
+String _skillLabel(BattleSkillDefinition skill, {required int manaCost}) {
   final String effectLabel = _skillEffectLabel(skill);
   final String targetLabel = _skillTargetLabel(skill.targetType);
-  return '스킬: ${skill.name} / $targetLabel / $effectLabel / MP 최대 시 전량 소비 / ${skill.summary}';
+  return '스킬: ${skill.name} / 마나 소모 $manaCost / $targetLabel / $effectLabel / ${skill.summary}';
 }
 
 String _modifierLabel(BattleModifier modifier) {

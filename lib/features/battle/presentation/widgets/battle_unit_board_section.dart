@@ -36,13 +36,13 @@ class BattleUnitBoardSection extends StatelessWidget {
             final Color backgroundColor = !unit.isAlive
                 ? colorScheme.surfaceContainerLow
                 : enemy
-                    ? colorScheme.errorContainer
-                    : colorScheme.surfaceContainerLowest;
+                ? colorScheme.errorContainer
+                : colorScheme.surfaceContainerLowest;
             final Color foregroundColor = !unit.isAlive
                 ? colorScheme.onSurface.withValues(alpha: 0.5)
                 : enemy
-                    ? colorScheme.onErrorContainer
-                    : colorScheme.onSurface;
+                ? colorScheme.onErrorContainer
+                : colorScheme.onSurface;
             return Container(
               margin: const EdgeInsets.only(bottom: AppSpacing.sm),
               padding: const EdgeInsets.all(AppSpacing.md),
@@ -72,7 +72,7 @@ class BattleUnitBoardSection extends StatelessWidget {
                     Text('HP ${unit.currentHp} / ${unit.maxHp}'),
                     if (unit.maxMp > 0) ...<Widget>[
                       const SizedBox(height: AppSpacing.xs),
-                      Text('MP ${unit.currentMp} / ${unit.maxMp}'),
+                      Text('마나 ${unit.currentMp} / ${unit.maxMp}'),
                     ],
                     if (unit.shield > 0) ...<Widget>[
                       const SizedBox(height: AppSpacing.xs),

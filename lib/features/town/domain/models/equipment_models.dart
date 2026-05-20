@@ -78,7 +78,7 @@ String _statModifierLabel(BattleStatModifier modifier) {
       : _signedValue(modifier.value.round());
   return switch (modifier.type) {
     BattleStatModifierType.maxHp => '체력 $valueLabel',
-    BattleStatModifierType.maxMp => 'MP $valueLabel',
+    BattleStatModifierType.maxMp => '마나 $valueLabel',
     BattleStatModifierType.physicalAttack => '물공 $valueLabel',
     BattleStatModifierType.physicalDefense => '물방 $valueLabel',
     BattleStatModifierType.magicalAttack => '마공 $valueLabel',
@@ -95,7 +95,7 @@ String _statModifierLabel(BattleStatModifier modifier) {
     BattleStatModifierType.lifesteal => '흡혈 $valueLabel',
     BattleStatModifierType.healingPower => '회복력 $valueLabel',
     BattleStatModifierType.regen => '재생 $valueLabel',
-    BattleStatModifierType.mpRegen => 'MP재생 $valueLabel',
+    BattleStatModifierType.mpRegen => '마나재생 $valueLabel',
   };
 }
 

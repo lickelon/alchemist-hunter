@@ -70,7 +70,7 @@ void main() {
 
     expect(find.text('Bloom Weaver'), findsOneWidget);
     expect(find.text('HP 64 / 100'), findsOneWidget);
-    expect(find.text('MP 4 / 10'), findsOneWidget);
+    expect(find.text('마나 4 / 10'), findsOneWidget);
     expect(find.text('보호막 18'), findsOneWidget);
     expect(find.text('중독 6 / 2행동'), findsOneWidget);
     expect(find.text('받는 피해 +12% / 1행동'), findsOneWidget);
