@@ -29,28 +29,19 @@ class DungeonScreen extends ConsumerWidget {
         final int assignedCount = ref
             .watch(battleStageAssignmentProvider(stage))
             .length;
-        final int partyPower = ref.watch(battleStagePartyPowerProvider(stage));
         final BattleExpeditionState expedition = ref.watch(
           battleStageExpeditionStateProvider(stage),
         );
         final String statusLabel = ref.watch(
           battleStageStatusLabelProvider(stage),
         );
-        final String pendingLabel = ref.watch(
-          battleStagePendingClaimLabelProvider(stage),
-        );
-        final List<BattleLogEntry> recentLogs = ref.watch(
-          battleStageRecentLogsProvider(stage),
-        );
         final bool canStart =
             unlocked && assignedCount > 0 && !expedition.isActive;
         final bool canStop = expedition.isActive;
         final bool canClaim = unlocked && !expedition.pendingClaim.isEmpty;
-        final String summary =
-            '편성 $assignedCount명 / 전투력 $partyPower / $statusLabel';
-        final String recentLine = recentLogs.isEmpty
-            ? '최근 전투 기록 없음'
-            : '최근 전투 ${recentLogs.first.success ? '성공' : '실패'} / ${recentLogs.first.turns}턴';
+        final String cardSummary = unlocked
+            ? '편성 $assignedCount명\n상태: $statusLabel'
+            : '편성 $assignedCount명\n상태: 잠김\n$lockReason';
 
         return Card(
           child: InkWell(
@@ -73,11 +64,7 @@ class DungeonScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Text(
-                    unlocked
-                        ? '$summary\n$pendingLabel\n$recentLine'
-                        : '$summary\n$lockReason',
-                  ),
+                  Text(cardSummary),
                   const SizedBox(height: AppSpacing.lg),
                   Wrap(
                     spacing: AppSpacing.md,
@@ -110,9 +97,6 @@ class DungeonScreen extends ConsumerWidget {
                               ? '잠김'
                               : canStop
                               ? '정지'
-                              : expedition.status ==
-                                    BattleExpeditionStatus.paused
-                              ? '재개'
                               : '원정 시작',
                         ),
                       ),
