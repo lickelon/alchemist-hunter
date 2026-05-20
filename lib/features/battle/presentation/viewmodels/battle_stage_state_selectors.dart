@@ -9,7 +9,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final Provider<List<String>> unlockedStageListProvider = Provider<List<String>>(
   (Ref ref) {
-    return ref.watch(stageCatalogProvider);
+    final List<String> stages = ref.watch(stageCatalogProvider);
+    final ProgressState progress = ref.watch(battleProgressProvider);
+    final BattleCatalogRepository battleCatalog = ref.watch(
+      battleCatalogRepositoryProvider,
+    );
+    const BattleProgressionService progressionService =
+        BattleProgressionService();
+    return stages
+        .where((String stageId) {
+          final BattleStageDefinition stage = battleCatalog.stageDefinition(
+            stageId,
+          );
+          return progressionService.isStageUnlocked(
+            progress: progress,
+            stage: stage,
+          );
+        })
+        .toList(growable: false);
   },
 );
 

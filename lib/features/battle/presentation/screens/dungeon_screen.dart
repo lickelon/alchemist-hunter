@@ -1,7 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
-import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_sheet.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_claim_sheet.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_sheet.dart';
@@ -21,11 +20,9 @@ class DungeonScreen extends ConsumerWidget {
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (BuildContext context, int index) {
         final String stage = stages[index];
-        final bool unlocked = ref.watch(battleStageUnlockedProvider(stage));
-        final String lockReason = ref.watch(
-          battleStageLockReasonProvider(stage),
+        final String stageLabel = ref.watch(
+          battleStageDisplayNameProvider(stage),
         );
-        final String stageLabel = battleStageDisplayName(stage);
         final int assignedCount = ref
             .watch(battleStageAssignmentProvider(stage))
             .length;
@@ -35,13 +32,10 @@ class DungeonScreen extends ConsumerWidget {
         final String statusLabel = ref.watch(
           battleStageStatusLabelProvider(stage),
         );
-        final bool canStart =
-            unlocked && assignedCount > 0 && !expedition.isActive;
+        final bool canStart = assignedCount > 0 && !expedition.isActive;
         final bool canStop = expedition.isActive;
-        final bool canClaim = unlocked && !expedition.pendingClaim.isEmpty;
-        final String cardSummary = unlocked
-            ? '편성 $assignedCount명\n상태: $statusLabel'
-            : '편성 $assignedCount명\n상태: 잠김\n$lockReason';
+        final bool canClaim = !expedition.pendingClaim.isEmpty;
+        final String cardSummary = '편성 $assignedCount명\n상태: $statusLabel';
 
         return Card(
           child: InkWell(
@@ -71,15 +65,11 @@ class DungeonScreen extends ConsumerWidget {
                     runSpacing: AppSpacing.md,
                     children: <Widget>[
                       FilledButton.tonal(
-                        onPressed: unlocked
-                            ? () => _showAssignmentSheet(context, stage)
-                            : null,
+                        onPressed: () => _showAssignmentSheet(context, stage),
                         child: const Text('편성'),
                       ),
                       FilledButton(
-                        onPressed: !unlocked
-                            ? null
-                            : canStop
+                        onPressed: canStop
                             ? () {
                                 ref
                                     .read(battleControllerProvider)
@@ -92,13 +82,7 @@ class DungeonScreen extends ConsumerWidget {
                                     .startExpedition(stage);
                               }
                             : null,
-                        child: Text(
-                          !unlocked
-                              ? '잠김'
-                              : canStop
-                              ? '정지'
-                              : '원정 시작',
-                        ),
+                        child: Text(canStop ? '정지' : '원정 시작'),
                       ),
                       FilledButton.tonal(
                         onPressed: canClaim
