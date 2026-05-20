@@ -28,10 +28,11 @@ class BattleClaimSheet extends ConsumerWidget {
     final MaterialCatalogRepository materialCatalog = ref.watch(
       materialCatalogRepositoryProvider,
     );
+    final String stageName = ref.watch(battleStageDisplayNameProvider(stageId));
 
     return AppBottomSheet(
       child: AppSheetLayout(
-        title: '${battleStageDisplayName(stageId)} 보상 수령',
+        title: '$stageName 보상 수령',
         header: Text(
           claim.isEmpty
               ? '수령 대기 보상 없음'

@@ -1,4 +1,7 @@
 String battleStageDisplayName(String stageId, {String? fallback}) {
+  if (fallback != null && fallback.isNotEmpty) {
+    return fallback;
+  }
   final int? stageNumber = int.tryParse(stageId.replaceFirst('stage_', ''));
   if (stageNumber != null) {
     return '$stageNumber단계';

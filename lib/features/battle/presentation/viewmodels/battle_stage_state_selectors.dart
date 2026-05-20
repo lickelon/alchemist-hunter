@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
@@ -11,6 +12,16 @@ final Provider<List<String>> unlockedStageListProvider = Provider<List<String>>(
     return ref.watch(stageCatalogProvider);
   },
 );
+
+final battleStageDisplayNameProvider = Provider.family<String, String>((
+  Ref ref,
+  String stageId,
+) {
+  final BattleStageDefinition stage = ref
+      .watch(battleCatalogRepositoryProvider)
+      .stageDefinition(stageId);
+  return battleStageDisplayName(stage.id, fallback: stage.name);
+});
 
 final Provider<int> battleGoldProvider = Provider<int>((Ref ref) {
   return ref.watch(

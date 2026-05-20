@@ -75,7 +75,7 @@ final battleStageAssignmentCharacterViewsProvider =
                       entry.value.contains(character.id);
                 })
                 .map((MapEntry<String, List<String>> entry) {
-                  return entry.key.replaceFirst('stage_', 'Stage ');
+                  return ref.watch(battleStageDisplayNameProvider(entry.key));
                 })
                 .firstOrNull;
             final bool workshopAssigned = workshopAssignedIds.contains(
@@ -127,34 +127,38 @@ final battleStageAssignmentPotionViewsProvider =
       );
       final List<PotionBlueprint> potions = ref.watch(potionsProvider);
 
-      final List<BattleAssignmentPotionView> views =
-          state.workshop.craftedPotionStacks.entries
-              .where((MapEntry<String, int> entry) => entry.value > 0)
-              .map((MapEntry<String, int> entry) {
-                final CraftedPotion? detail =
-                    state.workshop.craftedPotionDetails[entry.key];
-                if (detail == null) {
-                  return null;
-                }
-                final PotionBlueprint? potion = potions
-                    .where((PotionBlueprint item) => item.id == detail.typePotionId)
-                    .firstOrNull;
-                if (potion == null || potion.useType == PotionUseType.sell) {
-                  return null;
-                }
-                final String qualityLabel =
-                    detail.qualityGrade.name.toUpperCase();
-                return BattleAssignmentPotionView(
-                  stackKey: entry.key,
-                  label: '${potion.name} $qualityLabel',
-                  ownedCount: entry.value,
-                  selectedCount: selectedCounts[entry.key] ?? 0,
-                );
-              })
-              .whereType<BattleAssignmentPotionView>()
-              .toList(growable: false);
+      final List<BattleAssignmentPotionView> views = state
+          .workshop
+          .craftedPotionStacks
+          .entries
+          .where((MapEntry<String, int> entry) => entry.value > 0)
+          .map((MapEntry<String, int> entry) {
+            final CraftedPotion? detail =
+                state.workshop.craftedPotionDetails[entry.key];
+            if (detail == null) {
+              return null;
+            }
+            final PotionBlueprint? potion = potions
+                .where((PotionBlueprint item) => item.id == detail.typePotionId)
+                .firstOrNull;
+            if (potion == null || potion.useType == PotionUseType.sell) {
+              return null;
+            }
+            final String qualityLabel = detail.qualityGrade.name.toUpperCase();
+            return BattleAssignmentPotionView(
+              stackKey: entry.key,
+              label: '${potion.name} $qualityLabel',
+              ownedCount: entry.value,
+              selectedCount: selectedCounts[entry.key] ?? 0,
+            );
+          })
+          .whereType<BattleAssignmentPotionView>()
+          .toList(growable: false);
 
-      views.sort((BattleAssignmentPotionView left, BattleAssignmentPotionView right) {
+      views.sort((
+        BattleAssignmentPotionView left,
+        BattleAssignmentPotionView right,
+      ) {
         return left.label.compareTo(right.label);
       });
       return views;

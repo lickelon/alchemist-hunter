@@ -23,10 +23,11 @@ class BattleResultSheet extends ConsumerWidget {
       materialCatalogRepositoryProvider,
     );
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final String stageName = ref.watch(battleStageDisplayNameProvider(stageId));
 
     return AppBottomSheet(
       child: AppSheetLayout(
-        title: '${battleStageDisplayName(stageId)} 전투 기록',
+        title: '$stageName 전투 기록',
         header: Text(logs.isEmpty ? '최근 기록 없음' : '최근 기록 있음'),
         body: logs.isEmpty
             ? const Center(child: Text('전투 기록이 없습니다.'))
