@@ -32,6 +32,9 @@ class BattleUnitBoardSection extends StatelessWidget {
             final double hpRatio = unit.maxHp == 0
                 ? 0
                 : unit.currentHp / unit.maxHp;
+            final double manaRatio = unit.maxMp == 0
+                ? 0
+                : unit.currentMp / unit.maxMp;
             final List<String> effectLabels = _unitEffectLabels(unit);
             final Color backgroundColor = !unit.isAlive
                 ? colorScheme.surfaceContainerLow
@@ -69,20 +72,23 @@ class BattleUnitBoardSection extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: AppSpacing.xs),
-                    Text('HP ${unit.currentHp} / ${unit.maxHp}'),
+                    _ResourceBar(
+                      semanticsLabel: '체력',
+                      value: hpRatio,
+                      color: Colors.redAccent,
+                    ),
                     if (unit.maxMp > 0) ...<Widget>[
                       const SizedBox(height: AppSpacing.xs),
-                      Text('마나 ${unit.currentMp} / ${unit.maxMp}'),
+                      _ResourceBar(
+                        semanticsLabel: '마나',
+                        value: manaRatio,
+                        color: Colors.blueAccent,
+                      ),
                     ],
                     if (unit.shield > 0) ...<Widget>[
                       const SizedBox(height: AppSpacing.xs),
                       Text('보호막 ${unit.shield}'),
                     ],
-                    const SizedBox(height: AppSpacing.xs),
-                    LinearProgressIndicator(
-                      value: hpRatio.clamp(0, 1),
-                      minHeight: 8,
-                    ),
                     if (effectLabels.isNotEmpty) ...<Widget>[
                       const SizedBox(height: AppSpacing.sm),
                       Wrap(
@@ -104,6 +110,32 @@ class BattleUnitBoardSection extends StatelessWidget {
             );
           }),
       ],
+    );
+  }
+}
+
+class _ResourceBar extends StatelessWidget {
+  const _ResourceBar({
+    required this.semanticsLabel,
+    required this.value,
+    required this.color,
+  });
+
+  final String semanticsLabel;
+  final double value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: semanticsLabel,
+      value: '${(value.clamp(0, 1) * 100).round()}%',
+      child: LinearProgressIndicator(
+        value: value.clamp(0, 1),
+        minHeight: 8,
+        color: color,
+        backgroundColor: color.withValues(alpha: 0.18),
+      ),
     );
   }
 }
