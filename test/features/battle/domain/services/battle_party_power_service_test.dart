@@ -184,4 +184,52 @@ void main() {
     expect(warriorStats.physicalAttack, greaterThan(mageStats.physicalAttack));
     expect(mageStats.magicalAttack, greaterThan(warriorStats.magicalAttack));
   });
+
+  test('all ally combat jobs provide mp and active skills', () {
+    const BattlePartyPowerService service = BattlePartyPowerService();
+    const List<String> jobIds = <String>[
+      CombatJobIds.mercenaryWarrior,
+      CombatJobIds.mercenaryMage,
+      CombatJobIds.mercenaryRogue,
+      CombatJobIds.mercenaryArcher,
+      CombatJobIds.homunculusWarrior,
+      CombatJobIds.homunculusMage,
+      CombatJobIds.homunculusRogue,
+      CombatJobIds.homunculusArcher,
+    ];
+    final CharactersState state = CharactersState(
+      mercenaries: jobIds
+          .where((String jobId) => jobId.startsWith('mercenary_'))
+          .map(_characterForJob)
+          .toList(growable: false),
+      homunculi: jobIds
+          .where((String jobId) => jobId.startsWith('homunculus_'))
+          .map(_characterForJob)
+          .toList(growable: false),
+    );
+
+    final List<HeroProfile> heroes = service.buildParty(state);
+
+    expect(heroes, hasLength(jobIds.length));
+    for (final HeroProfile hero in heroes) {
+      expect(hero.stats.maxMp, greaterThan(0), reason: hero.jobId);
+      expect(hero.stats.mpRegen, greaterThan(0), reason: hero.jobId);
+      expect(hero.skills, isNotEmpty, reason: hero.jobId);
+    }
+  });
+}
+
+CharacterProgress _characterForJob(String jobId) {
+  final bool homunculus = jobId.startsWith('homunculus_');
+  return CharacterProgress(
+    id: jobId,
+    name: jobId,
+    type: homunculus ? CharacterType.homunculus : CharacterType.mercenary,
+    combatJobId: jobId,
+    level: 1,
+    rank: 1,
+    xp: 0,
+    mercenaryTier: homunculus ? null : MercenaryTier.rookie,
+    homunculusTier: homunculus ? HomunculusTier.nigredo : null,
+  );
 }

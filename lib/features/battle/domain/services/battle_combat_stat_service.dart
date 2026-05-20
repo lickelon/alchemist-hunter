@@ -28,6 +28,7 @@ class BattleCombatStatService {
       stats: stats,
       modifiers: modifiers,
       passives: passives,
+      skills: _skillsByJob[jobId] ?? const <BattleSkillDefinition>[],
       power:
           summaryPowerForStats(stats) +
           summaryPowerForEffects(modifiers, passives),

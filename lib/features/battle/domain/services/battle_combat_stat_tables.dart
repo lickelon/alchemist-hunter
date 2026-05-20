@@ -4,6 +4,7 @@ const Map<String, BattleCombatStats> _baseStatsByJob =
     <String, BattleCombatStats>{
       CombatJobIds.mercenaryWarrior: BattleCombatStats(
         maxHp: 74,
+        maxMp: 8,
         physicalAttack: 16,
         physicalDefense: 13,
         magicalAttack: 5,
@@ -20,9 +21,11 @@ const Map<String, BattleCombatStats> _baseStatsByJob =
         lifesteal: 0.02,
         healingPower: 0,
         regen: 0.01,
+        mpRegen: 2,
       ),
       CombatJobIds.mercenaryMage: BattleCombatStats(
         maxHp: 60,
+        maxMp: 10,
         physicalAttack: 5,
         physicalDefense: 8,
         magicalAttack: 18,
@@ -39,9 +42,11 @@ const Map<String, BattleCombatStats> _baseStatsByJob =
         lifesteal: 0,
         healingPower: 0.05,
         regen: 0.01,
+        mpRegen: 3,
       ),
       CombatJobIds.mercenaryRogue: BattleCombatStats(
         maxHp: 62,
+        maxMp: 8,
         physicalAttack: 15,
         physicalDefense: 9,
         magicalAttack: 6,
@@ -58,9 +63,11 @@ const Map<String, BattleCombatStats> _baseStatsByJob =
         lifesteal: 0.03,
         healingPower: 0,
         regen: 0.01,
+        mpRegen: 3,
       ),
       CombatJobIds.mercenaryArcher: BattleCombatStats(
         maxHp: 64,
+        maxMp: 9,
         physicalAttack: 15,
         physicalDefense: 9,
         magicalAttack: 5,
@@ -77,9 +84,11 @@ const Map<String, BattleCombatStats> _baseStatsByJob =
         lifesteal: 0.01,
         healingPower: 0,
         regen: 0.01,
+        mpRegen: 2,
       ),
       CombatJobIds.homunculusWarrior: BattleCombatStats(
         maxHp: 70,
+        maxMp: 8,
         physicalAttack: 14,
         physicalDefense: 12,
         magicalAttack: 8,
@@ -96,9 +105,11 @@ const Map<String, BattleCombatStats> _baseStatsByJob =
         lifesteal: 0.01,
         healingPower: 0.03,
         regen: 0.02,
+        mpRegen: 2,
       ),
       CombatJobIds.homunculusMage: BattleCombatStats(
         maxHp: 62,
+        maxMp: 10,
         physicalAttack: 5,
         physicalDefense: 8,
         magicalAttack: 17,
@@ -115,9 +126,11 @@ const Map<String, BattleCombatStats> _baseStatsByJob =
         lifesteal: 0,
         healingPower: 0.08,
         regen: 0.02,
+        mpRegen: 3,
       ),
       CombatJobIds.homunculusRogue: BattleCombatStats(
         maxHp: 60,
+        maxMp: 8,
         physicalAttack: 14,
         physicalDefense: 8,
         magicalAttack: 8,
@@ -134,9 +147,11 @@ const Map<String, BattleCombatStats> _baseStatsByJob =
         lifesteal: 0.02,
         healingPower: 0.02,
         regen: 0.02,
+        mpRegen: 3,
       ),
       CombatJobIds.homunculusArcher: BattleCombatStats(
         maxHp: 61,
+        maxMp: 9,
         physicalAttack: 14,
         physicalDefense: 8,
         magicalAttack: 7,
@@ -153,6 +168,7 @@ const Map<String, BattleCombatStats> _baseStatsByJob =
         lifesteal: 0.01,
         healingPower: 0.02,
         regen: 0.02,
+        mpRegen: 2,
       ),
     };
 
@@ -160,6 +176,7 @@ const Map<String, BattleCombatStats> _tierGrowthByJob =
     <String, BattleCombatStats>{
       CombatJobIds.mercenaryWarrior: BattleCombatStats(
         maxHp: 24,
+        maxMp: 1,
         physicalAttack: 4,
         physicalDefense: 4,
         magicalAttack: 1,
@@ -179,6 +196,7 @@ const Map<String, BattleCombatStats> _tierGrowthByJob =
       ),
       CombatJobIds.mercenaryMage: BattleCombatStats(
         maxHp: 20,
+        maxMp: 2,
         physicalAttack: 1,
         physicalDefense: 2,
         magicalAttack: 5,
@@ -198,6 +216,7 @@ const Map<String, BattleCombatStats> _tierGrowthByJob =
       ),
       CombatJobIds.mercenaryRogue: BattleCombatStats(
         maxHp: 18,
+        maxMp: 1,
         physicalAttack: 4,
         physicalDefense: 1,
         magicalAttack: 1,
@@ -217,6 +236,7 @@ const Map<String, BattleCombatStats> _tierGrowthByJob =
       ),
       CombatJobIds.mercenaryArcher: BattleCombatStats(
         maxHp: 18,
+        maxMp: 1,
         physicalAttack: 4,
         physicalDefense: 1,
         magicalAttack: 1,
@@ -236,6 +256,7 @@ const Map<String, BattleCombatStats> _tierGrowthByJob =
       ),
       CombatJobIds.homunculusWarrior: BattleCombatStats(
         maxHp: 22,
+        maxMp: 1,
         physicalAttack: 3,
         physicalDefense: 4,
         magicalAttack: 2,
@@ -255,6 +276,7 @@ const Map<String, BattleCombatStats> _tierGrowthByJob =
       ),
       CombatJobIds.homunculusMage: BattleCombatStats(
         maxHp: 20,
+        maxMp: 2,
         physicalAttack: 1,
         physicalDefense: 2,
         magicalAttack: 4,
@@ -274,6 +296,7 @@ const Map<String, BattleCombatStats> _tierGrowthByJob =
       ),
       CombatJobIds.homunculusRogue: BattleCombatStats(
         maxHp: 18,
+        maxMp: 1,
         physicalAttack: 3,
         physicalDefense: 1,
         magicalAttack: 2,
@@ -293,6 +316,7 @@ const Map<String, BattleCombatStats> _tierGrowthByJob =
       ),
       CombatJobIds.homunculusArcher: BattleCombatStats(
         maxHp: 18,
+        maxMp: 1,
         physicalAttack: 3,
         physicalDefense: 1,
         magicalAttack: 2,
@@ -316,6 +340,7 @@ const Map<String, BattleCombatStats> _rankGrowthByJob =
     <String, BattleCombatStats>{
       CombatJobIds.mercenaryWarrior: BattleCombatStats(
         maxHp: 18,
+        maxMp: 1,
         physicalAttack: 3,
         physicalDefense: 3,
         magicalAttack: 1,
@@ -335,6 +360,7 @@ const Map<String, BattleCombatStats> _rankGrowthByJob =
       ),
       CombatJobIds.mercenaryMage: BattleCombatStats(
         maxHp: 15,
+        maxMp: 1,
         physicalAttack: 1,
         physicalDefense: 1,
         magicalAttack: 4,
@@ -354,6 +380,7 @@ const Map<String, BattleCombatStats> _rankGrowthByJob =
       ),
       CombatJobIds.mercenaryRogue: BattleCombatStats(
         maxHp: 14,
+        maxMp: 1,
         physicalAttack: 3,
         physicalDefense: 1,
         magicalAttack: 1,
@@ -373,6 +400,7 @@ const Map<String, BattleCombatStats> _rankGrowthByJob =
       ),
       CombatJobIds.mercenaryArcher: BattleCombatStats(
         maxHp: 14,
+        maxMp: 1,
         physicalAttack: 3,
         physicalDefense: 1,
         magicalAttack: 1,
@@ -392,6 +420,7 @@ const Map<String, BattleCombatStats> _rankGrowthByJob =
       ),
       CombatJobIds.homunculusWarrior: BattleCombatStats(
         maxHp: 16,
+        maxMp: 1,
         physicalAttack: 2,
         physicalDefense: 3,
         magicalAttack: 2,
@@ -411,6 +440,7 @@ const Map<String, BattleCombatStats> _rankGrowthByJob =
       ),
       CombatJobIds.homunculusMage: BattleCombatStats(
         maxHp: 14,
+        maxMp: 1,
         physicalAttack: 1,
         physicalDefense: 1,
         magicalAttack: 3,
@@ -430,6 +460,7 @@ const Map<String, BattleCombatStats> _rankGrowthByJob =
       ),
       CombatJobIds.homunculusRogue: BattleCombatStats(
         maxHp: 13,
+        maxMp: 1,
         physicalAttack: 2,
         physicalDefense: 1,
         magicalAttack: 2,
@@ -449,6 +480,7 @@ const Map<String, BattleCombatStats> _rankGrowthByJob =
       ),
       CombatJobIds.homunculusArcher: BattleCombatStats(
         maxHp: 13,
+        maxMp: 1,
         physicalAttack: 2,
         physicalDefense: 1,
         magicalAttack: 2,
@@ -466,6 +498,106 @@ const Map<String, BattleCombatStats> _rankGrowthByJob =
         healingPower: 0.003,
         regen: 0.003,
       ),
+    };
+
+const Map<String, List<BattleSkillDefinition>> _skillsByJob =
+    <String, List<BattleSkillDefinition>>{
+      CombatJobIds.mercenaryWarrior: <BattleSkillDefinition>[
+        BattleSkillDefinition(
+          id: 'mercenary_warrior_shield_break',
+          name: '방패 강타',
+          summary: '강한 일격으로 무작위 적에게 물리 피해를 준다.',
+          targetType: BattleSkillTargetType.randomEnemy,
+          effectType: BattleSkillEffectType.damage,
+          school: DamageSchool.physical,
+          powerMultiplier: 1.45,
+          flatPower: 4,
+        ),
+      ],
+      CombatJobIds.mercenaryMage: <BattleSkillDefinition>[
+        BattleSkillDefinition(
+          id: 'mercenary_mage_fireball',
+          name: '화염구',
+          summary: '압축한 화염으로 모든 적에게 마법 피해를 준다.',
+          targetType: BattleSkillTargetType.allEnemies,
+          effectType: BattleSkillEffectType.damage,
+          school: DamageSchool.magical,
+          powerMultiplier: 0.95,
+          flatPower: 4,
+        ),
+      ],
+      CombatJobIds.mercenaryRogue: <BattleSkillDefinition>[
+        BattleSkillDefinition(
+          id: 'mercenary_rogue_expose',
+          name: '약점 노출',
+          summary: '무작위 적이 받는 피해를 잠시 증가시킨다.',
+          targetType: BattleSkillTargetType.randomEnemy,
+          effectType: BattleSkillEffectType.grantModifier,
+          durationLifecycles: 2,
+          modifier: BattleModifier(
+            type: BattleModifierType.damageTaken,
+            mode: BattleModifierMode.percent,
+            value: 0.16,
+            sourceId: 'mercenary_rogue_expose',
+          ),
+        ),
+      ],
+      CombatJobIds.mercenaryArcher: <BattleSkillDefinition>[
+        BattleSkillDefinition(
+          id: 'mercenary_archer_piercing_shot',
+          name: '관통 사격',
+          summary: '방어선을 꿰뚫는 화살로 무작위 적에게 물리 피해를 준다.',
+          targetType: BattleSkillTargetType.randomEnemy,
+          effectType: BattleSkillEffectType.damage,
+          school: DamageSchool.physical,
+          powerMultiplier: 1.55,
+          flatPower: 3,
+        ),
+      ],
+      CombatJobIds.homunculusWarrior: <BattleSkillDefinition>[
+        BattleSkillDefinition(
+          id: 'homunculus_warrior_bio_guard',
+          name: '생체 장갑',
+          summary: '자신에게 보호막을 부여한다.',
+          targetType: BattleSkillTargetType.self,
+          effectType: BattleSkillEffectType.grantShield,
+          shieldValue: 18,
+        ),
+      ],
+      CombatJobIds.homunculusMage: <BattleSkillDefinition>[
+        BattleSkillDefinition(
+          id: 'homunculus_mage_reconstruct',
+          name: '재구성',
+          summary: '모든 아군의 체력을 회복한다.',
+          targetType: BattleSkillTargetType.allAllies,
+          effectType: BattleSkillEffectType.heal,
+          flatPower: 12,
+        ),
+      ],
+      CombatJobIds.homunculusRogue: <BattleSkillDefinition>[
+        BattleSkillDefinition(
+          id: 'homunculus_rogue_acid_infusion',
+          name: '산성 주입',
+          summary: '무작위 적에게 독을 부여한다.',
+          targetType: BattleSkillTargetType.randomEnemy,
+          effectType: BattleSkillEffectType.grantStatus,
+          statusType: BattleStatusType.poison,
+          durationLifecycles: 3,
+          flatPower: 5,
+        ),
+      ],
+      CombatJobIds.homunculusArcher: <BattleSkillDefinition>[
+        BattleSkillDefinition(
+          id: 'homunculus_archer_resonance_shot',
+          name: '공명 사격',
+          summary: '모든 적에게 마법 피해를 준다.',
+          targetType: BattleSkillTargetType.allEnemies,
+          effectType: BattleSkillEffectType.damage,
+          school: DamageSchool.magical,
+          powerMultiplier: 0.9,
+          flatPower: 4,
+        ),
+      ],
     };
 
 const Map<String, int> _levelHpGrowthByJob = <String, int>{
