@@ -34,6 +34,7 @@ class BattleActionLog {
     this.targetTeam,
     this.skillId,
     this.skillName,
+    this.statusType,
     this.school = DamageSchool.any,
     this.hit = true,
     this.critical = false,
@@ -58,6 +59,7 @@ class BattleActionLog {
   final BattleTeam? targetTeam;
   final String? skillId;
   final String? skillName;
+  final BattleStatusType? statusType;
   final DamageSchool school;
   final bool hit;
   final bool critical;

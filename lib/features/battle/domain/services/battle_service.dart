@@ -200,6 +200,7 @@ class BattleService {
           actorId: context.actor.id,
           actorName: context.actor.name,
           actorTeam: _toBattleTeam(context.actor.side),
+          statusType: BattleStatusType.stun,
           actorHpAfter: context.actor.currentHp,
           actorMpAfter: context.actor.currentMp,
           message: 'status:stun',
@@ -710,11 +711,12 @@ class BattleService {
           targetTeam: _toBattleTeam(target.side),
           skillId: skill.id,
           skillName: skill.name,
+          statusType: skill.statusType,
           mpSpent: mpSpent,
           actorHpAfter: context.actor.currentHp,
           actorMpAfter: context.actor.currentMp,
           targetHpAfter: target.currentHp,
-          message: 'status:${skill.id}',
+          message: 'status:${skill.statusType!.name}:${skill.id}',
         ),
       );
     }
@@ -963,6 +965,7 @@ class BattleService {
           actorId: context.actor.id,
           actorName: context.actor.name,
           actorTeam: _toBattleTeam(context.actor.side),
+          statusType: BattleStatusType.poison,
           damage: damage,
           actorHpAfter: context.actor.currentHp,
           actorMpAfter: context.actor.currentMp,
@@ -1061,10 +1064,11 @@ class BattleService {
           targetId: recipient.id,
           targetName: recipient.name,
           targetTeam: _toBattleTeam(recipient.side),
+          statusType: passive.statusType,
           actorHpAfter: context.actor.currentHp,
           actorMpAfter: context.actor.currentMp,
           targetHpAfter: recipient.currentHp,
-          message: 'status:${passive.sourceId}',
+          message: 'status:${passive.statusType!.name}:${passive.sourceId}',
         ),
       );
     }

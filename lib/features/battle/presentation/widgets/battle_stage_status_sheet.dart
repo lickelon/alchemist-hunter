@@ -204,6 +204,7 @@ class _BattleStageStatusSheetState
       action.actorId,
       action.targetId,
       action.skillId,
+      action.statusType?.name,
       action.hit,
       action.critical,
       action.damage,

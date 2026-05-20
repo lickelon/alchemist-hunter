@@ -616,7 +616,9 @@ void main() {
     expect(
       second.lifecycleActions.any(
         (BattleActionLog action) =>
-            action.type == BattleActionType.status && action.damage == 7,
+            action.type == BattleActionType.status &&
+            action.statusType == BattleStatusType.poison &&
+            action.damage == 7,
       ),
       isTrue,
     );
@@ -1028,8 +1030,8 @@ void main() {
             (BattleActionLog action) => action.type == BattleActionType.status,
           )
           .single
-          .type,
-      BattleActionType.status,
+          .statusType,
+      BattleStatusType.poison,
     );
     expect(
       result.encounter.enemies.single.statuses.single.type,

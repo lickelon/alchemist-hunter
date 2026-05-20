@@ -97,8 +97,7 @@ String battleActionTimelineLabel(BattleActionLog action) {
     return '${action.actorName} 효과 부여';
   }
   if (action.type == BattleActionType.status) {
-    final String valueLabel = action.damage > 0 ? ' ${action.damage} 피해' : '';
-    return '${action.actorName} 상태효과$valueLabel';
+    return _statusActionTimelineLabel(action);
   }
   if (action.type == BattleActionType.shield) {
     return '${action.actorName} 보호막 +${action.healing}';
@@ -112,4 +111,26 @@ String battleActionTimelineLabel(BattleActionLog action) {
   final String criticalLabel = action.critical ? ' / 치명타' : '';
   final String mpLabel = action.mpSpent > 0 ? ' / 마나 -${action.mpSpent}' : '';
   return '${action.actorName} -> ${action.targetName ?? '대상'} ${action.damage} 피해$criticalLabel$mpLabel';
+}
+
+String _statusActionTimelineLabel(BattleActionLog action) {
+  final String statusLabel = _statusLabel(action.statusType);
+  if (action.damage > 0) {
+    return '${action.actorName} $statusLabel 피해 ${action.damage}';
+  }
+  if (action.statusType == BattleStatusType.stun && action.targetName == null) {
+    return '${action.actorName} $statusLabel로 행동 불가';
+  }
+  if (action.targetName != null) {
+    return '${action.actorName} -> ${action.targetName} $statusLabel 부여';
+  }
+  return '${action.actorName} $statusLabel';
+}
+
+String _statusLabel(BattleStatusType? statusType) {
+  return switch (statusType) {
+    BattleStatusType.poison => '중독',
+    BattleStatusType.stun => '기절',
+    null => '상태효과',
+  };
 }

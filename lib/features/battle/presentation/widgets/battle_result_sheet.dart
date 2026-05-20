@@ -165,8 +165,7 @@ class BattleResultSheet extends ConsumerWidget {
       return 'T${action.turn} ${action.actorName} -> ${action.targetName ?? action.actorName} 효과 부여';
     }
     if (action.type == BattleActionType.status) {
-      final String valueLabel = action.damage > 0 ? ' ${action.damage} 피해' : '';
-      return 'T${action.turn} ${action.actorName} 상태효과$valueLabel / HP ${action.actorHpAfter}';
+      return _formatStatusAction(action);
     }
     if (action.type == BattleActionType.shield) {
       return 'T${action.turn} ${action.actorName} -> ${action.targetName ?? action.actorName} 보호막 +${action.healing} / 보호막 ${action.targetShieldAfter ?? 0}';
@@ -185,5 +184,28 @@ class BattleResultSheet extends ConsumerWidget {
     final String criticalLabel = action.critical ? ' / 치명타' : '';
     final String mpLabel = action.mpSpent > 0 ? ' / 마나 -${action.mpSpent}' : '';
     return 'T${action.turn} ${action.actorName} -> ${action.targetName} $schoolLabel ${action.damage}$criticalLabel$mpLabel / 대상 HP ${action.targetHpAfter ?? 0}';
+  }
+
+  String _formatStatusAction(BattleActionLog action) {
+    final String statusLabel = _statusLabel(action.statusType);
+    if (action.damage > 0) {
+      return 'T${action.turn} ${action.actorName} $statusLabel 피해 ${action.damage} / HP ${action.actorHpAfter}';
+    }
+    if (action.statusType == BattleStatusType.stun &&
+        action.targetName == null) {
+      return 'T${action.turn} ${action.actorName} $statusLabel로 행동 불가 / HP ${action.actorHpAfter}';
+    }
+    if (action.targetName != null) {
+      return 'T${action.turn} ${action.actorName} -> ${action.targetName} $statusLabel 부여';
+    }
+    return 'T${action.turn} ${action.actorName} $statusLabel';
+  }
+
+  String _statusLabel(BattleStatusType? statusType) {
+    return switch (statusType) {
+      BattleStatusType.poison => '중독',
+      BattleStatusType.stun => '기절',
+      null => '상태효과',
+    };
   }
 }
