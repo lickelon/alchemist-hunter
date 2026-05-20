@@ -140,20 +140,11 @@ final battleStageStatusLabelProvider = Provider.family<String, String>((
   final BattleExpeditionState expedition = ref.watch(
     battleStageExpeditionStateProvider(stageId),
   );
-  final BattleStageDefinition stage = ref
-      .watch(battleCatalogRepositoryProvider)
-      .stageDefinition(stageId);
-  final BattleEncounterRuntimeState? currentEncounter = ref.watch(
-    battleStageCurrentEncounterProvider(stageId),
-  );
   return switch (expedition.status) {
     BattleExpeditionStatus.idle => '대기',
-    BattleExpeditionStatus.searching =>
-      '적 탐색 중 / ${_formatSeconds(expedition.phaseProgress)} / ${stage.searchDuration.inSeconds}초',
-    BattleExpeditionStatus.battling =>
-      '전투 진행 중 / ${currentEncounter == null ? '교전' : '${currentEncounter.encounterIndex}회 교전'}',
-    BattleExpeditionStatus.recovering =>
-      '복구 중 / ${_formatSeconds(stage.recoveryDuration - expedition.phaseProgress)} 남음',
+    BattleExpeditionStatus.searching => '적 탐색 중',
+    BattleExpeditionStatus.battling => '전투 진행 중',
+    BattleExpeditionStatus.recovering => '복구 중',
     BattleExpeditionStatus.paused => switch (expedition.pausedStatus ??
         BattleExpeditionStatus.searching) {
       BattleExpeditionStatus.searching => '정지 / 적 탐색 보류',
@@ -192,13 +183,5 @@ final battleStageLastResultLabelProvider = Provider.family<String, String>((
   final BattleLogEntry log = logs.first;
   final String wipeLabel = log.wipedParty ? ' / 전멸' : '';
   final String fallbackLabel = log.usedLoadoutFallback ? ' / 포션 부족' : '';
-  return '${log.encounterIndex}회 교전 / ${log.success ? '성공' : '실패'}$wipeLabel / 골드 ${battleSignedValueLabel(log.gold)} / 정수 ${battleSignedValueLabel(log.essence)} / 재료 ${log.materials.length}종$fallbackLabel';
+  return '${log.success ? '성공' : '실패'}$wipeLabel / 골드 ${battleSignedValueLabel(log.gold)} / 정수 ${battleSignedValueLabel(log.essence)} / 재료 ${log.materials.length}종$fallbackLabel';
 });
-
-String _formatSeconds(Duration duration) {
-  if (duration <= Duration.zero) {
-    return '0.0초';
-  }
-  final double seconds = duration.inMilliseconds / 1000;
-  return '${seconds.toStringAsFixed(1)}초';
-}

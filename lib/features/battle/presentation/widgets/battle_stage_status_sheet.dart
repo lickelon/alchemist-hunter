@@ -14,6 +14,11 @@ import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_uni
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+const double _unitBoardCardHeight = 220;
+const double _progressCardHeight = 44;
+const double _timelineCardHeight = 150;
+const int _timelineSlotCount = 6;
+
 class BattleStageStatusSheet extends ConsumerWidget {
   const BattleStageStatusSheet({super.key, required this.stageId});
 
@@ -40,12 +45,8 @@ class BattleStageStatusSheet extends ConsumerWidget {
     final int assignedCount = ref
         .watch(battleStageAssignmentProvider(stageId))
         .length;
-    final int partyPower = ref.watch(battleStagePartyPowerProvider(stageId));
     final String statusLabel = ref.watch(
       battleStageStatusLabelProvider(stageId),
-    );
-    final String pendingLabel = ref.watch(
-      battleStagePendingClaimLabelProvider(stageId),
     );
     final BattleStagePhaseProgress progress = buildBattleStagePhaseProgress(
       expedition: expedition,
@@ -67,59 +68,57 @@ class BattleStageStatusSheet extends ConsumerWidget {
             const SizedBox(height: AppSpacing.lg),
             BattleStatusCard(
               title: '전투 상태판',
-              child: Column(
-                children: <Widget>[
-                  BattleUnitBoardSection(
-                    title: '아군',
-                    units: runState?.allies ?? const <BattleRunUnitState>[],
-                    emptyLabel: assignedCount == 0 ? '편성 없음' : '전투 시작 전',
+              child: SizedBox(
+                height: _unitBoardCardHeight,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      BattleUnitBoardSection(
+                        title: '아군',
+                        units: runState?.allies ?? const <BattleRunUnitState>[],
+                        emptyLabel: assignedCount == 0 ? '편성 없음' : '전투 시작 전',
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      BattleUnitBoardSection(
+                        title: '적',
+                        units:
+                            currentEncounter?.enemies ??
+                            const <BattleRunUnitState>[],
+                        emptyLabel: currentEncounter == null ? '적 대기' : '적 없음',
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: AppSpacing.md),
-                  BattleUnitBoardSection(
-                    title: '적',
-                    units:
-                        currentEncounter?.enemies ??
-                        const <BattleRunUnitState>[],
-                    emptyLabel: currentEncounter == null ? '현재 교전 없음' : '적 없음',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            BattleStatusCard(
-              title: '진행',
-              child: _BattleStageProgressBody(
-                statusLabel: statusLabel,
-                progress: progress,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            BattleStatusCard(
-              title: '실시간 타임라인',
-              child: _BattleStageTimelineBody(
-                lines: battleStageTimelineLines(
-                  expedition: expedition,
-                  currentActions: currentActions,
                 ),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
             BattleStatusCard(
-              title: '런 요약',
-              child: _BattleStageSummaryBody(
-                stage: stage,
-                expedition: expedition,
-                runState: runState,
-                currentEncounter: currentEncounter,
-                assignedCount: assignedCount,
-                partyPower: partyPower,
-                pendingLabel: pendingLabel,
+              title: '진행',
+              child: SizedBox(
+                height: _progressCardHeight,
+                child: _BattleStageProgressBody(
+                  statusLabel: statusLabel,
+                  progress: progress,
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
             BattleStageStatusActions(
               stageId: stageId,
               hasRecentLogs: recentLogs.isNotEmpty,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            BattleStatusCard(
+              title: '실시간 타임라인',
+              child: SizedBox(
+                height: _timelineCardHeight,
+                child: _BattleStageTimelineBody(
+                  lines: battleStageTimelineLines(
+                    expedition: expedition,
+                    currentActions: currentActions,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -144,13 +143,7 @@ class _BattleStageStatusHeader extends StatelessWidget {
       runSpacing: AppSpacing.sm,
       children: <Widget>[
         Chip(label: Text(battleStagePhaseLabel(expedition.status))),
-        Chip(
-          label: Text(
-            currentEncounter == null
-                ? '교전 대기'
-                : '${currentEncounter!.encounterIndex}회 교전',
-          ),
-        ),
+        Chip(label: Text(currentEncounter == null ? '적 대기' : '적 조우')),
       ],
     );
   }
@@ -170,9 +163,7 @@ class _BattleStageProgressBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(statusLabel),
-        const SizedBox(height: AppSpacing.xs),
-        Text(progress.label),
+        Text(statusLabel, maxLines: 1, overflow: TextOverflow.ellipsis),
         const SizedBox(height: AppSpacing.sm),
         BattleSmoothProgressBar(value: progress.value.clamp(0, 1)),
       ],
@@ -187,63 +178,25 @@ class _BattleStageTimelineBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<String> visibleLines = lines.length > _timelineSlotCount
+        ? lines.skip(lines.length - _timelineSlotCount).toList(growable: false)
+        : lines;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: lines
-          .map((String line) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-              child: Text(line),
-            );
-          })
-          .toList(growable: false),
-    );
-  }
-}
-
-class _BattleStageSummaryBody extends StatelessWidget {
-  const _BattleStageSummaryBody({
-    required this.stage,
-    required this.expedition,
-    required this.runState,
-    required this.currentEncounter,
-    required this.assignedCount,
-    required this.partyPower,
-    required this.pendingLabel,
-  });
-
-  final BattleStageDefinition stage;
-  final BattleExpeditionState expedition;
-  final BattleRunState? runState;
-  final BattleEncounterRuntimeState? currentEncounter;
-  final int assignedCount;
-  final int partyPower;
-  final String pendingLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    final List<String> lines = <String>[
-      '편성 $assignedCount명 / 전투력 $partyPower',
-      pendingLabel,
-      '누적 승리 ${runState?.victoryCount ?? 0} / 전멸 ${runState?.wipeCount ?? 0}',
-      '누적 교전 ${runState?.encounterCount ?? 0}회',
-      if (currentEncounter != null)
-        '현재 교전 ${currentEncounter!.encounterIndex}회',
-      if (currentEncounter?.usedLoadoutFallback ?? false) '포션 부족으로 로드아웃 미적용',
-      if (expedition.status == BattleExpeditionStatus.recovering)
-        '복구 완료까지 ${formatBattleStageRemaining(stage.recoveryDuration, expedition.phaseProgress)}',
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: lines
-          .map((String line) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-              child: Text(line),
-            );
-          })
-          .toList(growable: false),
+      children: List<Widget>.generate(_timelineSlotCount, (int index) {
+        final String? line = index < visibleLines.length
+            ? visibleLines[index]
+            : null;
+        return SizedBox(
+          height: 24,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: line == null
+                ? const SizedBox.shrink()
+                : Text(line, maxLines: 1, overflow: TextOverflow.ellipsis),
+          ),
+        );
+      }),
     );
   }
 }

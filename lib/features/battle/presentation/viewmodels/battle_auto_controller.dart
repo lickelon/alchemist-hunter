@@ -154,7 +154,7 @@ class BattleAutoController {
         );
     _session.applyState(claimedState);
     _session.appendLog(
-      'Battle ${battleStageDisplayName(stageId)} / ${outcome.success ? '성공' : '실패'} / ${encounter.encounterIndex}회 교전${encounter.usedLoadoutFallback ? ' / 포션 부족' : ''}',
+      'Battle ${battleStageDisplayName(stageId)} / ${outcome.success ? '성공' : '실패'}${encounter.usedLoadoutFallback ? ' / 포션 부족' : ''}',
     );
   }
 }

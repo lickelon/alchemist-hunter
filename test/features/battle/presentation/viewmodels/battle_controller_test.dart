@@ -169,7 +169,7 @@ void main() {
 
     controller.runAutoBattle('stage_5');
 
-    expect(session.state.workshop.logs.first, contains('/ 성공 /'));
+    expect(session.state.workshop.logs.first, contains('/ 성공'));
     expect(session.state.player.essence, 138);
   });
 

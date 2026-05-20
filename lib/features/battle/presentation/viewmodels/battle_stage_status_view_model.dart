@@ -1,10 +1,9 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 
 class BattleStagePhaseProgress {
-  const BattleStagePhaseProgress({required this.value, required this.label});
+  const BattleStagePhaseProgress({required this.value});
 
   final double value;
-  final String label;
 }
 
 BattleStagePhaseProgress buildBattleStagePhaseProgress({
@@ -14,15 +13,13 @@ BattleStagePhaseProgress buildBattleStagePhaseProgress({
 }) {
   switch (expedition.status) {
     case BattleExpeditionStatus.idle:
-      return const BattleStagePhaseProgress(value: 0, label: '원정 시작 전');
+      return const BattleStagePhaseProgress(value: 0);
     case BattleExpeditionStatus.searching:
       return BattleStagePhaseProgress(
         value: stage.searchDuration.inMilliseconds == 0
             ? 0
             : expedition.phaseProgress.inMilliseconds /
                   stage.searchDuration.inMilliseconds,
-        label:
-            '다음 적 탐색까지 ${formatBattleStageRemaining(stage.searchDuration, expedition.phaseProgress)}',
       );
     case BattleExpeditionStatus.battling:
       final Duration lifecycleElapsed = _currentLifecycleElapsed(
@@ -34,8 +31,6 @@ BattleStagePhaseProgress buildBattleStagePhaseProgress({
             ? 0
             : lifecycleElapsed.inMilliseconds /
                   battleActionInterval.inMilliseconds,
-        label:
-            '다음 행동까지 ${formatBattleStageRemaining(battleActionInterval, lifecycleElapsed)}',
       );
     case BattleExpeditionStatus.recovering:
       return BattleStagePhaseProgress(
@@ -43,8 +38,6 @@ BattleStagePhaseProgress buildBattleStagePhaseProgress({
             ? 0
             : expedition.phaseProgress.inMilliseconds /
                   stage.recoveryDuration.inMilliseconds,
-        label:
-            '복구 완료까지 ${formatBattleStageRemaining(stage.recoveryDuration, expedition.phaseProgress)}',
       );
     case BattleExpeditionStatus.paused:
       final BattleExpeditionStatus pausedStatus =
@@ -59,7 +52,6 @@ BattleStagePhaseProgress buildBattleStagePhaseProgress({
               ? 0
               : lifecycleElapsed.inMilliseconds /
                     battleActionInterval.inMilliseconds,
-          label: '전투 일시정지',
         );
       }
       if (pausedStatus == BattleExpeditionStatus.recovering) {
@@ -68,7 +60,6 @@ BattleStagePhaseProgress buildBattleStagePhaseProgress({
               ? 0
               : expedition.phaseProgress.inMilliseconds /
                     stage.recoveryDuration.inMilliseconds,
-          label: '복구 일시정지',
         );
       }
       return BattleStagePhaseProgress(
@@ -76,7 +67,6 @@ BattleStagePhaseProgress buildBattleStagePhaseProgress({
             ? 0
             : expedition.phaseProgress.inMilliseconds /
                   stage.searchDuration.inMilliseconds,
-        label: '탐색 일시정지',
       );
   }
 }
@@ -108,15 +98,6 @@ String battleStagePhaseLabel(BattleExpeditionStatus status) {
     BattleExpeditionStatus.recovering => '복구',
     BattleExpeditionStatus.paused => '정지',
   };
-}
-
-String formatBattleStageRemaining(Duration total, Duration progress) {
-  final Duration remaining = total - progress;
-  if (remaining <= Duration.zero) {
-    return '0.0초';
-  }
-  final double seconds = remaining.inMilliseconds / 1000;
-  return '${seconds.toStringAsFixed(1)}초';
 }
 
 Duration _currentLifecycleElapsed(

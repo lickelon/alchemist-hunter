@@ -27,11 +27,7 @@ class BattleResultSheet extends ConsumerWidget {
     return AppBottomSheet(
       child: AppSheetLayout(
         title: '${battleStageDisplayName(stageId)} 전투 기록',
-        header: Text(
-          logs.isEmpty
-              ? '최근 기록 없음'
-              : '최근 ${logs.length}회 / 전멸 ${logs.where((BattleLogEntry log) => log.wipedParty).length}회',
-        ),
+        header: Text(logs.isEmpty ? '최근 기록 없음' : '최근 기록 있음'),
         body: logs.isEmpty
             ? const Center(child: Text('전투 기록이 없습니다.'))
             : ListView.separated(
@@ -55,7 +51,7 @@ class BattleResultSheet extends ConsumerWidget {
                                 : colorScheme.error,
                           ),
                           const SizedBox(width: AppSpacing.sm),
-                          Expanded(child: Text('${log.encounterIndex}회 교전 기록')),
+                          const Expanded(child: Text('전투 결과')),
                           if (log.wipedParty)
                             Text(
                               '전멸',
