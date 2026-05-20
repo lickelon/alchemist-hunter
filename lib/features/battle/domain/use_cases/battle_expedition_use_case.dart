@@ -32,9 +32,7 @@ class BattleExpeditionUseCase {
       return state;
     }
     final BattleExpeditionStatus nextStatus =
-        current.status == BattleExpeditionStatus.paused
-        ? current.pausedStatus ?? BattleExpeditionStatus.searching
-        : current.runState?.currentEncounter == null
+        current.runState?.currentEncounter == null
         ? BattleExpeditionStatus.searching
         : BattleExpeditionStatus.battling;
     final Map<String, BattleExpeditionState> nextExpeditions =
@@ -42,7 +40,6 @@ class BattleExpeditionUseCase {
     nextExpeditions[stageId] = current.copyWith(
       status: nextStatus,
       lastProgressedAt: now,
-      clearPausedStatus: true,
     );
     return state.copyWith(
       battle: state.battle.copyWith(stageExpeditions: nextExpeditions),
@@ -62,9 +59,10 @@ class BattleExpeditionUseCase {
     final Map<String, BattleExpeditionState> nextExpeditions =
         <String, BattleExpeditionState>{...state.battle.stageExpeditions};
     nextExpeditions[stageId] = current.copyWith(
-      status: BattleExpeditionStatus.paused,
+      status: BattleExpeditionStatus.idle,
       lastProgressedAt: now,
-      pausedStatus: current.status,
+      phaseProgress: Duration.zero,
+      clearRunState: true,
     );
     return state.copyWith(
       battle: state.battle.copyWith(stageExpeditions: nextExpeditions),

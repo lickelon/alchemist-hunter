@@ -39,35 +39,6 @@ BattleStagePhaseProgress buildBattleStagePhaseProgress({
             : expedition.phaseProgress.inMilliseconds /
                   stage.recoveryDuration.inMilliseconds,
       );
-    case BattleExpeditionStatus.paused:
-      final BattleExpeditionStatus pausedStatus =
-          expedition.pausedStatus ?? BattleExpeditionStatus.searching;
-      if (pausedStatus == BattleExpeditionStatus.battling) {
-        final Duration lifecycleElapsed = _currentLifecycleElapsed(
-          expedition.phaseProgress,
-          battleActionInterval,
-        );
-        return BattleStagePhaseProgress(
-          value: battleActionInterval.inMilliseconds == 0
-              ? 0
-              : lifecycleElapsed.inMilliseconds /
-                    battleActionInterval.inMilliseconds,
-        );
-      }
-      if (pausedStatus == BattleExpeditionStatus.recovering) {
-        return BattleStagePhaseProgress(
-          value: stage.recoveryDuration.inMilliseconds == 0
-              ? 0
-              : expedition.phaseProgress.inMilliseconds /
-                    stage.recoveryDuration.inMilliseconds,
-        );
-      }
-      return BattleStagePhaseProgress(
-        value: stage.searchDuration.inMilliseconds == 0
-            ? 0
-            : expedition.phaseProgress.inMilliseconds /
-                  stage.searchDuration.inMilliseconds,
-      );
   }
 }
 
@@ -85,7 +56,6 @@ List<String> battleStageTimelineLines({
     BattleExpeditionStatus.searching => const <String>['적을 탐색 중입니다.'],
     BattleExpeditionStatus.battling => const <String>['첫 행동 대기 중'],
     BattleExpeditionStatus.recovering => const <String>['파티 복구 중입니다.'],
-    BattleExpeditionStatus.paused => const <String>['진행이 일시정지되었습니다.'],
     BattleExpeditionStatus.idle => const <String>['진행 중인 전투가 없습니다.'],
   };
 }
@@ -96,7 +66,6 @@ String battleStagePhaseLabel(BattleExpeditionStatus status) {
     BattleExpeditionStatus.searching => '탐색',
     BattleExpeditionStatus.battling => '전투',
     BattleExpeditionStatus.recovering => '복구',
-    BattleExpeditionStatus.paused => '정지',
   };
 }
 

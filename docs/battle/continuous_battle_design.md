@@ -44,8 +44,8 @@
   - 현재 encounter가 진행 중인 상태
 - `recovering`
   - full wipe 후 복구 대기 상태
-- `paused`
-  - searching / battling / recovering 중 일시정지한 상태
+- 정지는 phase가 아니며, 현재 진행 중인 runState를 종료하고 `idle`로 되돌린다.
+  - `pendingClaim`과 `recentLogs`는 유지한다.
 
 ## 4. 전멸 / 복구 규칙
 - full wipe 기준

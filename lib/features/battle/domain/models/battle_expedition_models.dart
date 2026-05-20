@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'battle_playback_models.dart';
 import 'battle_result_models.dart';
 
-enum BattleExpeditionStatus { idle, searching, battling, recovering, paused }
+enum BattleExpeditionStatus { idle, searching, battling, recovering }
 
 @immutable
 class BattleEncounterRuntimeState {
@@ -94,7 +94,6 @@ class BattleExpeditionState {
     required this.lastProgressedAt,
     required this.phaseProgress,
     this.runState,
-    this.pausedStatus,
     this.pendingClaim = const BattlePendingClaim(),
     this.recentLogs = const <BattleLogEntry>[],
   });
@@ -103,7 +102,6 @@ class BattleExpeditionState {
   final DateTime? lastProgressedAt;
   final Duration phaseProgress;
   final BattleRunState? runState;
-  final BattleExpeditionStatus? pausedStatus;
   final BattlePendingClaim pendingClaim;
   final List<BattleLogEntry> recentLogs;
 
@@ -118,8 +116,6 @@ class BattleExpeditionState {
     Duration? phaseProgress,
     BattleRunState? runState,
     bool clearRunState = false,
-    BattleExpeditionStatus? pausedStatus,
-    bool clearPausedStatus = false,
     BattlePendingClaim? pendingClaim,
     List<BattleLogEntry>? recentLogs,
   }) {
@@ -128,9 +124,6 @@ class BattleExpeditionState {
       lastProgressedAt: lastProgressedAt ?? this.lastProgressedAt,
       phaseProgress: phaseProgress ?? this.phaseProgress,
       runState: clearRunState ? null : runState ?? this.runState,
-      pausedStatus: clearPausedStatus
-          ? null
-          : pausedStatus ?? this.pausedStatus,
       pendingClaim: pendingClaim ?? this.pendingClaim,
       recentLogs: recentLogs ?? this.recentLogs,
     );

@@ -17,7 +17,7 @@ void main() {
           ),
           stageExpeditions: const <String, BattleExpeditionState>{
             'stage_2': BattleExpeditionState(
-              status: BattleExpeditionStatus.paused,
+              status: BattleExpeditionStatus.idle,
               lastProgressedAt: null,
               phaseProgress: Duration.zero,
               pendingClaim: BattlePendingClaim(

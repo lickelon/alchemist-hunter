@@ -145,13 +145,6 @@ final battleStageStatusLabelProvider = Provider.family<String, String>((
     BattleExpeditionStatus.searching => '적 탐색 중',
     BattleExpeditionStatus.battling => '전투 진행 중',
     BattleExpeditionStatus.recovering => '복구 중',
-    BattleExpeditionStatus.paused => switch (expedition.pausedStatus ??
-        BattleExpeditionStatus.searching) {
-      BattleExpeditionStatus.searching => '정지 / 적 탐색 보류',
-      BattleExpeditionStatus.battling => '정지 / 전투 보류',
-      BattleExpeditionStatus.recovering => '정지 / 복구 보류',
-      BattleExpeditionStatus.idle || BattleExpeditionStatus.paused => '정지',
-    },
   };
 });
 

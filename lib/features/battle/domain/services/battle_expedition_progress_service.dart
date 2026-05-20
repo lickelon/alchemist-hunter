@@ -69,7 +69,6 @@ class BattleExpeditionProgressService {
           lastProgressedAt: now,
           phaseProgress: Duration.zero,
           clearRunState: true,
-          clearPausedStatus: true,
         );
         return;
       }
