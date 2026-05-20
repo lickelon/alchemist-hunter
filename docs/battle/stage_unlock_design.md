@@ -14,10 +14,10 @@
 
 | 대상 stage | 기준 stage | 조건 |
 | --- | --- | --- |
-| Stage 2 | Stage 1 | Stage 1에서 실패 없이 연속 승리 N회 |
-| Stage 3 | Stage 2 | Stage 2에서 실패 없이 연속 승리 N회 |
-| Stage 4 | Stage 3 | Stage 3에서 실패 없이 연속 승리 N회 |
-| Stage 5 | Stage 4 | Stage 4에서 실패 없이 연속 승리 N회 |
+| 먼지 회랑 | 폐허 입구 | 폐허 입구에서 실패 없이 연속 승리 N회 |
+| 재의 공방 | 먼지 회랑 | 먼지 회랑에서 실패 없이 연속 승리 N회 |
+| 폭풍 전시실 | 재의 공방 | 재의 공방에서 실패 없이 연속 승리 N회 |
+| 문물의 핵 | 폭풍 전시실 | 폭풍 전시실에서 실패 없이 연속 승리 N회 |
 
 `N`은 stage catalog의 튜닝 값으로 둔다. 초기 구현에서는 stage별로 다른 값을 둘 수 있게 모델만 열어둔다.
 
@@ -156,7 +156,7 @@ BattleStageUnlockRule(
       type: BattleUnlockRequirementType.previousStageWinStreak,
       stageId: 'stage_1',
       requiredCount: 3,
-      label: '1단계에서 실패 없이 3회 연속 승리',
+      label: '폐허 입구에서 실패 없이 3회 연속 승리',
     ),
   ],
 )
@@ -170,7 +170,7 @@ BattleStageUnlockRule(
 
 예시:
 
-- `잠금 조건: 1단계에서 실패 없이 3회 연속 승리`
+- `잠금 조건: 폐허 입구에서 실패 없이 3회 연속 승리`
 - `진행도: 2/3 연속 승리`
 - 실패 후: `진행도: 0/3 연속 승리`
 

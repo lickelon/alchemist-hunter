@@ -284,7 +284,7 @@ class _FakeBattleCatalogRepository implements BattleCatalogRepository {
         unlockCondition: BattleStageUnlockCondition(
           requiredStageId: 'stage_1',
           requiredWinStreakCount: 3,
-          label: '잠금 조건: 1단계에서 실패 없이 3회 연속 승리',
+          label: '잠금 조건: Stage 1에서 실패 없이 3회 연속 승리',
         ),
       );
     }

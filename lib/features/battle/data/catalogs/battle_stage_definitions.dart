@@ -39,7 +39,7 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         unlockCondition: BattleStageUnlockCondition(
           requiredStageId: 'stage_1',
           requiredWinStreakCount: 3,
-          label: '잠금 조건: 1단계에서 실패 없이 3회 연속 승리',
+          label: '잠금 조건: 폐허 입구에서 실패 없이 3회 연속 승리',
         ),
         clearUnlockFlags: <String>{'stage_3'},
       ),
@@ -59,7 +59,7 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         unlockCondition: BattleStageUnlockCondition(
           requiredStageId: 'stage_2',
           requiredWinStreakCount: 3,
-          label: '잠금 조건: 2단계에서 실패 없이 3회 연속 승리',
+          label: '잠금 조건: 먼지 회랑에서 실패 없이 3회 연속 승리',
         ),
         clearUnlockFlags: <String>{'stage_4', 'potion_special_1'},
       ),
@@ -79,7 +79,7 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         unlockCondition: BattleStageUnlockCondition(
           requiredStageId: 'stage_3',
           requiredWinStreakCount: 3,
-          label: '잠금 조건: 3단계에서 실패 없이 3회 연속 승리',
+          label: '잠금 조건: 재의 공방에서 실패 없이 3회 연속 승리',
         ),
         clearUnlockFlags: <String>{'stage_5'},
       ),
@@ -99,7 +99,7 @@ const Map<String, BattleStageDefinition> battleStageDefinitions =
         unlockCondition: BattleStageUnlockCondition(
           requiredStageId: 'stage_4',
           requiredWinStreakCount: 3,
-          label: '잠금 조건: 4단계에서 실패 없이 3회 연속 승리',
+          label: '잠금 조건: 폭풍 전시실에서 실패 없이 3회 연속 승리',
         ),
         clearUnlockFlags: <String>{'potion_special_2'},
       ),
