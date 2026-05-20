@@ -14,7 +14,7 @@ import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_uni
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-const double _unitBoardCardHeight = 220;
+const double _unitBoardCardHeight = 360;
 const double _progressCardHeight = 44;
 const double _timelineCardHeight = 150;
 const int _timelineSlotCount = 6;
@@ -42,9 +42,6 @@ class BattleStageStatusSheet extends ConsumerWidget {
     final List<BattleLogEntry> recentLogs = ref.watch(
       battleStageRecentLogsProvider(stageId),
     );
-    final int assignedCount = ref
-        .watch(battleStageAssignmentProvider(stageId))
-        .length;
     final String statusLabel = ref.watch(
       battleStageStatusLabelProvider(stageId),
     );
@@ -58,33 +55,24 @@ class BattleStageStatusSheet extends ConsumerWidget {
       child: AppSheetLayout(
         title:
             '${battleStageDisplayName(stage.id, fallback: stage.name)} 전투 현황',
-        header: Text('권장 전투력 ${stage.recommendedPower}'),
         body: ListView(
           children: <Widget>[
-            _BattleStageStatusHeader(
-              expedition: expedition,
-              currentEncounter: currentEncounter,
-            ),
-            const SizedBox(height: AppSpacing.lg),
             BattleStatusCard(
-              title: '전투 상태판',
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               child: SizedBox(
                 height: _unitBoardCardHeight,
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
                       BattleUnitBoardSection(
-                        title: '아군',
                         units: runState?.allies ?? const <BattleRunUnitState>[],
-                        emptyLabel: assignedCount == 0 ? '편성 없음' : '전투 시작 전',
                       ),
                       const SizedBox(height: AppSpacing.md),
                       BattleUnitBoardSection(
-                        title: '적',
                         units:
                             currentEncounter?.enemies ??
                             const <BattleRunUnitState>[],
-                        emptyLabel: currentEncounter == null ? '적 대기' : '적 없음',
+                        enemy: true,
                       ),
                     ],
                   ),
@@ -93,7 +81,6 @@ class BattleStageStatusSheet extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             BattleStatusCard(
-              title: '진행',
               child: SizedBox(
                 height: _progressCardHeight,
                 child: _BattleStageProgressBody(
@@ -109,7 +96,6 @@ class BattleStageStatusSheet extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             BattleStatusCard(
-              title: '실시간 타임라인',
               child: SizedBox(
                 height: _timelineCardHeight,
                 child: _BattleStageTimelineBody(
@@ -123,28 +109,6 @@ class BattleStageStatusSheet extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _BattleStageStatusHeader extends StatelessWidget {
-  const _BattleStageStatusHeader({
-    required this.expedition,
-    required this.currentEncounter,
-  });
-
-  final BattleExpeditionState expedition;
-  final BattleEncounterRuntimeState? currentEncounter;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: <Widget>[
-        Chip(label: Text(battleStagePhaseLabel(expedition.status))),
-        Chip(label: Text(currentEncounter == null ? '적 대기' : '적 조우')),
-      ],
     );
   }
 }

@@ -6,83 +6,93 @@ import 'package:flutter/material.dart';
 class BattleUnitBoardSection extends StatelessWidget {
   const BattleUnitBoardSection({
     super.key,
-    required this.title,
     required this.units,
-    required this.emptyLabel,
+    this.emptyLabel,
+    this.enemy = false,
   });
 
-  final String title;
   final List<BattleRunUnitState> units;
-  final String emptyLabel;
+  final String? emptyLabel;
+  final bool enemy;
 
   @override
   Widget build(BuildContext context) {
+    if (units.isEmpty && emptyLabel == null) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(title, style: Theme.of(context).textTheme.titleSmall),
-        const SizedBox(height: AppSpacing.sm),
-        if (units.isEmpty)
-          Text(emptyLabel)
-        else
+        if (units.isEmpty && emptyLabel != null)
+          Text(emptyLabel!)
+        else if (units.isNotEmpty)
           ...units.map((BattleRunUnitState unit) {
+            final ColorScheme colorScheme = Theme.of(context).colorScheme;
             final double hpRatio = unit.maxHp == 0
                 ? 0
                 : unit.currentHp / unit.maxHp;
             final List<String> effectLabels = _unitEffectLabels(unit);
+            final Color backgroundColor = enemy
+                ? colorScheme.errorContainer
+                : colorScheme.surfaceContainerLowest;
+            final Color foregroundColor = enemy
+                ? colorScheme.onErrorContainer
+                : colorScheme.onSurface;
             return Container(
               margin: const EdgeInsets.only(bottom: AppSpacing.sm),
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                color: backgroundColor,
                 borderRadius: AppRadius.interactive,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(child: Text(unit.name)),
-                      if (!unit.isAlive)
-                        Text(
-                          '사망',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
+              child: DefaultTextStyle.merge(
+                style: TextStyle(color: foregroundColor),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(child: Text(unit.name)),
+                        if (!unit.isAlive)
+                          Text(
+                            '사망',
+                            style: TextStyle(color: colorScheme.error),
                           ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text('HP ${unit.currentHp} / ${unit.maxHp}'),
-                  if (unit.maxMp > 0) ...<Widget>[
-                    const SizedBox(height: AppSpacing.xs),
-                    Text('MP ${unit.currentMp} / ${unit.maxMp}'),
-                  ],
-                  if (unit.shield > 0) ...<Widget>[
-                    const SizedBox(height: AppSpacing.xs),
-                    Text('보호막 ${unit.shield}'),
-                  ],
-                  const SizedBox(height: AppSpacing.xs),
-                  LinearProgressIndicator(
-                    value: hpRatio.clamp(0, 1),
-                    minHeight: 8,
-                  ),
-                  if (effectLabels.isNotEmpty) ...<Widget>[
-                    const SizedBox(height: AppSpacing.sm),
-                    Wrap(
-                      spacing: AppSpacing.xs,
-                      runSpacing: AppSpacing.xs,
-                      children: effectLabels
-                          .map(
-                            (String label) => Chip(
-                              label: Text(label),
-                              visualDensity: VisualDensity.compact,
-                            ),
-                          )
-                          .toList(growable: false),
+                      ],
                     ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text('HP ${unit.currentHp} / ${unit.maxHp}'),
+                    if (unit.maxMp > 0) ...<Widget>[
+                      const SizedBox(height: AppSpacing.xs),
+                      Text('MP ${unit.currentMp} / ${unit.maxMp}'),
+                    ],
+                    if (unit.shield > 0) ...<Widget>[
+                      const SizedBox(height: AppSpacing.xs),
+                      Text('보호막 ${unit.shield}'),
+                    ],
+                    const SizedBox(height: AppSpacing.xs),
+                    LinearProgressIndicator(
+                      value: hpRatio.clamp(0, 1),
+                      minHeight: 8,
+                    ),
+                    if (effectLabels.isNotEmpty) ...<Widget>[
+                      const SizedBox(height: AppSpacing.sm),
+                      Wrap(
+                        spacing: AppSpacing.xs,
+                        runSpacing: AppSpacing.xs,
+                        children: effectLabels
+                            .map(
+                              (String label) => Chip(
+                                label: Text(label),
+                                visualDensity: VisualDensity.compact,
+                              ),
+                            )
+                            .toList(growable: false),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             );
           }),

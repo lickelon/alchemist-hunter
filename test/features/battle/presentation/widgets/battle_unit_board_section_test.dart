@@ -61,9 +61,8 @@ void main() {
       const MaterialApp(
         home: Scaffold(
           body: BattleUnitBoardSection(
-            title: '적',
             units: <BattleRunUnitState>[unit],
-            emptyLabel: '적 없음',
+            enemy: true,
           ),
         ),
       ),

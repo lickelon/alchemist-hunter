@@ -52,19 +52,20 @@ void main() {
       assignedCharacterIds: session.state.battle.stageAssignments['stage_1'],
     );
 
-    expect(find.text('2단계'), findsOneWidget);
+    expect(find.text('먼지 회랑'), findsNothing);
     expect(find.textContaining('편성 2명'), findsWidgets);
-    expect(find.textContaining('상태: 잠김'), findsWidgets);
-    expect(find.textContaining('잠금 조건: 1단계에서 실패 없이 3회 연속 승리'), findsOneWidget);
-    expect(find.text('잠김'), findsWidgets);
+    expect(find.textContaining('상태: 잠김'), findsNothing);
+    expect(find.textContaining('잠금 조건:'), findsNothing);
+    expect(find.text('잠김'), findsNothing);
     expect(find.text('편성'), findsWidgets);
 
-    await tester.tap(find.text('1단계'));
+    await tester.tap(find.text('폐허 입구'));
     await tester.pumpAndSettle();
 
-    expect(find.text('1단계 전투 현황'), findsOneWidget);
-    expect(find.text('전투 상태판'), findsOneWidget);
-    expect(find.text('진행'), findsOneWidget);
+    expect(find.text('폐허 입구 전투 현황'), findsOneWidget);
+    expect(find.text('전투 상태판'), findsNothing);
+    expect(find.text('진행'), findsNothing);
+    expect(find.text('실시간 타임라인'), findsNothing);
     expect(find.text('대기'), findsWidgets);
     await tester.drag(find.byType(Scrollable).last, const Offset(0, -400));
     await tester.pumpAndSettle();
@@ -72,7 +73,7 @@ void main() {
     await tester.tap(find.text('적 정보 / 드롭'));
     await tester.pumpAndSettle();
 
-    expect(find.text('1단계 적 정보'), findsOneWidget);
+    expect(find.text('폐허 입구 적 정보'), findsOneWidget);
     expect(find.text('Ruin Scavenger'), findsWidgets);
     expect(find.text('전투 스탯'), findsNothing);
 
@@ -84,16 +85,16 @@ void main() {
     expect(find.textContaining('물방 9'), findsOneWidget);
     expect(find.textContaining('받는 피해 -5%'), findsOneWidget);
 
-    Navigator.of(tester.element(find.text('1단계 적 정보'))).pop();
+    Navigator.of(tester.element(find.text('폐허 입구 적 정보'))).pop();
     await tester.pumpAndSettle();
 
-    Navigator.of(tester.element(find.text('1단계 전투 현황'))).pop();
+    Navigator.of(tester.element(find.text('폐허 입구 전투 현황'))).pop();
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('편성').first);
     await tester.pumpAndSettle();
 
-    expect(find.text('1단계 편성'), findsOneWidget);
+    expect(find.text('폐허 입구 편성'), findsOneWidget);
     expect(find.text('배치 2/3명 / 전투력 $expectedPower'), findsOneWidget);
   });
 
@@ -157,16 +158,16 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('1단계'));
+    await tester.tap(find.text('폐허 입구'));
     await tester.pumpAndSettle();
 
-    expect(find.text('1단계 전투 현황'), findsOneWidget);
+    expect(find.text('폐허 입구 전투 현황'), findsOneWidget);
     await tester.drag(find.byType(Scrollable).last, const Offset(0, -400));
     await tester.pumpAndSettle();
     await tester.tap(find.text('최근 기록').last);
     await tester.pumpAndSettle();
 
-    expect(find.text('1단계 전투 기록'), findsOneWidget);
+    expect(find.text('폐허 입구 전투 기록'), findsOneWidget);
     expect(find.text('전투 결과'), findsOneWidget);
     expect(find.text('포션 부족으로 로드아웃이 적용되지 않았습니다.'), findsOneWidget);
     expect(find.textContaining('획득 재료: Emberroot x2'), findsOneWidget);
