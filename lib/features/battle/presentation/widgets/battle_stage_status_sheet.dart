@@ -56,8 +56,17 @@ class _BattleStageStatusSheetState
     final BattleRunState? runState = expedition.runState;
     final BattleEncounterRuntimeState? currentEncounter =
         runState?.currentEncounter;
-    final List<BattleActionLog> currentActions = ref.watch(
+    ref.listen<List<BattleActionLog>>(
       battleStageCurrentActionLogsProvider(widget.stageId),
+      (_, List<BattleActionLog> next) {
+        _appendTimelineActions(
+          ref
+              .read(battleStageExpeditionStateProvider(widget.stageId))
+              .runState
+              ?.currentEncounter,
+          next,
+        );
+      },
     );
     final List<BattleLogEntry> recentLogs = ref.watch(
       battleStageRecentLogsProvider(widget.stageId),
@@ -70,7 +79,6 @@ class _BattleStageStatusSheetState
       stage: stage,
       battleActionInterval: battleActionInterval,
     );
-    _appendTimelineActions(currentEncounter, currentActions);
     final List<String> timelineLines = _timelineLines.isEmpty
         ? battleStageTimelineLines(
             expedition: expedition,
@@ -168,15 +176,18 @@ class _BattleStageStatusSheetState
         appended = true;
       }
     }
-    if (appended && shouldFollow) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!_timelineScrollController.hasClients) {
-          return;
-        }
-        _timelineScrollController.jumpTo(
-          _timelineScrollController.position.maxScrollExtent,
-        );
-      });
+    if (appended) {
+      setState(() {});
+      if (shouldFollow) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!_timelineScrollController.hasClients) {
+            return;
+          }
+          _timelineScrollController.jumpTo(
+            _timelineScrollController.position.maxScrollExtent,
+          );
+        });
+      }
     }
   }
 
@@ -242,7 +253,7 @@ class _BattleStageTimelineBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       controller: controller,
-      itemExtent: _timelineLineHeight,
+      itemExtent: MediaQuery.textScalerOf(context).scale(_timelineLineHeight),
       itemCount: lines.length,
       itemBuilder: (BuildContext context, int index) {
         return Align(

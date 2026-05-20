@@ -55,6 +55,10 @@ class DungeonScreen extends ConsumerWidget {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),

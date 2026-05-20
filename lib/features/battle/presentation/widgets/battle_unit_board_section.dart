@@ -33,18 +33,25 @@ class BattleUnitBoardSection extends StatelessWidget {
                 ? 0
                 : unit.currentHp / unit.maxHp;
             final List<String> effectLabels = _unitEffectLabels(unit);
-            final Color backgroundColor = enemy
-                ? colorScheme.errorContainer
-                : colorScheme.surfaceContainerLowest;
-            final Color foregroundColor = enemy
-                ? colorScheme.onErrorContainer
-                : colorScheme.onSurface;
+            final Color backgroundColor = !unit.isAlive
+                ? colorScheme.surfaceContainerLow
+                : enemy
+                    ? colorScheme.errorContainer
+                    : colorScheme.surfaceContainerLowest;
+            final Color foregroundColor = !unit.isAlive
+                ? colorScheme.onSurface.withValues(alpha: 0.5)
+                : enemy
+                    ? colorScheme.onErrorContainer
+                    : colorScheme.onSurface;
             return Container(
               margin: const EdgeInsets.only(bottom: AppSpacing.sm),
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
                 color: backgroundColor,
                 borderRadius: AppRadius.interactive,
+                border: enemy && unit.isAlive
+                    ? Border.all(color: colorScheme.error, width: 1.5)
+                    : null,
               ),
               child: DefaultTextStyle.merge(
                 style: TextStyle(color: foregroundColor),

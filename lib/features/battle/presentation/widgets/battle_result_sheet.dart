@@ -28,7 +28,7 @@ class BattleResultSheet extends ConsumerWidget {
     return AppBottomSheet(
       child: AppSheetLayout(
         title: '$stageName 전투 기록',
-        header: Text(logs.isEmpty ? '최근 기록 없음' : '최근 기록 있음'),
+        header: Text(logs.isEmpty ? '기록 없음' : '기록 ${logs.length}건'),
         body: logs.isEmpty
             ? const Center(child: Text('전투 기록이 없습니다.'))
             : ListView.separated(

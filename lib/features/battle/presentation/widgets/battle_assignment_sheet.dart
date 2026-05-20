@@ -61,7 +61,7 @@ class BattleAssignmentSheet extends ConsumerWidget {
                 AppSpacing.sm,
               ),
               child: Text(
-                '포션 loadout',
+                '포션 로드아웃',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),

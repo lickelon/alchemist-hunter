@@ -84,7 +84,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('포션 loadout'), findsOneWidget);
+    expect(find.text('포션 로드아웃'), findsOneWidget);
     expect(find.text('활력 포션 A'), findsOneWidget);
     expect(find.text('보유 2 / 선택 0'), findsOneWidget);
 
