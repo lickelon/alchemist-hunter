@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/domain/repositories/extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/domain/repositories/material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositories/workshop_skill_tree_repository.dart';
@@ -13,7 +14,13 @@ import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewm
 import 'package:alchemist_hunter/features/workshop/skill_tree/presentation/viewmodels/workshop_skill_tree_service_providers.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_service_providers.dart';
 
-enum WorkshopExtractionSubmitResult { success, queueFull, failed }
+enum WorkshopExtractionSubmitResult {
+  success,
+  queueFull,
+  materialMissing,
+  elementSelectionRequired,
+  failed,
+}
 
 class WorkshopExtractionController {
   WorkshopExtractionController(
@@ -75,6 +82,17 @@ class WorkshopExtractionController {
       selectedTraits: selectedTraits,
     );
     if (identical(nextState, current)) {
+      final int owned = current.player.materialInventory[materialId] ?? 0;
+      if (quantity <= 0 || owned < quantity) {
+        _session.appendLog('재료 부족 / 추출 $materialId x$quantity');
+        return WorkshopExtractionSubmitResult.materialMissing;
+      }
+      final profile = _extractionProfileRepository.findProfileById(profileId);
+      if (profile?.mode == ExtractionMode.selective &&
+          (selectedTraits == null || selectedTraits.isEmpty)) {
+        _session.appendLog('원소 선택 필요 / 추출 $materialId');
+        return WorkshopExtractionSubmitResult.elementSelectionRequired;
+      }
       _session.appendLog('추출 등록 실패 / $materialId x$quantity');
       return WorkshopExtractionSubmitResult.failed;
     }

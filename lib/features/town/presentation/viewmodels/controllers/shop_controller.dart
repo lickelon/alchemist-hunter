@@ -41,9 +41,13 @@ class ShopController {
     );
     _apply(
       nextState,
-      logMessage: identical(nextState, current)
-          ? 'Purchase failed for $materialId'
-          : 'Bought $quantity of $materialId (${ShopType.general.name})',
+      logMessage: _purchaseLogMessage(
+        current: current,
+        nextState: nextState,
+        shopType: ShopType.general,
+        materialId: materialId,
+        quantity: quantity,
+      ),
     );
   }
 
@@ -59,9 +63,13 @@ class ShopController {
     );
     _apply(
       nextState,
-      logMessage: identical(nextState, current)
-          ? 'Purchase failed for $materialId'
-          : 'Bought $quantity of $materialId (${ShopType.catalyst.name})',
+      logMessage: _purchaseLogMessage(
+        current: current,
+        nextState: nextState,
+        shopType: ShopType.catalyst,
+        materialId: materialId,
+        quantity: quantity,
+      ),
     );
   }
 
@@ -80,8 +88,8 @@ class ShopController {
     _apply(
       nextState,
       logMessage: identical(nextState, current)
-          ? 'Not enough gold for refresh'
-          : 'Forced refresh ${shopType.name} shop',
+          ? _forceRefreshFailureLog(current, shopType)
+          : '상점 갱신 / ${_shopLabel(shopType)}',
     );
   }
 
@@ -95,9 +103,7 @@ class ShopController {
     );
     _apply(
       nextState,
-      logMessage: identical(nextState, current)
-          ? null
-          : 'Auto refresh executed',
+      logMessage: identical(nextState, current) ? null : '상점 자동 갱신',
     );
   }
 
@@ -106,6 +112,71 @@ class ShopController {
     if (logMessage != null) {
       _session.appendLog(logMessage);
     }
+  }
+
+  String _purchaseLogMessage({
+    required SessionState current,
+    required SessionState nextState,
+    required ShopType shopType,
+    required String materialId,
+    required int quantity,
+  }) {
+    final ShopItem? item = _findShopItem(current, shopType, materialId);
+    final String itemName = item?.name ?? materialId;
+    if (!identical(nextState, current)) {
+      return '재료 구매 / $itemName x$quantity / ${_shopLabel(shopType)}';
+    }
+    if (quantity < 1) {
+      return '구매 수량 오류 / $itemName';
+    }
+    if (item == null || item.quantity < quantity) {
+      return '재료 부족 / $itemName x$quantity';
+    }
+    if (current.player.gold < item.price * quantity) {
+      return '골드 부족 / $itemName x$quantity';
+    }
+    return '구매 실패 / $itemName x$quantity';
+  }
+
+  String _forceRefreshFailureLog(SessionState current, ShopType shopType) {
+    final ShopState shop = _shopFor(current, shopType);
+    final int effectiveCost = _townSkillTreeService.discountedGoldCost(
+      baseCost: shop.forcedRefreshCost,
+      discountRate: _townSkillTreeService.shopRefreshDiscountRate(
+        current,
+        _townSkillTreeRepository.nodes(),
+      ),
+    );
+    if (current.player.gold < effectiveCost) {
+      return '골드 부족 / ${_shopLabel(shopType)} 갱신';
+    }
+    return '상점 갱신 실패 / ${_shopLabel(shopType)}';
+  }
+
+  ShopState _shopFor(SessionState state, ShopType shopType) {
+    return shopType == ShopType.general
+        ? state.town.generalShop
+        : state.town.catalystShop;
+  }
+
+  ShopItem? _findShopItem(
+    SessionState state,
+    ShopType shopType,
+    String materialId,
+  ) {
+    for (final ShopItem item in _shopFor(state, shopType).items) {
+      if (item.materialId == materialId) {
+        return item;
+      }
+    }
+    return null;
+  }
+
+  String _shopLabel(ShopType shopType) {
+    return switch (shopType) {
+      ShopType.general => '일반 상점',
+      ShopType.catalyst => '촉매 상점',
+    };
   }
 }
 

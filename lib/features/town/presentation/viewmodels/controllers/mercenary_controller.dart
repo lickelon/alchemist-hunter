@@ -44,7 +44,7 @@ class MercenaryController {
           templateRepository: _mercenaryTemplateRepository,
         );
     _session.applyState(nextState);
-    _session.appendLog('Refreshed mercenary candidates');
+    _session.appendLog('용병 후보 갱신');
   }
 
   void hireMercenary(String candidateId) {
@@ -53,7 +53,7 @@ class MercenaryController {
         .where((entry) => entry.id == candidateId)
         .firstOrNull;
     if (candidate == null) {
-      _session.appendLog('Mercenary candidate missing: $candidateId');
+      _session.appendLog('용병 후보 없음: $candidateId');
       return;
     }
     final SessionState nextState = _hireMercenaryUseCase.hireCandidate(
@@ -65,8 +65,8 @@ class MercenaryController {
     _session.applyState(nextState);
     _session.appendLog(
       identical(nextState, current)
-          ? 'Not enough gold for ${candidate.name}'
-          : 'Hired ${candidate.name}',
+          ? '골드 부족 / ${candidate.name}'
+          : '용병 고용 / ${candidate.name}',
     );
   }
 }

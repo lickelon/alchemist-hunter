@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/use_cases/workshop_craft_enqueue_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/domain/use_cases/workshop_queue_claim_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_crafting_service.dart';
@@ -13,7 +14,7 @@ import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmod
 import 'package:alchemist_hunter/features/workshop/skill_tree/presentation/viewmodels/workshop_skill_tree_service_providers.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_service_providers.dart';
 
-enum WorkshopCraftSubmitResult { success, queueFull, failed }
+enum WorkshopCraftSubmitResult { success, queueFull, elementMissing, failed }
 
 class WorkshopCraftQueueController {
   WorkshopCraftQueueController(
@@ -67,6 +68,18 @@ class WorkshopCraftQueueController {
       workshopSupportService: _workshopSupportService,
     );
     if (identical(nextState, current)) {
+      final PotionBlueprint? blueprint = _potionCatalogRepository
+          .findPotionById(potionId);
+      if (blueprint != null &&
+          repeatCount > 0 &&
+          !_craftingService.canCraftRepeatCount(
+            blueprint: blueprint,
+            extractedInventory: current.workshop.extractedTraitInventory,
+            repeatCount: repeatCount,
+          )) {
+        _session.appendLog('원소 부족 / 제조 $potionId x$repeatCount');
+        return WorkshopCraftSubmitResult.elementMissing;
+      }
       _session.appendLog('제조 등록 실패 / $potionId x$repeatCount');
       return WorkshopCraftSubmitResult.failed;
     }

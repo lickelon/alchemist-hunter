@@ -63,7 +63,7 @@ void main() {
     );
     expect(
       session.state.workshop.logs.first,
-      'Bought 2 of ${item.materialId} (general)',
+      '재료 구매 / ${item.name} x2 / 일반 상점',
     );
   });
 
@@ -79,7 +79,7 @@ void main() {
     expect(session.state.player.gold, previousGold - 25);
     expect(session.state.town.generalShop.cycleRefreshCount, 1);
     expect(session.state.town.generalShop.nextRefreshAt, previousRefreshAt);
-    expect(session.state.workshop.logs.first, 'Forced refresh general shop');
+    expect(session.state.workshop.logs.first, '상점 갱신 / 일반 상점');
   });
 
   test('forceRefresh applies town trade ledger discount', () {
@@ -123,7 +123,7 @@ void main() {
     );
     expect(session.state.town.generalShop.forcedRefreshCost, 25);
     expect(session.state.town.generalShop.cycleRefreshCount, 0);
-    expect(session.state.workshop.logs.first, 'Auto refresh executed');
+    expect(session.state.workshop.logs.first, '상점 자동 갱신');
   });
 
   test('craftEquipment reserves materials and enqueues forge job', () {
@@ -185,7 +185,7 @@ void main() {
     expect(session.state.characters.mercenaries, hasLength(2));
     expect(session.state.characters.mercenaries.last.name, candidate.name);
     expect(session.state.town.mercenaryCandidates, hasLength(2));
-    expect(session.state.workshop.logs.first, 'Hired ${candidate.name}');
+    expect(session.state.workshop.logs.first, '용병 고용 / ${candidate.name}');
   });
 
   test('hireMercenary applies hiring board discount', () {
@@ -229,6 +229,6 @@ void main() {
           .toList(growable: false),
       isNot(previousIds),
     );
-    expect(session.state.workshop.logs.first, 'Refreshed mercenary candidates');
+    expect(session.state.workshop.logs.first, '용병 후보 갱신');
   });
 }

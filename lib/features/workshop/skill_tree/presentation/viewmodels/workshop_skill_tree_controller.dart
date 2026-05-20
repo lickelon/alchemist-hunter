@@ -33,8 +33,8 @@ class WorkshopSkillTreeController {
     _session.applyState(nextState);
     _session.appendLog(
       identical(nextState, current)
-          ? 'Cannot upgrade workshop skill $nodeId'
-          : 'Upgraded workshop skill $nodeId',
+          ? '작업실 스킬 강화 불가 / $nodeId'
+          : '작업실 스킬 강화 / $nodeId',
     );
   }
 }

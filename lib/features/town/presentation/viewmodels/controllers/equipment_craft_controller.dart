@@ -29,7 +29,7 @@ class EquipmentCraftController {
     final SessionState current = _session.snapshot();
     final blueprint = _equipmentBlueprintRepository.findById(blueprintId);
     if (blueprint == null) {
-      _session.appendLog('Equipment blueprint missing: $blueprintId');
+      _session.appendLog('장비 설계도 없음: $blueprintId');
       return;
     }
 
@@ -43,7 +43,7 @@ class EquipmentCraftController {
     _session.applyState(nextState);
     _session.appendLog(
       identical(nextState, current)
-          ? 'Missing materials for ${blueprint.name}'
+          ? '재료 부족 / ${blueprint.name}'
           : '대장간 등록 / ${blueprint.name}',
     );
   }

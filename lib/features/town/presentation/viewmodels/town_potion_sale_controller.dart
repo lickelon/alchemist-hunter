@@ -48,10 +48,10 @@ class TownPotionSaleController {
     _session.applyState(nextState);
     _session.appendLog(
       !hasEnough
-          ? 'Not enough crafted potion to sell'
+          ? '판매할 포션 부족'
           : !hasDetails
-          ? 'Potion detail not found'
-          : 'Sold potion $stackKey x$quantity for $earned gold',
+          ? '포션 상세 정보 없음'
+          : '포션 판매 / $stackKey x$quantity / 골드 +$earned / 명성 +$quantity',
     );
   }
 }

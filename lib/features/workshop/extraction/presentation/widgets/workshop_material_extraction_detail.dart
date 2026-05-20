@@ -129,10 +129,15 @@ class _WorkshopMaterialExtractionDetailState
                     Navigator.of(context).pop();
                     return;
                   }
-                  final String message =
-                      result == WorkshopExtractionSubmitResult.queueFull
-                      ? '작업실 큐가 가득 찼습니다'
-                      : '추출 등록에 실패했습니다';
+                  final String message = switch (result) {
+                    WorkshopExtractionSubmitResult.queueFull =>
+                      '작업실 큐가 가득 찼습니다',
+                    WorkshopExtractionSubmitResult.materialMissing => '재료 부족',
+                    WorkshopExtractionSubmitResult.elementSelectionRequired =>
+                      '원소 선택 필요',
+                    WorkshopExtractionSubmitResult.success => '',
+                    WorkshopExtractionSubmitResult.failed => '추출 등록에 실패했습니다',
+                  };
                   AppToast.show(context, message);
                 },
               ),

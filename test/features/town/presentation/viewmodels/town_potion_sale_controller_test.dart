@@ -46,7 +46,7 @@ void main() {
     );
     expect(
       session.state.workshop.logs.first,
-      startsWith('Sold potion $stackKey x1 for '),
+      startsWith('포션 판매 / $stackKey x1 / 골드 +'),
     );
   });
 

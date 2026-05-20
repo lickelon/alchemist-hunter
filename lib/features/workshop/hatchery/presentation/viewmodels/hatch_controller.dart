@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/workshop/hatchery/domain/models/hatch_models.dart';
 import 'package:alchemist_hunter/features/workshop/hatchery/domain/repositories/homunculus_hatch_repository.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
@@ -10,7 +11,15 @@ import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/presentation/viewmodels/workshop_skill_tree_service_providers.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_service_providers.dart';
 
-enum WorkshopHatchSubmitResult { success, queueFull, failed }
+enum WorkshopHatchSubmitResult {
+  success,
+  queueFull,
+  essenceMissing,
+  arcaneMissing,
+  materialMissing,
+  elementMissing,
+  failed,
+}
 
 class WorkshopHatchController {
   WorkshopHatchController(
@@ -37,7 +46,7 @@ class WorkshopHatchController {
     final SessionState current = _session.snapshot();
     final recipe = _hatchRepository.findById(recipeId);
     if (recipe == null) {
-      _session.appendLog('Hatch recipe missing: $recipeId');
+      _session.appendLog('부화 레시피 없음: $recipeId');
       return WorkshopHatchSubmitResult.failed;
     }
 
@@ -59,8 +68,15 @@ class WorkshopHatchController {
       workshopSupportService: _workshopSupportService,
     );
     if (identical(nextState, current)) {
-      _session.appendLog('부화 등록 실패 / ${recipe.resultName}');
-      return WorkshopHatchSubmitResult.failed;
+      final WorkshopHatchSubmitResult failure = _hatchFailureReason(
+        current,
+        recipe,
+        _workshopSupportService,
+      );
+      _session.appendLog(
+        '${_hatchFailureLogLabel(failure)} / ${recipe.resultName}',
+      );
+      return failure;
     }
     _session.applyState(nextState);
     _session.appendLog('부화 등록 / ${recipe.resultName}');
@@ -80,3 +96,45 @@ final Provider<WorkshopHatchController> workshopHatchControllerProvider =
         workshopSupportService: ref.read(workshopSupportServiceProvider),
       );
     });
+
+WorkshopHatchSubmitResult _hatchFailureReason(
+  SessionState state,
+  HomunculusHatchRecipe recipe,
+  WorkshopSupportService workshopSupportService,
+) {
+  final int arcaneDustCost =
+      (recipe.arcaneDustCost -
+              workshopSupportService.hatchArcaneDustDiscount(state))
+          .clamp(0, recipe.arcaneDustCost)
+          .toInt();
+  if (state.player.essence < recipe.essenceCost) {
+    return WorkshopHatchSubmitResult.essenceMissing;
+  }
+  if (state.player.arcaneDust < arcaneDustCost) {
+    return WorkshopHatchSubmitResult.arcaneMissing;
+  }
+  for (final MapEntry<String, int> entry in recipe.materialCosts.entries) {
+    if ((state.player.materialInventory[entry.key] ?? 0) < entry.value) {
+      return WorkshopHatchSubmitResult.materialMissing;
+    }
+  }
+  for (final MapEntry<String, double> entry in recipe.traitCosts.entries) {
+    if ((state.workshop.extractedTraitInventory[entry.key] ?? 0) <
+        entry.value) {
+      return WorkshopHatchSubmitResult.elementMissing;
+    }
+  }
+  return WorkshopHatchSubmitResult.failed;
+}
+
+String _hatchFailureLogLabel(WorkshopHatchSubmitResult result) {
+  return switch (result) {
+    WorkshopHatchSubmitResult.essenceMissing => '정수 부족',
+    WorkshopHatchSubmitResult.arcaneMissing => '신비 부족',
+    WorkshopHatchSubmitResult.materialMissing => '재료 부족',
+    WorkshopHatchSubmitResult.elementMissing => '원소 부족',
+    WorkshopHatchSubmitResult.queueFull => '작업실 큐 가득 참',
+    WorkshopHatchSubmitResult.success => '부화 등록',
+    WorkshopHatchSubmitResult.failed => '부화 등록 실패',
+  };
+}

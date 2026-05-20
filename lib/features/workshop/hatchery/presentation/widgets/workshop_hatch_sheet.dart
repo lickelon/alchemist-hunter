@@ -55,11 +55,21 @@ class WorkshopHatchSheet extends ConsumerWidget {
                                       WorkshopHatchSubmitResult.success) {
                                     return;
                                   }
-                                  final String message =
-                                      result ==
-                                          WorkshopHatchSubmitResult.queueFull
-                                      ? '작업실 큐가 가득 찼습니다'
-                                      : '부화 등록에 실패했습니다';
+                                  final String message = switch (result) {
+                                    WorkshopHatchSubmitResult.queueFull =>
+                                      '작업실 큐가 가득 찼습니다',
+                                    WorkshopHatchSubmitResult.essenceMissing =>
+                                      '정수 부족',
+                                    WorkshopHatchSubmitResult.arcaneMissing =>
+                                      '신비 부족',
+                                    WorkshopHatchSubmitResult.materialMissing =>
+                                      '재료 부족',
+                                    WorkshopHatchSubmitResult.elementMissing =>
+                                      '원소 부족',
+                                    WorkshopHatchSubmitResult.success => '',
+                                    WorkshopHatchSubmitResult.failed =>
+                                      '부화 등록에 실패했습니다',
+                                  };
                                   AppToast.show(context, message);
                                 }
                               : null,

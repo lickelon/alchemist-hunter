@@ -48,10 +48,12 @@ class WorkshopEnqueueOptionsSheet extends ConsumerWidget {
                     Navigator.of(context).pop();
                     return;
                   }
-                  final String message =
-                      result == WorkshopCraftSubmitResult.queueFull
-                      ? '작업실 큐가 가득 찼습니다'
-                      : '제조 등록에 실패했습니다';
+                  final String message = switch (result) {
+                    WorkshopCraftSubmitResult.queueFull => '작업실 큐가 가득 찼습니다',
+                    WorkshopCraftSubmitResult.elementMissing => '원소 부족',
+                    WorkshopCraftSubmitResult.success => '',
+                    WorkshopCraftSubmitResult.failed => '제조 등록에 실패했습니다',
+                  };
                   AppToast.show(context, message);
                 },
                 child: const Text('등록'),

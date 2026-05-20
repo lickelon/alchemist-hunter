@@ -33,8 +33,8 @@ class TownSkillTreeController {
     _session.applyState(nextState);
     _session.appendLog(
       identical(nextState, current)
-          ? 'Cannot upgrade town skill $nodeId'
-          : 'Upgraded town skill $nodeId',
+          ? '마을 스킬 강화 불가 / $nodeId'
+          : '마을 스킬 강화 / $nodeId',
     );
   }
 }
