@@ -84,14 +84,14 @@ String battleActionTimelineLabel(BattleActionLog action) {
   if (action.type == BattleActionType.regen) {
     return '${action.actorName} 재생 +${action.healing}';
   }
-  if (action.type == BattleActionType.mpRegen) {
-    return '${action.actorName} 마나 회복 +${action.healing}';
+  if (action.type == BattleActionType.skillUse) {
+    return '${action.actorName} ${action.skillName ?? '스킬'} 사용';
   }
   if (action.type == BattleActionType.lifesteal) {
     return '${action.actorName} 흡혈 +${action.healing}';
   }
   if (action.type == BattleActionType.heal) {
-    return '${action.actorName} 회복 +${action.healing}';
+    return '${action.actorName} -> ${action.targetName ?? '대상'} 회복 +${action.healing}';
   }
   if (action.type == BattleActionType.modifier) {
     return '${action.actorName} 효과 부여';
@@ -106,13 +106,10 @@ String battleActionTimelineLabel(BattleActionLog action) {
   if (action.type == BattleActionType.passive) {
     return '${action.actorName} 패시브 발동';
   }
-  final String skillLabel = action.type == BattleActionType.skill
-      ? ' ${action.skillName ?? '스킬'}'
-      : '';
   if (!action.hit) {
-    return '${action.actorName}$skillLabel -> ${action.targetName ?? '대상'} 빗나감';
+    return '${action.actorName} -> ${action.targetName ?? '대상'} 빗나감';
   }
   final String criticalLabel = action.critical ? ' / 치명타' : '';
   final String mpLabel = action.mpSpent > 0 ? ' / 마나 -${action.mpSpent}' : '';
-  return '${action.actorName}$skillLabel -> ${action.targetName ?? '대상'} ${action.damage} 피해$criticalLabel$mpLabel';
+  return '${action.actorName} -> ${action.targetName ?? '대상'} ${action.damage} 피해$criticalLabel$mpLabel';
 }

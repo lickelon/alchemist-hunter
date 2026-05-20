@@ -231,6 +231,9 @@ class BattleService {
     if (usesSkill) {
       context.actor.currentMp = 0;
       context.actor.skillCooldowns = _startSkillCooldowns(context.actor, skill);
+      actions.add(
+        _buildSkillUseAction(context: context, skill: skill, mpSpent: mpSpent),
+      );
     } else {
       context.actor.skillCooldowns = _tickSkillCooldowns(context.actor);
     }
@@ -243,7 +246,7 @@ class BattleService {
           context: context,
           skill: skill!,
           targets: targets,
-          mpSpent: mpSpent,
+          mpSpent: 0,
         ),
       );
     } else if (skill?.effectType == BattleSkillEffectType.grantModifier) {
@@ -252,7 +255,7 @@ class BattleService {
           context: context,
           skill: skill!,
           targets: targets,
-          mpSpent: mpSpent,
+          mpSpent: 0,
         ),
       );
     } else if (skill?.effectType == BattleSkillEffectType.grantStatus) {
@@ -261,7 +264,7 @@ class BattleService {
           context: context,
           skill: skill!,
           targets: targets,
-          mpSpent: mpSpent,
+          mpSpent: 0,
         ),
       );
     } else if (skill?.effectType == BattleSkillEffectType.grantShield) {
@@ -270,7 +273,7 @@ class BattleService {
           context: context,
           skill: skill!,
           targets: targets,
-          mpSpent: mpSpent,
+          mpSpent: 0,
         ),
       );
     } else {
@@ -294,7 +297,7 @@ class BattleService {
               skillId: skill?.id,
               skillName: skill?.name,
               hit: false,
-              mpSpent: mpSpent,
+              mpSpent: 0,
               actorHpAfter: context.actor.currentHp,
               actorMpAfter: context.actor.currentMp,
               targetHpAfter: target.currentHp,
@@ -338,7 +341,7 @@ class BattleService {
             hit: true,
             critical: critical,
             damage: damage,
-            mpSpent: mpSpent,
+            mpSpent: 0,
             actorHpAfter: actorHpBeforeRecovery,
             actorMpAfter: context.actor.currentMp,
             targetHpAfter: target.currentHp,
@@ -411,6 +414,26 @@ class BattleService {
       lifecycle: lifecycle,
       potionBoost: actor.side == _BattleSide.ally ? potionBoost : 0,
       allowDerivedActions: allowDerivedActions,
+    );
+  }
+
+  BattleActionLog _buildSkillUseAction({
+    required _ActionLifecycleContext context,
+    required BattleSkillDefinition skill,
+    required int mpSpent,
+  }) {
+    return BattleActionLog(
+      lifecycle: context.lifecycle,
+      turn: context.lifecycle,
+      type: BattleActionType.skillUse,
+      actorId: context.actor.id,
+      actorName: context.actor.name,
+      actorTeam: _toBattleTeam(context.actor.side),
+      skillId: skill.id,
+      skillName: skill.name,
+      mpSpent: mpSpent,
+      actorHpAfter: context.actor.currentHp,
+      actorMpAfter: context.actor.currentMp,
     );
   }
 
@@ -809,23 +832,8 @@ class BattleService {
         ),
       );
     }
-    final int mpRegen = usesSkill
-        ? 0
-        : recoveryResolver.applyMpRegen(context.actor);
-    if (mpRegen > 0) {
-      actions.add(
-        BattleActionLog(
-          lifecycle: context.lifecycle,
-          turn: context.lifecycle,
-          type: BattleActionType.mpRegen,
-          actorId: context.actor.id,
-          actorName: context.actor.name,
-          actorTeam: _toBattleTeam(context.actor.side),
-          healing: mpRegen,
-          actorHpAfter: context.actor.currentHp,
-          actorMpAfter: context.actor.currentMp,
-        ),
-      );
+    if (!usesSkill) {
+      recoveryResolver.applyMpRegen(context.actor);
     }
     return actions;
   }

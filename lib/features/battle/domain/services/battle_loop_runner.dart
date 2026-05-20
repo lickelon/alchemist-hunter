@@ -129,6 +129,23 @@ class _BattleLoopRunner {
           }
           turns += 1;
           final int lifecycle = turns;
+          if (usesSkill && attackIndex == 0) {
+            actions.add(
+              BattleActionLog(
+                lifecycle: lifecycle,
+                turn: turns,
+                type: BattleActionType.skillUse,
+                actorId: actor.id,
+                actorName: actor.name,
+                actorTeam: _toBattleTeam(actor.side),
+                skillId: skill.id,
+                skillName: skill.name,
+                mpSpent: mpSpent,
+                actorHpAfter: actor.currentHp,
+                actorMpAfter: actor.currentMp,
+              ),
+            );
+          }
 
           final bool hit = attackResolver.rollHit(
             attacker: actor,
@@ -152,7 +169,7 @@ class _BattleLoopRunner {
                 skillId: skill?.id,
                 skillName: skill?.name,
                 hit: false,
-                mpSpent: attackIndex == 0 ? mpSpent : 0,
+                mpSpent: 0,
                 actorHpAfter: actor.currentHp,
                 actorMpAfter: actor.currentMp,
                 targetHpAfter: currentTarget.currentHp,
@@ -166,13 +183,7 @@ class _BattleLoopRunner {
               recoveryResolver: recoveryResolver,
             );
             if (!usesSkill) {
-              _applyMpRegen(
-                actor,
-                lifecycle: lifecycle,
-                turn: turns,
-                actions: actions,
-                recoveryResolver: recoveryResolver,
-              );
+              _applyMpRegen(actor, recoveryResolver: recoveryResolver);
             }
             continue;
           }
@@ -218,7 +229,7 @@ class _BattleLoopRunner {
               hit: true,
               critical: critical,
               damage: damageRoll.damage,
-              mpSpent: attackIndex == 0 ? mpSpent : 0,
+              mpSpent: 0,
               actorHpAfter: actorHpBeforeRecovery,
               actorMpAfter: actor.currentMp,
               targetHpAfter: currentTarget.currentHp,
@@ -250,13 +261,7 @@ class _BattleLoopRunner {
             recoveryResolver: recoveryResolver,
           );
           if (!usesSkill) {
-            _applyMpRegen(
-              actor,
-              lifecycle: lifecycle,
-              turn: turns,
-              actions: actions,
-              recoveryResolver: recoveryResolver,
-            );
+            _applyMpRegen(actor, recoveryResolver: recoveryResolver);
           }
           target = currentTarget;
         }
@@ -320,28 +325,9 @@ class _BattleLoopRunner {
 
   void _applyMpRegen(
     _BattleUnit unit, {
-    required int lifecycle,
-    required int turn,
-    required List<BattleActionLog> actions,
     required _BattleRecoveryResolver recoveryResolver,
   }) {
-    final int mpRegen = recoveryResolver.applyMpRegen(unit);
-    if (mpRegen == 0) {
-      return;
-    }
-    actions.add(
-      BattleActionLog(
-        lifecycle: lifecycle,
-        turn: turn,
-        type: BattleActionType.mpRegen,
-        actorId: unit.id,
-        actorName: unit.name,
-        actorTeam: _toBattleTeam(unit.side),
-        healing: mpRegen,
-        actorHpAfter: unit.currentHp,
-        actorMpAfter: unit.currentMp,
-      ),
-    );
+    recoveryResolver.applyMpRegen(unit);
   }
 
   BattleSkillDefinition? _selectSkill(_BattleUnit actor) {

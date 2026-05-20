@@ -719,7 +719,7 @@ void main() {
     expect(correctTriggerResult.lifecycleActions.first.hit, isTrue);
   });
 
-  test('normal attack restores fixed mp regen after lifecycle', () {
+  test('normal attack restores fixed mp regen without action log', () {
     final BattleService service = BattleService(random: Random(1));
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
       encounterId: 'encounter_1',
@@ -741,14 +741,11 @@ void main() {
 
     expect(result.allies.single.currentMp, 4);
     expect(
-      result.lifecycleActions.map((BattleActionLog action) => action.type),
-      containsAllInOrder(<BattleActionType>[
-        BattleActionType.attack,
-        BattleActionType.mpRegen,
-      ]),
+      result.lifecycleActions.any(
+        (BattleActionLog action) => action.type == BattleActionType.mpRegen,
+      ),
+      isFalse,
     );
-    expect(result.lifecycleActions.last.healing, 4);
-    expect(result.lifecycleActions.last.actorMpAfter, 4);
   });
 
   test('unit at max mp uses active skill and spends all mp', () {
@@ -787,7 +784,7 @@ void main() {
     );
     final BattleActionLog skillAction = result.lifecycleActions.first;
 
-    expect(skillAction.type, BattleActionType.skill);
+    expect(skillAction.type, BattleActionType.skillUse);
     expect(skillAction.skillId, 'skill_burst');
     expect(skillAction.mpSpent, 10);
     expect(skillAction.actorMpAfter, 0);
@@ -845,6 +842,15 @@ void main() {
           )
           .map((BattleActionLog action) => action.targetId),
       <String>['enemy_a', 'enemy_b'],
+    );
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) =>
+                action.type == BattleActionType.skillUse,
+          )
+          .map((BattleActionLog action) => action.skillId),
+      <String>['skill_sweep'],
     );
     expect(
       result.encounter.enemies.every(
@@ -944,7 +950,26 @@ void main() {
       potionBoost: 0,
     );
 
-    expect(result.lifecycleActions.single.type, BattleActionType.modifier);
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) =>
+                action.type == BattleActionType.skillUse,
+          )
+          .single
+          .skillId,
+      'skill_weaken',
+    );
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) =>
+                action.type == BattleActionType.modifier,
+          )
+          .single
+          .type,
+      BattleActionType.modifier,
+    );
     expect(
       result.encounter.enemies.single.activeModifiers.single.modifier.sourceId,
       'skill_weaken',
@@ -987,7 +1012,25 @@ void main() {
       potionBoost: 0,
     );
 
-    expect(result.lifecycleActions.single.type, BattleActionType.status);
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) =>
+                action.type == BattleActionType.skillUse,
+          )
+          .single
+          .skillId,
+      'skill_poison',
+    );
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.status,
+          )
+          .single
+          .type,
+      BattleActionType.status,
+    );
     expect(
       result.encounter.enemies.single.statuses.single.type,
       BattleStatusType.poison,

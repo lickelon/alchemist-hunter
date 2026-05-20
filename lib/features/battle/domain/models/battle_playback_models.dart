@@ -8,6 +8,7 @@ enum BattleTeam { ally, enemy }
 
 enum BattleActionType {
   attack,
+  skillUse,
   skill,
   heal,
   lifesteal,
