@@ -1,5 +1,7 @@
+import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_inventory_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/workshop_display_labels.dart';
@@ -59,6 +61,11 @@ class _WorkshopMaterialSheet extends ConsumerWidget {
                   final MaterialInventoryView entry = materials[index];
                   return ListTile(
                     dense: true,
+                    leading: CatalogAssetIcon(
+                      assetPath: CatalogIconAssetPaths.material(entry.id),
+                      size: 36,
+                      padding: 5,
+                    ),
                     title: Text(entry.name),
                     subtitle: Text(
                       '${workshopMaterialRarityLabel(entry.rarity)} / 원소 ${entry.traitSummary}',

@@ -1,3 +1,5 @@
+import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:flutter/material.dart';
 
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_inventory_selectors.dart';
@@ -19,6 +21,11 @@ class WorkshopTraitInventoryStrip extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 final ExtractedTraitInventoryView entry = traits[index];
                 return Chip(
+                  avatar: CatalogAssetIcon(
+                    assetPath: CatalogIconAssetPaths.element(entry.id),
+                    size: 24,
+                    padding: 2,
+                  ),
                   label: Text(
                     '${entry.name} 원소 ${workshopTraitAmountLabel(entry.amount)}',
                   ),

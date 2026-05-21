@@ -1,7 +1,9 @@
+import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_controller.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_detail_selector.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/workshop_display_labels.dart';
@@ -49,7 +51,15 @@ class _WorkshopMaterialExtractionDetailState
     return AppBottomSheet(
       child: AppSheetLayout(
         title: detail.materialName,
-        header: Text('보유 ${detail.ownedQuantity}개'),
+        header: Row(
+          children: <Widget>[
+            CatalogAssetIcon(
+              assetPath: CatalogIconAssetPaths.material(detail.materialId),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Text('보유 ${detail.ownedQuantity}개'),
+          ],
+        ),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,6 +100,11 @@ class _WorkshopMaterialExtractionDetailState
                 children: detail.traits.map((ExtractionTraitOptionView trait) {
                   final bool selected = _selectedTraits.contains(trait.id);
                   return FilterChip(
+                    avatar: CatalogAssetIcon(
+                      assetPath: CatalogIconAssetPaths.element(trait.id),
+                      size: 24,
+                      padding: 2,
+                    ),
                     label: Text(
                       '${trait.name} 원소 ${workshopTraitAmountLabel(trait.amount)}',
                     ),
