@@ -27,12 +27,14 @@ class TownEquipmentBlueprintView {
 class TownEquipmentInventoryView {
   const TownEquipmentInventoryView({
     required this.id,
+    required this.blueprintId,
     required this.name,
     required this.slotLabel,
     required this.statLabel,
   });
 
   final String id;
+  final String blueprintId;
   final String name;
   final String slotLabel;
   final String statLabel;
@@ -162,6 +164,7 @@ townEquipmentInventoryViewsProvider =
           .map((EquipmentInstance entry) {
             return TownEquipmentInventoryView(
               id: entry.id,
+              blueprintId: entry.blueprintId,
               name: entry.name,
               slotLabel: entry.slot.name,
               statLabel: entry.detailLabel,

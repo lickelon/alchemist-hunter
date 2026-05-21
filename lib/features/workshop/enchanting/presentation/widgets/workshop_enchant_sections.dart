@@ -1,5 +1,7 @@
+import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_potion_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_preview_selector.dart';
@@ -83,6 +85,11 @@ class WorkshopEnchantEquipmentSelector extends StatelessWidget {
                     children: equipments.map((EnchantEquipmentView item) {
                       return RadioListTile<String>(
                         value: item.equipmentId,
+                        secondary: CatalogAssetIcon(
+                          assetPath: CatalogIconAssetPaths.equipment(
+                            item.blueprintId,
+                          ),
+                        ),
                         title: Text(item.name),
                         subtitle: Text(
                           '${item.locationLabel} / ${item.slotLabel}\n${item.statLabel}\n${item.enchantLabel}',

@@ -1,4 +1,6 @@
+import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_view_models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_detail_section.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,14 @@ class CharacterEquipmentSection extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    if (slot.equippedItem != null) ...<Widget>[
+                      CatalogAssetIcon(
+                        assetPath: CatalogIconAssetPaths.equipment(
+                          slot.equippedItem!.blueprintId,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                    ],
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

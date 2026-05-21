@@ -1,6 +1,8 @@
+import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +32,9 @@ class TownEquipmentSheet extends ConsumerWidget {
             ...blueprints.map((TownEquipmentBlueprintView entry) {
               return ListTile(
                 dense: true,
+                leading: CatalogAssetIcon(
+                  assetPath: CatalogIconAssetPaths.equipment(entry.id),
+                ),
                 title: Text(entry.name),
                 subtitle: Text(
                   '${entry.slotLabel} / ${entry.statLabel}\n${entry.materialCostLabel}\n제작 시간 ${entry.durationLabel}',
@@ -86,6 +91,11 @@ class TownEquipmentSheet extends ConsumerWidget {
               ...inventory.map((TownEquipmentInventoryView entry) {
                 return ListTile(
                   dense: true,
+                  leading: CatalogAssetIcon(
+                    assetPath: CatalogIconAssetPaths.equipment(
+                      entry.blueprintId,
+                    ),
+                  ),
                   title: Text(entry.name),
                   subtitle: Text('${entry.slotLabel} / ${entry.statLabel}'),
                 );

@@ -6,6 +6,7 @@ import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewm
 class EnchantEquipmentView {
   const EnchantEquipmentView({
     required this.equipmentId,
+    required this.blueprintId,
     required this.name,
     required this.slotLabel,
     required this.locationLabel,
@@ -14,6 +15,7 @@ class EnchantEquipmentView {
   });
 
   final String equipmentId;
+  final String blueprintId;
   final String name;
   final String slotLabel;
   final String locationLabel;
@@ -31,6 +33,7 @@ final Provider<List<EnchantEquipmentView>> enchantEquipmentViewsProvider =
             final item = record.item;
             return EnchantEquipmentView(
               equipmentId: item.id,
+              blueprintId: item.blueprintId,
               name: item.name,
               slotLabel: equipmentSlotLabel(item.slot),
               locationLabel: record.locationLabel,

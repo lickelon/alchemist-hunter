@@ -1,5 +1,7 @@
+import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
@@ -32,6 +34,11 @@ class CharacterEquipmentSheet extends StatelessWidget {
             else
               ListTile(
                 contentPadding: EdgeInsets.zero,
+                leading: CatalogAssetIcon(
+                  assetPath: CatalogIconAssetPaths.equipment(
+                    slot.equippedItem!.blueprintId,
+                  ),
+                ),
                 title: Text(slot.equippedItem!.name),
                 subtitle: Text(slot.statLabel),
                 trailing: TextButton(
@@ -52,6 +59,11 @@ class CharacterEquipmentSheet extends StatelessWidget {
                 children: slot.availableItems.map((EquipmentInstance item) {
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
+                    leading: CatalogAssetIcon(
+                      assetPath: CatalogIconAssetPaths.equipment(
+                        item.blueprintId,
+                      ),
+                    ),
                     title: Text(item.name),
                     subtitle: Text(item.detailLabel),
                     trailing: FilledButton.tonal(
