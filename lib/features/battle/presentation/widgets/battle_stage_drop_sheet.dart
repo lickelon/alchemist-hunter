@@ -1,5 +1,7 @@
+import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
@@ -114,13 +116,7 @@ class BattleStageDropSheet extends ConsumerWidget {
                   ...enemy.normalDrops.map((BattleDropChanceView drop) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '${drop.materialName} ${drop.quantityLabel} / ${drop.chanceLabel}',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
+                      child: _DropLine(drop: drop),
                     );
                   }),
                   if (enemy.specialDrops.isNotEmpty) ...<Widget>[
@@ -136,13 +132,7 @@ class BattleStageDropSheet extends ConsumerWidget {
                     ...enemy.specialDrops.map((BattleDropChanceView drop) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '${drop.materialName} ${drop.quantityLabel} / ${drop.chanceLabel}',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
+                        child: _DropLine(drop: drop),
                       );
                     }),
                   ],
@@ -152,6 +142,32 @@ class BattleStageDropSheet extends ConsumerWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+class _DropLine extends StatelessWidget {
+  const _DropLine({required this.drop});
+
+  final BattleDropChanceView drop;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        CatalogAssetIcon(
+          assetPath: CatalogIconAssetPaths.material(drop.materialId),
+          size: 28,
+          padding: 3,
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Text(
+            '${drop.materialName} ${drop.quantityLabel} / ${drop.chanceLabel}',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
+      ],
     );
   }
 }

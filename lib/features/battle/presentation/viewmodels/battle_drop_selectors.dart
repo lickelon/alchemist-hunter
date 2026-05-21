@@ -7,11 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BattleDropChanceView {
   const BattleDropChanceView({
+    required this.materialId,
     required this.materialName,
     required this.quantityLabel,
     required this.chanceLabel,
   });
 
+  final String materialId;
   final String materialName;
   final String quantityLabel;
   final String chanceLabel;
@@ -81,6 +83,7 @@ final battleStageDropOverviewProvider =
                 normalDrops: enemy.normalDrops
                     .map(
                       (BattleDropEntry drop) => BattleDropChanceView(
+                        materialId: drop.materialId,
                         materialName:
                             materialCatalog.materialName(drop.materialId) ??
                             drop.materialId,
@@ -92,6 +95,7 @@ final battleStageDropOverviewProvider =
                 specialDrops: enemy.specialDrops
                     .map(
                       (BattleDropEntry drop) => BattleDropChanceView(
+                        materialId: drop.materialId,
                         materialName:
                             materialCatalog.materialName(drop.materialId) ??
                             drop.materialId,
