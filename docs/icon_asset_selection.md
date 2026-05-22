@@ -2,7 +2,7 @@
 
 ## 기준
 
-- 대상: 재료, 장비, 원소
+- 대상: 재료, 장비, 원소, 포션
 - 제외: 적 아이콘
 - 후보 원본: `assets/candidate/Free - Raven Fantasy Icons/Separated Files/64x64`
 - 적용 위치: `assets/icons`
@@ -73,6 +73,26 @@
 | c_luck | Lucky Blend | `assets/icons/elements/c_luck.png` | `fc15.png` |
 | c_twilight | Twilight Blend | `assets/icons/elements/c_twilight.png` | `fc978.png` |
 | c_alch | Alchemist Blend | `assets/icons/elements/c_alch.png` | `fc1.png` |
+
+## 포션
+
+| id | 이름 | 적용 경로 | 원본 |
+| --- | --- | --- | --- |
+| p_1 | 활력 포션 | `assets/icons/potions/p_1.png` | `fc505.png` |
+| p_2 | 돌격 포션 | `assets/icons/potions/p_2.png` | `fc265.png` |
+| p_3 | 투지 포션 | `assets/icons/potions/p_3.png` | `fc281.png` |
+| p_4 | 수호 기동 포션 | `assets/icons/potions/p_4.png` | `fc524.png` |
+| p_5 | 정밀 포션 | `assets/icons/potions/p_5.png` | `fc70.png` |
+| p_6 | 흡수 포션 | `assets/icons/potions/p_6.png` | `fc525.png` |
+| p_7 | 집중 포션 | `assets/icons/potions/p_7.png` | `fc58.png` |
+| p_8 | 행운 포션 | `assets/icons/potions/p_8.png` | `fc62.png` |
+| p_9 | 황혼 포션 | `assets/icons/potions/p_9.png` | `fc506.png` |
+| p_10 | 정화 포션 | `assets/icons/potions/p_10.png` | `fc50.png` |
+| p_11 | 마력 포션 | `assets/icons/potions/p_11.png` | `fc336.png` |
+| p_12 | 재생 포션 | `assets/icons/potions/p_12.png` | `fc63.png` |
+| p_13 | 강인 혼합 포션 | `assets/icons/potions/p_13.png` | `fc54.png` |
+| p_14 | 사냥꾼 혼합 포션 | `assets/icons/potions/p_14.png` | `fc68.png` |
+| p_15 | 연금 혼합 포션 | `assets/icons/potions/p_15.png` | `fc1.png` |
 
 ## 후속 작업
 

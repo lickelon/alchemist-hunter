@@ -59,6 +59,7 @@ flutter:
     - assets/icons/materials/
     - assets/icons/equipment/
     - assets/icons/elements/
+    - assets/icons/potions/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

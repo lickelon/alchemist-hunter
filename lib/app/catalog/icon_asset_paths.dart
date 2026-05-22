@@ -10,4 +10,8 @@ abstract final class CatalogIconAssetPaths {
   static String element(String elementId) {
     return 'assets/icons/elements/$elementId.png';
   }
+
+  static String potion(String potionId) {
+    return 'assets/icons/potions/$potionId.png';
+  }
 }
