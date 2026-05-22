@@ -104,16 +104,6 @@ final Provider<double> workshopEnchantPotencyBonusRateProvider =
               .enchantPotencyBonusRate(state);
     });
 
-final Provider<List<String>> recentLogsProvider = Provider<List<String>>((
-  Ref ref,
-) {
-  return ref.watch(
-    sessionControllerProvider.select(
-      (SessionState state) => state.workshop.logs,
-    ),
-  );
-});
-
 final Provider<WorkshopDashboardSummaryView> workshopDashboardSummaryProvider =
     Provider<WorkshopDashboardSummaryView>((Ref ref) {
       final int essence = ref.watch(workshopEssenceProvider);
