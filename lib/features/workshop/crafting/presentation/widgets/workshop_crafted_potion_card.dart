@@ -1,6 +1,8 @@
+import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/crafted_inventory_selectors.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +52,11 @@ class _WorkshopCraftedPotionSheet extends ConsumerWidget {
                 children: potions.map((CraftedPotionStackView entry) {
                   return ExpansionTile(
                     tilePadding: EdgeInsets.zero,
+                    leading: CatalogAssetIcon(
+                      assetPath: CatalogIconAssetPaths.potion(entry.potionId),
+                      size: 36,
+                      padding: 5,
+                    ),
                     title: Text('${entry.name} x${entry.quantity}'),
                     subtitle: Text('품질 ${entry.qualityLabel}'),
                     children: <Widget>[

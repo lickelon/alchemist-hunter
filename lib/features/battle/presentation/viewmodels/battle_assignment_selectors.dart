@@ -29,12 +29,14 @@ class BattleAssignmentCharacterView {
 class BattleAssignmentPotionView {
   const BattleAssignmentPotionView({
     required this.stackKey,
+    required this.potionId,
     required this.label,
     required this.ownedCount,
     required this.selectedCount,
   });
 
   final String stackKey;
+  final String potionId;
   final String label;
   final int ownedCount;
   final int selectedCount;
@@ -147,6 +149,7 @@ final battleStageAssignmentPotionViewsProvider =
             final String qualityLabel = detail.qualityGrade.name.toUpperCase();
             return BattleAssignmentPotionView(
               stackKey: entry.key,
+              potionId: potion.id,
               label: '${potion.name} $qualityLabel',
               ownedCount: entry.value,
               selectedCount: selectedCounts[entry.key] ?? 0,

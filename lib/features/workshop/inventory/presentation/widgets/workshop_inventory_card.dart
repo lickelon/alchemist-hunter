@@ -168,6 +168,11 @@ class _InventoryPotionTab extends StatelessWidget {
         return ListTile(
           dense: true,
           contentPadding: EdgeInsets.zero,
+          leading: CatalogAssetIcon(
+            assetPath: CatalogIconAssetPaths.potion(entry.potionId),
+            size: 36,
+            padding: 5,
+          ),
           title: Text('${entry.name} x${entry.quantity}'),
           subtitle: Text(
             '품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}\n원소 ${entry.traitsLabel}',

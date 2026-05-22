@@ -7,6 +7,7 @@ import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 class EnchantPotionView {
   const EnchantPotionView({
     required this.stackKey,
+    required this.potionId,
     required this.name,
     required this.quantity,
     required this.qualityLabel,
@@ -14,6 +15,7 @@ class EnchantPotionView {
   });
 
   final String stackKey;
+  final String potionId;
   final String name;
   final int quantity;
   final String qualityLabel;
@@ -62,6 +64,7 @@ enchantPotionViewsProvider = Provider<List<EnchantPotionView>>((Ref ref) {
 
     return EnchantPotionView(
       stackKey: entry.key,
+      potionId: detail?.typePotionId ?? entry.key,
       name: potion?.name ?? entry.key,
       quantity: entry.value,
       qualityLabel: detail?.qualityGrade.name.toUpperCase() ?? '-',

@@ -1,6 +1,8 @@
+import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -73,6 +75,11 @@ class BattleAssignmentSheet extends ConsumerWidget {
             else
               ...potions.map((BattleAssignmentPotionView potion) {
                 return ListTile(
+                  leading: CatalogAssetIcon(
+                    assetPath: CatalogIconAssetPaths.potion(potion.potionId),
+                    size: 36,
+                    padding: 5,
+                  ),
                   title: Text(potion.label),
                   subtitle: Text(
                     '보유 ${potion.ownedCount} / 선택 ${potion.selectedCount}',

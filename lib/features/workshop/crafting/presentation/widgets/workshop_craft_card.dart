@@ -1,5 +1,7 @@
+import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/craft_queue_option_selectors.dart';
@@ -68,6 +70,11 @@ class WorkshopCraftSheet extends ConsumerWidget {
                   return ListTile(
                     dense: true,
                     contentPadding: EdgeInsets.zero,
+                    leading: CatalogAssetIcon(
+                      assetPath: CatalogIconAssetPaths.potion(option.potionId),
+                      size: 36,
+                      padding: 5,
+                    ),
                     title: Text(option.title),
                     subtitle: Text(
                       option.unlocked

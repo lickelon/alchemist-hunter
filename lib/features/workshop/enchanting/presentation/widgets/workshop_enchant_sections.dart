@@ -40,6 +40,11 @@ class WorkshopEnchantPotionSelector extends StatelessWidget {
                     children: potions.map((EnchantPotionView potion) {
                       return RadioListTile<String>(
                         value: potion.stackKey,
+                        secondary: CatalogAssetIcon(
+                          assetPath: CatalogIconAssetPaths.potion(
+                            potion.potionId,
+                          ),
+                        ),
                         title: Text('${potion.name} x${potion.quantity}'),
                         subtitle: Text(
                           '품질 ${potion.qualityLabel} / 원소 ${potion.traitsLabel}',

@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class TownPotionSaleView {
   const TownPotionSaleView({
     required this.stackKey,
+    required this.potionId,
     required this.name,
     required this.quantity,
     required this.qualityLabel,
@@ -16,6 +17,7 @@ class TownPotionSaleView {
   });
 
   final String stackKey;
+  final String potionId;
   final String name;
   final int quantity;
   final String qualityLabel;
@@ -60,6 +62,7 @@ final Provider<List<TownPotionSaleView>> townPotionSaleViewsProvider =
         };
         return TownPotionSaleView(
           stackKey: entry.key,
+          potionId: detail?.typePotionId ?? entry.key,
           name: displayService.potionName(
             stackKey: entry.key,
             detail: detail,
