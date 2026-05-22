@@ -14,12 +14,12 @@
 ### ✅ 1-2. CharacterCombatEffectSection — 빈 상태 처리 없음
 - `lib/features/characters/presentation/widgets/character_detail_sheet.dart` — `effectLines.isNotEmpty` 조건 추가 완료
 
-### 🔍 1-3. WorkshopLogCard — 화면에 미표시
+### ✅ 1-3. WorkshopLogCard — 미사용 잔존 UI 제거
 - `lib/features/workshop/dashboard/presentation/widgets/workshop_log_card.dart`
-- 구현은 되어 있으나 현재 `WorkshopScreen` 자식 목록에는 없음.
+- 구현은 되어 있었으나 `WorkshopScreen` 자식 목록에는 없었다.
 - 히스토리 확인 결과, 예전 `workshop_sections.dart`에는 export가 있었지만 `WorkshopScreen`에 실제로 붙어 있었던 흔적은 찾지 못함.
-- 현재 판단은 `의도적 숨김`보다 `미완성 잔존 코드`에 가깝다.
-- **방향**: 이번에는 문서화만 하고 보류. 후속에서 `WorkshopScreen` 정식 편입 또는 `파일 제거` 중 하나로 정리 필요.
+- 실제 로그는 전투, 마을, 작업실, 캐릭터 성장 로그가 섞인 전역 활동 로그라 작업실 전용 카드로 유지하기 어렵다.
+- **처리**: 미사용 카드 파일과 전용 selector를 제거했다.
 
 ---
 
@@ -95,4 +95,4 @@
 | 완료 | 2-8. 하드코딩된 패딩 |
 | 완료 | 3-2. 뱃지 컴포넌트 미정의 |
 | 완료 | 5-2. SupportSheet 선택 UX 불명확 |
-| 확인 필요 | 1-3. WorkshopLogCard 미표시, 미완성 잔존 코드 가능성 높음 |
+| 완료 | 1-3. WorkshopLogCard 미사용 잔존 UI 제거 |
