@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_assignment_selectors.dart';
+import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_combat_labels.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_detail_selectors.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_equipment_selectors.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_view_models.dart';
