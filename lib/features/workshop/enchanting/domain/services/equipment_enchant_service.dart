@@ -3,9 +3,15 @@ import 'dart:math';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/enchanting/domain/services/equipment_enchant_formula_service.dart';
 
 class EquipmentEnchantService {
-  const EquipmentEnchantService();
+  const EquipmentEnchantService({
+    EquipmentEnchantFormulaService formulaService =
+        const EquipmentEnchantFormulaService(),
+  }) : _formulaService = formulaService;
+
+  final EquipmentEnchantFormulaService _formulaService;
 
   EquipmentEnchant buildEnchant({
     required EquipmentInstance equipment,
@@ -13,8 +19,8 @@ class EquipmentEnchantService {
     required PotionBlueprint blueprint,
     double potencyBonusRate = 0,
   }) {
-    final String dominantTraitId = _dominantTraitId(potion);
-    final int potency = _potency(potion, potencyBonusRate);
+    final String dominantTraitId = _formulaService.dominantTraitId(potion);
+    final int potency = _formulaService.potency(potion, potencyBonusRate);
 
     switch (equipment.slot) {
       case EquipmentSlot.weapon:
@@ -23,14 +29,18 @@ class EquipmentEnchantService {
           potionName: blueprint.name,
           qualityLabel: potion.qualityGrade.name.toUpperCase(),
           dominantTraitId: dominantTraitId,
-          maxHpBonus: potency + _maxHpAffinity(dominantTraitId),
+          maxHpBonus: potency + _formulaService.maxHpAffinity(dominantTraitId),
           physicalAttackBonus:
-              max(1, potency ~/ 2) + _physicalAttackAffinity(dominantTraitId),
+              max(1, potency ~/ 2) +
+              _formulaService.physicalAttackAffinity(dominantTraitId),
           physicalDefenseBonus: max(0, potency ~/ 4),
-          magicalAttackBonus: _magicalAttackAffinity(dominantTraitId),
+          magicalAttackBonus: _formulaService.magicalAttackAffinity(
+            dominantTraitId,
+          ),
           magicalDefenseBonus:
-              max(0, potency ~/ 5) + _magicalDefenseAffinity(dominantTraitId),
-          speedBonus: _speedAffinity(dominantTraitId),
+              max(0, potency ~/ 5) +
+              _formulaService.magicalDefenseAffinity(dominantTraitId),
+          speedBonus: _formulaService.speedAffinity(dominantTraitId),
           statModifiers: _buildStatModifiers(
             slot: equipment.slot,
             dominantTraitId: dominantTraitId,
@@ -52,15 +62,17 @@ class EquipmentEnchantService {
           potionName: blueprint.name,
           qualityLabel: potion.qualityGrade.name.toUpperCase(),
           dominantTraitId: dominantTraitId,
-          maxHpBonus: (potency * 2) + _maxHpAffinity(dominantTraitId),
+          maxHpBonus:
+              (potency * 2) + _formulaService.maxHpAffinity(dominantTraitId),
           physicalAttackBonus: max(0, potency ~/ 6),
           physicalDefenseBonus:
               max(1, (potency * 3) ~/ 4) +
-              _physicalDefenseAffinity(dominantTraitId),
+              _formulaService.physicalDefenseAffinity(dominantTraitId),
           magicalAttackBonus: max(0, potency ~/ 8),
           magicalDefenseBonus:
-              max(0, potency ~/ 3) + _magicalDefenseAffinity(dominantTraitId),
-          speedBonus: _speedAffinity(dominantTraitId),
+              max(0, potency ~/ 3) +
+              _formulaService.magicalDefenseAffinity(dominantTraitId),
+          speedBonus: _formulaService.speedAffinity(dominantTraitId),
           statModifiers: _buildStatModifiers(
             slot: equipment.slot,
             dominantTraitId: dominantTraitId,
@@ -82,16 +94,23 @@ class EquipmentEnchantService {
           potionName: blueprint.name,
           qualityLabel: potion.qualityGrade.name.toUpperCase(),
           dominantTraitId: dominantTraitId,
-          maxHpBonus: (potency * 2) + _maxHpAffinity(dominantTraitId),
+          maxHpBonus:
+              (potency * 2) + _formulaService.maxHpAffinity(dominantTraitId),
           physicalAttackBonus:
-              max(0, potency ~/ 3) + _physicalAttackAffinity(dominantTraitId),
+              max(0, potency ~/ 3) +
+              _formulaService.physicalAttackAffinity(dominantTraitId),
           physicalDefenseBonus:
-              max(0, potency ~/ 3) + _physicalDefenseAffinity(dominantTraitId),
+              max(0, potency ~/ 3) +
+              _formulaService.physicalDefenseAffinity(dominantTraitId),
           magicalAttackBonus:
-              max(0, potency ~/ 3) + _magicalAttackAffinity(dominantTraitId),
+              max(0, potency ~/ 3) +
+              _formulaService.magicalAttackAffinity(dominantTraitId),
           magicalDefenseBonus:
-              max(0, potency ~/ 3) + _magicalDefenseAffinity(dominantTraitId),
-          speedBonus: max(0, potency ~/ 6) + _speedAffinity(dominantTraitId),
+              max(0, potency ~/ 3) +
+              _formulaService.magicalDefenseAffinity(dominantTraitId),
+          speedBonus:
+              max(0, potency ~/ 6) +
+              _formulaService.speedAffinity(dominantTraitId),
           statModifiers: _buildStatModifiers(
             slot: equipment.slot,
             dominantTraitId: dominantTraitId,
@@ -273,79 +292,5 @@ class EquipmentEnchantService {
     }
 
     return const <BattlePassiveEffect>[];
-  }
-
-  String _dominantTraitId(CraftedPotion potion) {
-    if (potion.traits.isEmpty) {
-      return 't_pure';
-    }
-    final List<MapEntry<String, double>> sorted = potion.traits.entries.toList()
-      ..sort(
-        (MapEntry<String, double> left, MapEntry<String, double> right) =>
-            right.value.compareTo(left.value),
-      );
-    return sorted.first.key;
-  }
-
-  int _potency(CraftedPotion potion, double bonusRate) {
-    final int qualityBonus = switch (potion.qualityGrade) {
-      PotionQualityGrade.s => 4,
-      PotionQualityGrade.a => 3,
-      PotionQualityGrade.b => 2,
-      PotionQualityGrade.c => 1,
-    };
-    final int basePotency = (potion.qualityScore * 5).round() + qualityBonus;
-    return max(1, (basePotency * (1 + bonusRate)).round());
-  }
-
-  int _physicalAttackAffinity(String traitId) {
-    if (const <String>{'t_atk', 't_crit'}.contains(traitId)) {
-      return 3;
-    }
-    if (traitId == 't_focus') {
-      return 2;
-    }
-    return 0;
-  }
-
-  int _physicalDefenseAffinity(String traitId) {
-    if (const <String>{'t_def', 't_pure'}.contains(traitId)) {
-      return 3;
-    }
-    return 0;
-  }
-
-  int _magicalAttackAffinity(String traitId) {
-    if (const <String>{'t_mana', 't_dark'}.contains(traitId)) {
-      return 3;
-    }
-    if (traitId == 't_focus') {
-      return 2;
-    }
-    return 0;
-  }
-
-  int _magicalDefenseAffinity(String traitId) {
-    if (const <String>{'t_pure', 't_mana', 't_dark'}.contains(traitId)) {
-      return 3;
-    }
-    return 0;
-  }
-
-  int _maxHpAffinity(String traitId) {
-    if (const <String>{'t_hp', 't_life', 't_regen'}.contains(traitId)) {
-      return 6;
-    }
-    return 0;
-  }
-
-  int _speedAffinity(String traitId) {
-    if (traitId == 't_spd') {
-      return 2;
-    }
-    if (traitId == 't_focus') {
-      return 1;
-    }
-    return 0;
   }
 }
