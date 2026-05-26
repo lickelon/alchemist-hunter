@@ -136,4 +136,4 @@
 ## 8. 현재 결론
 지금은 실제 JSON 로딩이나 원격 설정 구현을 시작하지 않는다.
 
-Battle stage / enemy / encounter 카탈로그는 `data/catalogs`의 DTO 상수와 도메인 모델 매핑 경계로 분리했다. 저장 DTO와 실제 저장소는 보류하며, 다음 작업은 가격 / 드롭 / 제작시간 곡선과 경제 지표를 문서화하는 것이다.
+Battle stage / enemy / encounter 카탈로그는 `data/catalogs`의 DTO 상수와 도메인 모델 매핑 경계로 분리했다. 가격 / 드롭 / 제작시간 곡선과 경제 지표는 [가격 / 드롭 / 제작시간 곡선과 경제 지표](./economy_balance_guidelines.md)를 기준으로 관리한다.
