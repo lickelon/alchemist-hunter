@@ -23,6 +23,8 @@ class ShopState {
     required this.shopType,
     required this.items,
     required this.nextRefreshAt,
+    required this.refreshInterval,
+    required this.purchaseLimitPerItem,
     required this.forcedRefreshCost,
     required this.baseRefreshCost,
     required this.refreshCostStep,
@@ -32,6 +34,8 @@ class ShopState {
   final ShopType shopType;
   final List<ShopItem> items;
   final DateTime nextRefreshAt;
+  final Duration refreshInterval;
+  final int purchaseLimitPerItem;
   final int forcedRefreshCost;
   final int baseRefreshCost;
   final int refreshCostStep;
@@ -40,6 +44,8 @@ class ShopState {
   ShopState copyWith({
     List<ShopItem>? items,
     DateTime? nextRefreshAt,
+    Duration? refreshInterval,
+    int? purchaseLimitPerItem,
     int? forcedRefreshCost,
     int? cycleRefreshCount,
   }) {
@@ -47,6 +53,8 @@ class ShopState {
       shopType: shopType,
       items: items ?? this.items,
       nextRefreshAt: nextRefreshAt ?? this.nextRefreshAt,
+      refreshInterval: refreshInterval ?? this.refreshInterval,
+      purchaseLimitPerItem: purchaseLimitPerItem ?? this.purchaseLimitPerItem,
       forcedRefreshCost: forcedRefreshCost ?? this.forcedRefreshCost,
       baseRefreshCost: baseRefreshCost,
       refreshCostStep: refreshCostStep,

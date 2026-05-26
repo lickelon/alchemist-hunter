@@ -35,6 +35,11 @@ const List<ShopItem> _catalystShopSeedItems = <ShopItem>[
   ),
 ];
 
+const Duration _generalShopRefreshInterval = Duration(minutes: 15);
+const Duration _catalystShopRefreshInterval = Duration(minutes: 30);
+const int _generalShopPurchaseLimitPerItem = 20;
+const int _catalystShopPurchaseLimitPerItem = 8;
+
 List<ShopItem> buildGeneralShopSeedItems() {
   return _generalShopSeedItems
       .map(
@@ -65,7 +70,9 @@ ShopState buildGeneralShopState(DateTime now) {
   return ShopState(
     shopType: ShopType.general,
     items: buildGeneralShopSeedItems(),
-    nextRefreshAt: now.add(const Duration(minutes: 15)),
+    nextRefreshAt: now.add(_generalShopRefreshInterval),
+    refreshInterval: _generalShopRefreshInterval,
+    purchaseLimitPerItem: _generalShopPurchaseLimitPerItem,
     forcedRefreshCost: 25,
     baseRefreshCost: 25,
     refreshCostStep: 15,
@@ -77,7 +84,9 @@ ShopState buildCatalystShopState(DateTime now) {
   return ShopState(
     shopType: ShopType.catalyst,
     items: buildCatalystShopSeedItems(),
-    nextRefreshAt: now.add(const Duration(minutes: 30)),
+    nextRefreshAt: now.add(_catalystShopRefreshInterval),
+    refreshInterval: _catalystShopRefreshInterval,
+    purchaseLimitPerItem: _catalystShopPurchaseLimitPerItem,
     forcedRefreshCost: 90,
     baseRefreshCost: 90,
     refreshCostStep: 45,

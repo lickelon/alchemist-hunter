@@ -108,14 +108,14 @@ class TownUseCase {
           shop: state.town.generalShop,
           now: now,
           nextItems: shopCatalogRepository.generalSeedItems(),
-          refreshInterval: const Duration(minutes: 15),
+          refreshInterval: state.town.generalShop.refreshInterval,
         );
     final ({ShopState shop, bool refreshed}) catalystResult = economy
         .applyAutoRefresh(
           shop: state.town.catalystShop,
           now: now,
           nextItems: shopCatalogRepository.catalystSeedItems(),
-          refreshInterval: const Duration(minutes: 30),
+          refreshInterval: state.town.catalystShop.refreshInterval,
         );
 
     if (!generalResult.refreshed && !catalystResult.refreshed) {
