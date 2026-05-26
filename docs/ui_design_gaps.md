@@ -10,36 +10,36 @@
 
 `DetailLines`가 이미 존재함에도 town 시트들은 적용되지 않은 상태다.
 
-### ⚠️ 1-1. TownEquipmentSheet — blueprint subtitle 3줄
+### ~~⚠️ 1-1. TownEquipmentSheet — blueprint subtitle 3줄~~ ✅ 수정 완료
 `lib/features/town/presentation/widgets/sheets/town_equipment_sheet.dart:38`
 ```dart
 '${entry.slotLabel} / ${entry.statLabel}\n${entry.materialCostLabel}\n제작 시간 ${entry.durationLabel}'
 ```
 슬롯/스탯, 재료 비용, 제작 시간이 하나의 subtitle 문자열에 `\n`으로 연결된다.  
-→ `DetailLines`로 분리하거나, `SectionCard` 내 별도 행으로 표현할 것.
+→ `DetailLines`로 분리 완료.
 
-### ⚠️ 1-2. TownPotionSaleSheet — subtitle 2줄
+### ~~⚠️ 1-2. TownPotionSaleSheet — subtitle 2줄~~ ✅ 수정 완료
 `lib/features/town/presentation/widgets/sheets/town_potion_sale_sheet.dart:32`
 ```dart
 '품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}\n판매가 ${entry.saleValue}'
 ```
 판매가가 다음 줄로 내려가 핵심 정보(가격)의 위치가 불명확하다.  
-→ `DetailLines` 적용.
+→ `DetailLines` 적용 완료.
 
-### ⚠️ 1-3. TownMercenaryHireSheet — subtitle 2줄
+### ~~⚠️ 1-3. TownMercenaryHireSheet — subtitle 2줄~~ ✅ 수정 완료
 `lib/features/town/presentation/widgets/sheets/town_mercenary_hire_sheet.dart:42`
 ```dart
 '${entry.tierLabel} / ${entry.roleLabel}\n고용 비용 ${entry.hireCost}${entry.hireHint}'
 ```
-→ `DetailLines` 적용.
+→ `DetailLines` 적용 완료.
 
-### ⚠️ 1-4. BattleResultSheet — subtitle에 6개 항목이 `/`로 연결
+### ~~⚠️ 1-4. BattleResultSheet — subtitle에 6개 항목이 `/`로 연결~~ ✅ 수정 완료
 `lib/features/battle/presentation/widgets/battle_result_sheet.dart:114`
 ```dart
 '${log.success ? '성공' : '실패'} / 골드 ... / 정수 ... / 재료 ...종 / 행동 ...회${log.usedLoadoutFallback ? ' / 포션 부족' : ''}'
 ```
 6개 항목이 한 줄에 `/`로 연결된다. 접힌 상태에서는 overflow되거나 잘린다.  
-→ 핵심 2~3개 항목만 subtitle에 두고 나머지는 ExpansionTile 본문으로 이동.
+→ title은 성공/실패와 핵심 보상, subtitle은 재료/행동/포션 부족 상태만 표시하도록 축소 완료.
 
 ---
 
@@ -58,7 +58,7 @@ class _SheetSectionTitle extends StatelessWidget {
 `SectionCard`를 쓰면 카드 배경과 패딩까지 일관되게 적용된다.  
 → `_SheetSectionTitle` 제거 후 `SectionCard`로 교체.
 
-### ⚠️ 2-2. `BattleResultSheet` — ExpansionTile title/subtitle 역할 역전
+### ~~⚠️ 2-2. `BattleResultSheet` — ExpansionTile title/subtitle 역할 역전~~ ✅ 수정 완료
 `lib/features/battle/presentation/widgets/battle_result_sheet.dart:93-115`
 
 현재:
@@ -66,7 +66,7 @@ class _SheetSectionTitle extends StatelessWidget {
 - `subtitle` → 성공/실패, 골드, 정수, 재료, 행동 수 등 핵심 요약
 
 타일이 접히면 "전투 결과"만 보인다. 기록이 여러 건일 때 구분이 불가능하다.  
-→ `title`에 성공/실패 + 핵심 수치, `subtitle`에 부가 정보.
+→ `title`에 성공/실패 + 핵심 수치, `subtitle`에 부가 정보를 표시하도록 정리 완료.
 
 ### ⚠️ 2-3. `BattleAssignmentSheet` — 삼항 안에 삼항으로 오류 메시지 처리
 `lib/features/battle/presentation/widgets/battle_assignment_sheet.dart:46-50`
@@ -141,7 +141,7 @@ _timelineScrollController.position.maxScrollExtent - 12
 
 ## 4. 디자인 시스템 미정의 항목
 
-### 🔲 4-1. 섹션 소제목 텍스트 스타일 토큰 없음
+### ~~🔲 4-1. 섹션 소제목 텍스트 스타일 토큰 없음~~ ✅ 수정 완료
 `TextStyle(fontWeight: FontWeight.w700)`이 섹션 소제목 용도로 최소 7곳에 인라인으로 박혀 있다.
 
 | 파일 | 줄 | 용도 |
@@ -154,7 +154,7 @@ _timelineScrollController.position.maxScrollExtent - 12
 
 반면 `CharacterDetailSection`(`character_detail_section.dart:24`)은 `textTheme.labelLarge?.copyWith(fontWeight: w700, color: primary)`를 사용한다. 같은 역할인데 구현이 다르다.
 
-→ `AppTheme`에 `subsectionTitle` 텍스트 스타일을 추가하고, 모든 소제목이 이를 참조하도록 통일.
+→ `AppTextStyles.subsectionTitle` ThemeExtension을 추가하고 관련 소제목이 이를 참조하도록 통일 완료.
 
 ### 🔲 4-2. `FontWeight.w600` vs `w700` 사용 기준 미정의
 - `AppBadge` 라벨: `w600`
@@ -258,9 +258,9 @@ AppSpacing에 없는 레이아웃 제약들이 파일 내에 흩어져 있다. �
 
 | 우선순위 | 항목 | 파급 범위 |
 |---|---|---|
-| 높음 | 1-1~1-4. subtitle `\n` 정보 밀도 | town 시트 전반, battle result |
-| 높음 | 2-2. BattleResultSheet title/subtitle 역전 | battle |
-| 높음 | 4-1. 섹션 소제목 스타일 토큰 없음 | 앱 전반 |
+| 완료 | 1-1~1-4. subtitle `\n` 정보 밀도 | town 시트 전반, battle result |
+| 완료 | 2-2. BattleResultSheet title/subtitle 역전 | battle |
+| 완료 | 4-1. 섹션 소제목 스타일 토큰 없음 | 앱 전반 |
 | 중간 | 2-1. `_SheetSectionTitle` 중복 | town equipment |
 | 중간 | 2-3. BattleAssignment 삼항 중첩 오류 처리 | battle |
 | 중간 | 3-1. WorkshopCraftSheet contentPadding 무력화 | workshop craft |
