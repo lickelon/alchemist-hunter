@@ -9,7 +9,7 @@ import 'package:alchemist_hunter/features/workshop/dashboard/presentation/viewmo
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'workshop_enqueue_options_sheet.dart';
+import 'workshop_enqueue_options_dialog.dart';
 
 class WorkshopCraftCard extends StatelessWidget {
   const WorkshopCraftCard({super.key, required this.craftableCount});

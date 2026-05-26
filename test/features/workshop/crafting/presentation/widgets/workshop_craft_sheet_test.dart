@@ -1,7 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/workshop_craft_card.dart';
-import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/workshop_enqueue_options_sheet.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/workshop_enqueue_options_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -132,7 +132,7 @@ void main() {
         container: container,
         child: const MaterialApp(
           home: Scaffold(
-            body: WorkshopEnqueueOptionsSheet(
+            body: WorkshopEnqueueOptionsDialog(
               potionId: 'p_1',
               title: '활력 포션',
               maxCraftableCount: 1,

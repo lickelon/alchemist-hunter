@@ -1,35 +1,11 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
-import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_controller.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/craft_queue_quantity_selectors.dart';
-
-class WorkshopEnqueueOptionsSheet extends StatelessWidget {
-  const WorkshopEnqueueOptionsSheet({
-    super.key,
-    required this.potionId,
-    required this.title,
-    required this.maxCraftableCount,
-  });
-
-  final String potionId;
-  final String title;
-  final int maxCraftableCount;
-
-  @override
-  Widget build(BuildContext context) {
-    return _WorkshopEnqueueOptionsContent(
-      potionId: potionId,
-      title: title,
-      maxCraftableCount: maxCraftableCount,
-      presentation: _EnqueueOptionsPresentation.sheet,
-    );
-  }
-}
 
 class WorkshopEnqueueOptionsDialog extends StatelessWidget {
   const WorkshopEnqueueOptionsDialog({
@@ -49,25 +25,20 @@ class WorkshopEnqueueOptionsDialog extends StatelessWidget {
       potionId: potionId,
       title: title,
       maxCraftableCount: maxCraftableCount,
-      presentation: _EnqueueOptionsPresentation.dialog,
     );
   }
 }
-
-enum _EnqueueOptionsPresentation { sheet, dialog }
 
 class _WorkshopEnqueueOptionsContent extends ConsumerWidget {
   const _WorkshopEnqueueOptionsContent({
     required this.potionId,
     required this.title,
     required this.maxCraftableCount,
-    required this.presentation,
   });
 
   final String potionId;
   final String title;
   final int maxCraftableCount;
-  final _EnqueueOptionsPresentation presentation;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -108,26 +79,17 @@ class _WorkshopEnqueueOptionsContent extends ConsumerWidget {
       }).toList(),
     );
 
-    if (presentation == _EnqueueOptionsPresentation.dialog) {
-      return AppDialogLayout(
-        title: title,
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('최대 $maxCraftableCount회 제작 가능'),
-            const SizedBox(height: AppSpacing.md),
-            quantityList,
-          ],
-        ),
-      );
-    }
-
-    return AppSheetLayout(
+    return AppDialogLayout(
       title: title,
-      header: Text('최대 $maxCraftableCount회 제작 가능'),
-      expandBody: false,
-      body: quantityList,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('최대 $maxCraftableCount회 제작 가능'),
+          const SizedBox(height: AppSpacing.md),
+          quantityList,
+        ],
+      ),
     );
   }
 }

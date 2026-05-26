@@ -1,7 +1,6 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
-import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_controller.dart';
@@ -11,20 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'workshop_extraction_profile_list.dart';
-
-class WorkshopMaterialExtractionDetail extends StatelessWidget {
-  const WorkshopMaterialExtractionDetail({super.key, required this.materialId});
-
-  final String materialId;
-
-  @override
-  Widget build(BuildContext context) {
-    return _WorkshopMaterialExtractionDetailContent(
-      materialId: materialId,
-      presentation: _ExtractionDetailPresentation.sheet,
-    );
-  }
-}
 
 class WorkshopMaterialExtractionDetailDialog extends StatelessWidget {
   const WorkshopMaterialExtractionDetailDialog({
@@ -36,23 +21,14 @@ class WorkshopMaterialExtractionDetailDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _WorkshopMaterialExtractionDetailContent(
-      materialId: materialId,
-      presentation: _ExtractionDetailPresentation.dialog,
-    );
+    return _WorkshopMaterialExtractionDetailContent(materialId: materialId);
   }
 }
 
-enum _ExtractionDetailPresentation { sheet, dialog }
-
 class _WorkshopMaterialExtractionDetailContent extends ConsumerStatefulWidget {
-  const _WorkshopMaterialExtractionDetailContent({
-    required this.materialId,
-    required this.presentation,
-  });
+  const _WorkshopMaterialExtractionDetailContent({required this.materialId});
 
   final String materialId;
-  final _ExtractionDetailPresentation presentation;
 
   @override
   ConsumerState<_WorkshopMaterialExtractionDetailContent> createState() =>
@@ -176,28 +152,20 @@ class _WorkshopMaterialExtractionDetailContentState
       );
     }
 
-    if (widget.presentation == _ExtractionDetailPresentation.dialog) {
-      return AppDialogLayout(
-        title: detail.materialName,
-        body: SizedBox(
-          width: double.maxFinite,
-          height: MediaQuery.sizeOf(context).height * 0.58,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              header,
-              const SizedBox(height: AppSpacing.md),
-              Expanded(child: buildBody()),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return AppSheetLayout(
+    return AppDialogLayout(
       title: detail.materialName,
-      header: header,
-      body: buildBody(),
+      body: SizedBox(
+        width: double.maxFinite,
+        height: MediaQuery.sizeOf(context).height * 0.58,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            header,
+            const SizedBox(height: AppSpacing.md),
+            Expanded(child: buildBody()),
+          ],
+        ),
+      ),
     );
   }
 }
