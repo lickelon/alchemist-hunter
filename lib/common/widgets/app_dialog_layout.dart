@@ -19,6 +19,11 @@ class AppDialogLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const double horizontalInset = AppSpacing.xl;
+    final double availableWidth =
+        (MediaQuery.sizeOf(context).width - horizontalInset * 2)
+            .clamp(0.0, contentWidth)
+            .toDouble();
     final List<Widget>? actionWidgets =
         actions ??
         (showCloseButton
@@ -34,11 +39,12 @@ class AppDialogLayout extends StatelessWidget {
             : null);
 
     return AlertDialog(
-      title: Text(title),
-      content: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: contentWidth),
-        child: body,
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: horizontalInset,
+        vertical: AppSpacing.xxl,
       ),
+      title: Text(title),
+      content: SizedBox(width: availableWidth, child: body),
       actions: actionWidgets,
       actionsPadding: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
