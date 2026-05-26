@@ -81,9 +81,6 @@ class WorkshopResourceIconGrid extends StatelessWidget {
     if (fittingCount < 1) {
       return 1;
     }
-    if (fittingCount > itemCount) {
-      return itemCount;
-    }
     return fittingCount;
   }
 
