@@ -20,7 +20,7 @@
 - 앱 셸은 `lib/app/app.dart`에 있다.
 - 전역 세션 상태 저장소와 sync 파이프라인은 현재 `lib/app/session/*`에 있다.
 - 기능별 코드는 `lib/features/<feature>` 아래 `presentation / domain / data`로 나뉜다.
-- 재사용 UI와 테마는 `lib/common/*`에 둔다.
+- 재사용 UI와 테마는 `lib/common/*`에 둔다. UI 표면과 시트/모달 기준은 `docs/ui_design_system_guidelines.md`를 따른다.
 
 ### 2.2 상태 소유권
 - `Town`은 상점, 판매, 장비 제작, 용병 고용, 마을 스킬트리의 소유자다.
