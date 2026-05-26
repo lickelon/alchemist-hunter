@@ -111,7 +111,9 @@ void main() {
 
       expect(find.text('보유 2개'), findsOneWidget);
       expect(find.text('추출 수량'), findsOneWidget);
-      expect(find.text('최대'), findsOneWidget);
+      expect(find.text('선택 1개'), findsOneWidget);
+      expect(find.text('최대 2개'), findsOneWidget);
+      expect(find.byType(Slider), findsOneWidget);
     },
   );
 
@@ -158,7 +160,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('분석/추출'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('등록').first);
+    final Finder submitButton = find.widgetWithText(FilledButton, '등록').first;
+    await tester.ensureVisible(submitButton);
+    await tester.pumpAndSettle();
+    await tester.tap(submitButton);
     await tester.pump();
 
     expect(find.text('작업실 큐가 가득 찼습니다'), findsOneWidget);

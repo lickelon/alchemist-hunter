@@ -62,7 +62,7 @@ class _WorkshopMaterialExtractionDetailContent extends ConsumerStatefulWidget {
 class _WorkshopMaterialExtractionDetailContentState
     extends ConsumerState<_WorkshopMaterialExtractionDetailContent> {
   final Set<String> _selectedTraits = <String>{};
-  int _quantity = 1;
+  double _quantityValue = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -75,15 +75,14 @@ class _WorkshopMaterialExtractionDetailContentState
     if (detail == null) {
       return const SizedBox.shrink();
     }
-    final int selectedQuantity = _quantity > detail.ownedQuantity
-        ? detail.ownedQuantity
-        : _quantity;
-    final List<int> quantityOptions = <int>{
-      1,
-      if (detail.ownedQuantity >= 5) 5,
-      if (detail.ownedQuantity >= 10) 10,
-      detail.ownedQuantity,
-    }.where((int value) => value > 0).toList()..sort();
+    final int maxQuantity = detail.ownedQuantity < 1 ? 1 : detail.ownedQuantity;
+    final double sliderValue = _quantityValue
+        .clamp(1.0, maxQuantity.toDouble())
+        .toDouble();
+    final int selectedQuantity = sliderValue
+        .round()
+        .clamp(1, maxQuantity)
+        .toInt();
     final Widget header = Row(
       children: <Widget>[
         CatalogAssetIcon(
@@ -101,24 +100,15 @@ class _WorkshopMaterialExtractionDetailContentState
           children: <Widget>[
             const Text('추출 수량', style: TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: AppSpacing.md),
-            Wrap(
-              spacing: AppSpacing.md,
-              runSpacing: AppSpacing.md,
-              children: quantityOptions.map((int quantity) {
-                final bool selected = quantity == selectedQuantity;
-                final String label = quantity == detail.ownedQuantity
-                    ? '최대'
-                    : 'x$quantity';
-                return ChoiceChip(
-                  label: Text(label),
-                  selected: selected,
-                  onSelected: (_) {
-                    setState(() {
-                      _quantity = quantity;
-                    });
-                  },
-                );
-              }).toList(),
+            _ExtractionQuantitySlider(
+              selectedQuantity: selectedQuantity,
+              value: sliderValue,
+              maxQuantity: maxQuantity,
+              onChanged: (double value) {
+                setState(() {
+                  _quantityValue = value;
+                });
+              },
             ),
             const SizedBox(height: AppSpacing.lg),
             const Text('분석 결과', style: TextStyle(fontWeight: FontWeight.w700)),
@@ -208,6 +198,56 @@ class _WorkshopMaterialExtractionDetailContentState
       title: detail.materialName,
       header: header,
       body: buildBody(),
+    );
+  }
+}
+
+class _ExtractionQuantitySlider extends StatelessWidget {
+  const _ExtractionQuantitySlider({
+    required this.selectedQuantity,
+    required this.value,
+    required this.maxQuantity,
+    required this.onChanged,
+  });
+
+  final int selectedQuantity;
+  final double value;
+  final int maxQuantity;
+  final ValueChanged<double> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool enabled = maxQuantity > 1;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                '선택 $selectedQuantity개',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            Text(
+              '최대 $maxQuantity개',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+        Slider(
+          value: value,
+          min: 1,
+          max: maxQuantity.toDouble(),
+          onChanged: enabled
+              ? (double value) {
+                  onChanged(value);
+                }
+              : null,
+        ),
+      ],
     );
   }
 }
