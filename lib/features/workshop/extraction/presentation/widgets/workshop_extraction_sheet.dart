@@ -1,4 +1,3 @@
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/workshop_display_labels.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_inventory_selectors.dart';
@@ -6,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'workshop_material_extraction_detail.dart';
-import 'workshop_trait_inventory_strip.dart';
 
 class WorkshopExtractionSheet extends ConsumerWidget {
   const WorkshopExtractionSheet({super.key});
@@ -16,21 +14,12 @@ class WorkshopExtractionSheet extends ConsumerWidget {
     final List<MaterialInventoryView> materials = ref.watch(
       materialInventoryViewsProvider,
     );
-    final List<ExtractedTraitInventoryView> extractedTraits = ref.watch(
-      extractedTraitViewsProvider,
-    );
 
     return AppSheetLayout(
       title: '추출',
-      header: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text('보유 추출 원소', style: TextStyle(fontWeight: FontWeight.w700)),
-          const SizedBox(height: AppSpacing.md),
-          WorkshopTraitInventoryStrip(traits: extractedTraits),
-          const Divider(),
-          const Text('재료 선택', style: TextStyle(fontWeight: FontWeight.w700)),
-        ],
+      header: const Text(
+        '재료 선택',
+        style: TextStyle(fontWeight: FontWeight.w700),
       ),
       body: materials.isEmpty
           ? const Center(child: Text('추출 가능한 재료가 없습니다'))

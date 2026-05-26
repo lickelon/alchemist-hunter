@@ -102,8 +102,9 @@ void main() {
       await tester.tap(find.text('재료 추출'));
       await tester.pumpAndSettle();
 
-      expect(find.text('보유 추출 원소'), findsOneWidget);
-      expect(find.textContaining('Vital 원소 +0.85'), findsOneWidget);
+      expect(find.text('재료 선택'), findsOneWidget);
+      expect(find.text('보유 추출 원소'), findsNothing);
+      expect(find.textContaining('Vital 원소 +0.85'), findsNothing);
       expect(find.text('분석/추출'), findsOneWidget);
 
       await tester.tap(find.text('분석/추출'));
