@@ -3,6 +3,7 @@ export 'town_mercenary_card.dart';
 export 'town_skill_tree_card.dart';
 
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/presentation/widgets/sheets/town_potion_sale_sheet.dart';
 import 'package:alchemist_hunter/features/town/presentation/widgets/sheets/town_shop_sheet.dart';
@@ -31,9 +32,8 @@ class TownShopCard extends StatelessWidget {
   }
 
   void _showShopSheet(BuildContext context, String title, ShopType shopType) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return TownShopSheet(title: title, shopType: shopType);
       },
@@ -57,9 +57,8 @@ class TownPotionSellCard extends StatelessWidget {
   }
 
   void _showSellSheet(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const TownPotionSaleSheet();
       },

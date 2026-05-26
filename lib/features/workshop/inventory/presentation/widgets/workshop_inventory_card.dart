@@ -38,9 +38,8 @@ class WorkshopInventoryCard extends StatelessWidget {
   }
 
   void _showInventorySheet(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const WorkshopInventorySheet();
       },
@@ -65,23 +64,21 @@ class WorkshopInventorySheet extends ConsumerWidget {
 
     return DefaultTabController(
       length: 3,
-      child: AppBottomSheet(
-        child: AppSheetLayout(
-          title: '작업실 인벤토리',
-          header: const TabBar(
-            tabs: <Widget>[
-              Tab(text: '재료'),
-              Tab(text: '원소'),
-              Tab(text: '포션'),
-            ],
-          ),
-          body: TabBarView(
-            children: <Widget>[
-              _InventoryMaterialTab(materials: materials),
-              _InventoryTraitTab(traits: traits),
-              _InventoryPotionTab(potions: potions),
-            ],
-          ),
+      child: AppSheetLayout(
+        title: '작업실 인벤토리',
+        header: const TabBar(
+          tabs: <Widget>[
+            Tab(text: '재료'),
+            Tab(text: '원소'),
+            Tab(text: '포션'),
+          ],
+        ),
+        body: TabBarView(
+          children: <Widget>[
+            _InventoryMaterialTab(materials: materials),
+            _InventoryTraitTab(traits: traits),
+            _InventoryPotionTab(potions: potions),
+          ],
         ),
       ),
     );

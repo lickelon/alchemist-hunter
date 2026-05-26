@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/presentation/widgets/workshop_skill_tree_sheet.dart';
 
@@ -24,9 +25,8 @@ class WorkshopSkillTreeCard extends StatelessWidget {
   }
 
   void _showSkillTreeSheet(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const WorkshopSkillTreeSheet();
       },

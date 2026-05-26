@@ -1,5 +1,4 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
-import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:flutter/material.dart';
@@ -22,49 +21,47 @@ class WorkshopSkillTreeSheet extends ConsumerWidget {
       workshopSkillNodeViewsProvider,
     );
 
-    return AppBottomSheet(
-      child: AppSheetLayout(
-        title: '작업실 스킬트리',
-        header: Text('신비 $arcaneDust'),
-        body: ListView(
-          children: nodes.map((WorkshopSkillNodeView node) {
-            final int clampedDepth = node.depth.clamp(0, _kMaxDepth);
-            return Padding(
-              padding: EdgeInsets.only(
-                left: clampedDepth * _kDepthIndent,
-                bottom: AppSpacing.md,
-              ),
-              child: Card(
-                child: ListTile(
-                  dense: true,
-                  title: Text(
-                    '${node.depth == 0 ? "●" : "↳"} ${node.name} (${node.levelLabel})',
-                  ),
-                  subtitle: DetailLines(
-                    description: node.description,
-                    lines: <String>[
-                      '현재 효과 ${node.currentEffectLabel}',
-                      '다음 효과 ${node.nextEffectLabel}',
-                      node.prerequisiteLabel,
-                      '비용 ${node.costLabel}',
-                      node.statusLabel,
-                    ],
-                  ),
-                  trailing: FilledButton.tonal(
-                    onPressed: node.upgradeable
-                        ? () {
-                            ref
-                                .read(workshopSkillTreeControllerProvider)
-                                .upgradeNode(node.id);
-                          }
-                        : null,
-                    child: const Text('강화'),
-                  ),
+    return AppSheetLayout(
+      title: '작업실 스킬트리',
+      header: Text('신비 $arcaneDust'),
+      body: ListView(
+        children: nodes.map((WorkshopSkillNodeView node) {
+          final int clampedDepth = node.depth.clamp(0, _kMaxDepth);
+          return Padding(
+            padding: EdgeInsets.only(
+              left: clampedDepth * _kDepthIndent,
+              bottom: AppSpacing.md,
+            ),
+            child: Card(
+              child: ListTile(
+                dense: true,
+                title: Text(
+                  '${node.depth == 0 ? "●" : "↳"} ${node.name} (${node.levelLabel})',
+                ),
+                subtitle: DetailLines(
+                  description: node.description,
+                  lines: <String>[
+                    '현재 효과 ${node.currentEffectLabel}',
+                    '다음 효과 ${node.nextEffectLabel}',
+                    node.prerequisiteLabel,
+                    '비용 ${node.costLabel}',
+                    node.statusLabel,
+                  ],
+                ),
+                trailing: FilledButton.tonal(
+                  onPressed: node.upgradeable
+                      ? () {
+                          ref
+                              .read(workshopSkillTreeControllerProvider)
+                              .upgradeNode(node.id);
+                        }
+                      : null,
+                  child: const Text('강화'),
                 ),
               ),
-            );
-          }).toList(),
-        ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

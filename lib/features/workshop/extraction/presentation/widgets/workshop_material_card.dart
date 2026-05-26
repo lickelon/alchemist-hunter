@@ -31,9 +31,8 @@ class WorkshopMaterialCard extends StatelessWidget {
   }
 
   void _showItemList(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const _WorkshopMaterialSheet();
       },
@@ -50,31 +49,29 @@ class _WorkshopMaterialSheet extends ConsumerWidget {
       materialInventoryViewsProvider,
     );
 
-    return AppBottomSheet(
-      child: AppSheetLayout(
-        title: '보유 재료 목록',
-        body: materials.isEmpty
-            ? const Center(child: Text('보유 재료가 없습니다'))
-            : ListView.builder(
-                itemCount: materials.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final MaterialInventoryView entry = materials[index];
-                  return ListTile(
-                    dense: true,
-                    leading: CatalogAssetIcon(
-                      assetPath: CatalogIconAssetPaths.material(entry.id),
-                      size: 36,
-                      padding: 5,
-                    ),
-                    title: Text(entry.name),
-                    subtitle: Text(
-                      '${workshopMaterialRarityLabel(entry.rarity)} / 원소 ${entry.traitSummary}',
-                    ),
-                    trailing: Text('x${entry.quantity}'),
-                  );
-                },
-              ),
-      ),
+    return AppSheetLayout(
+      title: '보유 재료 목록',
+      body: materials.isEmpty
+          ? const Center(child: Text('보유 재료가 없습니다'))
+          : ListView.builder(
+              itemCount: materials.length,
+              itemBuilder: (BuildContext context, int index) {
+                final MaterialInventoryView entry = materials[index];
+                return ListTile(
+                  dense: true,
+                  leading: CatalogAssetIcon(
+                    assetPath: CatalogIconAssetPaths.material(entry.id),
+                    size: 36,
+                    padding: 5,
+                  ),
+                  title: Text(entry.name),
+                  subtitle: Text(
+                    '${workshopMaterialRarityLabel(entry.rarity)} / 원소 ${entry.traitSummary}',
+                  ),
+                  trailing: Text('x${entry.quantity}'),
+                );
+              },
+            ),
     );
   }
 }

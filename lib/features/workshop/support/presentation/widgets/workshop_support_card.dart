@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 
 import 'workshop_support_sheet.dart';
@@ -27,9 +28,8 @@ class WorkshopSupportCard extends StatelessWidget {
   }
 
   void _showSupportSheet(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const WorkshopSupportSheet();
       },

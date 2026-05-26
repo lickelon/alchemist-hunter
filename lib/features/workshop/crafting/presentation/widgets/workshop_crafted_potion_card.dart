@@ -24,9 +24,8 @@ class WorkshopCraftedPotionCard extends StatelessWidget {
   }
 
   void _showPotionSheet(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const _WorkshopCraftedPotionSheet();
       },
@@ -43,34 +42,32 @@ class _WorkshopCraftedPotionSheet extends ConsumerWidget {
       craftedPotionStackViewsProvider,
     );
 
-    return AppBottomSheet(
-      child: AppSheetLayout(
-        title: '완성 포션 상세',
-        body: potions.isEmpty
-            ? const Center(child: Text('완성 포션이 없습니다'))
-            : ListView(
-                children: potions.map((CraftedPotionStackView entry) {
-                  return ExpansionTile(
-                    tilePadding: EdgeInsets.zero,
-                    leading: CatalogAssetIcon(
-                      assetPath: CatalogIconAssetPaths.potion(entry.potionId),
-                      size: 36,
-                      padding: 5,
-                    ),
-                    title: Text('${entry.name} x${entry.quantity}'),
-                    subtitle: Text('품질 ${entry.qualityLabel}'),
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                        child: Text(
-                          '점수 ${entry.scoreLabel} / 원소 ${entry.traitsLabel}',
-                        ),
+    return AppSheetLayout(
+      title: '완성 포션 상세',
+      body: potions.isEmpty
+          ? const Center(child: Text('완성 포션이 없습니다'))
+          : ListView(
+              children: potions.map((CraftedPotionStackView entry) {
+                return ExpansionTile(
+                  tilePadding: EdgeInsets.zero,
+                  leading: CatalogAssetIcon(
+                    assetPath: CatalogIconAssetPaths.potion(entry.potionId),
+                    size: 36,
+                    padding: 5,
+                  ),
+                  title: Text('${entry.name} x${entry.quantity}'),
+                  subtitle: Text('품질 ${entry.qualityLabel}'),
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                      child: Text(
+                        '점수 ${entry.scoreLabel} / 원소 ${entry.traitsLabel}',
                       ),
-                    ],
-                  );
-                }).toList(),
-              ),
-      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
     );
   }
 }

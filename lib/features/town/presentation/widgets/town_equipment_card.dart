@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/features/town/presentation/widgets/sheets/town_equipment_sheet.dart';
 import 'package:flutter/material.dart';
 
@@ -27,9 +28,8 @@ class TownEquipmentCraftCard extends StatelessWidget {
   }
 
   void _showEquipmentSheet(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const TownEquipmentSheet();
       },
