@@ -43,7 +43,7 @@ class AppDialogLayout extends StatelessWidget {
         horizontal: horizontalInset,
         vertical: AppSpacing.xxl,
       ),
-      title: Text(title),
+      title: Text(title, style: Theme.of(context).textTheme.titleMedium),
       content: SizedBox(width: availableWidth, child: body),
       actions: actionWidgets,
       actionsPadding: const EdgeInsets.fromLTRB(
