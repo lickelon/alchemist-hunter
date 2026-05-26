@@ -124,6 +124,7 @@ class BattleAutoController {
               materials: materials,
               gold: outcome.success ? stage.goldSuccess : 0,
               essence: outcome.success ? stage.essenceSuccess : 0,
+              xp: outcome.success ? stage.xpSuccessBase : 0,
               hasSuccessfulBattle: outcome.success,
             ),
             recentLogs: <BattleLogEntry>[

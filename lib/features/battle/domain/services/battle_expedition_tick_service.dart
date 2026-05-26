@@ -197,6 +197,7 @@ class BattleExpeditionTickService {
               materials: materials,
               gold: stageDefinition.goldSuccess,
               essence: stageDefinition.essenceSuccess,
+              xp: stageDefinition.xpSuccessBase,
               hasSuccessfulBattle: true,
             ),
           );

@@ -103,7 +103,12 @@ class BattleExpeditionUseCase {
 
     final Map<String, BattleExpeditionState> nextExpeditions =
         <String, BattleExpeditionState>{...state.battle.stageExpeditions};
+    final BattleRunState? nextRunState = expedition.runState?.copyWith(
+      victoryCount: 0,
+      wipeCount: 0,
+    );
     nextExpeditions[stageId] = expedition.copyWith(
+      runState: nextRunState,
       pendingClaim: const BattlePendingClaim(),
     );
 

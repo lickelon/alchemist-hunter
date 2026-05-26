@@ -15,6 +15,7 @@ class BattleExpeditionProgressHelpers {
       materials: mergedMaterials,
       gold: left.gold + right.gold,
       essence: left.essence + right.essence,
+      xp: left.xp + right.xp,
       hasSuccessfulBattle:
           left.hasSuccessfulBattle || right.hasSuccessfulBattle,
     );

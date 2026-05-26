@@ -47,4 +47,49 @@ void main() {
       );
     },
   );
+
+  test('claimStageRewards resets visible run outcome counts', () {
+    final DateTime now = DateTime(2026, 1, 1, 10);
+    final BattleExpeditionUseCase useCase = BattleExpeditionUseCase();
+    final SessionState initialState = createInitialSessionState(now);
+    final SessionState state = initialState.copyWith(
+      battle: initialState.battle.copyWith(
+        stageExpeditions: const <String, BattleExpeditionState>{
+          'stage_1': BattleExpeditionState(
+            status: BattleExpeditionStatus.idle,
+            lastProgressedAt: null,
+            phaseProgress: Duration.zero,
+            runState: BattleRunState(
+              encounterCount: 9,
+              victoryCount: 3,
+              wipeCount: 2,
+            ),
+            pendingClaim: BattlePendingClaim(
+              materials: <String, int>{'m_1': 1},
+              gold: 10,
+              essence: 2,
+              xp: 4,
+              hasSuccessfulBattle: true,
+            ),
+          ),
+        },
+      ),
+    );
+
+    final SessionState nextState = useCase.claimStageRewards(
+      state: state,
+      stageId: 'stage_1',
+      battleCatalogRepository: const StaticBattleCatalogRepository(),
+    );
+
+    final BattleRunState? nextRunState =
+        nextState.battle.stageExpeditions['stage_1']?.runState;
+    expect(nextRunState?.encounterCount, 9);
+    expect(nextRunState?.victoryCount, 0);
+    expect(nextRunState?.wipeCount, 0);
+    expect(
+      nextState.battle.stageExpeditions['stage_1']?.pendingClaim.isEmpty,
+      true,
+    );
+  });
 }

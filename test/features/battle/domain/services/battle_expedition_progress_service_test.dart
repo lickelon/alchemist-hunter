@@ -48,6 +48,7 @@ void main() {
     expect(expedition.status, BattleExpeditionStatus.searching);
     expect(expedition.runState!.currentEncounter, isNull);
     expect(expedition.runState!.allies.single.currentHp, 25);
+    expect(expedition.pendingClaim.xp, 8);
   });
 
   test('search recovery heals only living allies', () {
@@ -97,6 +98,7 @@ void main() {
       pendingClaim: const BattlePendingClaim(
         gold: 24,
         essence: 4,
+        xp: 8,
         materials: <String, int>{'m_1': 1},
         hasSuccessfulBattle: true,
       ),
@@ -121,6 +123,7 @@ void main() {
     expect(expedition.status, BattleExpeditionStatus.recovering);
     expect(expedition.pendingClaim.gold, 24);
     expect(expedition.pendingClaim.essence, 4);
+    expect(expedition.pendingClaim.xp, 8);
     expect(expedition.pendingClaim.materials, <String, int>{'m_1': 1});
     expect(result.battle.progress.stageCurrentWinStreaks['stage_1'], 0);
   });
