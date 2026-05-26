@@ -21,11 +21,10 @@ class BattleStageStatusActions extends StatelessWidget {
       children: <Widget>[
         FilledButton.tonalIcon(
           onPressed: () {
-            showModalBottomSheet<void>(
+            showDialog<void>(
               context: context,
-              isScrollControlled: true,
               builder: (BuildContext context) {
-                return BattleStageDropSheet(stageId: stageId);
+                return BattleStageDropDialog(stageId: stageId);
               },
             );
           },
@@ -35,11 +34,10 @@ class BattleStageStatusActions extends StatelessWidget {
         FilledButton.tonalIcon(
           onPressed: hasRecentLogs
               ? () {
-                  showModalBottomSheet<void>(
+                  showDialog<void>(
                     context: context,
-                    isScrollControlled: true,
                     builder: (BuildContext context) {
-                      return BattleResultSheet(stageId: stageId);
+                      return BattleResultDialog(stageId: stageId);
                     },
                   );
                 }

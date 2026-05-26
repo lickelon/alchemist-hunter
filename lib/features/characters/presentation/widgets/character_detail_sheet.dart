@@ -1,4 +1,3 @@
-import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
@@ -40,40 +39,42 @@ class CharacterDetailSheet extends ConsumerWidget {
       ),
     };
     if (item == null) {
-      return const AppBottomSheet(child: Text('캐릭터 정보를 찾을 수 없습니다'));
+      return const AppSheetLayout(
+        title: '캐릭터 정보',
+        expandBody: false,
+        body: Text('캐릭터 정보를 찾을 수 없습니다'),
+      );
     }
 
     final CharacterProgress character = item.character;
-    return AppBottomSheet(
-      child: AppSheetLayout(
-        title: '${character.name} / ${item.typeLabel}',
-        body: ListView(
-          children: <Widget>[
-            CharacterGrowthSection(
-              character: character,
-              growthLabel: item.growthLabel,
-              hasTierUpMaterial: item.hasTierUpMaterial,
-              onRankUp: onRankUp,
-              onTierUp: onTierUp,
-            ),
-            CharacterCombatSection(
-              powerLabel: item.combatPowerLabel,
-              statPairs: item.combatStatPairs,
-            ),
-            if (item.combatEffectLines.isNotEmpty)
-              CharacterCombatEffectSection(effectLines: item.combatEffectLines),
-            CharacterEquipmentSection(
-              slots: item.equipmentSlots,
-              onManage: (CharacterEquipmentSlotView slot) {
-                _showEquipmentSheet(context, character: character, slot: slot);
-              },
-            ),
-            CharacterAssignmentSection(
-              assignmentLabel: item.assignmentLabel,
-              assignmentGuideLabel: item.assignmentGuideLabel,
-            ),
-          ],
-        ),
+    return AppSheetLayout(
+      title: '${character.name} / ${item.typeLabel}',
+      body: ListView(
+        children: <Widget>[
+          CharacterGrowthSection(
+            character: character,
+            growthLabel: item.growthLabel,
+            hasTierUpMaterial: item.hasTierUpMaterial,
+            onRankUp: onRankUp,
+            onTierUp: onTierUp,
+          ),
+          CharacterCombatSection(
+            powerLabel: item.combatPowerLabel,
+            statPairs: item.combatStatPairs,
+          ),
+          if (item.combatEffectLines.isNotEmpty)
+            CharacterCombatEffectSection(effectLines: item.combatEffectLines),
+          CharacterEquipmentSection(
+            slots: item.equipmentSlots,
+            onManage: (CharacterEquipmentSlotView slot) {
+              _showEquipmentSheet(context, character: character, slot: slot);
+            },
+          ),
+          CharacterAssignmentSection(
+            assignmentLabel: item.assignmentLabel,
+            assignmentGuideLabel: item.assignmentGuideLabel,
+          ),
+        ],
       ),
     );
   }
@@ -83,11 +84,10 @@ class CharacterDetailSheet extends ConsumerWidget {
     required CharacterProgress character,
     required CharacterEquipmentSlotView slot,
   }) {
-    showModalBottomSheet<void>(
+    showDialog<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
-        return CharacterEquipmentSheet(
+        return CharacterEquipmentDialog(
           character: character,
           slot: slot,
           onEquip: onEquip,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/widgets/workshop_enchant_sheet.dart';
 
@@ -19,9 +20,8 @@ class WorkshopEnchantCard extends StatelessWidget {
   }
 
   void _showEnchantSheet(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const WorkshopEnchantSheet();
       },

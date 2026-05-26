@@ -29,9 +29,8 @@ class WorkshopCraftCard extends StatelessWidget {
   }
 
   void _showCraftSheet(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const WorkshopCraftSheet();
       },
@@ -55,56 +54,54 @@ class WorkshopCraftSheet extends ConsumerWidget {
     final int queueCapacity = ref.watch(workshopQueueCapacityProvider);
     final bool queueFull = queueLength >= queueCapacity;
 
-    return AppBottomSheet(
-      child: AppSheetLayout(
-        title: '포션 제조',
-        header: queueFull
-            ? Text('작업실 큐 가득 참 ($queueLength/$queueCapacity)')
-            : null,
-        body: options.isEmpty
-            ? const Center(child: Text('등록 가능한 포션이 없습니다'))
-            : ListView.builder(
-                itemCount: options.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final PotionQueueOptionView option = options[index];
-                  return ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    leading: CatalogAssetIcon(
-                      assetPath: CatalogIconAssetPaths.potion(option.potionId),
-                      size: 36,
-                      padding: 5,
-                    ),
-                    title: Text(option.title),
-                    subtitle: Text(
-                      option.unlocked
-                          ? option.materialHint
-                          : '잠김: ${option.lockReason}',
-                    ),
-                    trailing: FilledButton.tonal(
-                      onPressed:
-                          option.unlocked &&
-                              option.craftableNow &&
-                              !option.queueFull
-                          ? () {
-                              showModalBottomSheet<void>(
-                                context: context,
-                                builder: (BuildContext bottomSheetContext) {
-                                  return WorkshopEnqueueOptionsSheet(
-                                    potionId: option.potionId,
-                                    title: option.title,
-                                    maxCraftableCount: option.maxCraftableCount,
-                                  );
-                                },
-                              );
-                            }
-                          : null,
-                      child: const Text('등록'),
-                    ),
-                  );
-                },
-              ),
-      ),
+    return AppSheetLayout(
+      title: '포션 제조',
+      header: queueFull
+          ? Text('작업실 큐 가득 참 ($queueLength/$queueCapacity)')
+          : null,
+      body: options.isEmpty
+          ? const Center(child: Text('등록 가능한 포션이 없습니다'))
+          : ListView.builder(
+              itemCount: options.length,
+              itemBuilder: (BuildContext context, int index) {
+                final PotionQueueOptionView option = options[index];
+                return ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  leading: CatalogAssetIcon(
+                    assetPath: CatalogIconAssetPaths.potion(option.potionId),
+                    size: 36,
+                    padding: 5,
+                  ),
+                  title: Text(option.title),
+                  subtitle: Text(
+                    option.unlocked
+                        ? option.materialHint
+                        : '잠김: ${option.lockReason}',
+                  ),
+                  trailing: FilledButton.tonal(
+                    onPressed:
+                        option.unlocked &&
+                            option.craftableNow &&
+                            !option.queueFull
+                        ? () {
+                            showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return WorkshopEnqueueOptionsDialog(
+                                  potionId: option.potionId,
+                                  title: option.title,
+                                  maxCraftableCount: option.maxCraftableCount,
+                                );
+                              },
+                            );
+                          }
+                        : null,
+                    child: const Text('등록'),
+                  ),
+                );
+              },
+            ),
     );
   }
 }

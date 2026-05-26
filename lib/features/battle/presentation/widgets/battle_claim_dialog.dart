@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
@@ -24,9 +25,9 @@ class BattleClaimDialog extends ConsumerWidget {
     );
     final String stageName = ref.watch(battleStageDisplayNameProvider(stageId));
 
-    return AlertDialog(
-      title: Text('$stageName 보상 수령'),
-      content: SingleChildScrollView(
+    return AppDialogLayout(
+      title: '$stageName 보상 수령',
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,

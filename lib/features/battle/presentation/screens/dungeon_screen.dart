@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_sheet.dart';
@@ -106,9 +107,8 @@ class DungeonScreen extends ConsumerWidget {
   }
 
   void _showAssignmentSheet(BuildContext context, String stageId) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return BattleAssignmentSheet(stageId: stageId);
       },
@@ -116,9 +116,8 @@ class DungeonScreen extends ConsumerWidget {
   }
 
   void _showStatusSheet(BuildContext context, String stageId) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return BattleStageStatusSheet(stageId: stageId);
       },

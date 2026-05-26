@@ -1,6 +1,5 @@
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
-import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
@@ -86,72 +85,68 @@ class _BattleStageStatusSheetState
           )
         : _timelineLines;
 
-    return AppBottomSheet(
-      child: AppSheetLayout(
-        title:
-            '${battleStageDisplayName(stage.id, fallback: stage.name)} 전투 현황',
-        body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            final double unitBoardHeight =
-                (constraints.maxHeight - _compactLayoutReserveHeight).clamp(
-                  _unitBoardMinHeight,
-                  _unitBoardCardHeight,
-                );
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                BattleStatusCard(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  child: SizedBox(
-                    height: unitBoardHeight,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          BattleUnitBoardSection(
-                            units:
-                                runState?.allies ??
-                                const <BattleRunUnitState>[],
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          BattleUnitBoardSection(
-                            units:
-                                currentEncounter?.enemies ??
-                                const <BattleRunUnitState>[],
-                            enemy: true,
-                          ),
-                        ],
-                      ),
+    return AppSheetLayout(
+      title: '${battleStageDisplayName(stage.id, fallback: stage.name)} 전투 현황',
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final double unitBoardHeight =
+              (constraints.maxHeight - _compactLayoutReserveHeight).clamp(
+                _unitBoardMinHeight,
+                _unitBoardCardHeight,
+              );
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              BattleStatusCard(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: SizedBox(
+                  height: unitBoardHeight,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        BattleUnitBoardSection(
+                          units:
+                              runState?.allies ?? const <BattleRunUnitState>[],
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        BattleUnitBoardSection(
+                          units:
+                              currentEncounter?.enemies ??
+                              const <BattleRunUnitState>[],
+                          enemy: true,
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                BattleStatusCard(
-                  child: SizedBox(
-                    height: _progressCardHeight,
-                    child: _BattleStageProgressBody(
-                      statusLabel: statusLabel,
-                      progress: progress,
-                    ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              BattleStatusCard(
+                child: SizedBox(
+                  height: _progressCardHeight,
+                  child: _BattleStageProgressBody(
+                    statusLabel: statusLabel,
+                    progress: progress,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                BattleStageStatusActions(
-                  stageId: widget.stageId,
-                  hasRecentLogs: recentLogs.isNotEmpty,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Expanded(
-                  child: BattleStatusCard(
-                    child: _BattleStageTimelineBody(
-                      controller: _timelineScrollController,
-                      lines: timelineLines,
-                    ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              BattleStageStatusActions(
+                stageId: widget.stageId,
+                hasRecentLogs: recentLogs.isNotEmpty,
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Expanded(
+                child: BattleStatusCard(
+                  child: _BattleStageTimelineBody(
+                    controller: _timelineScrollController,
+                    lines: timelineLines,
                   ),
                 ),
-              ],
-            );
-          },
-        ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

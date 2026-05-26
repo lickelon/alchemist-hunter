@@ -1,5 +1,4 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
-import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
@@ -27,103 +26,101 @@ class BattleAssignmentSheet extends ConsumerWidget {
     );
     final String stageName = ref.watch(battleStageDisplayNameProvider(stageId));
 
-    return AppBottomSheet(
-      child: AppSheetLayout(
-        title: '$stageName 편성',
-        header: Text('배치 ${assignedIds.length}/3명 / 전투력 $partyPower'),
-        body: ListView(
-          children: <Widget>[
-            ...characters.map((BattleAssignmentCharacterView character) {
-              return CheckboxListTile(
-                value: character.assigned,
-                onChanged: character.assignable
-                    ? (_) {
-                        ref
-                            .read(battleControllerProvider)
-                            .toggleStageAssignment(stageId, character.id);
-                      }
-                    : null,
-                title: Text(character.name),
-                subtitle: Text(
-                  '${character.typeLabel} / 전투력 ${character.power}${character.assignmentHint.isNotEmpty
-                      ? " / ${character.assignmentHint}"
-                      : character.assignable
-                      ? ""
-                      : " / 파티가 가득 참"}',
+    return AppSheetLayout(
+      title: '$stageName 편성',
+      header: Text('배치 ${assignedIds.length}/3명 / 전투력 $partyPower'),
+      body: ListView(
+        children: <Widget>[
+          ...characters.map((BattleAssignmentCharacterView character) {
+            return CheckboxListTile(
+              value: character.assigned,
+              onChanged: character.assignable
+                  ? (_) {
+                      ref
+                          .read(battleControllerProvider)
+                          .toggleStageAssignment(stageId, character.id);
+                    }
+                  : null,
+              title: Text(character.name),
+              subtitle: Text(
+                '${character.typeLabel} / 전투력 ${character.power}${character.assignmentHint.isNotEmpty
+                    ? " / ${character.assignmentHint}"
+                    : character.assignable
+                    ? ""
+                    : " / 파티가 가득 참"}',
+              ),
+              controlAffinity: ListTileControlAffinity.trailing,
+            );
+          }),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.xl,
+              AppSpacing.md,
+              AppSpacing.xl,
+              AppSpacing.sm,
+            ),
+            child: Text(
+              '포션 로드아웃',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          if (potions.isEmpty)
+            const ListTile(
+              title: Text('전투용 포션 없음'),
+              subtitle: Text('제조 완료된 전투 포션이 있으면 여기서 선택할 수 있습니다'),
+            )
+          else
+            ...potions.map((BattleAssignmentPotionView potion) {
+              return ListTile(
+                leading: CatalogAssetIcon(
+                  assetPath: CatalogIconAssetPaths.potion(potion.potionId),
+                  size: 36,
+                  padding: 5,
                 ),
-                controlAffinity: ListTileControlAffinity.trailing,
+                title: Text(potion.label),
+                subtitle: Text(
+                  '보유 ${potion.ownedCount} / 선택 ${potion.selectedCount}',
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                      onPressed: potion.selectedCount == 0
+                          ? null
+                          : () {
+                              ref
+                                  .read(battleControllerProvider)
+                                  .setStagePotionCount(
+                                    stageId,
+                                    potion.stackKey,
+                                    count: potion.selectedCount - 1,
+                                    maxOwned: potion.ownedCount,
+                                  );
+                            },
+                      icon: const Icon(Icons.remove_circle_outline),
+                    ),
+                    Text('${potion.selectedCount}'),
+                    IconButton(
+                      onPressed: potion.selectedCount >= potion.ownedCount
+                          ? null
+                          : () {
+                              ref
+                                  .read(battleControllerProvider)
+                                  .setStagePotionCount(
+                                    stageId,
+                                    potion.stackKey,
+                                    count: potion.selectedCount + 1,
+                                    maxOwned: potion.ownedCount,
+                                  );
+                            },
+                      icon: const Icon(Icons.add_circle_outline),
+                    ),
+                  ],
+                ),
               );
             }),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.xl,
-                AppSpacing.md,
-                AppSpacing.xl,
-                AppSpacing.sm,
-              ),
-              child: Text(
-                '포션 로드아웃',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            if (potions.isEmpty)
-              const ListTile(
-                title: Text('전투용 포션 없음'),
-                subtitle: Text('제조 완료된 전투 포션이 있으면 여기서 선택할 수 있습니다'),
-              )
-            else
-              ...potions.map((BattleAssignmentPotionView potion) {
-                return ListTile(
-                  leading: CatalogAssetIcon(
-                    assetPath: CatalogIconAssetPaths.potion(potion.potionId),
-                    size: 36,
-                    padding: 5,
-                  ),
-                  title: Text(potion.label),
-                  subtitle: Text(
-                    '보유 ${potion.ownedCount} / 선택 ${potion.selectedCount}',
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      IconButton(
-                        onPressed: potion.selectedCount == 0
-                            ? null
-                            : () {
-                                ref
-                                    .read(battleControllerProvider)
-                                    .setStagePotionCount(
-                                      stageId,
-                                      potion.stackKey,
-                                      count: potion.selectedCount - 1,
-                                      maxOwned: potion.ownedCount,
-                                    );
-                              },
-                        icon: const Icon(Icons.remove_circle_outline),
-                      ),
-                      Text('${potion.selectedCount}'),
-                      IconButton(
-                        onPressed: potion.selectedCount >= potion.ownedCount
-                            ? null
-                            : () {
-                                ref
-                                    .read(battleControllerProvider)
-                                    .setStagePotionCount(
-                                      stageId,
-                                      potion.stackKey,
-                                      count: potion.selectedCount + 1,
-                                      maxOwned: potion.ownedCount,
-                                    );
-                              },
-                        icon: const Icon(Icons.add_circle_outline),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-          ],
-        ),
+        ],
       ),
     );
   }

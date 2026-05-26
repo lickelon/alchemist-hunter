@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_detail_sheet.dart';
@@ -63,9 +64,8 @@ class CharacterCard extends StatelessWidget {
   }
 
   void _showDetailSheet(BuildContext context, CharacterProgress character) {
-    showModalBottomSheet<void>(
+    showAppBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return CharacterDetailSheet(
           type: character.type,
