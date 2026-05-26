@@ -1,13 +1,13 @@
-import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import '../battle_catalog_dtos.dart';
 
-const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
-    <String, BattleEnemyDefinition>{
-      'enemy_apprentice': BattleEnemyDefinition(
+const Map<String, BattleEnemyDefinitionDto> stage3BattleEnemyDefinitionDtos =
+    <String, BattleEnemyDefinitionDto>{
+      'enemy_apprentice': BattleEnemyDefinitionDto(
         id: 'enemy_apprentice',
         name: 'Ash Apprentice',
         faction: CombatFaction.mercenary,
         summary: '마력 증폭형 견습 연금술사',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 52,
           maxMp: 8,
           physicalAttack: 5,
@@ -28,8 +28,8 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 4,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageDealt,
             mode: BattleModifierMode.percent,
             value: 0.12,
@@ -37,8 +37,8 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             sourceId: 'enemy_apprentice_arcane_surge',
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_apprentice_ash_burst',
             name: 'Ash Burst',
             summary: '잿빛 마력을 터뜨려 모든 적에게 마법 피해를 준다.',
@@ -48,19 +48,19 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             powerMultiplier: 0.95,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_6', min: 1, max: 2, chance: 0.76),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_6', min: 1, max: 2, chance: 0.76),
         ],
-        specialDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_27', min: 1, max: 1, chance: 0.28),
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_27', min: 1, max: 1, chance: 0.28),
         ],
       ),
-      'enemy_crucible': BattleEnemyDefinition(
+      'enemy_crucible': BattleEnemyDefinitionDto(
         id: 'enemy_crucible',
         name: 'Crucible Hound',
         faction: CombatFaction.homunculus,
         summary: '달궈진 몸체로 밀어붙이는 돌진형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 66,
           maxMp: 8,
           physicalAttack: 16,
@@ -81,16 +81,16 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
           regen: 0.015,
           mpRegen: 3,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageTaken,
             mode: BattleModifierMode.percent,
             value: -0.08,
             sourceId: 'enemy_crucible_molten_hide',
           ),
         ],
-        passives: <BattlePassiveEffect>[
-          BattlePassiveEffect(
+        passives: <BattlePassiveEffectDto>[
+          BattlePassiveEffectDto(
             trigger: BattlePassiveTrigger.afterHit,
             type: BattlePassiveEffectType.grantStatus,
             sourceId: 'enemy_crucible_scorch',
@@ -99,8 +99,8 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             statusType: BattleStatusType.poison,
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_crucible_molten_charge',
             name: 'Molten Charge',
             summary: '가열된 돌진으로 적 하나에게 강한 물리 피해를 준다.',
@@ -109,16 +109,16 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             powerMultiplier: 1.45,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_5', min: 1, max: 3, chance: 0.8),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_5', min: 1, max: 3, chance: 0.8),
         ],
       ),
-      'enemy_sentinel': BattleEnemyDefinition(
+      'enemy_sentinel': BattleEnemyDefinitionDto(
         id: 'enemy_sentinel',
         name: 'Clockwork Sentinel',
         faction: CombatFaction.homunculus,
         summary: '장갑형 자동 수호기',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 60,
           maxMp: 8,
           physicalAttack: 14,
@@ -139,24 +139,24 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
           regen: 0.015,
           mpRegen: 4,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageTaken,
             mode: BattleModifierMode.percent,
             value: -0.12,
             sourceId: 'enemy_sentinel_plating',
           ),
         ],
-        passives: <BattlePassiveEffect>[
-          BattlePassiveEffect(
+        passives: <BattlePassiveEffectDto>[
+          BattlePassiveEffectDto(
             trigger: BattlePassiveTrigger.onDamaged,
             type: BattlePassiveEffectType.counterAttack,
             sourceId: 'enemy_sentinel_guard_protocol',
             value: 1,
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_sentinel_guard_field',
             name: 'Guard Field',
             summary: '모든 아군에게 보호막을 펼친다.',
@@ -165,16 +165,16 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             shieldValue: 14,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_5', min: 1, max: 3, chance: 0.82),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_5', min: 1, max: 3, chance: 0.82),
         ],
       ),
-      'enemy_distiller': BattleEnemyDefinition(
+      'enemy_distiller': BattleEnemyDefinitionDto(
         id: 'enemy_distiller',
         name: 'Soot Distiller',
         faction: CombatFaction.mercenary,
         summary: '잔열을 돌려 화력을 키우는 후열형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 56,
           maxMp: 8,
           physicalAttack: 6,
@@ -195,8 +195,8 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
           regen: 0.02,
           mpRegen: 4,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageDealt,
             mode: BattleModifierMode.percent,
             value: 0.1,
@@ -204,8 +204,8 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             sourceId: 'enemy_distiller_heat_cycle',
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_distiller_catalyze',
             name: 'Catalyze',
             summary: '모든 아군의 주는 마법 피해를 잠시 증가시킨다.',
@@ -213,7 +213,7 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             priority: 2,
             targetType: BattleSkillTargetType.allAllies,
             effectType: BattleSkillEffectType.grantModifier,
-            modifier: BattleModifier(
+            modifier: BattleModifierDto(
               type: BattleModifierType.damageDealt,
               mode: BattleModifierMode.percent,
               value: 0.1,
@@ -222,7 +222,7 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             ),
             durationLifecycles: 2,
           ),
-          BattleSkillDefinition(
+          BattleSkillDefinitionDto(
             id: 'enemy_distiller_soot_mend',
             name: 'Soot Mend',
             summary: '그을음 촉매로 무작위 아군 하나를 회복한다.',
@@ -233,16 +233,16 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             flatPower: 14,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_6', min: 1, max: 2, chance: 0.72),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_6', min: 1, max: 2, chance: 0.72),
         ],
       ),
-      'enemy_furnace_leech': BattleEnemyDefinition(
+      'enemy_furnace_leech': BattleEnemyDefinitionDto(
         id: 'enemy_furnace_leech',
         name: 'Furnace Leech',
         faction: CombatFaction.homunculus,
         summary: '열을 빨아들여 버티는 흡혈형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 60,
           maxMp: 8,
           physicalAttack: 13,
@@ -263,8 +263,8 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
           regen: 0.015,
           mpRegen: 4,
         ),
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_furnace_leech_heat_siphon',
             name: 'Heat Siphon',
             summary: '응축된 열을 빨아들여 적 하나에게 마법 피해를 준다.',
@@ -273,16 +273,16 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             powerMultiplier: 1.15,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_5', min: 1, max: 2, chance: 0.74),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_5', min: 1, max: 2, chance: 0.74),
         ],
       ),
-      'enemy_cinder_scribe': BattleEnemyDefinition(
+      'enemy_cinder_scribe': BattleEnemyDefinitionDto(
         id: 'enemy_cinder_scribe',
         name: 'Cinder Scribe',
         faction: CombatFaction.mercenary,
         summary: '재 문양으로 취약점을 새기는 보조 화력형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 50,
           maxMp: 8,
           physicalAttack: 5,
@@ -303,14 +303,14 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 4,
         ),
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_cinder_scribe_mark',
             name: 'Cinder Mark',
             summary: '모든 적에게 재 문양을 새겨 받는 피해를 증가시킨다.',
             targetType: BattleSkillTargetType.allEnemies,
             effectType: BattleSkillEffectType.grantModifier,
-            modifier: BattleModifier(
+            modifier: BattleModifierDto(
               type: BattleModifierType.damageTaken,
               mode: BattleModifierMode.percent,
               value: 0.1,
@@ -319,11 +319,11 @@ const Map<String, BattleEnemyDefinition> stage3BattleEnemyDefinitions =
             durationLifecycles: 2,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_6', min: 1, max: 2, chance: 0.68),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_6', min: 1, max: 2, chance: 0.68),
         ],
-        specialDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_27', min: 1, max: 1, chance: 0.22),
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_27', min: 1, max: 1, chance: 0.22),
         ],
       ),
     };

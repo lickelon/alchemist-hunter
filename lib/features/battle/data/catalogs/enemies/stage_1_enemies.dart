@@ -1,13 +1,13 @@
-import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import '../battle_catalog_dtos.dart';
 
-const Map<String, BattleEnemyDefinition> stage1BattleEnemyDefinitions =
-    <String, BattleEnemyDefinition>{
-      'enemy_scavenger': BattleEnemyDefinition(
+const Map<String, BattleEnemyDefinitionDto> stage1BattleEnemyDefinitionDtos =
+    <String, BattleEnemyDefinitionDto>{
+      'enemy_scavenger': BattleEnemyDefinitionDto(
         id: 'enemy_scavenger',
         name: 'Ruin Scavenger',
         faction: CombatFaction.homunculus,
         summary: '잔해를 주워 버티는 전열형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 46,
           maxMp: 6,
           physicalAttack: 10,
@@ -28,16 +28,16 @@ const Map<String, BattleEnemyDefinition> stage1BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 2,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageTaken,
             mode: BattleModifierMode.percent,
             value: -0.05,
             sourceId: 'enemy_scavenger_hide',
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_scavenger_scrap_guard',
             name: 'Scrap Guard',
             summary: '잔해를 끌어모아 자신에게 보호막을 부여한다.',
@@ -46,16 +46,16 @@ const Map<String, BattleEnemyDefinition> stage1BattleEnemyDefinitions =
             shieldValue: 12,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_1', min: 1, max: 3, chance: 0.86),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_1', min: 1, max: 3, chance: 0.86),
         ],
       ),
-      'enemy_wisp': BattleEnemyDefinition(
+      'enemy_wisp': BattleEnemyDefinitionDto(
         id: 'enemy_wisp',
         name: 'Moontear Wisp',
         faction: CombatFaction.homunculus,
         summary: '희귀 촉매를 품은 부유체',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 38,
           maxMp: 6,
           physicalAttack: 4,
@@ -76,8 +76,8 @@ const Map<String, BattleEnemyDefinition> stage1BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 3,
         ),
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_wisp_lunar_mend',
             name: 'Lunar Mend',
             summary: '달빛 촉매로 모든 아군을 회복한다.',
@@ -86,19 +86,19 @@ const Map<String, BattleEnemyDefinition> stage1BattleEnemyDefinitions =
             flatPower: 10,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_2', min: 1, max: 2, chance: 0.74),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_2', min: 1, max: 2, chance: 0.74),
         ],
-        specialDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_25', min: 1, max: 1, chance: 0.24),
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_25', min: 1, max: 1, chance: 0.24),
         ],
       ),
-      'enemy_mite': BattleEnemyDefinition(
+      'enemy_mite': BattleEnemyDefinitionDto(
         id: 'enemy_mite',
         name: 'Ash Mite',
         faction: CombatFaction.homunculus,
         summary: '빠르게 파고드는 군체형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 34,
           maxMp: 4,
           physicalAttack: 8,
@@ -119,8 +119,8 @@ const Map<String, BattleEnemyDefinition> stage1BattleEnemyDefinitions =
           regen: 0,
           mpRegen: 2,
         ),
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_mite_ash_venom',
             name: 'Ash Venom',
             summary: '잿빛 독을 묻혀 적 하나에게 중독을 부여한다.',
@@ -130,17 +130,17 @@ const Map<String, BattleEnemyDefinition> stage1BattleEnemyDefinitions =
             durationLifecycles: 2,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_1', min: 1, max: 2, chance: 0.7),
-          BattleDropEntry(materialId: 'm_2', min: 1, max: 1, chance: 0.32),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_1', min: 1, max: 2, chance: 0.7),
+          BattleDropEntryDto(materialId: 'm_2', min: 1, max: 1, chance: 0.32),
         ],
       ),
-      'enemy_rust_slug': BattleEnemyDefinition(
+      'enemy_rust_slug': BattleEnemyDefinitionDto(
         id: 'enemy_rust_slug',
         name: 'Rust Slug',
         faction: CombatFaction.homunculus,
         summary: '산성 점액으로 방어를 녹이는 둔중형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 42,
           maxMp: 4,
           physicalAttack: 7,
@@ -161,13 +161,13 @@ const Map<String, BattleEnemyDefinition> stage1BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 2,
         ),
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_rust_slug_corrosion',
             name: 'Corrosion',
             summary: '산성 점액으로 적 하나의 받는 피해를 증가시킨다.',
             effectType: BattleSkillEffectType.grantModifier,
-            modifier: BattleModifier(
+            modifier: BattleModifierDto(
               type: BattleModifierType.damageTaken,
               mode: BattleModifierMode.percent,
               value: 0.08,
@@ -176,16 +176,16 @@ const Map<String, BattleEnemyDefinition> stage1BattleEnemyDefinitions =
             durationLifecycles: 2,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_1', min: 1, max: 2, chance: 0.68),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_1', min: 1, max: 2, chance: 0.68),
         ],
       ),
-      'enemy_glowcap': BattleEnemyDefinition(
+      'enemy_glowcap': BattleEnemyDefinitionDto(
         id: 'enemy_glowcap',
         name: 'Glowcap Sprout',
         faction: CombatFaction.homunculus,
         summary: '희미한 포자로 초입 전장을 흐리는 발아체',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 36,
           maxMp: 6,
           physicalAttack: 4,
@@ -206,8 +206,8 @@ const Map<String, BattleEnemyDefinition> stage1BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 3,
         ),
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_glowcap_drowsy_spores',
             name: 'Drowsy Spores',
             summary: '포자를 흩뿌려 모든 적에게 약한 중독을 부여한다.',
@@ -218,11 +218,11 @@ const Map<String, BattleEnemyDefinition> stage1BattleEnemyDefinitions =
             durationLifecycles: 2,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_2', min: 1, max: 2, chance: 0.64),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_2', min: 1, max: 2, chance: 0.64),
         ],
-        specialDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_25', min: 1, max: 1, chance: 0.16),
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_25', min: 1, max: 1, chance: 0.16),
         ],
       ),
     };

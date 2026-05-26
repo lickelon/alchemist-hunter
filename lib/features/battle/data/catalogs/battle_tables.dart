@@ -1,17 +1,29 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 
+import 'battle_catalog_dtos.dart';
 import 'battle_stage_definitions.dart' as stage_catalog;
 import 'encounters/battle_enemy_set_definitions.dart' as encounter_catalog;
 import 'enemies/battle_enemy_definitions.dart' as enemy_catalog;
 
-const Map<String, BattleEnemyDefinition> battleEnemyDefinitions =
-    enemy_catalog.battleEnemyDefinitions;
+final Map<String, BattleEnemyDefinition> battleEnemyDefinitions = enemy_catalog
+    .battleEnemyDefinitionDtos
+    .map(
+      (String id, BattleEnemyDefinitionDto definition) =>
+          MapEntry<String, BattleEnemyDefinition>(id, definition.toDomain()),
+    );
 
-const Map<String, BattleEnemySetDefinition> battleEnemySetDefinitions =
-    encounter_catalog.battleEnemySetDefinitions;
+final Map<String, BattleEnemySetDefinition> battleEnemySetDefinitions =
+    encounter_catalog.battleEnemySetDefinitionDtos.map(
+      (String id, BattleEnemySetDefinitionDto definition) =>
+          MapEntry<String, BattleEnemySetDefinition>(id, definition.toDomain()),
+    );
 
-const Map<String, BattleStageDefinition> battleStageDefinitions =
-    stage_catalog.battleStageDefinitions;
+final Map<String, BattleStageDefinition> battleStageDefinitions = stage_catalog
+    .battleStageDefinitionDtos
+    .map(
+      (String id, BattleStageDefinitionDto definition) =>
+          MapEntry<String, BattleStageDefinition>(id, definition.toDomain()),
+    );
 
 const List<String> stageCatalog = stage_catalog.stageCatalog;
 

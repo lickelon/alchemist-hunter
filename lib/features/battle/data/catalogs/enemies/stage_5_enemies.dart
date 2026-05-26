@@ -1,13 +1,13 @@
-import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import '../battle_catalog_dtos.dart';
 
-const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
-    <String, BattleEnemyDefinition>{
-      'enemy_chimera': BattleEnemyDefinition(
+const Map<String, BattleEnemyDefinitionDto> stage5BattleEnemyDefinitionDtos =
+    <String, BattleEnemyDefinitionDto>{
+      'enemy_chimera': BattleEnemyDefinitionDto(
         id: 'enemy_chimera',
         name: 'Moontear Chimera',
         faction: CombatFaction.homunculus,
         summary: '흡혈과 압박을 겸한 보스형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 72,
           maxMp: 10,
           physicalAttack: 15,
@@ -28,16 +28,16 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 4,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageDealt,
             mode: BattleModifierMode.percent,
             value: 0.08,
             sourceId: 'enemy_chimera_fury',
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_chimera_rending_howl',
             name: 'Rending Howl',
             summary: '찢는 포효로 모든 적에게 물리 피해를 준다.',
@@ -47,19 +47,19 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             powerMultiplier: 1.0,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_29', min: 1, max: 2, chance: 0.88),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_29', min: 1, max: 2, chance: 0.88),
         ],
-        specialDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_30', min: 1, max: 2, chance: 0.46),
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_30', min: 1, max: 2, chance: 0.46),
         ],
       ),
-      'enemy_herald': BattleEnemyDefinition(
+      'enemy_herald': BattleEnemyDefinitionDto(
         id: 'enemy_herald',
         name: 'Core Herald',
         faction: CombatFaction.mercenary,
         summary: '보스의 틈을 벌리는 고속 보조형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 68,
           maxMp: 8,
           physicalAttack: 12,
@@ -80,8 +80,8 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 4,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageDealt,
             mode: BattleModifierMode.percent,
             value: 0.1,
@@ -89,8 +89,8 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             sourceId: 'enemy_herald_core_signal',
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_herald_core_signal',
             name: 'Core Signal',
             summary: '모든 아군의 주는 피해를 잠시 증가시킨다.',
@@ -98,7 +98,7 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             priority: 2,
             targetType: BattleSkillTargetType.allAllies,
             effectType: BattleSkillEffectType.grantModifier,
-            modifier: BattleModifier(
+            modifier: BattleModifierDto(
               type: BattleModifierType.damageDealt,
               mode: BattleModifierMode.percent,
               value: 0.12,
@@ -106,7 +106,7 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             ),
             durationLifecycles: 2,
           ),
-          BattleSkillDefinition(
+          BattleSkillDefinitionDto(
             id: 'enemy_herald_core_fracture',
             name: 'Core Fracture',
             summary: '핵 신호를 흔들어 모든 적의 받는 피해를 증가시킨다.',
@@ -114,7 +114,7 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             priority: 1,
             targetType: BattleSkillTargetType.allEnemies,
             effectType: BattleSkillEffectType.grantModifier,
-            modifier: BattleModifier(
+            modifier: BattleModifierDto(
               type: BattleModifierType.damageTaken,
               mode: BattleModifierMode.percent,
               value: 0.08,
@@ -123,16 +123,16 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             durationLifecycles: 2,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_29', min: 1, max: 2, chance: 0.8),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_29', min: 1, max: 2, chance: 0.8),
         ],
       ),
-      'enemy_warden': BattleEnemyDefinition(
+      'enemy_warden': BattleEnemyDefinitionDto(
         id: 'enemy_warden',
         name: 'Moonvault Warden',
         faction: CombatFaction.homunculus,
         summary: '핵심을 지키는 중장갑 호위체',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 82,
           maxMp: 10,
           physicalAttack: 13,
@@ -153,24 +153,24 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
           regen: 0.02,
           mpRegen: 4,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageTaken,
             mode: BattleModifierMode.percent,
             value: -0.12,
             sourceId: 'enemy_warden_core_shell',
           ),
         ],
-        passives: <BattlePassiveEffect>[
-          BattlePassiveEffect(
+        passives: <BattlePassiveEffectDto>[
+          BattlePassiveEffectDto(
             trigger: BattlePassiveTrigger.onDamaged,
             type: BattlePassiveEffectType.counterAttack,
             sourceId: 'enemy_warden_guard_retaliation',
             value: 1,
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_warden_moonvault_barrier',
             name: 'Moonvault Barrier',
             summary: '모든 아군에게 두꺼운 보호막을 부여한다.',
@@ -179,16 +179,16 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             shieldValue: 20,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_29', min: 1, max: 2, chance: 0.84),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_29', min: 1, max: 2, chance: 0.84),
         ],
       ),
-      'enemy_core_siphon': BattleEnemyDefinition(
+      'enemy_core_siphon': BattleEnemyDefinitionDto(
         id: 'enemy_core_siphon',
         name: 'Core Siphon',
         faction: CombatFaction.homunculus,
         summary: '문물 핵의 마력을 빨아들이는 흡수형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 72,
           maxMp: 10,
           physicalAttack: 8,
@@ -209,13 +209,13 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
           regen: 0.015,
           mpRegen: 5,
         ),
-        passives: <BattlePassiveEffect>[
-          BattlePassiveEffect(
+        passives: <BattlePassiveEffectDto>[
+          BattlePassiveEffectDto(
             trigger: BattlePassiveTrigger.afterHit,
             type: BattlePassiveEffectType.grantModifier,
             sourceId: 'enemy_core_siphon_mana_wound',
             durationLifecycles: 2,
-            modifier: BattleModifier(
+            modifier: BattleModifierDto(
               type: BattleModifierType.damageTaken,
               mode: BattleModifierMode.percent,
               value: 0.1,
@@ -224,8 +224,8 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             ),
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_core_siphon_mana_rend',
             name: 'Mana Rend',
             summary: '핵 마력을 찢어 적 하나에게 큰 마법 피해를 준다.',
@@ -234,16 +234,16 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             powerMultiplier: 1.35,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_29', min: 1, max: 2, chance: 0.82),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_29', min: 1, max: 2, chance: 0.82),
         ],
       ),
-      'enemy_moonvault_aegis': BattleEnemyDefinition(
+      'enemy_moonvault_aegis': BattleEnemyDefinitionDto(
         id: 'enemy_moonvault_aegis',
         name: 'Moonvault Aegis',
         faction: CombatFaction.homunculus,
         summary: '문물의 외벽을 펼치는 중장갑 방어형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 88,
           maxMp: 10,
           physicalAttack: 12,
@@ -264,16 +264,16 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
           regen: 0.02,
           mpRegen: 5,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageTaken,
             mode: BattleModifierMode.percent,
             value: -0.1,
             sourceId: 'enemy_moonvault_aegis_shell',
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_moonvault_aegis_guard_field',
             name: 'Guard Field',
             summary: '문물 외벽을 펼쳐 모든 아군에게 보호막을 부여한다.',
@@ -282,11 +282,11 @@ const Map<String, BattleEnemyDefinition> stage5BattleEnemyDefinitions =
             shieldValue: 24,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_30', min: 1, max: 1, chance: 0.42),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_30', min: 1, max: 1, chance: 0.42),
         ],
-        specialDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_29', min: 1, max: 2, chance: 0.44),
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_29', min: 1, max: 2, chance: 0.44),
         ],
       ),
     };

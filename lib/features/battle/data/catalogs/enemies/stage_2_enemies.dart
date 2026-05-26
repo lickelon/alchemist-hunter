@@ -1,13 +1,13 @@
-import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import '../battle_catalog_dtos.dart';
 
-const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
-    <String, BattleEnemyDefinition>{
-      'enemy_scout': BattleEnemyDefinition(
+const Map<String, BattleEnemyDefinitionDto> stage2BattleEnemyDefinitionDtos =
+    <String, BattleEnemyDefinitionDto>{
+      'enemy_scout': BattleEnemyDefinitionDto(
         id: 'enemy_scout',
         name: 'Dust Scout',
         faction: CombatFaction.mercenary,
         summary: '견제 사격 중심의 정찰병',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 44,
           maxMp: 6,
           physicalAttack: 12,
@@ -28,16 +28,16 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 3,
         ),
-        passives: <BattlePassiveEffect>[
-          BattlePassiveEffect(
+        passives: <BattlePassiveEffectDto>[
+          BattlePassiveEffectDto(
             trigger: BattlePassiveTrigger.battleStart,
             type: BattlePassiveEffectType.firstStrike,
             sourceId: 'enemy_scout_quick_draw',
             value: 1,
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_scout_crossfire',
             name: 'Crossfire',
             summary: '넓게 견제 사격을 가해 모든 적에게 물리 피해를 준다.',
@@ -47,16 +47,16 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
             powerMultiplier: 0.85,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_3', min: 1, max: 2, chance: 0.78),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_3', min: 1, max: 2, chance: 0.78),
         ],
       ),
-      'enemy_stalker': BattleEnemyDefinition(
+      'enemy_stalker': BattleEnemyDefinitionDto(
         id: 'enemy_stalker',
         name: 'Shade Stalker',
         faction: CombatFaction.homunculus,
         summary: '후열을 노리는 연타형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 48,
           physicalAttack: 13,
           physicalDefense: 7,
@@ -75,27 +75,27 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
           healingPower: 0,
           regen: 0.01,
         ),
-        passives: <BattlePassiveEffect>[
-          BattlePassiveEffect(
+        passives: <BattlePassiveEffectDto>[
+          BattlePassiveEffectDto(
             trigger: BattlePassiveTrigger.afterAction,
             type: BattlePassiveEffectType.extraAttack,
             sourceId: 'enemy_stalker_flurry',
             value: 1,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_4', min: 1, max: 2, chance: 0.7),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_4', min: 1, max: 2, chance: 0.7),
         ],
-        specialDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_26', min: 1, max: 1, chance: 0.22),
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_26', min: 1, max: 1, chance: 0.22),
         ],
       ),
-      'enemy_bruiser': BattleEnemyDefinition(
+      'enemy_bruiser': BattleEnemyDefinitionDto(
         id: 'enemy_bruiser',
         name: 'Scrap Bruiser',
         faction: CombatFaction.mercenary,
         summary: '느리지만 묵직하게 압박하는 근접형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 58,
           maxMp: 8,
           physicalAttack: 15,
@@ -116,24 +116,24 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 3,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageDealt,
             mode: BattleModifierMode.percent,
             value: 0.08,
             sourceId: 'enemy_bruiser_overhead_swing',
           ),
         ],
-        passives: <BattlePassiveEffect>[
-          BattlePassiveEffect(
+        passives: <BattlePassiveEffectDto>[
+          BattlePassiveEffectDto(
             trigger: BattlePassiveTrigger.onDamaged,
             type: BattlePassiveEffectType.counterAttack,
             sourceId: 'enemy_bruiser_backhand',
             value: 1,
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_bruiser_staggering_blow',
             name: 'Staggering Blow',
             summary: '묵직한 타격으로 적 하나에게 기절을 부여한다.',
@@ -142,16 +142,16 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
             durationLifecycles: 1,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_4', min: 1, max: 3, chance: 0.8),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_4', min: 1, max: 3, chance: 0.8),
         ],
       ),
-      'enemy_raider': BattleEnemyDefinition(
+      'enemy_raider': BattleEnemyDefinitionDto(
         id: 'enemy_raider',
         name: 'Dust Raider',
         faction: CombatFaction.mercenary,
         summary: '짧은 교전 뒤 파고드는 돌격형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 50,
           maxMp: 6,
           physicalAttack: 14,
@@ -172,8 +172,8 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 3,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageDealt,
             mode: BattleModifierMode.percent,
             value: 0.06,
@@ -181,13 +181,13 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
             sourceId: 'enemy_raider_lunge',
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_raider_expose',
             name: 'Expose',
             summary: '적 하나의 방어 자세를 무너뜨려 받는 피해를 증가시킨다.',
             effectType: BattleSkillEffectType.grantModifier,
-            modifier: BattleModifier(
+            modifier: BattleModifierDto(
               type: BattleModifierType.damageTaken,
               mode: BattleModifierMode.percent,
               value: 0.12,
@@ -196,17 +196,17 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
             durationLifecycles: 2,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_3', min: 1, max: 2, chance: 0.68),
-          BattleDropEntry(materialId: 'm_4', min: 1, max: 1, chance: 0.36),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_3', min: 1, max: 2, chance: 0.68),
+          BattleDropEntryDto(materialId: 'm_4', min: 1, max: 1, chance: 0.36),
         ],
       ),
-      'enemy_glassback': BattleEnemyDefinition(
+      'enemy_glassback': BattleEnemyDefinitionDto(
         id: 'enemy_glassback',
         name: 'Glassback Bulwark',
         faction: CombatFaction.homunculus,
         summary: '균열 유리갑으로 전열을 막아서는 방벽형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 52,
           maxMp: 6,
           physicalAttack: 11,
@@ -227,16 +227,16 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
           regen: 0.015,
           mpRegen: 3,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageTaken,
             mode: BattleModifierMode.percent,
             value: -0.08,
             sourceId: 'enemy_glassback_shell',
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_glassback_reflective_shell',
             name: 'Reflective Shell',
             summary: '반짝이는 갑각을 세워 자신에게 보호막을 부여한다.',
@@ -245,19 +245,19 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
             shieldValue: 14,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_4', min: 1, max: 2, chance: 0.66),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_4', min: 1, max: 2, chance: 0.66),
         ],
-        specialDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_26', min: 1, max: 1, chance: 0.18),
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_26', min: 1, max: 1, chance: 0.18),
         ],
       ),
-      'enemy_dust_mender': BattleEnemyDefinition(
+      'enemy_dust_mender': BattleEnemyDefinitionDto(
         id: 'enemy_dust_mender',
         name: 'Dust Mender',
         faction: CombatFaction.mercenary,
         summary: '먼지 회랑의 상처를 급히 봉합하는 보조형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 46,
           maxMp: 8,
           physicalAttack: 5,
@@ -278,8 +278,8 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 4,
         ),
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_dust_mender_quick_patch',
             name: 'Quick Patch',
             summary: '모든 아군의 HP를 즉시 회복한다.',
@@ -289,7 +289,7 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
             effectType: BattleSkillEffectType.heal,
             flatPower: 12,
           ),
-          BattleSkillDefinition(
+          BattleSkillDefinitionDto(
             id: 'enemy_dust_mender_dust_ward',
             name: 'Dust Ward',
             summary: '먼지 장막으로 모든 아군에게 얕은 보호막을 부여한다.',
@@ -300,8 +300,8 @@ const Map<String, BattleEnemyDefinition> stage2BattleEnemyDefinitions =
             shieldValue: 10,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_3', min: 1, max: 2, chance: 0.7),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_3', min: 1, max: 2, chance: 0.7),
         ],
       ),
     };

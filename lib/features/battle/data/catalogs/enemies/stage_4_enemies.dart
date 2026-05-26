@@ -1,13 +1,13 @@
-import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import '../battle_catalog_dtos.dart';
 
-const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
-    <String, BattleEnemyDefinition>{
-      'enemy_sniper': BattleEnemyDefinition(
+const Map<String, BattleEnemyDefinitionDto> stage4BattleEnemyDefinitionDtos =
+    <String, BattleEnemyDefinitionDto>{
+      'enemy_sniper': BattleEnemyDefinitionDto(
         id: 'enemy_sniper',
         name: 'Gale Sniper',
         faction: CombatFaction.mercenary,
         summary: '필중 사격 중심의 저격수',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 54,
           maxMp: 8,
           physicalAttack: 16,
@@ -28,18 +28,18 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 4,
         ),
-        passives: <BattlePassiveEffect>[
-          BattlePassiveEffect(
+        passives: <BattlePassiveEffectDto>[
+          BattlePassiveEffectDto(
             trigger: BattlePassiveTrigger.beforeHitCheck,
             type: BattlePassiveEffectType.alwaysHit,
             sourceId: 'enemy_sniper_true_shot',
           ),
-          BattlePassiveEffect(
+          BattlePassiveEffectDto(
             trigger: BattlePassiveTrigger.beforeDamage,
             type: BattlePassiveEffectType.grantModifier,
             sourceId: 'enemy_sniper_precise_aim',
             durationLifecycles: 1,
-            modifier: BattleModifier(
+            modifier: BattleModifierDto(
               type: BattleModifierType.damageDealt,
               mode: BattleModifierMode.percent,
               value: 0.08,
@@ -48,8 +48,8 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             ),
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_sniper_pin_shot',
             name: 'Pin Shot',
             summary: '정밀 사격으로 적 하나에게 큰 물리 피해를 준다.',
@@ -58,16 +58,16 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             powerMultiplier: 1.55,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_7', min: 1, max: 2, chance: 0.74),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_7', min: 1, max: 2, chance: 0.74),
         ],
       ),
-      'enemy_weaver': BattleEnemyDefinition(
+      'enemy_weaver': BattleEnemyDefinitionDto(
         id: 'enemy_weaver',
         name: 'Bloom Weaver',
         faction: CombatFaction.homunculus,
         summary: '포자를 흩뿌리는 후열형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 58,
           maxMp: 8,
           physicalAttack: 7,
@@ -88,8 +88,8 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 4,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageDealt,
             mode: BattleModifierMode.percent,
             value: 0.1,
@@ -97,8 +97,8 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             sourceId: 'enemy_weaver_spore_burst',
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_weaver_spore_cloud',
             name: 'Spore Cloud',
             summary: '포자 구름으로 모든 적에게 중독을 부여한다.',
@@ -109,19 +109,19 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             durationLifecycles: 2,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_8', min: 1, max: 2, chance: 0.72),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_8', min: 1, max: 2, chance: 0.72),
         ],
-        specialDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_28', min: 1, max: 1, chance: 0.32),
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_28', min: 1, max: 1, chance: 0.32),
         ],
       ),
-      'enemy_tempest': BattleEnemyDefinition(
+      'enemy_tempest': BattleEnemyDefinitionDto(
         id: 'enemy_tempest',
         name: 'Tempest Disciple',
         faction: CombatFaction.mercenary,
         summary: '질주 후 연속 주문을 엮는 기동형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 62,
           maxMp: 6,
           physicalAttack: 9,
@@ -142,16 +142,16 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 3,
         ),
-        passives: <BattlePassiveEffect>[
-          BattlePassiveEffect(
+        passives: <BattlePassiveEffectDto>[
+          BattlePassiveEffectDto(
             trigger: BattlePassiveTrigger.afterAction,
             type: BattlePassiveEffectType.extraAttack,
             sourceId: 'enemy_tempest_chain_cast',
             value: 1,
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_tempest_chain_arc',
             name: 'Chain Arc',
             summary: '연쇄 번개로 모든 적에게 마법 피해를 준다.',
@@ -161,16 +161,16 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             powerMultiplier: 0.9,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_8', min: 1, max: 2, chance: 0.78),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_8', min: 1, max: 2, chance: 0.78),
         ],
       ),
-      'enemy_mirage': BattleEnemyDefinition(
+      'enemy_mirage': BattleEnemyDefinitionDto(
         id: 'enemy_mirage',
         name: 'Mirage Harrier',
         faction: CombatFaction.homunculus,
         summary: '회피와 견제를 반복하는 교란형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 56,
           maxMp: 6,
           physicalAttack: 10,
@@ -191,24 +191,24 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 3,
         ),
-        modifiers: <BattleModifier>[
-          BattleModifier(
+        modifiers: <BattleModifierDto>[
+          BattleModifierDto(
             type: BattleModifierType.damageTaken,
             mode: BattleModifierMode.percent,
             value: -0.07,
             sourceId: 'enemy_mirage_distortion',
           ),
         ],
-        passives: <BattlePassiveEffect>[
-          BattlePassiveEffect(
+        passives: <BattlePassiveEffectDto>[
+          BattlePassiveEffectDto(
             trigger: BattlePassiveTrigger.battleStart,
             type: BattlePassiveEffectType.firstStrike,
             sourceId: 'enemy_mirage_blink_in',
             value: 1,
           ),
         ],
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_mirage_false_opening',
             name: 'False Opening',
             summary: '허상을 남겨 자신에게 보호막을 만든다.',
@@ -217,17 +217,17 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             shieldValue: 18,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_7', min: 1, max: 1, chance: 0.34),
-          BattleDropEntry(materialId: 'm_8', min: 1, max: 2, chance: 0.62),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_7', min: 1, max: 1, chance: 0.34),
+          BattleDropEntryDto(materialId: 'm_8', min: 1, max: 2, chance: 0.62),
         ],
       ),
-      'enemy_thunder_moth': BattleEnemyDefinition(
+      'enemy_thunder_moth': BattleEnemyDefinitionDto(
         id: 'enemy_thunder_moth',
         name: 'Thunder Moth',
         faction: CombatFaction.homunculus,
         summary: '전하 비늘을 흩뿌리는 광역 마법형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 58,
           maxMp: 8,
           physicalAttack: 5,
@@ -248,8 +248,8 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 4,
         ),
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_thunder_moth_static_wing',
             name: 'Static Wing',
             summary: '전하 비늘을 흩뿌려 모든 적에게 마법 피해를 준다.',
@@ -259,19 +259,19 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             powerMultiplier: 0.86,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_8', min: 1, max: 2, chance: 0.72),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_8', min: 1, max: 2, chance: 0.72),
         ],
-        specialDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_28', min: 1, max: 1, chance: 0.24),
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_28', min: 1, max: 1, chance: 0.24),
         ],
       ),
-      'enemy_gale_channeler': BattleEnemyDefinition(
+      'enemy_gale_channeler': BattleEnemyDefinitionDto(
         id: 'enemy_gale_channeler',
         name: 'Gale Channeler',
         faction: CombatFaction.mercenary,
         summary: '폭풍 술식을 증폭하는 후열 보조형',
-        stats: BattleCombatStats(
+        stats: BattleCombatStatsDto(
           maxHp: 60,
           maxMp: 8,
           physicalAttack: 6,
@@ -292,8 +292,8 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
           regen: 0.01,
           mpRegen: 4,
         ),
-        skills: <BattleSkillDefinition>[
-          BattleSkillDefinition(
+        skills: <BattleSkillDefinitionDto>[
+          BattleSkillDefinitionDto(
             id: 'enemy_gale_channeler_storm_rite',
             name: 'Storm Rite',
             summary: '폭풍 술식으로 모든 아군의 마법 피해를 증가시킨다.',
@@ -301,7 +301,7 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             priority: 2,
             targetType: BattleSkillTargetType.allAllies,
             effectType: BattleSkillEffectType.grantModifier,
-            modifier: BattleModifier(
+            modifier: BattleModifierDto(
               type: BattleModifierType.damageDealt,
               mode: BattleModifierMode.percent,
               value: 0.1,
@@ -310,7 +310,7 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             ),
             durationLifecycles: 2,
           ),
-          BattleSkillDefinition(
+          BattleSkillDefinitionDto(
             id: 'enemy_gale_channeler_gale_ward',
             name: 'Gale Ward',
             summary: '휘감기는 바람으로 모든 아군에게 보호막을 부여한다.',
@@ -321,8 +321,8 @@ const Map<String, BattleEnemyDefinition> stage4BattleEnemyDefinitions =
             shieldValue: 14,
           ),
         ],
-        normalDrops: <BattleDropEntry>[
-          BattleDropEntry(materialId: 'm_7', min: 1, max: 2, chance: 0.66),
+        normalDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(materialId: 'm_7', min: 1, max: 2, chance: 0.66),
         ],
       ),
     };
