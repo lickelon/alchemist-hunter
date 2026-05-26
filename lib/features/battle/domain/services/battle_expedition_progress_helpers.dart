@@ -16,6 +16,9 @@ class BattleExpeditionProgressHelpers {
       gold: left.gold + right.gold,
       essence: left.essence + right.essence,
       xp: left.xp + right.xp,
+      elapsedRealTime: left.elapsedRealTime + right.elapsedRealTime,
+      victoryCount: left.victoryCount + right.victoryCount,
+      wipeCount: left.wipeCount + right.wipeCount,
       hasSuccessfulBattle:
           left.hasSuccessfulBattle || right.hasSuccessfulBattle,
     );

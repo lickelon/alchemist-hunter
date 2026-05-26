@@ -92,6 +92,7 @@ class BattleExpeditionTickService {
     Duration nextPhaseProgress = expedition.phaseProgress;
     BattleRunState? runState = expedition.runState;
     BattlePendingClaim pendingClaim = expedition.pendingClaim;
+    Duration pendingClaimElapsedRealTime = pendingClaim.elapsedRealTime;
     List<BattleLogEntry> recentLogs = expedition.recentLogs;
     Duration remainingElapsed = _helpers.scaledDuration(
       now.difference(baseTime),
@@ -109,9 +110,12 @@ class BattleExpeditionTickService {
         );
         nextPhaseProgress += consumed;
         remainingElapsed -= consumed;
-        cursorTime = cursorTime.add(
-          _helpers.unscaledDuration(consumed, speedMultiplier),
+        final Duration realConsumed = _helpers.unscaledDuration(
+          consumed,
+          speedMultiplier,
         );
+        pendingClaimElapsedRealTime += consumed;
+        cursorTime = cursorTime.add(realConsumed);
         if (nextPhaseProgress < stageDefinition.searchDuration) {
           break;
         }
@@ -160,9 +164,12 @@ class BattleExpeditionTickService {
         );
         nextPhaseProgress += consumed;
         remainingElapsed -= consumed;
-        cursorTime = cursorTime.add(
-          _helpers.unscaledDuration(consumed, speedMultiplier),
+        final Duration realConsumed = _helpers.unscaledDuration(
+          consumed,
+          speedMultiplier,
         );
+        pendingClaimElapsedRealTime += consumed;
+        cursorTime = cursorTime.add(realConsumed);
         if (nextPhaseProgress < battleActionInterval) {
           break;
         }
@@ -198,6 +205,7 @@ class BattleExpeditionTickService {
               gold: stageDefinition.goldSuccess,
               essence: stageDefinition.essenceSuccess,
               xp: stageDefinition.xpSuccessBase,
+              victoryCount: 1,
               hasSuccessfulBattle: true,
             ),
           );
@@ -257,6 +265,10 @@ class BattleExpeditionTickService {
           ),
         );
         if (step.wiped) {
+          pendingClaim = _helpers.mergePendingClaim(
+            pendingClaim,
+            const BattlePendingClaim(wipeCount: 1),
+          );
           runState = runState.copyWith(
             wipeCount: runState.wipeCount + 1,
             clearCurrentEncounter: true,
@@ -278,9 +290,12 @@ class BattleExpeditionTickService {
         );
         nextPhaseProgress += consumed;
         remainingElapsed -= consumed;
-        cursorTime = cursorTime.add(
-          _helpers.unscaledDuration(consumed, speedMultiplier),
+        final Duration realConsumed = _helpers.unscaledDuration(
+          consumed,
+          speedMultiplier,
         );
+        pendingClaimElapsedRealTime += consumed;
+        cursorTime = cursorTime.add(realConsumed);
         if (nextPhaseProgress < stageDefinition.recoveryDuration) {
           break;
         }
@@ -317,7 +332,9 @@ class BattleExpeditionTickService {
         lastProgressedAt: now,
         phaseProgress: nextPhaseProgress,
         runState: runState,
-        pendingClaim: pendingClaim,
+        pendingClaim: pendingClaim.copyWith(
+          elapsedRealTime: pendingClaimElapsedRealTime,
+        ),
         recentLogs: recentLogs,
       ),
       characters: nextCharacters,

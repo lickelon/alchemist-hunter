@@ -53,6 +53,9 @@ class BattlePendingClaim {
     this.gold = 0,
     this.essence = 0,
     this.xp = 0,
+    this.elapsedRealTime = Duration.zero,
+    this.victoryCount = 0,
+    this.wipeCount = 0,
     this.hasSuccessfulBattle = false,
   });
 
@@ -60,6 +63,9 @@ class BattlePendingClaim {
   final int gold;
   final int essence;
   final int xp;
+  final Duration elapsedRealTime;
+  final int victoryCount;
+  final int wipeCount;
   final bool hasSuccessfulBattle;
 
   bool get isEmpty =>
@@ -74,6 +80,9 @@ class BattlePendingClaim {
     int? gold,
     int? essence,
     int? xp,
+    Duration? elapsedRealTime,
+    int? victoryCount,
+    int? wipeCount,
     bool? hasSuccessfulBattle,
   }) {
     return BattlePendingClaim(
@@ -81,6 +90,9 @@ class BattlePendingClaim {
       gold: gold ?? this.gold,
       essence: essence ?? this.essence,
       xp: xp ?? this.xp,
+      elapsedRealTime: elapsedRealTime ?? this.elapsedRealTime,
+      victoryCount: victoryCount ?? this.victoryCount,
+      wipeCount: wipeCount ?? this.wipeCount,
       hasSuccessfulBattle: hasSuccessfulBattle ?? this.hasSuccessfulBattle,
     );
   }

@@ -125,6 +125,8 @@ class BattleAutoController {
               gold: outcome.success ? stage.goldSuccess : 0,
               essence: outcome.success ? stage.essenceSuccess : 0,
               xp: outcome.success ? stage.xpSuccessBase : 0,
+              victoryCount: outcome.success ? 1 : 0,
+              wipeCount: outcome.wiped ? 1 : 0,
               hasSuccessfulBattle: outcome.success,
             ),
             recentLogs: <BattleLogEntry>[

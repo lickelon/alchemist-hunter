@@ -48,7 +48,39 @@ void main() {
     expect(expedition.status, BattleExpeditionStatus.searching);
     expect(expedition.runState!.currentEncounter, isNull);
     expect(expedition.runState!.allies.single.currentHp, 25);
+    expect(expedition.pendingClaim.elapsedRealTime, const Duration(seconds: 1));
     expect(expedition.pendingClaim.xp, 8);
+    expect(expedition.pendingClaim.victoryCount, 1);
+    expect(expedition.pendingClaim.wipeCount, 0);
+  });
+
+  test('pending claim elapsed time uses accelerated progress time', () {
+    final SessionState state = _sessionWithExpedition(
+      start,
+      status: BattleExpeditionStatus.battling,
+      runState: _runState(
+        allies: <BattleRunUnitState>[_ally('merc_1', currentHp: 30)],
+        currentEncounter: _encounter(),
+      ),
+    );
+
+    final BattleExpeditionSyncResult result = service.syncExpeditions(
+      state: state,
+      syncFrom: start,
+      now: start.add(const Duration(seconds: 5)),
+      speedMultiplier: 2,
+      battleActionInterval: const Duration(seconds: 1),
+      battleExpeditionResolver: _ScriptedBattleExpeditionResolver(),
+      battleCatalogRepository: repository,
+    );
+
+    final BattleExpeditionState expedition =
+        result.battle.stageExpeditions['stage_1']!;
+    expect(
+      expedition.pendingClaim.elapsedRealTime,
+      const Duration(seconds: 10),
+    );
+    expect(expedition.pendingClaim.xp, greaterThan(0));
   });
 
   test('search recovery heals only living allies', () {
@@ -99,6 +131,7 @@ void main() {
         gold: 24,
         essence: 4,
         xp: 8,
+        victoryCount: 1,
         materials: <String, int>{'m_1': 1},
         hasSuccessfulBattle: true,
       ),
@@ -124,6 +157,8 @@ void main() {
     expect(expedition.pendingClaim.gold, 24);
     expect(expedition.pendingClaim.essence, 4);
     expect(expedition.pendingClaim.xp, 8);
+    expect(expedition.pendingClaim.victoryCount, 1);
+    expect(expedition.pendingClaim.wipeCount, 1);
     expect(expedition.pendingClaim.materials, <String, int>{'m_1': 1});
     expect(result.battle.progress.stageCurrentWinStreaks['stage_1'], 0);
   });
@@ -136,6 +171,14 @@ void main() {
     final SessionState state = _sessionWithExpedition(
       start,
       status: BattleExpeditionStatus.recovering,
+      pendingClaim: const BattlePendingClaim(
+        gold: 24,
+        essence: 4,
+        xp: 8,
+        victoryCount: 2,
+        wipeCount: 1,
+        hasSuccessfulBattle: true,
+      ),
       runState: _runState(
         allies: <BattleRunUnitState>[_ally('merc_1', currentHp: 0)],
       ),
@@ -155,6 +198,8 @@ void main() {
         result.battle.stageExpeditions['stage_1']!;
     expect(expedition.status, BattleExpeditionStatus.searching);
     expect(expedition.runState!.allies.single.currentHp, 100);
+    expect(expedition.pendingClaim.victoryCount, 2);
+    expect(expedition.pendingClaim.wipeCount, 1);
   });
 
   test(

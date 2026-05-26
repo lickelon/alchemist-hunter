@@ -24,6 +24,7 @@ void main() {
                 materials: <String, int>{},
                 gold: 0,
                 essence: 0,
+                elapsedRealTime: Duration(seconds: 10),
                 hasSuccessfulBattle: false,
               ),
             ),
@@ -69,6 +70,9 @@ void main() {
               gold: 10,
               essence: 2,
               xp: 4,
+              elapsedRealTime: Duration(seconds: 42),
+              victoryCount: 3,
+              wipeCount: 2,
               hasSuccessfulBattle: true,
             ),
           ),
@@ -90,6 +94,22 @@ void main() {
     expect(
       nextState.battle.stageExpeditions['stage_1']?.pendingClaim.isEmpty,
       true,
+    );
+    expect(
+      nextState
+          .battle
+          .stageExpeditions['stage_1']
+          ?.pendingClaim
+          .elapsedRealTime,
+      Duration.zero,
+    );
+    expect(
+      nextState.battle.stageExpeditions['stage_1']?.pendingClaim.victoryCount,
+      0,
+    );
+    expect(
+      nextState.battle.stageExpeditions['stage_1']?.pendingClaim.wipeCount,
+      0,
     );
   });
 }
