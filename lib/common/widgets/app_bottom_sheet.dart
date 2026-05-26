@@ -1,22 +1,27 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:flutter/material.dart';
 
-/// 모달 바텀 시트의 표준 래퍼.
-///
-/// 기존 코드에서 시트마다 하드코딩되던 `SizedBox(height: screenHeight * X)` 패턴을
-/// 대체한다. 화면 높이의 90 %를 상한으로 하여 기기·방향에 관계없이 안전하게 동작한다.
-///
-/// 사용 예
-/// ```dart
-/// showModalBottomSheet(
-///   context: context,
-///   isScrollControlled: true,
-///   builder: (_) => AppBottomSheet(child: MySheetContent()),
-/// );
-/// ```
-///
-/// [child]는 보통 [Column] + [Expanded] 조합으로 사용한다.
-/// 내부 [ListView]의 스크롤은 [Expanded] 안에서 처리한다.
+Future<T?> showAppBottomSheet<T>({
+  required BuildContext context,
+  required WidgetBuilder builder,
+  bool isDismissible = true,
+  bool enableDrag = true,
+  bool useRootNavigator = false,
+  RouteSettings? routeSettings,
+}) {
+  return showModalBottomSheet<T>(
+    context: context,
+    isScrollControlled: true,
+    isDismissible: isDismissible,
+    enableDrag: enableDrag,
+    useRootNavigator: useRootNavigator,
+    routeSettings: routeSettings,
+    builder: (BuildContext context) {
+      return AppBottomSheet(child: builder(context));
+    },
+  );
+}
+
 class AppBottomSheet extends StatelessWidget {
   const AppBottomSheet({super.key, required this.child});
 
