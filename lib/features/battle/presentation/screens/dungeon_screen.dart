@@ -2,7 +2,7 @@ import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_sheet.dart';
-import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_claim_sheet.dart';
+import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_claim_dialog.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -90,7 +90,7 @@ class DungeonScreen extends ConsumerWidget {
                       ),
                       FilledButton.tonal(
                         onPressed: canClaim
-                            ? () => _showClaimSheet(context, stage)
+                            ? () => _showClaimDialog(context, stage)
                             : null,
                         child: const Text('수령'),
                       ),
@@ -125,12 +125,11 @@ class DungeonScreen extends ConsumerWidget {
     );
   }
 
-  void _showClaimSheet(BuildContext context, String stageId) {
-    showModalBottomSheet<void>(
+  void _showClaimDialog(BuildContext context, String stageId) {
+    showDialog<void>(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
-        return BattleClaimSheet(stageId: stageId);
+        return BattleClaimDialog(stageId: stageId);
       },
     );
   }

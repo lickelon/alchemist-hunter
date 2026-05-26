@@ -176,4 +176,66 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('dungeon screen claims pending rewards from dialog', (
+    WidgetTester tester,
+  ) async {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+    final SessionController session = container.read(
+      sessionControllerProvider.notifier,
+    );
+    final int initialGold = session.state.player.gold;
+    final int initialEssence = session.state.player.essence;
+    final int initialMaterialCount =
+        session.state.player.materialInventory['m_1'] ?? 0;
+
+    session.state = session.state.copyWith(
+      battle: session.state.battle.copyWith(
+        stageExpeditions: <String, BattleExpeditionState>{
+          'stage_1': BattleExpeditionState(
+            status: BattleExpeditionStatus.idle,
+            lastProgressedAt: DateTime(2026, 1, 1, 10),
+            phaseProgress: Duration.zero,
+            runState: const BattleRunState(victoryCount: 2, wipeCount: 1),
+            pendingClaim: const BattlePendingClaim(
+              gold: 12,
+              essence: 3,
+              xp: 5,
+              materials: <String, int>{'m_1': 2},
+              hasSuccessfulBattle: true,
+            ),
+          ),
+        },
+      ),
+    );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(home: Scaffold(body: DungeonScreen())),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('수령'));
+    await tester.pumpAndSettle();
+    expect(find.text('폐허 입구 보상 수령'), findsOneWidget);
+    expect(find.text('경험치 +5'), findsOneWidget);
+
+    await tester.tap(find.text('수령').last);
+    await tester.pumpAndSettle();
+
+    final BattleExpeditionState expedition =
+        session.state.battle.stageExpeditions['stage_1']!;
+    expect(expedition.pendingClaim.isEmpty, true);
+    expect(expedition.runState?.victoryCount, 0);
+    expect(expedition.runState?.wipeCount, 0);
+    expect(session.state.player.gold, initialGold + 12);
+    expect(session.state.player.essence, initialEssence + 3);
+    expect(
+      session.state.player.materialInventory['m_1'],
+      initialMaterialCount + 2,
+    );
+  });
 }
