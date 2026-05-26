@@ -1,11 +1,12 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
-import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/crafted_inventory_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_inventory_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/workshop_display_labels.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_resource_detail_dialogs.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -95,25 +96,29 @@ class _InventoryMaterialTab extends StatelessWidget {
     if (materials.isEmpty) {
       return const Center(child: Text('보유 재료가 없습니다'));
     }
-    return ListView.builder(
-      itemCount: materials.length,
-      itemBuilder: (BuildContext context, int index) {
-        final MaterialInventoryView entry = materials[index];
-        return ListTile(
-          dense: true,
-          contentPadding: EdgeInsets.zero,
-          leading: CatalogAssetIcon(
-            assetPath: CatalogIconAssetPaths.material(entry.id),
-            size: 36,
-            padding: 5,
-          ),
-          title: Text(entry.name),
-          subtitle: Text(
-            '${workshopMaterialRarityLabel(entry.rarity)} / 원소 ${entry.traitSummary}',
-          ),
-          trailing: Text('x${entry.quantity}'),
-        );
-      },
+    return WorkshopResourceIconGrid(
+      items: materials
+          .map((MaterialInventoryView entry) {
+            return WorkshopResourceIconGridItem(
+              key: ValueKey<String>('inventory_material_${entry.id}'),
+              assetPath: CatalogIconAssetPaths.material(entry.id),
+              badgeLabel: 'x${entry.quantity}',
+              semanticLabel: '${entry.name} x${entry.quantity}',
+              tooltipMessage:
+                  '${entry.name} x${entry.quantity}\n${workshopMaterialRarityLabel(entry.rarity)} / 원소 ${entry.traitSummary}',
+              onTap: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return WorkshopMaterialResourceDetailDialog(
+                      material: entry,
+                    );
+                  },
+                );
+              },
+            );
+          })
+          .toList(growable: false),
     );
   }
 }
@@ -128,22 +133,27 @@ class _InventoryTraitTab extends StatelessWidget {
     if (traits.isEmpty) {
       return const Center(child: Text('보유 추출 원소가 없습니다'));
     }
-    return ListView.builder(
-      itemCount: traits.length,
-      itemBuilder: (BuildContext context, int index) {
-        final ExtractedTraitInventoryView entry = traits[index];
-        return ListTile(
-          dense: true,
-          contentPadding: EdgeInsets.zero,
-          leading: CatalogAssetIcon(
-            assetPath: CatalogIconAssetPaths.element(entry.id),
-            size: 36,
-            padding: 5,
-          ),
-          title: Text(entry.name),
-          trailing: Text(workshopTraitAmountLabel(entry.amount)),
-        );
-      },
+    return WorkshopResourceIconGrid(
+      items: traits
+          .map((ExtractedTraitInventoryView entry) {
+            final String amountLabel = workshopTraitAmountLabel(entry.amount);
+            return WorkshopResourceIconGridItem(
+              key: ValueKey<String>('inventory_trait_${entry.id}'),
+              assetPath: CatalogIconAssetPaths.element(entry.id),
+              badgeLabel: amountLabel,
+              semanticLabel: '${entry.name} 원소 $amountLabel',
+              tooltipMessage: '${entry.name} 원소 $amountLabel',
+              onTap: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return WorkshopTraitResourceDetailDialog(trait: entry);
+                  },
+                );
+              },
+            );
+          })
+          .toList(growable: false),
     );
   }
 }
@@ -158,24 +168,27 @@ class _InventoryPotionTab extends StatelessWidget {
     if (potions.isEmpty) {
       return const Center(child: Text('보유 포션이 없습니다'));
     }
-    return ListView.builder(
-      itemCount: potions.length,
-      itemBuilder: (BuildContext context, int index) {
-        final CraftedPotionStackView entry = potions[index];
-        return ListTile(
-          dense: true,
-          contentPadding: EdgeInsets.zero,
-          leading: CatalogAssetIcon(
-            assetPath: CatalogIconAssetPaths.potion(entry.potionId),
-            size: 36,
-            padding: 5,
-          ),
-          title: Text('${entry.name} x${entry.quantity}'),
-          subtitle: Text(
-            '품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}\n원소 ${entry.traitsLabel}',
-          ),
-        );
-      },
+    return WorkshopResourceIconGrid(
+      items: potions
+          .map((CraftedPotionStackView entry) {
+            return WorkshopResourceIconGridItem(
+              key: ValueKey<String>('inventory_potion_${entry.stackKey}'),
+              assetPath: CatalogIconAssetPaths.potion(entry.potionId),
+              badgeLabel: 'x${entry.quantity}',
+              semanticLabel: '${entry.name} x${entry.quantity}',
+              tooltipMessage:
+                  '${entry.name} x${entry.quantity}\n품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}',
+              onTap: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return WorkshopPotionResourceDetailDialog(potion: entry);
+                  },
+                );
+              },
+            );
+          })
+          .toList(growable: false),
     );
   }
 }

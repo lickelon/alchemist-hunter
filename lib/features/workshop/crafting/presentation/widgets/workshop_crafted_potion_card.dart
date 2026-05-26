@@ -1,10 +1,10 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
-import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/crafted_inventory_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_resource_detail_dialogs.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -46,25 +46,25 @@ class _WorkshopCraftedPotionSheet extends ConsumerWidget {
       title: '완성 포션 상세',
       body: potions.isEmpty
           ? const Center(child: Text('완성 포션이 없습니다'))
-          : ListView(
-              children: potions.map((CraftedPotionStackView entry) {
-                return ExpansionTile(
-                  tilePadding: EdgeInsets.zero,
-                  leading: CatalogAssetIcon(
-                    assetPath: CatalogIconAssetPaths.potion(entry.potionId),
-                    size: 36,
-                    padding: 5,
-                  ),
-                  title: Text('${entry.name} x${entry.quantity}'),
-                  subtitle: Text('품질 ${entry.qualityLabel}'),
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                      child: Text(
-                        '점수 ${entry.scoreLabel} / 원소 ${entry.traitsLabel}',
-                      ),
-                    ),
-                  ],
+          : WorkshopResourceIconGrid(
+              items: potions.map((CraftedPotionStackView entry) {
+                return WorkshopResourceIconGridItem(
+                  key: ValueKey<String>('crafted_potion_${entry.stackKey}'),
+                  assetPath: CatalogIconAssetPaths.potion(entry.potionId),
+                  badgeLabel: 'x${entry.quantity}',
+                  semanticLabel: '${entry.name} x${entry.quantity}',
+                  tooltipMessage:
+                      '${entry.name} x${entry.quantity}\n품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}',
+                  onTap: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return WorkshopPotionResourceDetailDialog(
+                          potion: entry,
+                        );
+                      },
+                    );
+                  },
                 );
               }).toList(),
             ),

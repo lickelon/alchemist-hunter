@@ -55,20 +55,50 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('작업실 인벤토리'), findsOneWidget);
-    expect(find.text('Emberroot'), findsOneWidget);
-    expect(find.text('일반 / 원소 Vital / Swift'), findsOneWidget);
     expect(find.text('x2'), findsOneWidget);
+    expect(find.text('Emberroot'), findsNothing);
+
+    await tester.tap(
+      find.byKey(const ValueKey<String>('inventory_material_m_1')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Emberroot'), findsOneWidget);
+    expect(find.text('보유 수량 x2'), findsOneWidget);
+    expect(find.text('희귀도 일반'), findsOneWidget);
+    expect(find.text('원소 Vital / Swift'), findsOneWidget);
+
+    await tester.tap(find.text('닫기').last);
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('원소'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Vital'), findsOneWidget);
+    await tester.tap(
+      find.byKey(const ValueKey<String>('inventory_trait_t_hp')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Vital'), findsWidgets);
     expect(find.text('+0.85'), findsOneWidget);
+
+    await tester.tap(find.text('닫기').last);
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('포션'));
     await tester.pumpAndSettle();
 
-    expect(find.text('활력 포션 x1'), findsOneWidget);
+    expect(find.text('x1'), findsOneWidget);
+
+    await tester.tap(
+      find.byKey(const ValueKey<String>('inventory_potion_p_1|a')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('활력 포션'), findsOneWidget);
+    expect(find.text('보유 수량 x1'), findsOneWidget);
+    expect(find.text('품질 A'), findsOneWidget);
+    expect(find.text('점수 0.84'), findsOneWidget);
     expect(find.textContaining('원소 Aggro 70%, Vital 30%'), findsOneWidget);
   });
 
