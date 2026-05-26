@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
@@ -35,6 +36,7 @@ class AppTheme {
         labelColor: base.colorScheme.primary,
         unselectedLabelColor: base.colorScheme.onSurfaceVariant,
       ),
+      extensions: <ThemeExtension<dynamic>>[AppTextStyles.fromTheme(base)],
     );
   }
 }

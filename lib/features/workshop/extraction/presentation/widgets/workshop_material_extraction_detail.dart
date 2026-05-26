@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
@@ -70,11 +71,14 @@ class _WorkshopMaterialExtractionDetailContentState
     );
 
     Widget buildBody() {
+      final TextStyle subsectionTitleStyle = AppTextStyles.of(
+        context,
+      ).subsectionTitle;
       return SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Text('추출 수량', style: TextStyle(fontWeight: FontWeight.w700)),
+            Text('추출 수량', style: subsectionTitleStyle),
             const SizedBox(height: AppSpacing.md),
             _ExtractionQuantitySlider(
               selectedQuantity: selectedQuantity,
@@ -87,7 +91,7 @@ class _WorkshopMaterialExtractionDetailContentState
               },
             ),
             const SizedBox(height: AppSpacing.lg),
-            const Text('분석 결과', style: TextStyle(fontWeight: FontWeight.w700)),
+            Text('분석 결과', style: subsectionTitleStyle),
             const SizedBox(height: AppSpacing.md),
             Wrap(
               spacing: AppSpacing.md,
@@ -117,7 +121,7 @@ class _WorkshopMaterialExtractionDetailContentState
               }).toList(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            const Text('추출 프로필', style: TextStyle(fontWeight: FontWeight.w700)),
+            Text('추출 프로필', style: subsectionTitleStyle),
             const SizedBox(height: AppSpacing.md),
             WorkshopExtractionProfileList(
               profiles: detail.profiles,

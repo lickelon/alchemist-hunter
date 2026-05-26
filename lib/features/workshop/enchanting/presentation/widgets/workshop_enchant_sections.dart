@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_potion_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_preview_selector.dart';
@@ -23,10 +24,13 @@ class WorkshopEnchantPotionSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextStyle subsectionTitleStyle = AppTextStyles.of(
+      context,
+    ).subsectionTitle;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Text('포션 선택', style: TextStyle(fontWeight: FontWeight.w700)),
+        Text('포션 선택', style: subsectionTitleStyle),
         const SizedBox(height: AppSpacing.md),
         ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: _kSelectorMaxHeight),
@@ -72,10 +76,13 @@ class WorkshopEnchantEquipmentSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextStyle subsectionTitleStyle = AppTextStyles.of(
+      context,
+    ).subsectionTitle;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Text('장비 선택', style: TextStyle(fontWeight: FontWeight.w700)),
+        Text('장비 선택', style: subsectionTitleStyle),
         const SizedBox(height: AppSpacing.md),
         ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: _kSelectorMaxHeight),
@@ -114,16 +121,13 @@ class WorkshopEnchantPreviewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextStyle subsectionTitleStyle = AppTextStyles.of(
+      context,
+    ).subsectionTitle;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          '예상 결과',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
+        Text('예상 결과', style: subsectionTitleStyle),
         const SizedBox(height: AppSpacing.md),
         Container(
           width: double.infinity,
@@ -137,10 +141,7 @@ class WorkshopEnchantPreviewSection extends StatelessWidget {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      preview!.equipmentName,
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
+                    Text(preview!.equipmentName, style: subsectionTitleStyle),
                     const SizedBox(height: AppSpacing.sm),
                     Text('현재 ${preview!.currentEnchantLabel}'),
                     Text('예상 ${preview!.nextEnchantLabel}'),

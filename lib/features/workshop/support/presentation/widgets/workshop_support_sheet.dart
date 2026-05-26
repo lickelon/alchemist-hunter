@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/section_card.dart';
@@ -19,6 +20,9 @@ class WorkshopSupportSheet extends ConsumerWidget {
     final List<WorkshopSupportSlotView> slots = ref.watch(
       workshopSupportSlotViewsProvider,
     );
+    final TextStyle subsectionTitleStyle = AppTextStyles.of(
+      context,
+    ).subsectionTitle;
 
     return AppSheetLayout(
       title: '작업실 보조 슬롯',
@@ -33,7 +37,7 @@ class WorkshopSupportSheet extends ConsumerWidget {
                 padding: const EdgeInsets.only(bottom: AppSpacing.lg),
                 child: SectionCard(
                   title: '${slot.slotLabel} 슬롯',
-                  titleStyle: const TextStyle(fontWeight: FontWeight.w700),
+                  titleStyle: subsectionTitleStyle,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[

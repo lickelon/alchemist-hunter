@@ -1,7 +1,9 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,8 +36,12 @@ class TownEquipmentSheet extends ConsumerWidget {
                 assetPath: CatalogIconAssetPaths.equipment(entry.id),
               ),
               title: Text(entry.name),
-              subtitle: Text(
-                '${entry.slotLabel} / ${entry.statLabel}\n${entry.materialCostLabel}\n제작 시간 ${entry.durationLabel}',
+              subtitle: DetailLines(
+                lines: <String>[
+                  '${entry.slotLabel} / ${entry.statLabel}',
+                  entry.materialCostLabel,
+                  '제작 시간 ${entry.durationLabel}',
+                ],
               ),
               trailing: FilledButton.tonal(
                 onPressed: entry.canCraft
@@ -109,6 +115,6 @@ class _SheetSectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(label, style: const TextStyle(fontWeight: FontWeight.w700));
+    return Text(label, style: AppTextStyles.of(context).subsectionTitle);
   }
 }

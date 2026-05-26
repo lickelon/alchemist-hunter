@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,8 +39,11 @@ class TownMercenaryHireSheet extends ConsumerWidget {
                 return ListTile(
                   dense: true,
                   title: Text(entry.name),
-                  subtitle: Text(
-                    '${entry.tierLabel} / ${entry.roleLabel}\n고용 비용 ${entry.hireCost}${entry.hireHint}',
+                  subtitle: DetailLines(
+                    lines: <String>[
+                      '${entry.tierLabel} / ${entry.roleLabel}',
+                      '고용 비용 ${entry.hireCost}${entry.hireHint}',
+                    ],
                   ),
                   trailing: FilledButton.tonal(
                     onPressed: entry.canHire
