@@ -1,10 +1,10 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
-import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_potion_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_preview_selector.dart';
+import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart';
 import 'package:flutter/material.dart';
 
 const double _kSelectorMaxHeight = 120.0;
@@ -30,29 +30,28 @@ class WorkshopEnchantPotionSelector extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: _kSelectorMaxHeight),
-          child: RadioGroup<String>(
-            groupValue: selectedPotionStackKey,
-            onChanged: onChanged,
-            child: potions.isEmpty
-                ? const Center(child: Text('인챈트에 사용할 포션이 없습니다'))
-                : ListView(
-                    shrinkWrap: true,
-                    children: potions.map((EnchantPotionView potion) {
-                      return RadioListTile<String>(
-                        value: potion.stackKey,
-                        secondary: CatalogAssetIcon(
+          child: potions.isEmpty
+              ? const Center(child: Text('인챈트에 사용할 포션이 없습니다'))
+              : WorkshopResourceIconGrid(
+                  items: potions
+                      .map((EnchantPotionView potion) {
+                        return WorkshopResourceIconGridItem(
+                          key: ValueKey<String>(
+                            'enchant_potion_${potion.stackKey}',
+                          ),
                           assetPath: CatalogIconAssetPaths.potion(
                             potion.potionId,
                           ),
-                        ),
-                        title: Text('${potion.name} x${potion.quantity}'),
-                        subtitle: Text(
-                          '품질 ${potion.qualityLabel} / 원소 ${potion.traitsLabel}',
-                        ),
-                      );
-                    }).toList(),
-                  ),
-          ),
+                          badgeLabel: 'x${potion.quantity}',
+                          semanticLabel: '${potion.name} x${potion.quantity}',
+                          tooltipMessage:
+                              '${potion.name} x${potion.quantity}\n품질 ${potion.qualityLabel} / 원소 ${potion.traitsLabel}',
+                          selected: potion.stackKey == selectedPotionStackKey,
+                          onTap: () => onChanged(potion.stackKey),
+                        );
+                      })
+                      .toList(growable: false),
+                ),
         ),
       ],
     );
@@ -80,29 +79,28 @@ class WorkshopEnchantEquipmentSelector extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: _kSelectorMaxHeight),
-          child: RadioGroup<String>(
-            groupValue: selectedEquipmentId,
-            onChanged: onChanged,
-            child: equipments.isEmpty
-                ? const Center(child: Text('인챈트 가능한 장비가 없습니다'))
-                : ListView(
-                    shrinkWrap: true,
-                    children: equipments.map((EnchantEquipmentView item) {
-                      return RadioListTile<String>(
-                        value: item.equipmentId,
-                        secondary: CatalogAssetIcon(
+          child: equipments.isEmpty
+              ? const Center(child: Text('인챈트 가능한 장비가 없습니다'))
+              : WorkshopResourceIconGrid(
+                  items: equipments
+                      .map((EnchantEquipmentView item) {
+                        return WorkshopResourceIconGridItem(
+                          key: ValueKey<String>(
+                            'enchant_equipment_${item.equipmentId}',
+                          ),
                           assetPath: CatalogIconAssetPaths.equipment(
                             item.blueprintId,
                           ),
-                        ),
-                        title: Text(item.name),
-                        subtitle: Text(
-                          '${item.locationLabel} / ${item.slotLabel}\n${item.statLabel}\n${item.enchantLabel}',
-                        ),
-                      );
-                    }).toList(),
-                  ),
-          ),
+                          badgeLabel: item.slotLabel,
+                          semanticLabel: item.name,
+                          tooltipMessage:
+                              '${item.name}\n${item.locationLabel} / ${item.slotLabel}\n${item.statLabel}\n${item.enchantLabel}',
+                          selected: item.equipmentId == selectedEquipmentId,
+                          onTap: () => onChanged(item.equipmentId),
+                        );
+                      })
+                      .toList(growable: false),
+                ),
         ),
       ],
     );

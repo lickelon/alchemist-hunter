@@ -10,6 +10,7 @@ class WorkshopResourceIconGridItem {
     this.tooltipMessage,
     this.key,
     this.onTap,
+    this.selected = false,
   });
 
   final String assetPath;
@@ -18,6 +19,7 @@ class WorkshopResourceIconGridItem {
   final String? tooltipMessage;
   final Key? key;
   final VoidCallback? onTap;
+  final bool selected;
 }
 
 class WorkshopResourceIconGrid extends StatelessWidget {
@@ -106,12 +108,18 @@ class _WorkshopResourceIconTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final BorderSide borderSide = BorderSide(
+      color: item.selected ? colorScheme.primary : colorScheme.outlineVariant,
+      width: item.selected ? 2 : 1,
+    );
     final Widget tile = SizedBox.square(
       dimension: size,
       child: Material(
-        color: colorScheme.surfaceContainerHighest,
+        color: item.selected
+            ? colorScheme.primaryContainer
+            : colorScheme.surfaceContainerHighest,
         shape: RoundedRectangleBorder(
-          side: BorderSide(color: colorScheme.outlineVariant),
+          side: borderSide,
           borderRadius: BorderRadius.circular(8),
         ),
         clipBehavior: Clip.antiAlias,
@@ -126,6 +134,16 @@ class _WorkshopResourceIconTile extends StatelessWidget {
                   padding: AppSpacing.sm,
                 ),
               ),
+              if (item.selected)
+                Positioned(
+                  right: AppSpacing.xs,
+                  top: AppSpacing.xs,
+                  child: Icon(
+                    Icons.check_circle,
+                    size: 16,
+                    color: colorScheme.primary,
+                  ),
+                ),
               Positioned(
                 right: AppSpacing.xs,
                 bottom: AppSpacing.xs,
@@ -157,6 +175,7 @@ class _WorkshopResourceIconTile extends StatelessWidget {
       message: item.tooltipMessage ?? item.semanticLabel,
       child: Semantics(
         button: item.onTap != null,
+        selected: item.selected,
         label: item.semanticLabel,
         child: tile,
       ),

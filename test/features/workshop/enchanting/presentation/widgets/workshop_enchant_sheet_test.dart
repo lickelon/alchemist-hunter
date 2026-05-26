@@ -60,10 +60,16 @@ void main() {
 
     expect(find.text('포션과 장비를 선택하면 인챈트 결과를 미리 볼 수 있습니다'), findsOneWidget);
 
-    await tester.tap(find.byType(RadioListTile<String>).at(0));
+    await tester.tap(
+      find.byKey(const ValueKey<String>('enchant_potion_p_1|a')),
+    );
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byType(RadioListTile<String>).at(1));
-    await tester.tap(find.byType(RadioListTile<String>).at(1));
+    await tester.ensureVisible(
+      find.byKey(const ValueKey<String>('enchant_equipment_eq_instance_1')),
+    );
+    await tester.tap(
+      find.byKey(const ValueKey<String>('enchant_equipment_eq_instance_1')),
+    );
     await tester.pumpAndSettle();
     expect(find.text('예상 결과'), findsOneWidget);
     expect(find.text('현재 인챈트 없음'), findsOneWidget);
@@ -144,10 +150,16 @@ void main() {
     await tester.tap(find.text('인챈트'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(RadioListTile<String>).at(0));
+    await tester.tap(
+      find.byKey(const ValueKey<String>('enchant_potion_p_1|a')),
+    );
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byType(RadioListTile<String>).at(1));
-    await tester.tap(find.byType(RadioListTile<String>).at(1));
+    await tester.ensureVisible(
+      find.byKey(const ValueKey<String>('enchant_equipment_eq_instance_1')),
+    );
+    await tester.tap(
+      find.byKey(const ValueKey<String>('enchant_equipment_eq_instance_1')),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('기존 인챈트가 교체됩니다'), findsOneWidget);
@@ -248,10 +260,16 @@ void main() {
 
     await tester.tap(find.text('인챈트'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(RadioListTile<String>).at(0));
+    await tester.tap(
+      find.byKey(const ValueKey<String>('enchant_potion_p_1|a')),
+    );
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byType(RadioListTile<String>).at(1));
-    await tester.tap(find.byType(RadioListTile<String>).at(1));
+    await tester.ensureVisible(
+      find.byKey(const ValueKey<String>('enchant_equipment_eq_instance_1')),
+    );
+    await tester.tap(
+      find.byKey(const ValueKey<String>('enchant_equipment_eq_instance_1')),
+    );
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('인챈트 등록'));
     await tester.tap(find.text('인챈트 등록'));
