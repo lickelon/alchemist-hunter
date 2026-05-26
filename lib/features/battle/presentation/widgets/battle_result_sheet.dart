@@ -87,6 +87,10 @@ class _BattleResultList extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (BuildContext context, int index) {
         final BattleLogEntry log = logs[index];
+        final String resultTitle =
+            '${log.success ? '성공' : '실패'} / 골드 ${battleSignedValueLabel(log.gold)} / 정수 ${battleSignedValueLabel(log.essence)}';
+        final String resultSubtitle =
+            '재료 ${log.materials.length}종 / 행동 ${log.turns}회${log.usedLoadoutFallback ? ' / 포션 부족' : ''}';
         return Card(
           child: ExpansionTile(
             initiallyExpanded: index == 0,
@@ -100,7 +104,7 @@ class _BattleResultList extends StatelessWidget {
                   color: log.success ? colorScheme.primary : colorScheme.error,
                 ),
                 const SizedBox(width: AppSpacing.sm),
-                const Expanded(child: Text('전투 결과')),
+                Expanded(child: Text(resultTitle)),
                 if (log.wipedParty)
                   Text('전멸', style: TextStyle(color: colorScheme.error)),
                 const SizedBox(width: AppSpacing.sm),
@@ -110,9 +114,7 @@ class _BattleResultList extends StatelessWidget {
                 ),
               ],
             ),
-            subtitle: Text(
-              '${log.success ? '성공' : '실패'} / 골드 ${battleSignedValueLabel(log.gold)} / 정수 ${battleSignedValueLabel(log.essence)} / 재료 ${log.materials.length}종 / 행동 ${log.turns}회${log.usedLoadoutFallback ? ' / 포션 부족' : ''}',
-            ),
+            subtitle: Text(resultSubtitle),
             childrenPadding: const EdgeInsets.fromLTRB(
               AppSpacing.lg,
               0,
