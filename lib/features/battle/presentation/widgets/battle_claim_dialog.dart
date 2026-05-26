@@ -18,7 +18,6 @@ class BattleClaimDialog extends ConsumerWidget {
     final BattleExpeditionState expedition = ref.watch(
       battleStageExpeditionStateProvider(stageId),
     );
-    final BattleRunState? runState = expedition.runState;
     final BattlePendingClaim claim = expedition.pendingClaim;
     final MaterialCatalogRepository materialCatalog = ref.watch(
       materialCatalogRepositoryProvider,
@@ -35,7 +34,8 @@ class BattleClaimDialog extends ConsumerWidget {
             _ClaimSection(
               title: '런 요약',
               lines: <String>[
-                '성공 ${runState?.victoryCount ?? 0}회 / 실패 ${runState?.wipeCount ?? 0}회',
+                '성공 ${claim.victoryCount}회 / 실패 ${claim.wipeCount}회',
+                '진행 시간 ${_durationLabel(claim.elapsedRealTime)}',
                 '경험치 ${battleSignedValueLabel(claim.xp)}',
               ],
             ),
@@ -72,6 +72,33 @@ class BattleClaimDialog extends ConsumerWidget {
       ],
     );
   }
+}
+
+String _durationLabel(Duration duration) {
+  if (duration <= Duration.zero) {
+    return '0초';
+  }
+  final int totalSeconds = duration.inSeconds;
+  if (totalSeconds == 0) {
+    return '1초 미만';
+  }
+  final int hours = totalSeconds ~/ Duration.secondsPerHour;
+  final int minutes =
+      (totalSeconds % Duration.secondsPerHour) ~/ Duration.secondsPerMinute;
+  final int seconds = totalSeconds % Duration.secondsPerMinute;
+  if (hours > 0) {
+    if (minutes > 0) {
+      return '$hours시간 $minutes분';
+    }
+    return '$hours시간';
+  }
+  if (minutes > 0) {
+    if (seconds > 0) {
+      return '$minutes분 $seconds초';
+    }
+    return '$minutes분';
+  }
+  return '$seconds초';
 }
 
 class _ClaimSection extends StatelessWidget {

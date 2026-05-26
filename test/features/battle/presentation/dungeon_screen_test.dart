@@ -202,6 +202,9 @@ void main() {
               gold: 12,
               essence: 3,
               xp: 5,
+              elapsedRealTime: Duration(minutes: 1, seconds: 5),
+              victoryCount: 2,
+              wipeCount: 1,
               materials: <String, int>{'m_1': 2},
               hasSuccessfulBattle: true,
             ),
@@ -221,6 +224,8 @@ void main() {
     await tester.tap(find.text('수령'));
     await tester.pumpAndSettle();
     expect(find.text('폐허 입구 보상 수령'), findsOneWidget);
+    expect(find.text('성공 2회 / 실패 1회'), findsOneWidget);
+    expect(find.text('진행 시간 1분 5초'), findsOneWidget);
     expect(find.text('경험치 +5'), findsOneWidget);
 
     await tester.tap(find.text('수령').last);
