@@ -116,19 +116,21 @@ actionsPadding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSp
 ```
 콘텐츠와 액션 버튼 사이 간격이 0이다. 콘텐츠 위젯이 스스로 하단 여백을 두지 않으면 버튼과 내용이 붙는다.
 
-### ⚠️ 3-4. 아이콘 배지 vertical padding에 raw 픽셀 값
+### ~~⚠️ 3-4. 아이콘 배지 vertical padding에 raw 픽셀 값~~ ✅ 수정 완료
 `lib/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart:158`
 ```dart
 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: 1),
 ```
 `AppSpacing.xs = 2pt`인데 vertical만 `1`로 하드코딩됐다. `AppSpacing`에 없는 값이다.
+→ 공통 `ResourceIconGrid`로 이동하면서 `AppSpacing.xs`로 통일 완료.
 
-### ⚠️ 3-5. `BorderRadius` 두 곳이 AppRadius 상수를 사용하지 않음
+### ~~⚠️ 3-5. `BorderRadius` 두 곳이 AppRadius 상수를 사용하지 않음~~ ✅ 수정 완료
 `lib/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart:122, 154`
 ```dart
 borderRadius: BorderRadius.circular(8),  // AppRadius.sm과 동일값이지만 상수 미참조
 borderRadius: BorderRadius.circular(6),  // AppRadius에 없는 값
 ```
+→ 공통 `ResourceIconGrid`에서 `AppRadius.card`, `AppRadius.badge`를 사용하도록 변경 완료.
 
 ### ⚠️ 3-6. 스크롤 감지 임계값에 raw 픽셀 magic number
 `lib/features/battle/presentation/widgets/battle_stage_status_sheet.dart:165`
@@ -209,7 +211,7 @@ Tab(text: 'Battle')
 
 → `AppDialogHeight` 상수 또는 `AppBottomSheet`와 동일한 방식의 토큰 정의 필요.
 
-### 🔲 4-7. `AppRadius`에 작은 pill 반지름 없음
+### ~~🔲 4-7. `AppRadius`에 작은 pill 반지름 없음~~ ✅ 수정 완료
 현재 AppRadius:
 - `sm = 8pt` — 카드/컨테이너
 - `md = 12pt` — 인터랙티브 요소
@@ -218,6 +220,7 @@ Tab(text: 'Battle')
 
 아이콘 배지(`BorderRadius.circular(6)`), `AppBadge`(`BorderRadius.circular(AppSpacing.sm)` = 4pt) 같이 작은 pill 형태가 필요한 곳에서 각자 임의 값을 쓴다.  
 → `AppRadius.chip` 또는 `AppRadius.badge`(4~6pt) 추가.
+→ `AppRadius.badge` 추가 완료.
 
 ### 🔲 4-8. `AppBadge`의 borderRadius가 spacing 값을 반지름으로 오용
 `lib/common/widgets/app_badge.dart:17`

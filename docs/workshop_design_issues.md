@@ -29,9 +29,9 @@
 | `AppDialogLayout` | 상세 / 확인 / 보조 입력 다이얼로그에서 사용 |
 | `showAppBottomSheet` | 대시보드 카드에서 시트 진입 시 사용 |
 | `ListCard` | Workshop 기능 카드에서 사용 |
-| `WorkshopResourceIconGrid` | Workshop 재료 / 원소 / 포션 그리드 표시에서 사용 |
+| `ResourceIconGrid` | Workshop 재료 / 원소 / 포션 그리드 표시에서 사용 |
 
-`WorkshopResourceIconGrid`는 현재 Workshop 전용 공통 위젯이다. Town / Characters에서도 같은 패턴을 쓰기 전까지는 `common/widgets`로 올리지 않는다.
+`ResourceIconGrid`는 `common/widgets`의 공통 위젯이다. Workshop뿐 아니라 Town 포션 판매, Characters 장비 선택, Battle 보상 수령에서도 같은 패턴을 쓴다.
 
 ## 4. 이슈별 분석
 
@@ -104,7 +104,7 @@
 권장 조치:
 
 - 제조, 부화, 지원, 스킬트리는 현재 리스트를 유지한다.
-- 이후 다른 자원 선택 화면이 추가되면 `WorkshopResourceIconGrid`를 우선 검토한다.
+- 이후 다른 자원 선택 화면이 추가되면 `ResourceIconGrid`를 우선 검토한다.
 
 우선순위: 낮음
 
@@ -135,24 +135,23 @@
 
 우선순위: 낮음
 
-### 4.5 `WorkshopResourceIconGrid` 위치
+### ~~4.5 `WorkshopResourceIconGrid` 위치~~ ✅ 정리 완료
 
 현황:
 
-- `lib/features/workshop/presentation/widgets`에 있다.
-- Workshop 내부에서만 사용한다.
+- `ResourceIconGrid`로 이름을 바꾸고 `lib/common/widgets`로 이동했다.
+- Workshop / Town / Characters / Battle에서 같은 아이콘 그리드 패턴을 공유한다.
 
 영향:
 
-- feature-first 구조 기준에 맞다.
-- 아직 `common/widgets`로 올릴 근거는 부족하다.
+- feature 전용 위젯을 다른 feature에서 참조하지 않아도 된다.
+- 배지, radius, tile 크기 기준이 한 곳으로 모인다.
 
 권장 조치:
 
-- 현재 위치를 유지한다.
-- Town / Characters에서도 같은 자원 그리드 패턴을 쓰게 되면 그때 공통 위젯 이동을 검토한다.
+- 완료 상태를 유지한다.
 
-우선순위: 없음
+우선순위: 완료
 
 ### ~~4.6 `WorkshopMaterialCard`와 `WorkshopInventoryCard` 역할 중복~~ ✅ 정리 완료
 
@@ -174,4 +173,4 @@
 ## 5. 권장 작업 순서
 
 1. 자원 상세 모달이 더 늘어날 때 상세 행 표현 정리
-2. Town / Characters에서도 자원 그리드를 쓰게 될 경우 `WorkshopResourceIconGrid` 공통화 검토
+2. 남은 Town / Characters 자원 선택 화면에 `ResourceIconGrid` 적용
