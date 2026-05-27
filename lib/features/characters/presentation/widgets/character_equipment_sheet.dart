@@ -3,6 +3,7 @@ import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
+import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
@@ -88,6 +89,7 @@ class _CharacterEquipmentContent extends StatelessWidget {
       character: character,
       slot: slot,
       onEquip: onEquip,
+      showDetailDialog: presentation == _CharacterEquipmentPresentation.sheet,
     );
 
     if (presentation == _CharacterEquipmentPresentation.dialog) {
@@ -164,35 +166,109 @@ class _EquipmentItemList extends StatelessWidget {
     required this.character,
     required this.slot,
     required this.onEquip,
+    required this.showDetailDialog,
   });
 
   final CharacterProgress character;
   final CharacterEquipmentSlotView slot;
   final void Function(String characterId, String equipmentId) onEquip;
+  final bool showDetailDialog;
 
   @override
   Widget build(BuildContext context) {
     if (slot.availableItems.isEmpty) {
       return const Center(child: Text('장착 가능한 장비가 없습니다'));
     }
-    return ListView(
-      children: slot.availableItems.map((EquipmentInstance item) {
-        return ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: CatalogAssetIcon(
-            assetPath: CatalogIconAssetPaths.equipment(item.blueprintId),
-          ),
-          title: Text(item.name),
-          subtitle: Text(item.detailLabel),
-          trailing: FilledButton.tonal(
-            onPressed: () {
+    return ResourceIconGrid(
+      items: slot.availableItems.map((EquipmentInstance item) {
+        final String actionLabel = slot.equippedItem == null ? '장착' : '교체';
+        return ResourceIconGridItem(
+          key: ValueKey<String>('character_equipment_${item.id}'),
+          assetPath: CatalogIconAssetPaths.equipment(item.blueprintId),
+          badgeLabel: _slotBadgeLabel(item.slot),
+          semanticLabel: item.name,
+          tooltipMessage: '${item.name}\n${item.detailLabel}',
+          onTap: () {
+            if (!showDetailDialog) {
               Navigator.of(context).pop();
               onEquip(character.id, item.id);
-            },
-            child: Text(slot.equippedItem == null ? '장착' : '교체'),
-          ),
+              return;
+            }
+            showDialog<void>(
+              context: context,
+              builder: (BuildContext dialogContext) {
+                return _EquipmentDetailDialog(
+                  item: item,
+                  actionLabel: actionLabel,
+                  onEquip: () {
+                    Navigator.of(dialogContext).pop();
+                    Navigator.of(context).pop();
+                    onEquip(character.id, item.id);
+                  },
+                );
+              },
+            );
+          },
         );
       }).toList(),
     );
   }
 }
+
+class _EquipmentDetailDialog extends StatelessWidget {
+  const _EquipmentDetailDialog({
+    required this.item,
+    required this.actionLabel,
+    required this.onEquip,
+  });
+
+  final EquipmentInstance item;
+  final String actionLabel;
+  final VoidCallback onEquip;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppDialogLayout(
+      title: item.name,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(_slotLabel(item.slot)),
+          const SizedBox(height: AppSpacing.sm),
+          Text(item.statLabel),
+          if (item.enchant != null) ...<Widget>[
+            const SizedBox(height: AppSpacing.sm),
+            Text('인챈트 ${item.enchant!.label}'),
+          ],
+          if (item.totalStatModifiers.isNotEmpty ||
+              item.totalModifiers.isNotEmpty ||
+              item.totalPassives.isNotEmpty) ...<Widget>[
+            const SizedBox(height: AppSpacing.sm),
+            Text(item.effectLabel),
+          ],
+        ],
+      ),
+      actions: <Widget>[
+        TextButton.icon(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.close),
+          label: const Text('닫기'),
+        ),
+        FilledButton(onPressed: onEquip, child: Text(actionLabel)),
+      ],
+    );
+  }
+}
+
+String _slotBadgeLabel(EquipmentSlot slot) {
+  return switch (slot) {
+    EquipmentSlot.weapon => '무기',
+    EquipmentSlot.armor => '방어구',
+    EquipmentSlot.accessory => '장신구',
+  };
+}
+
+String _slotLabel(EquipmentSlot slot) => '슬롯 ${_slotBadgeLabel(slot)}';

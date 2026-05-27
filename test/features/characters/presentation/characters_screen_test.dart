@@ -140,9 +140,14 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, '장착').first);
     await tester.pumpAndSettle();
 
-    expect(find.text('Bronze Sword'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey<String>('character_equipment_eq_instance_1')),
+      findsOneWidget,
+    );
 
-    await tester.tap(find.widgetWithText(FilledButton, '장착').last);
+    await tester.tap(
+      find.byKey(const ValueKey<String>('character_equipment_eq_instance_1')),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('무기: Bronze Sword'), findsOneWidget);
