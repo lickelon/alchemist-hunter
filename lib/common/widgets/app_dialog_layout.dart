@@ -48,7 +48,7 @@ class AppDialogLayout extends StatelessWidget {
       actions: actionWidgets,
       actionsPadding: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
-        0,
+        AppSpacing.sm,
         AppSpacing.lg,
         AppSpacing.md,
       ),

@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class AppBadge extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(AppSpacing.sm),
+        borderRadius: AppRadius.badge,
       ),
       child: Text(
         label,
