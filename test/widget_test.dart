@@ -6,9 +6,9 @@ void main() {
   testWidgets('main tabs are visible', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: App()));
 
-    expect(find.text('Town'), findsOneWidget);
-    expect(find.text('Workshop'), findsOneWidget);
-    expect(find.text('Characters'), findsOneWidget);
-    expect(find.text('Battle'), findsOneWidget);
+    expect(find.text('마을'), findsOneWidget);
+    expect(find.text('작업실'), findsOneWidget);
+    expect(find.text('캐릭터'), findsOneWidget);
+    expect(find.text('전투'), findsOneWidget);
   });
 }
