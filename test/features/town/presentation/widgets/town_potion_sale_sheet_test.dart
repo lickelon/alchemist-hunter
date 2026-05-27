@@ -39,8 +39,12 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('활력 포션 x1'), findsOneWidget);
-    expect(find.textContaining('품질 A / 점수 0.84'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey<String>('sale_potion_p_1|a')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('활력 포션'), findsOneWidget);
+    expect(find.text('품질 A'), findsOneWidget);
+    expect(find.text('점수 0.84'), findsOneWidget);
     expect(find.text('p_1|a x1'), findsNothing);
   });
 }
