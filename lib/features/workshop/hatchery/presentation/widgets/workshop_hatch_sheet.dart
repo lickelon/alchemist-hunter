@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
@@ -24,7 +25,7 @@ class WorkshopHatchSheet extends ConsumerWidget {
       title: '호문쿨루스 부화',
       header: Text('정수 $essence / 신비 $arcaneDust / 보유 호문쿨루스 $homunculusCount체'),
       body: recipes.isEmpty
-          ? const Center(child: Text('부화 가능한 레시피가 없습니다'))
+          ? const AppEmptyState('부화 가능한 레시피가 없습니다')
           : ListView(
               children: recipes
                   .map((HomunculusHatchRecipeView recipe) {

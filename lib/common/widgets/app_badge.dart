@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
 class AppBadge extends StatelessWidget {
@@ -20,9 +21,9 @@ class AppBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+        style: AppTextStyles.of(context).dataEmphasis.copyWith(
           color: Theme.of(context).colorScheme.onSecondaryContainer,
-          fontWeight: FontWeight.w600,
+          fontSize: Theme.of(context).textTheme.labelSmall?.fontSize,
         ),
       ),
     );

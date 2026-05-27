@@ -8,16 +8,11 @@ import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_stage_status_view_model.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_smooth_progress_bar.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_actions.dart';
+import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_layout.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_status_card.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_unit_board_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-const double _unitBoardCardHeight = 360;
-const double _unitBoardMinHeight = 220;
-const double _compactLayoutReserveHeight = 250;
-const double _progressCardHeight = 44;
-const double _timelineLineHeight = 24;
 
 class BattleStageStatusSheet extends ConsumerStatefulWidget {
   const BattleStageStatusSheet({super.key, required this.stageId});
@@ -90,10 +85,12 @@ class _BattleStageStatusSheetState
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           final double unitBoardHeight =
-              (constraints.maxHeight - _compactLayoutReserveHeight).clamp(
-                _unitBoardMinHeight,
-                _unitBoardCardHeight,
-              );
+              (constraints.maxHeight -
+                      BattleStageStatusLayout.compactLayoutReserveHeight)
+                  .clamp(
+                    BattleStageStatusLayout.unitBoardMinHeight,
+                    BattleStageStatusLayout.unitBoardCardHeight,
+                  );
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -123,7 +120,7 @@ class _BattleStageStatusSheetState
               const SizedBox(height: AppSpacing.lg),
               BattleStatusCard(
                 child: SizedBox(
-                  height: _progressCardHeight,
+                  height: BattleStageStatusLayout.progressCardHeight,
                   child: _BattleStageProgressBody(
                     statusLabel: statusLabel,
                     progress: progress,
@@ -162,7 +159,8 @@ class _BattleStageStatusSheetState
     final bool shouldFollow =
         !_timelineScrollController.hasClients ||
         _timelineScrollController.position.pixels >=
-            _timelineScrollController.position.maxScrollExtent - 12;
+            _timelineScrollController.position.maxScrollExtent -
+                BattleStageStatusLayout.timelineFollowThreshold;
     bool appended = false;
     for (final BattleActionLog action in actions) {
       final String key = _timelineActionKey(encounter, action);
@@ -249,7 +247,9 @@ class _BattleStageTimelineBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       controller: controller,
-      itemExtent: MediaQuery.textScalerOf(context).scale(_timelineLineHeight),
+      itemExtent: MediaQuery.textScalerOf(
+        context,
+      ).scale(BattleStageStatusLayout.timelineLineHeight),
       itemCount: lines.length,
       itemBuilder: (BuildContext context, int index) {
         return Align(

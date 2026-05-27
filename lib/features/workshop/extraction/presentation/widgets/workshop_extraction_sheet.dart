@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_inventory_selectors.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
@@ -21,7 +22,7 @@ class WorkshopExtractionSheet extends ConsumerWidget {
       title: '추출',
       header: Text('재료 선택', style: AppTextStyles.of(context).subsectionTitle),
       body: materials.isEmpty
-          ? const Center(child: Text('추출 가능한 재료가 없습니다'))
+          ? const AppEmptyState('추출 가능한 재료가 없습니다')
           : ResourceIconGrid(
               items: materials
                   .map((MaterialInventoryView material) {

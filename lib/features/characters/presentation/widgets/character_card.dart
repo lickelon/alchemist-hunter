@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
@@ -41,7 +42,7 @@ class CharacterCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       character.name,
-                      style: const TextStyle(fontWeight: FontWeight.w700),
+                      style: AppTextStyles.of(context).subsectionTitle,
                     ),
                   ),
                   Text(

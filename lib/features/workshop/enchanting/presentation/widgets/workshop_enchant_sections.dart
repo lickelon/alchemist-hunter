@@ -2,13 +2,14 @@ import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_potion_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_preview_selector.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:flutter/material.dart';
 
-const double _kSelectorMaxHeight = 120.0;
+const double _kSelectorMaxHeight = ResourceIconGrid.twoRowMaxHeight;
 
 class WorkshopEnchantPotionSelector extends StatelessWidget {
   const WorkshopEnchantPotionSelector({
@@ -35,7 +36,7 @@ class WorkshopEnchantPotionSelector extends StatelessWidget {
         ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: _kSelectorMaxHeight),
           child: potions.isEmpty
-              ? const Center(child: Text('인챈트에 사용할 포션이 없습니다'))
+              ? const AppEmptyState('인챈트에 사용할 포션이 없습니다')
               : ResourceIconGrid(
                   items: potions
                       .map((EnchantPotionView potion) {
@@ -87,7 +88,7 @@ class WorkshopEnchantEquipmentSelector extends StatelessWidget {
         ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: _kSelectorMaxHeight),
           child: equipments.isEmpty
-              ? const Center(child: Text('인챈트 가능한 장비가 없습니다'))
+              ? const AppEmptyState('인챈트 가능한 장비가 없습니다')
               : ResourceIconGrid(
                   items: equipments
                       .map((EnchantEquipmentView item) {

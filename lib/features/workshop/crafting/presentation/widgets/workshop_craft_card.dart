@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
@@ -60,7 +61,7 @@ class WorkshopCraftSheet extends ConsumerWidget {
           ? Text('작업실 큐 가득 참 ($queueLength/$queueCapacity)')
           : null,
       body: options.isEmpty
-          ? const Center(child: Text('등록 가능한 포션이 없습니다'))
+          ? const AppEmptyState('등록 가능한 포션이 없습니다')
           : ListView.builder(
               itemCount: options.length,
               itemBuilder: (BuildContext context, int index) {

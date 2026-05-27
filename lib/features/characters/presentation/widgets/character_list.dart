@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_screen_body.dart';
 import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_card.dart';
@@ -23,7 +24,7 @@ class CharacterList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (characters.isEmpty) {
-      return const Center(child: Text('No characters'));
+      return const AppEmptyState('캐릭터가 없습니다');
     }
 
     return AppScreenBody(

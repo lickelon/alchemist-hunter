@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
@@ -19,7 +20,7 @@ class TownPotionSaleSheet extends ConsumerWidget {
     return AppSheetLayout(
       title: '포션 판매',
       body: views.isEmpty
-          ? const Center(child: Text('판매 가능한 포션이 없습니다'))
+          ? const AppEmptyState('판매 가능한 포션이 없습니다')
           : ResourceIconGrid(
               items: views
                   .map((TownPotionSaleView entry) {

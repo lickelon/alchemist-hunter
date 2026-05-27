@@ -130,10 +130,10 @@ class _MainTabBar extends StatelessWidget {
     return const SafeArea(
       child: TabBar(
         tabs: <Widget>[
-          Tab(icon: Icon(Icons.location_city), text: 'Town'),
-          Tab(icon: Icon(Icons.science), text: 'Workshop'),
-          Tab(icon: Icon(Icons.person), text: 'Characters'),
-          Tab(icon: Icon(Icons.shield), text: 'Battle'),
+          Tab(icon: Icon(Icons.location_city), text: '마을'),
+          Tab(icon: Icon(Icons.science), text: '작업실'),
+          Tab(icon: Icon(Icons.person), text: '캐릭터'),
+          Tab(icon: Icon(Icons.shield), text: '전투'),
         ],
       ),
     );

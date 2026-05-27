@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_detail_section.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class CharacterCombatSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(powerLabel, style: const TextStyle(fontWeight: FontWeight.w600)),
+          Text(powerLabel, style: AppTextStyles.of(context).dataEmphasis),
           const SizedBox(height: AppSpacing.lg),
           _StatGrid(pairs: statPairs),
         ],
@@ -99,7 +100,7 @@ class _StatCell extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
+        Text(value, style: AppTextStyles.of(context).dataEmphasis),
       ],
     );
   }

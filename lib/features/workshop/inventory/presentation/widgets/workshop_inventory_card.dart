@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/crafted_inventory_selectors.dart';
@@ -94,7 +95,7 @@ class _InventoryMaterialTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (materials.isEmpty) {
-      return const Center(child: Text('보유 재료가 없습니다'));
+      return const AppEmptyState('보유 재료가 없습니다');
     }
     return ResourceIconGrid(
       items: materials
@@ -131,7 +132,7 @@ class _InventoryTraitTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (traits.isEmpty) {
-      return const Center(child: Text('보유 추출 원소가 없습니다'));
+      return const AppEmptyState('보유 추출 원소가 없습니다');
     }
     return ResourceIconGrid(
       items: traits
@@ -166,7 +167,7 @@ class _InventoryPotionTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (potions.isEmpty) {
-      return const Center(child: Text('보유 포션이 없습니다'));
+      return const AppEmptyState('보유 포션이 없습니다');
     }
     return ResourceIconGrid(
       items: potions

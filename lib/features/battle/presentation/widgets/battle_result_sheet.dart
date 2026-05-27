@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/common/themes/app_dialog_heights.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
@@ -29,7 +30,7 @@ class BattleResultSheet extends ConsumerWidget {
       title: '$stageName 전투 기록',
       header: Text(logs.isEmpty ? '기록 없음' : '기록 ${logs.length}건'),
       body: logs.isEmpty
-          ? const Center(child: Text('전투 기록이 없습니다.'))
+          ? const AppEmptyState('전투 기록이 없습니다.')
           : _BattleResultList(logs: logs, materialCatalog: materialCatalog),
     );
   }
@@ -62,7 +63,7 @@ class BattleResultDialog extends ConsumerWidget {
             width: double.maxFinite,
             height: MediaQuery.sizeOf(context).height * AppDialogHeights.medium,
             child: logs.isEmpty
-                ? const Center(child: Text('전투 기록이 없습니다.'))
+                ? const AppEmptyState('전투 기록이 없습니다.')
                 : _BattleResultList(
                     logs: logs,
                     materialCatalog: materialCatalog,

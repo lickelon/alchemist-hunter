@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
@@ -17,23 +18,33 @@ class TownMercenaryHireSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: '용병 고용',
-      header: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      header: Text('보유 골드 $gold'),
+      footer: Row(
         children: <Widget>[
-          Text('보유 골드 $gold'),
-          const SizedBox(height: AppSpacing.md),
-          FilledButton.tonal(
-            onPressed: () {
-              ref
-                  .read(mercenaryControllerProvider)
-                  .refreshMercenaryCandidates();
-            },
-            child: const Text('후보 갱신'),
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.close),
+              label: const Text('닫기'),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: FilledButton.tonal(
+              onPressed: () {
+                ref
+                    .read(mercenaryControllerProvider)
+                    .refreshMercenaryCandidates();
+              },
+              child: const Text('후보 갱신'),
+            ),
           ),
         ],
       ),
       body: candidates.isEmpty
-          ? const Center(child: Text('고용 후보가 없습니다'))
+          ? const AppEmptyState('고용 후보가 없습니다')
           : ListView(
               children: candidates.map((TownMercenaryCandidateView entry) {
                 return ListTile(

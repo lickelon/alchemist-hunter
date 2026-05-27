@@ -1,7 +1,9 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_dialog_heights.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
@@ -156,7 +158,7 @@ class _EquipmentHeader extends StatelessWidget {
             ),
           ),
         const Divider(),
-        const Text('보관 장비', style: TextStyle(fontWeight: FontWeight.w700)),
+        Text('보관 장비', style: AppTextStyles.of(context).subsectionTitle),
       ],
     );
   }
@@ -178,7 +180,7 @@ class _EquipmentItemList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (slot.availableItems.isEmpty) {
-      return const Center(child: Text('장착 가능한 장비가 없습니다'));
+      return const AppEmptyState('장착 가능한 장비가 없습니다');
     }
     return ResourceIconGrid(
       items: slot.availableItems.map((EquipmentInstance item) {

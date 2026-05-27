@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
@@ -51,7 +52,7 @@ class TownShopSheet extends ConsumerWidget {
         ],
       ),
       body: shop.items.isEmpty
-          ? const Center(child: Text('판매 재료가 없습니다'))
+          ? const AppEmptyState('판매 재료가 없습니다')
           : ListView.builder(
               itemCount: shop.items.length,
               itemBuilder: (BuildContext context, int index) {

@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/themes/app_tree_layout.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
@@ -7,9 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alchemist_hunter/features/workshop/dashboard/presentation/viewmodels/workshop_shared_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/presentation/viewmodels/workshop_skill_tree_controller.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/presentation/viewmodels/workshop_skill_tree_selectors.dart';
-
-const double _kDepthIndent = 20.0;
-const int _kMaxDepth = 6;
 
 class WorkshopSkillTreeSheet extends ConsumerWidget {
   const WorkshopSkillTreeSheet({super.key});
@@ -26,17 +24,21 @@ class WorkshopSkillTreeSheet extends ConsumerWidget {
       header: Text('신비 $arcaneDust'),
       body: ListView(
         children: nodes.map((WorkshopSkillNodeView node) {
-          final int clampedDepth = node.depth.clamp(0, _kMaxDepth);
+          final int clampedDepth = node.depth.clamp(0, AppTreeLayout.maxDepth);
           return Padding(
             padding: EdgeInsets.only(
-              left: clampedDepth * _kDepthIndent,
+              left: clampedDepth * AppTreeLayout.depthIndent,
               bottom: AppSpacing.md,
             ),
             child: Card(
               child: ListTile(
                 dense: true,
-                title: Text(
-                  '${node.depth == 0 ? "●" : "↳"} ${node.name} (${node.levelLabel})',
+                title: Row(
+                  children: <Widget>[
+                    Text(node.depth == 0 ? '●' : '↳'),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(child: Text('${node.name} (${node.levelLabel})')),
+                  ],
                 ),
                 subtitle: DetailLines(
                   description: node.description,

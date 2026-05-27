@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/section_card.dart';
 import 'package:flutter/material.dart';
 
@@ -21,8 +22,7 @@ class CharacterDetailSection extends StatelessWidget {
       child: SectionCard(
         margin: EdgeInsets.zero,
         title: title,
-        titleStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-          fontWeight: FontWeight.w700,
+        titleStyle: AppTextStyles.of(context).subsectionTitle.copyWith(
           color: Theme.of(context).colorScheme.primary,
         ),
         trailing: trailing,

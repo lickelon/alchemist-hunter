@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class WorkshopTraitInventoryStrip extends StatelessWidget {
     return SizedBox(
       height: 72,
       child: traits.isEmpty
-          ? const Center(child: Text('추출된 원소가 없습니다'))
+          ? const AppEmptyState('추출된 원소가 없습니다')
           : ListView.separated(
               scrollDirection: Axis.horizontal,
               itemBuilder: (BuildContext context, int index) {
