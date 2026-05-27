@@ -173,4 +173,4 @@
 ## 5. 권장 작업 순서
 
 1. 자원 상세 모달이 더 늘어날 때 상세 행 표현 정리
-2. 남은 Town / Characters 자원 선택 화면에 `ResourceIconGrid` 적용
+2. 새 자원 선택 화면이 추가되면 `ResourceIconGrid` 우선 검토
