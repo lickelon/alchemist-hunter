@@ -42,13 +42,7 @@ class BattleAssignmentSheet extends ConsumerWidget {
                     }
                   : null,
               title: Text(character.name),
-              subtitle: Text(
-                '${character.typeLabel} / 전투력 ${character.power}${character.assignmentHint.isNotEmpty
-                    ? " / ${character.assignmentHint}"
-                    : character.assignable
-                    ? ""
-                    : " / 파티가 가득 참"}',
-              ),
+              subtitle: _AssignmentSubtitle(character: character),
               controlAffinity: ListTileControlAffinity.trailing,
             );
           }),
@@ -122,6 +116,45 @@ class BattleAssignmentSheet extends ConsumerWidget {
             }),
         ],
       ),
+    );
+  }
+}
+
+class _AssignmentSubtitle extends StatelessWidget {
+  const _AssignmentSubtitle({required this.character});
+
+  final BattleAssignmentCharacterView character;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextStyle? detailStyle = theme.textTheme.bodySmall?.copyWith(
+      color: theme.colorScheme.onSurfaceVariant,
+    );
+    final TextStyle? errorStyle = theme.textTheme.bodySmall?.copyWith(
+      color: theme.colorScheme.error,
+    );
+    final String? statusLine = character.assignmentHint.isNotEmpty
+        ? character.assignmentHint
+        : character.assignable
+        ? null
+        : '파티가 가득 참';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          '${character.typeLabel} / 전투력 ${character.power}',
+          style: detailStyle,
+        ),
+        if (statusLine != null) ...<Widget>[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            statusLine,
+            style: character.assignmentHint.isEmpty ? errorStyle : detailStyle,
+          ),
+        ],
+      ],
     );
   }
 }

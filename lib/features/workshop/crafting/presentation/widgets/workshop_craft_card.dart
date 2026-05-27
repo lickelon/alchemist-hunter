@@ -67,7 +67,6 @@ class WorkshopCraftSheet extends ConsumerWidget {
                 final PotionQueueOptionView option = options[index];
                 return ListTile(
                   dense: true,
-                  contentPadding: EdgeInsets.zero,
                   leading: CatalogAssetIcon(
                     assetPath: CatalogIconAssetPaths.potion(option.potionId),
                     size: 36,
