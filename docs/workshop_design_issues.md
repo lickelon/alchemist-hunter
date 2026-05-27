@@ -31,7 +31,7 @@
 | `ListCard` | Workshop 기능 카드에서 사용 |
 | `ResourceIconGrid` | Workshop 재료 / 원소 / 포션 그리드 표시에서 사용 |
 
-`ResourceIconGrid`는 `common/widgets`의 공통 위젯이다. Workshop뿐 아니라 Town 포션 판매, Characters 장비 선택, Battle 보상 수령에서도 같은 패턴을 쓴다.
+`ResourceIconGrid`는 `common/widgets`의 공통 위젯이다. Workshop뿐 아니라 Town 포션 판매, Town 대장간 보유 장비, Characters 장비 선택, Battle 보상 수령에서도 같은 패턴을 쓴다.
 
 ## 4. 이슈별 분석
 
