@@ -216,15 +216,18 @@ Tab(text: 'Battle')
 ```
 앱 전체가 한국어인데 하단 탭만 영어다. 의도적 선택인지 미처리인지 불명확하고 어디에도 문서화되지 않았다.
 
-### 🔲 4-6. 다이얼로그 높이 시스템 미정의
+### ~~🔲 4-6. 다이얼로그 높이 시스템 미정의~~ ✅ 수정 완료
 `AppBottomSheet`는 `maxHeight = 0.9 * screenHeight`로 캡을 정의했지만, 다이얼로그는 각자 다른 비율을 직접 쓴다.
 
 | 파일 | 줄 | 값 |
 |---|---|---|
 | `battle_result_sheet.dart` | 62 | `* 0.52` |
-| `workshop_material_extraction_detail.dart` | 159 | `* 0.58` |
+| `battle_stage_drop_sheet.dart` | 55 | `* 0.52` |
+| `character_equipment_sheet.dart` | 100 | `* 0.52` |
+| `workshop_material_extraction_detail.dart` | 163 | `* 0.58` |
 
 → `AppDialogHeight` 상수 또는 `AppBottomSheet`와 동일한 방식의 토큰 정의 필요.
+→ `AppDialogHeights.medium = 0.52`, `AppDialogHeights.tall = 0.58`을 추가하고 4개 사용처를 토큰 참조로 변경 완료.
 
 ### ~~🔲 4-7. `AppRadius`에 작은 pill 반지름 없음~~ ✅ 수정 완료
 현재 AppRadius:
@@ -297,7 +300,7 @@ AppSpacing에 없는 레이아웃 제약들이 파일 내에 흩어져 있다. �
 | ⚠️ 낮음 | 3-6. 스크롤 감지 magic number `- 12` | battle status sheet |
 | ⚠️ 낮음 | 4-2. w600/w700 기준 미정의 | 앱 전반 |
 | ⚠️ 낮음 | 4-5. 탭 바 영어 | app.dart |
-| ⚠️ 낮음 | 4-6. 다이얼로그 높이 시스템 미정의 | battle, workshop, character |
+| ✅ 완료 | 4-6. 다이얼로그 높이 시스템 미정의 | battle, workshop, character |
 | ✅ 완료 | 4-8. `AppBadge` borderRadius spacing 값 오용 | app_badge |
 | ⚠️ 낮음 | 4-9. `_kSelectorMaxHeight` magic number | workshop enchant |
 | ⚠️ 낮음 | 4-10. `_kDepthIndent` AppSpacing 미등록 | town/workshop skill tree |
