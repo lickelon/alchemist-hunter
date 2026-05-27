@@ -19,12 +19,10 @@
 → `DetailLines`로 분리 완료.
 
 ### ~~⚠️ 1-2. TownPotionSaleSheet — subtitle 2줄~~ ✅ 수정 완료
-`lib/features/town/presentation/widgets/sheets/town_potion_sale_sheet.dart:32`
-```dart
-'품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}\n판매가 ${entry.saleValue}'
-```
-판매가가 다음 줄로 내려가 핵심 정보(가격)의 위치가 불명확하다.  
-→ `DetailLines` 적용 완료.
+`lib/features/town/presentation/widgets/sheets/town_potion_sale_sheet.dart`
+
+ListTile subtitle에 `\n`으로 품질/점수/판매가를 구겨 넣고 있었다.  
+→ `ResourceIconGrid` + 상세 모달(`_PotionSaleDetailDialog`) 구조로 전환 완료. 각 필드가 모달 내 개별 행으로 표시된다.
 
 ### ~~⚠️ 1-3. TownMercenaryHireSheet — subtitle 2줄~~ ✅ 수정 완료
 `lib/features/town/presentation/widgets/sheets/town_mercenary_hire_sheet.dart:42`
@@ -46,17 +44,17 @@
 ## 2. 컴포넌트 중복 / 패턴 불일치
 
 ### ⚠️ 2-1. `_SheetSectionTitle` — private 위젯이 `SectionCard`와 역할 중복
-`lib/features/town/presentation/widgets/sheets/town_equipment_sheet.dart:105-113`
+`lib/features/town/presentation/widgets/sheets/town_equipment_sheet.dart`
 ```dart
 class _SheetSectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
-    return Text(label, style: const TextStyle(fontWeight: FontWeight.w700));
+    return Text(label, style: AppTextStyles.of(context).subsectionTitle);
   }
 }
 ```
-`SectionCard`(공통 위젯)가 이미 섹션 구분 역할을 하는데, 이 파일만 별도 private 위젯을 정의했다.  
-`SectionCard`를 쓰면 카드 배경과 패딩까지 일관되게 적용된다.  
-→ `_SheetSectionTitle` 제거 후 `SectionCard`로 교체.
+스타일 인라인 문제는 `AppTextStyles.subsectionTitle` 적용으로 해결됐다.  
+남은 문제: `_SheetSectionTitle` private 위젯 자체가 `SectionCard`(카드 배경 + padding 포함)와 같은 역할을 분리 구현하고 있다. 플레인 텍스트 헤더인지 카드 컨테이너인지 일관성이 없다.  
+→ `_SheetSectionTitle` 제거 후 `SectionCard`로 통일하거나, 카드 없는 헤더 패턴을 디자인 시스템에 명시.
 
 ### ~~⚠️ 2-2. `BattleResultSheet` — ExpansionTile title/subtitle 역할 역전~~ ✅ 수정 완료
 `lib/features/battle/presentation/widgets/battle_result_sheet.dart:93-115`
@@ -103,6 +101,15 @@ contentPadding: EdgeInsets.zero,
 ```
 전역 `ListTileThemeData.contentPadding = horizontal: 12, vertical: 2`를 덮어써서, 이 리스트의 아이콘이 `AppBottomSheet`의 12pt outer padding 경계에 바로 붙는다. 같은 시트 내 `AppSheetLayout` 타이틀과 수직 정렬이 어긋난다.
 
+`WorkshopCraftSheet`는 `AppSheetLayout` 바로 아래의 최상위 목록이므로 전역 `ListTileTheme`을 우선 따르는 편이 자연스럽다.  
+동일 패턴의 추가 점검 후보:
+
+- `lib/features/characters/presentation/widgets/character_equipment_sheet.dart`
+- `lib/features/workshop/extraction/presentation/widgets/workshop_extraction_profile_list.dart`
+- `lib/features/workshop/crafting/presentation/widgets/workshop_enqueue_options_dialog.dart`
+
+위 3곳은 섹션 내부 또는 다이얼로그 내부 옵션 리스트라 `EdgeInsets.zero`가 의도된 예외일 수 있다. 제거보다 예외 기준 명시가 먼저 필요하다.
+
 ### ⚠️ 3-2. `SectionCard` 내부 padding이 outer padding과 이중 합산됨
 `lib/common/widgets/section_card.dart:27`
 
@@ -117,20 +124,24 @@ actionsPadding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSp
 콘텐츠와 액션 버튼 사이 간격이 0이다. 콘텐츠 위젯이 스스로 하단 여백을 두지 않으면 버튼과 내용이 붙는다.
 
 ### ~~⚠️ 3-4. 아이콘 배지 vertical padding에 raw 픽셀 값~~ ✅ 수정 완료
-`lib/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart:158`
+구 경로: `lib/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart`  
+현 경로: `lib/common/widgets/resource_icon_grid.dart`
 ```dart
+// 이전
 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: 1),
 ```
-`AppSpacing.xs = 2pt`인데 vertical만 `1`로 하드코딩됐다. `AppSpacing`에 없는 값이다.
+`AppSpacing.xs = 2pt`인데 vertical만 `1`로 하드코딩됐다.  
 → 공통 `ResourceIconGrid`로 이동하면서 `AppSpacing.xs`로 통일 완료.
 
 ### ~~⚠️ 3-5. `BorderRadius` 두 곳이 AppRadius 상수를 사용하지 않음~~ ✅ 수정 완료
-`lib/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart:122, 154`
+구 경로: `lib/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart`  
+현 경로: `lib/common/widgets/resource_icon_grid.dart`
 ```dart
+// 이전
 borderRadius: BorderRadius.circular(8),  // AppRadius.sm과 동일값이지만 상수 미참조
 borderRadius: BorderRadius.circular(6),  // AppRadius에 없는 값
 ```
-→ 공통 `ResourceIconGrid`에서 `AppRadius.card`, `AppRadius.badge`를 사용하도록 변경 완료.
+→ 공통 `ResourceIconGrid`로 이동하면서 `AppRadius.card`, `AppRadius.badge` 참조로 변경 완료.
 
 ### ⚠️ 3-6. 스크롤 감지 임계값에 raw 픽셀 magic number
 `lib/features/battle/presentation/widgets/battle_stage_status_sheet.dart:165`
@@ -222,13 +233,13 @@ Tab(text: 'Battle')
 → `AppRadius.chip` 또는 `AppRadius.badge`(4~6pt) 추가.
 → `AppRadius.badge` 추가 완료.
 
-### 🔲 4-8. `AppBadge`의 borderRadius가 spacing 값을 반지름으로 오용
-`lib/common/widgets/app_badge.dart:17`
+### ⚠️ 4-8. `AppBadge`의 borderRadius가 spacing 값을 반지름으로 오용
+`lib/common/widgets/app_badge.dart`
 ```dart
 borderRadius: BorderRadius.circular(AppSpacing.sm), // 4pt — spacing 상수를 radius로 사용
 ```
 `AppSpacing.sm = 4`는 간격 값인데 모서리 반지름에 사용됐다.  
-4-7에서 `AppRadius.badge`가 정의되면 이를 참조하도록 교체.
+`AppRadius.badge`(4-7에서 추가 완료)로 교체 필요.
 
 ### 🔲 4-9. `_kSelectorMaxHeight = 120.0` — 레이아웃 제약이 magic number
 `lib/features/workshop/enchanting/presentation/widgets/workshop_enchant_sections.dart:10`
@@ -238,11 +249,13 @@ const double _kSelectorMaxHeight = 120.0;
 아이콘 그리드 2행 분량(`tileSize 52 + spacing 4 + tileSize 52 + runSpacing 4 = 112`에 여유)이지만, 타일 크기(`tileSize = 52`)와의 관계가 코드에 표현되어 있지 않다. 타일 크기 변경 시 이 값도 수동으로 맞춰야 한다.
 
 ### 🔲 4-10. `_kDepthIndent = 20.0` — AppSpacing에 없는 레이아웃 상수
-`lib/features/town/presentation/widgets/sheets/town_skill_tree_sheet.dart:9`
+두 파일에 동일 상수가 중복 정의되어 있다.
+- `lib/features/town/presentation/widgets/sheets/town_skill_tree_sheet.dart`
+- `lib/features/workshop/skill_tree/presentation/widgets/workshop_skill_tree_sheet.dart`
 ```dart
 const double _kDepthIndent = 20.0;
 ```
-`AppSpacing`에 없는 값이 파일 로컬 상수로만 존재한다.
+`AppSpacing`에 없는 값이 각 파일에 로컬 상수로 분리 존재한다. 값이 같으므로 하나로 통일 가능하다.
 
 ### 🔲 4-11. `BattleStageStatusSheet` 레이아웃 상수 5개가 파일 상단에 하드코딩
 `lib/features/battle/presentation/widgets/battle_stage_status_sheet.dart:16-20`
@@ -259,20 +272,28 @@ AppSpacing에 없는 레이아웃 제약들이 파일 내에 흩어져 있다. �
 
 ## 우선순위 요약
 
-| 우선순위 | 항목 | 파급 범위 |
+| 상태 | 항목 | 파급 범위 |
 |---|---|---|
-| 완료 | 1-1~1-4. subtitle `\n` 정보 밀도 | town 시트 전반, battle result |
-| 완료 | 2-2. BattleResultSheet title/subtitle 역전 | battle |
-| 완료 | 4-1. 섹션 소제목 스타일 토큰 없음 | 앱 전반 |
-| 중간 | 2-1. `_SheetSectionTitle` 중복 | town equipment |
-| 중간 | 2-3. BattleAssignment 삼항 중첩 오류 처리 | battle |
-| 중간 | 3-1. WorkshopCraftSheet contentPadding 무력화 | workshop craft |
-| 중간 | 3-2. SectionCard 이중 padding | 공통 |
-| 중간 | 4-3. 드래그 핸들 없음 | 모든 bottom sheet |
-| 중간 | 4-4. empty state 위젯 미정의 | 앱 전반 |
-| 낮음 | 2-4. 스킬트리 불릿 기호 문자열 내 포함 | town skill tree |
-| 낮음 | 2-5. 용병 고용 header 역할 혼재 | town mercenary |
-| 낮음 | 3-3~3-6. 개별 padding raw 값 | 산발적 |
-| 낮음 | 4-2. w600/w700 기준 미정의 | 앱 전반 |
-| 낮음 | 4-5. 탭 바 영어 | app.dart |
-| 낮음 | 4-6~4-11. AppRadius/AppSpacing 시스템 갭 | 공통 |
+| ✅ 완료 | 1-1~1-4. subtitle `\n` 정보 밀도 | town 시트 전반, battle result |
+| ✅ 완료 | 2-2. BattleResultSheet title/subtitle 역전 | battle |
+| ✅ 완료 | 3-4. 배지 vertical padding raw 값 → 공통 `ResourceIconGrid`로 이동하면서 수정 | workshop → common |
+| ✅ 완료 | 3-5. BorderRadius 하드코딩 → `AppRadius.card`/`AppRadius.badge` 참조로 변경, 공통 이동 | workshop → common |
+| ✅ 완료 | 4-1. 섹션 소제목 스타일 토큰 없음 → `AppTextStyles.subsectionTitle` | 앱 전반 |
+| ✅ 완료 | 4-7. `AppRadius.badge` 미정의 → `AppRadius.xs = 4pt`, `AppRadius.badge` 추가 | AppRadius |
+| ⚠️ 중간 | 2-1. `_SheetSectionTitle` 중복 | town equipment |
+| ⚠️ 중간 | 2-3. BattleAssignment 삼항 중첩 오류 처리 | battle |
+| ⚠️ 중간 | 3-1. WorkshopCraftSheet contentPadding 무력화 | workshop craft |
+| ⚠️ 중간 | 3-2. SectionCard 이중 padding | 공통 |
+| ⚠️ 중간 | 4-3. 드래그 핸들 없음 | 모든 bottom sheet |
+| ⚠️ 중간 | 4-4. empty state 위젯 미정의 | 앱 전반 |
+| ⚠️ 낮음 | 2-4. 스킬트리 불릿 기호 문자열 내 포함 | town skill tree |
+| ⚠️ 낮음 | 2-5. 용병 고용 header 역할 혼재 | town mercenary |
+| ⚠️ 낮음 | 3-3. AppDialogLayout actionsPadding top 0 | app_dialog_layout |
+| ⚠️ 낮음 | 3-6. 스크롤 감지 magic number `- 12` | battle status sheet |
+| ⚠️ 낮음 | 4-2. w600/w700 기준 미정의 | 앱 전반 |
+| ⚠️ 낮음 | 4-5. 탭 바 영어 | app.dart |
+| ⚠️ 낮음 | 4-6. 다이얼로그 높이 시스템 미정의 | battle, workshop, character |
+| ⚠️ 낮음 | 4-8. `AppBadge` borderRadius spacing 값 오용 | app_badge |
+| ⚠️ 낮음 | 4-9. `_kSelectorMaxHeight` magic number | workshop enchant |
+| ⚠️ 낮음 | 4-10. `_kDepthIndent` AppSpacing 미등록 | town/workshop skill tree |
+| ⚠️ 낮음 | 4-11. BattleStageStatusSheet 레이아웃 상수 5개 | battle status sheet |
