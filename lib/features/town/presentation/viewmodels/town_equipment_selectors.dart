@@ -134,7 +134,7 @@ townEquipmentBlueprintViewsProvider = Provider<List<TownEquipmentBlueprintView>>
         return TownEquipmentBlueprintView(
           id: blueprint.id,
           name: blueprint.name,
-          slotLabel: blueprint.slot.name,
+          slotLabel: _equipmentSlotLabel(blueprint.slot),
           statLabel:
               blueprint.statModifiers.isEmpty &&
                   blueprint.modifiers.isEmpty &&
@@ -166,12 +166,20 @@ townEquipmentInventoryViewsProvider =
               id: entry.id,
               blueprintId: entry.blueprintId,
               name: entry.name,
-              slotLabel: entry.slot.name,
+              slotLabel: _equipmentSlotLabel(entry.slot),
               statLabel: entry.detailLabel,
             );
           })
           .toList(growable: false);
     });
+
+String _equipmentSlotLabel(EquipmentSlot slot) {
+  return switch (slot) {
+    EquipmentSlot.weapon => '무기',
+    EquipmentSlot.armor => '방어구',
+    EquipmentSlot.accessory => '장신구',
+  };
+}
 
 final Provider<List<TownForgeJobView>> townForgeJobViewsProvider =
     Provider<List<TownForgeJobView>>((Ref ref) {

@@ -1,9 +1,11 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
+import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
+import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -92,16 +94,53 @@ class TownEquipmentSheet extends ConsumerWidget {
               child: Text('보유 장비가 없습니다'),
             )
           else
-            ...inventory.map((TownEquipmentInventoryView entry) {
-              return ListTile(
-                dense: true,
-                leading: CatalogAssetIcon(
-                  assetPath: CatalogIconAssetPaths.equipment(entry.blueprintId),
-                ),
-                title: Text(entry.name),
-                subtitle: Text('${entry.slotLabel} / ${entry.statLabel}'),
-              );
-            }),
+            ResourceIconGrid(
+              items: inventory
+                  .map((TownEquipmentInventoryView entry) {
+                    return ResourceIconGridItem(
+                      key: ValueKey<String>('town_equipment_${entry.id}'),
+                      assetPath: CatalogIconAssetPaths.equipment(
+                        entry.blueprintId,
+                      ),
+                      badgeLabel: entry.slotLabel,
+                      semanticLabel: entry.name,
+                      tooltipMessage: '${entry.name}\n${entry.statLabel}',
+                      onTap: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return _EquipmentInventoryDetailDialog(
+                              entry: entry,
+                            );
+                          },
+                        );
+                      },
+                    );
+                  })
+                  .toList(growable: false),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EquipmentInventoryDetailDialog extends StatelessWidget {
+  const _EquipmentInventoryDetailDialog({required this.entry});
+
+  final TownEquipmentInventoryView entry;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppDialogLayout(
+      title: entry.name,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('슬롯 ${entry.slotLabel}'),
+          const SizedBox(height: AppSpacing.sm),
+          Text(entry.statLabel),
         ],
       ),
     );
