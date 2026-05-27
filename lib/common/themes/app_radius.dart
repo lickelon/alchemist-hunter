@@ -12,12 +12,15 @@ class AppRadius {
   static const double sm = 8.0;
   static const double md = 12.0;
   static const double lg = 16.0;
+  static const double xs = 4.0;
 
   /// 카드·컨테이너용 BorderRadius
   static const BorderRadius card = BorderRadius.all(Radius.circular(sm));
 
   /// 인터랙티브 탭 영역용 BorderRadius
   static const BorderRadius interactive = BorderRadius.all(Radius.circular(md));
+
+  static const BorderRadius badge = BorderRadius.all(Radius.circular(xs));
 
   static const BorderRadius progress = BorderRadius.all(Radius.circular(3.0));
 }

@@ -6,7 +6,7 @@ import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmod
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_inventory_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/workshop_display_labels.dart';
 import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_resource_detail_dialogs.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart';
+import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -96,10 +96,10 @@ class _InventoryMaterialTab extends StatelessWidget {
     if (materials.isEmpty) {
       return const Center(child: Text('보유 재료가 없습니다'));
     }
-    return WorkshopResourceIconGrid(
+    return ResourceIconGrid(
       items: materials
           .map((MaterialInventoryView entry) {
-            return WorkshopResourceIconGridItem(
+            return ResourceIconGridItem(
               key: ValueKey<String>('inventory_material_${entry.id}'),
               assetPath: CatalogIconAssetPaths.material(entry.id),
               badgeLabel: 'x${entry.quantity}',
@@ -133,11 +133,11 @@ class _InventoryTraitTab extends StatelessWidget {
     if (traits.isEmpty) {
       return const Center(child: Text('보유 추출 원소가 없습니다'));
     }
-    return WorkshopResourceIconGrid(
+    return ResourceIconGrid(
       items: traits
           .map((ExtractedTraitInventoryView entry) {
             final String amountLabel = workshopTraitAmountLabel(entry.amount);
-            return WorkshopResourceIconGridItem(
+            return ResourceIconGridItem(
               key: ValueKey<String>('inventory_trait_${entry.id}'),
               assetPath: CatalogIconAssetPaths.element(entry.id),
               badgeLabel: amountLabel,
@@ -168,10 +168,10 @@ class _InventoryPotionTab extends StatelessWidget {
     if (potions.isEmpty) {
       return const Center(child: Text('보유 포션이 없습니다'));
     }
-    return WorkshopResourceIconGrid(
+    return ResourceIconGrid(
       items: potions
           .map((CraftedPotionStackView entry) {
-            return WorkshopResourceIconGridItem(
+            return ResourceIconGridItem(
               key: ValueKey<String>('inventory_potion_${entry.stackKey}'),
               assetPath: CatalogIconAssetPaths.potion(entry.potionId),
               badgeLabel: 'x${entry.quantity}',

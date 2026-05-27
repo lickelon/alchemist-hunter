@@ -2,7 +2,7 @@ import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_inventory_selectors.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart';
+import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,10 +22,10 @@ class WorkshopExtractionSheet extends ConsumerWidget {
       header: Text('재료 선택', style: AppTextStyles.of(context).subsectionTitle),
       body: materials.isEmpty
           ? const Center(child: Text('추출 가능한 재료가 없습니다'))
-          : WorkshopResourceIconGrid(
+          : ResourceIconGrid(
               items: materials
                   .map((MaterialInventoryView material) {
-                    return WorkshopResourceIconGridItem(
+                    return ResourceIconGridItem(
                       key: ValueKey<String>(
                         'extraction_material_${material.id}',
                       ),

@@ -1,5 +1,5 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart';
+import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -17,9 +17,9 @@ void main() {
             child: SizedBox(
               key: gridKey,
               width: 220,
-              child: WorkshopResourceIconGrid(
-                items: <WorkshopResourceIconGridItem>[
-                  WorkshopResourceIconGridItem(
+              child: ResourceIconGrid(
+                items: <ResourceIconGridItem>[
+                  ResourceIconGridItem(
                     key: itemKey,
                     assetPath: CatalogIconAssetPaths.material('m_1'),
                     badgeLabel: 'x1',

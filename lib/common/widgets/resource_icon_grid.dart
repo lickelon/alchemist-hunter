@@ -1,9 +1,10 @@
+import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:flutter/material.dart';
 
-class WorkshopResourceIconGridItem {
-  const WorkshopResourceIconGridItem({
+class ResourceIconGridItem {
+  const ResourceIconGridItem({
     required this.assetPath,
     required this.badgeLabel,
     required this.semanticLabel,
@@ -22,15 +23,15 @@ class WorkshopResourceIconGridItem {
   final bool selected;
 }
 
-class WorkshopResourceIconGrid extends StatelessWidget {
-  const WorkshopResourceIconGrid({
+class ResourceIconGrid extends StatelessWidget {
+  const ResourceIconGrid({
     super.key,
     required this.items,
     this.tileSize = 52,
     this.spacing = AppSpacing.sm,
   });
 
-  final List<WorkshopResourceIconGridItem> items;
+  final List<ResourceIconGridItem> items;
   final double tileSize;
   final double spacing;
 
@@ -65,8 +66,8 @@ class WorkshopResourceIconGrid extends StatelessWidget {
     );
   }
 
-  Widget _buildTile(WorkshopResourceIconGridItem item) {
-    return _WorkshopResourceIconTile(key: item.key, item: item, size: tileSize);
+  Widget _buildTile(ResourceIconGridItem item) {
+    return _ResourceIconTile(key: item.key, item: item, size: tileSize);
   }
 
   int _columnCountForWidth(double width, int itemCount) {
@@ -92,14 +93,10 @@ class WorkshopResourceIconGrid extends StatelessWidget {
   }
 }
 
-class _WorkshopResourceIconTile extends StatelessWidget {
-  const _WorkshopResourceIconTile({
-    super.key,
-    required this.item,
-    required this.size,
-  });
+class _ResourceIconTile extends StatelessWidget {
+  const _ResourceIconTile({super.key, required this.item, required this.size});
 
-  final WorkshopResourceIconGridItem item;
+  final ResourceIconGridItem item;
   final double size;
 
   @override
@@ -117,7 +114,7 @@ class _WorkshopResourceIconTile extends StatelessWidget {
             : colorScheme.surfaceContainerHighest,
         shape: RoundedRectangleBorder(
           side: borderSide,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: AppRadius.card,
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -147,13 +144,13 @@ class _WorkshopResourceIconTile extends StatelessWidget {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: colorScheme.surface,
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: AppRadius.badge,
                     border: Border.all(color: colorScheme.outlineVariant),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.xs,
-                      vertical: 1,
+                      vertical: AppSpacing.xs,
                     ),
                     child: Text(
                       item.badgeLabel,

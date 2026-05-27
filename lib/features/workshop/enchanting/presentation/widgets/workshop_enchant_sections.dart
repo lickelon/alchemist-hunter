@@ -5,7 +5,7 @@ import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_potion_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_preview_selector.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_resource_icon_grid.dart';
+import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:flutter/material.dart';
 
 const double _kSelectorMaxHeight = 120.0;
@@ -36,10 +36,10 @@ class WorkshopEnchantPotionSelector extends StatelessWidget {
           constraints: const BoxConstraints(maxHeight: _kSelectorMaxHeight),
           child: potions.isEmpty
               ? const Center(child: Text('인챈트에 사용할 포션이 없습니다'))
-              : WorkshopResourceIconGrid(
+              : ResourceIconGrid(
                   items: potions
                       .map((EnchantPotionView potion) {
-                        return WorkshopResourceIconGridItem(
+                        return ResourceIconGridItem(
                           key: ValueKey<String>(
                             'enchant_potion_${potion.stackKey}',
                           ),
@@ -88,10 +88,10 @@ class WorkshopEnchantEquipmentSelector extends StatelessWidget {
           constraints: const BoxConstraints(maxHeight: _kSelectorMaxHeight),
           child: equipments.isEmpty
               ? const Center(child: Text('인챈트 가능한 장비가 없습니다'))
-              : WorkshopResourceIconGrid(
+              : ResourceIconGrid(
                   items: equipments
                       .map((EnchantEquipmentView item) {
-                        return WorkshopResourceIconGridItem(
+                        return ResourceIconGridItem(
                           key: ValueKey<String>(
                             'enchant_equipment_${item.equipmentId}',
                           ),

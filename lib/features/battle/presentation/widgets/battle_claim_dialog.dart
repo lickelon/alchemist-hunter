@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
@@ -141,98 +142,19 @@ class _MaterialRewardGrid extends StatelessWidget {
       return const Text('재료 없음');
     }
 
-    final List<MapEntry<String, int>> entries = materials.entries.toList();
-    return SizedBox(
-      width: 280,
-      child: Wrap(
-        spacing: AppSpacing.sm,
-        runSpacing: AppSpacing.sm,
-        children: entries.map((MapEntry<String, int> entry) {
-          final String name =
-              materialCatalog.materialName(entry.key) ?? entry.key;
-          return SizedBox.square(
-            dimension: 52,
-            child: Tooltip(
-              message: '$name x${entry.value}',
-              child: _MaterialRewardTile(
-                materialId: entry.key,
-                quantity: entry.value,
-                label: name,
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-class _MaterialRewardTile extends StatelessWidget {
-  const _MaterialRewardTile({
-    required this.materialId,
-    required this.quantity,
-    required this.label,
-  });
-
-  final String materialId;
-  final int quantity;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    return Semantics(
-      label: '$label x$quantity',
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest,
-          border: Border.all(color: colorScheme.outlineVariant),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Stack(
-          children: <Widget>[
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.sm),
-                child: Image.asset(
-                  CatalogIconAssetPaths.material(materialId),
-                  fit: BoxFit.contain,
-                  filterQuality: FilterQuality.none,
-                  isAntiAlias: false,
-                  errorBuilder:
-                      (BuildContext context, Object error, StackTrace? stack) {
-                        return Icon(
-                          Icons.category_outlined,
-                          color: colorScheme.onSurfaceVariant,
-                        );
-                      },
-                ),
-              ),
-            ),
-            Positioned(
-              right: AppSpacing.xs,
-              bottom: AppSpacing.xs,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: colorScheme.outlineVariant),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xs,
-                    vertical: 1,
-                  ),
-                  child: Text(
-                    'x$quantity',
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return ResourceIconGrid(
+      items: materials.entries
+          .map((MapEntry<String, int> entry) {
+            final String name =
+                materialCatalog.materialName(entry.key) ?? entry.key;
+            return ResourceIconGridItem(
+              key: ValueKey<String>('claim_material_${entry.key}'),
+              assetPath: CatalogIconAssetPaths.material(entry.key),
+              badgeLabel: 'x${entry.value}',
+              semanticLabel: '$name x${entry.value}',
+            );
+          })
+          .toList(growable: false),
     );
   }
 }
