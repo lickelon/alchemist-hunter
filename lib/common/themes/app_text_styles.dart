@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 
 @immutable
 class AppTextStyles extends ThemeExtension<AppTextStyles> {
-  const AppTextStyles({required this.subsectionTitle});
+  const AppTextStyles({
+    required this.subsectionTitle,
+    required this.dataEmphasis,
+  });
 
   final TextStyle subsectionTitle;
+  final TextStyle dataEmphasis;
 
   static AppTextStyles fromTheme(ThemeData theme) {
     return AppTextStyles(
       subsectionTitle: (theme.textTheme.labelLarge ?? const TextStyle())
           .copyWith(fontWeight: FontWeight.w700),
+      dataEmphasis: (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(
+        fontWeight: FontWeight.w600,
+      ),
     );
   }
 
@@ -19,9 +26,13 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
   }
 
   @override
-  AppTextStyles copyWith({TextStyle? subsectionTitle}) {
+  AppTextStyles copyWith({
+    TextStyle? subsectionTitle,
+    TextStyle? dataEmphasis,
+  }) {
     return AppTextStyles(
       subsectionTitle: subsectionTitle ?? this.subsectionTitle,
+      dataEmphasis: dataEmphasis ?? this.dataEmphasis,
     );
   }
 
@@ -34,6 +45,8 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       subsectionTitle:
           TextStyle.lerp(subsectionTitle, other.subsectionTitle, t) ??
           subsectionTitle,
+      dataEmphasis:
+          TextStyle.lerp(dataEmphasis, other.dataEmphasis, t) ?? dataEmphasis,
     );
   }
 }

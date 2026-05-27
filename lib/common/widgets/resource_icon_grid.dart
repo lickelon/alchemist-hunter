@@ -27,9 +27,14 @@ class ResourceIconGrid extends StatelessWidget {
   const ResourceIconGrid({
     super.key,
     required this.items,
-    this.tileSize = 52,
-    this.spacing = AppSpacing.sm,
+    this.tileSize = defaultTileSize,
+    this.spacing = defaultSpacing,
   });
+
+  static const double defaultTileSize = 52.0;
+  static const double defaultSpacing = AppSpacing.sm;
+  static const double twoRowMaxHeight =
+      (defaultTileSize * 2) + defaultSpacing + AppSpacing.md;
 
   final List<ResourceIconGridItem> items;
   final double tileSize;

@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ class SectionCard extends StatelessWidget {
     this.trailing,
     this.titleStyle,
     this.titleSpacing = AppSpacing.md,
+    this.padding = const EdgeInsets.all(AppSpacing.md),
     this.margin,
   });
 
@@ -17,6 +19,7 @@ class SectionCard extends StatelessWidget {
   final Widget? trailing;
   final TextStyle? titleStyle;
   final double titleSpacing;
+  final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry? margin;
 
   @override
@@ -24,13 +27,19 @@ class SectionCard extends StatelessWidget {
     return Card(
       margin: margin,
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: padding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
               children: <Widget>[
-                Expanded(child: Text(title, style: titleStyle)),
+                Expanded(
+                  child: Text(
+                    title,
+                    style:
+                        titleStyle ?? AppTextStyles.of(context).subsectionTitle,
+                  ),
+                ),
                 if (trailing != null) trailing!,
               ],
             ),
