@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
+import 'package:alchemist_hunter/common/themes/app_dialog_heights.dart';
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
@@ -52,7 +53,7 @@ class BattleStageDropDialog extends ConsumerWidget {
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             width: double.maxFinite,
-            height: MediaQuery.sizeOf(context).height * 0.52,
+            height: MediaQuery.sizeOf(context).height * AppDialogHeights.medium,
             child: _BattleStageDropList(overview: overview),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
+import 'package:alchemist_hunter/common/themes/app_dialog_heights.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
@@ -160,7 +161,7 @@ class _WorkshopMaterialExtractionDetailContentState
       title: detail.materialName,
       body: SizedBox(
         width: double.maxFinite,
-        height: MediaQuery.sizeOf(context).height * 0.58,
+        height: MediaQuery.sizeOf(context).height * AppDialogHeights.tall,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
