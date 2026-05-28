@@ -9,6 +9,16 @@ mixin _BattleEncounterRunnerMixin
     required BattleEncounterRuntimeState encounter,
     required int potionBoost,
   }) {
+    if (encounter.turnInEncounter >= BattleService.maxActionTurns) {
+      return BattleEncounterStepResult(
+        allies: allies,
+        encounter: encounter,
+        ended: true,
+        success: false,
+        wiped: false,
+      );
+    }
+
     final Map<String, _BattleUnit> units = <String, _BattleUnit>{
       for (final BattleRunUnitState ally in allies) ally.unitId: _toUnit(ally),
       for (final BattleRunUnitState enemy in encounter.enemies)
@@ -102,40 +112,3 @@ mixin _BattleEncounterRunnerMixin
     );
   }
 }
-
-class _ActionLifecycleContext {
-  const _ActionLifecycleContext({
-    required this.actor,
-    required this.turn,
-    required this.lifecycle,
-    required this.potionBoost,
-    required this.allowExtraAttack,
-    required this.allowCounterAttack,
-  });
-
-  final _BattleUnit actor;
-  final int turn;
-  final int lifecycle;
-  final int potionBoost;
-  final bool allowExtraAttack;
-  final bool allowCounterAttack;
-}
-
-class _ActionLifecycleResult {
-  const _ActionLifecycleResult({
-    required this.actions,
-    required this.nextLifecycle,
-  });
-
-  final List<BattleActionLog> actions;
-  final int nextLifecycle;
-}
-
-class _DerivedActionRequest {
-  const _DerivedActionRequest({required this.actor, required this.type});
-
-  final _BattleUnit actor;
-  final _DerivedActionType type;
-}
-
-enum _DerivedActionType { counterAttack, extraAttack }

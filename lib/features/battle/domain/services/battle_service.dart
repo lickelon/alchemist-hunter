@@ -8,6 +8,7 @@ part 'battle_skill_effect_resolver.dart';
 part 'battle_passive_effect_resolver.dart';
 part 'battle_action_selection.dart';
 part 'battle_action_followup_resolver.dart';
+part 'battle_action_lifecycle_models.dart';
 part 'battle_action_lifecycle.dart';
 part 'battle_encounter_runner.dart';
 part 'battle_modifier_resolver.dart';

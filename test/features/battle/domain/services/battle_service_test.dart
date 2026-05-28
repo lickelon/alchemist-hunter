@@ -351,6 +351,34 @@ void main() {
     },
   );
 
+  test('run encounter step applies the shared action turn timeout', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      turnInEncounter: BattleService.maxActionTurns,
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 10),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(id: 'ally', team: BattleTeam.ally, speed: 10),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(result.ended, isTrue);
+    expect(result.success, isFalse);
+    expect(result.wiped, isFalse);
+    expect(result.encounter.turnInEncounter, BattleService.maxActionTurns);
+    expect(result.lifecycleActions, isEmpty);
+  });
+
   test('first strike only changes initial encounter turn order', () {
     final BattleService service = BattleService(random: Random(1));
     final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
