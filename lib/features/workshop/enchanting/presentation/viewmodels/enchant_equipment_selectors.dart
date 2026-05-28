@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/town/equipment_display_labels.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_lookup.dart';
 
 class EnchantEquipmentView {
@@ -37,7 +38,7 @@ final Provider<List<EnchantEquipmentView>> enchantEquipmentViewsProvider =
               name: item.name,
               slotLabel: equipmentSlotLabel(item.slot),
               locationLabel: record.locationLabel,
-              statLabel: item.detailLabel,
+              statLabel: equipmentInstanceDetailLabel(item),
               enchantLabel: item.enchant?.label ?? '인챈트 없음',
             );
           }).toList();

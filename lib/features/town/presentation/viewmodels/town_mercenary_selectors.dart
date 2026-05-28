@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/mercenary_display_labels.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,7 +59,7 @@ townMercenaryCandidateViewsProvider =
               id: entry.id,
               name: entry.name,
               roleLabel: entry.roleLabel,
-              tierLabel: entry.tierLabel,
+              tierLabel: mercenaryTierLabel(entry.tierIndex),
               hireCost: hireCost,
               canHire: state.player.gold >= hireCost,
             );

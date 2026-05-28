@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/equipment_display_labels.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/dashboard/presentation/viewmodels/workshop_shared_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/shared/presentation/viewmodels/workshop_shared_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_lookup.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchanting_service_providers.dart';
 
@@ -75,8 +76,8 @@ final enchantPreviewProvider =
         equipmentName: equipment.name,
         currentEnchantLabel: equipment.enchant?.label ?? '인챈트 없음',
         nextEnchantLabel: nextEnchant.label,
-        currentStatLabel: equipment.detailLabel,
-        nextStatLabel: previewEquipment.detailLabel,
+        currentStatLabel: equipmentInstanceDetailLabel(equipment),
+        nextStatLabel: equipmentInstanceDetailLabel(previewEquipment),
         deltaStatLabel:
             '변화 ${formatEquipmentStatLabel(maxHp: previewEquipment.totalMaxHp - equipment.totalMaxHp, physicalAttack: previewEquipment.totalPhysicalAttack - equipment.totalPhysicalAttack, physicalDefense: previewEquipment.totalPhysicalDefense - equipment.totalPhysicalDefense, magicalAttack: previewEquipment.totalMagicalAttack - equipment.totalMagicalAttack, magicalDefense: previewEquipment.totalMagicalDefense - equipment.totalMagicalDefense, speed: previewEquipment.totalSpeed - equipment.totalSpeed, signed: true, includeZero: false, emptyLabel: '없음')}',
         replaceRequired: equipment.enchant != null,

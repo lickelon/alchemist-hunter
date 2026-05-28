@@ -10,6 +10,7 @@ import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/equipment_display_labels.dart';
 import 'package:flutter/material.dart';
 
 class CharacterEquipmentSheet extends StatelessWidget {
@@ -190,7 +191,7 @@ class _EquipmentItemList extends StatelessWidget {
           assetPath: CatalogIconAssetPaths.equipment(item.blueprintId),
           badgeLabel: _slotBadgeLabel(item.slot),
           semanticLabel: item.name,
-          tooltipMessage: '${item.name}\n${item.detailLabel}',
+          tooltipMessage: '${item.name}\n${equipmentInstanceDetailLabel(item)}',
           onTap: () {
             if (!showDetailDialog) {
               Navigator.of(context).pop();
@@ -239,7 +240,7 @@ class _EquipmentDetailDialog extends StatelessWidget {
         children: <Widget>[
           Text(_slotLabel(item.slot)),
           const SizedBox(height: AppSpacing.sm),
-          Text(item.statLabel),
+          Text(equipmentInstanceStatLabel(item)),
           if (item.enchant != null) ...<Widget>[
             const SizedBox(height: AppSpacing.sm),
             Text('인챈트 ${item.enchant!.label}'),
@@ -248,7 +249,7 @@ class _EquipmentDetailDialog extends StatelessWidget {
               item.totalModifiers.isNotEmpty ||
               item.totalPassives.isNotEmpty) ...<Widget>[
             const SizedBox(height: AppSpacing.sm),
-            Text(item.effectLabel),
+            Text(equipmentInstanceEffectLabel(item)),
           ],
         ],
       ),

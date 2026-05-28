@@ -52,19 +52,3 @@ EquipmentInstance? findEnchantEquipmentById(
   }
   return null;
 }
-
-String equipmentSlotLabel(EquipmentSlot slot) {
-  switch (slot) {
-    case EquipmentSlot.weapon:
-      return '무기';
-    case EquipmentSlot.armor:
-      return '방어구';
-    case EquipmentSlot.accessory:
-      return '장신구';
-  }
-}
-
-String signedDelta(int value, String label) {
-  final String sign = value >= 0 ? '+' : '';
-  return '$label $sign$value';
-}

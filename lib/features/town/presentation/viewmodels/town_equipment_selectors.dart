@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/equipment_display_labels.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -134,13 +135,8 @@ townEquipmentBlueprintViewsProvider = Provider<List<TownEquipmentBlueprintView>>
         return TownEquipmentBlueprintView(
           id: blueprint.id,
           name: blueprint.name,
-          slotLabel: _equipmentSlotLabel(blueprint.slot),
-          statLabel:
-              blueprint.statModifiers.isEmpty &&
-                  blueprint.modifiers.isEmpty &&
-                  blueprint.passives.isEmpty
-              ? blueprint.statLabel
-              : '${blueprint.statLabel}\n${blueprint.effectLabel}',
+          slotLabel: equipmentSlotLabel(blueprint.slot),
+          statLabel: equipmentBlueprintDetailLabel(blueprint),
           materialCostLabel: adjustedCosts.entries
               .map(
                 (MapEntry<String, int> entry) =>
@@ -166,20 +162,12 @@ townEquipmentInventoryViewsProvider =
               id: entry.id,
               blueprintId: entry.blueprintId,
               name: entry.name,
-              slotLabel: _equipmentSlotLabel(entry.slot),
-              statLabel: entry.detailLabel,
+              slotLabel: equipmentSlotLabel(entry.slot),
+              statLabel: equipmentInstanceDetailLabel(entry),
             );
           })
           .toList(growable: false);
     });
-
-String _equipmentSlotLabel(EquipmentSlot slot) {
-  return switch (slot) {
-    EquipmentSlot.weapon => '무기',
-    EquipmentSlot.armor => '방어구',
-    EquipmentSlot.accessory => '장신구',
-  };
-}
 
 final Provider<List<TownForgeJobView>> townForgeJobViewsProvider =
     Provider<List<TownForgeJobView>>((Ref ref) {

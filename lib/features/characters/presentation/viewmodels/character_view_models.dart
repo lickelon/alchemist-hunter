@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/equipment_display_labels.dart';
 
 class CharacterEquipmentSlotView {
   const CharacterEquipmentSlotView({
@@ -30,7 +31,7 @@ class CharacterEquipmentSlotView {
     if (item == null) {
       return '장착 가능한 장비 ${availableItems.length}개';
     }
-    return item.detailLabel;
+    return equipmentInstanceDetailLabel(item);
   }
 }
 

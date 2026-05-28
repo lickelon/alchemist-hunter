@@ -17,21 +17,6 @@ class MercenaryTemplate {
   final String combatJobId;
   final int hireCost;
   final int tierIndex;
-
-  String get tierLabel {
-    switch (tierIndex) {
-      case 1:
-        return 'Rookie';
-      case 2:
-        return 'Veteran';
-      case 3:
-        return 'Elite';
-      case 4:
-        return 'Champion';
-      default:
-        return 'Legend';
-    }
-  }
 }
 
 @immutable
@@ -53,19 +38,4 @@ class MercenaryCandidate {
   final String combatJobId;
   final int hireCost;
   final int tierIndex;
-
-  String get tierLabel {
-    switch (tierIndex) {
-      case 1:
-        return 'Rookie';
-      case 2:
-        return 'Veteran';
-      case 3:
-        return 'Elite';
-      case 4:
-        return 'Champion';
-      default:
-        return 'Legend';
-    }
-  }
 }
