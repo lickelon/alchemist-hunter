@@ -78,6 +78,26 @@ void main() {
           }
         }
       }
+
+      if (relativePath.contains('/domain/') &&
+          (RegExp(r'\bformat\w*Label\b').hasMatch(source) ||
+              RegExp(r'String\s+get\s+\w*Label\b').hasMatch(source))) {
+        violations.add('$relativePath contains presentation label formatting');
+      }
+
+      if (relativePath.startsWith('lib/features/workshop/presentation/')) {
+        violations.add('$relativePath uses legacy top-level workshop path');
+      }
+
+      if (relativePath.startsWith('lib/features/workshop/') &&
+          !relativePath.startsWith('lib/features/workshop/dashboard/')) {
+        for (final RegExpMatch match in imports) {
+          final String target = match.group(1)!;
+          if (target.startsWith('features/workshop/dashboard/presentation/')) {
+            violations.add('$relativePath -> $target');
+          }
+        }
+      }
     }
 
     expect(violations, isEmpty, reason: violations.join('\n'));
