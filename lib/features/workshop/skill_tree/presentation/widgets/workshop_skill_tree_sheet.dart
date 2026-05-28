@@ -1,7 +1,6 @@
-import 'package:alchemist_hunter/common/themes/app_tree_layout.dart';
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
-import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
+import 'package:alchemist_hunter/common/widgets/skill_tree_graph_view.dart';
+import 'package:alchemist_hunter/common/widgets/skill_tree_node_detail_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,48 +21,25 @@ class WorkshopSkillTreeSheet extends ConsumerWidget {
     return AppSheetLayout(
       title: '작업실 스킬트리',
       header: Text('신비 $arcaneDust'),
-      body: ListView(
-        children: nodes.map((WorkshopSkillNodeView node) {
-          final int clampedDepth = node.depth.clamp(0, AppTreeLayout.maxDepth);
-          return Padding(
-            padding: EdgeInsets.only(
-              left: clampedDepth * AppTreeLayout.depthIndent,
-              bottom: AppSpacing.md,
-            ),
-            child: Card(
-              child: ListTile(
-                dense: true,
-                title: Row(
-                  children: <Widget>[
-                    Text(node.depth == 0 ? '●' : '↳'),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(child: Text('${node.name} (${node.levelLabel})')),
-                  ],
-                ),
-                subtitle: DetailLines(
-                  description: node.description,
-                  lines: <String>[
-                    '현재 효과 ${node.currentEffectLabel}',
-                    '다음 효과 ${node.nextEffectLabel}',
-                    node.prerequisiteLabel,
-                    '비용 ${node.costLabel}',
-                    node.statusLabel,
-                  ],
-                ),
-                trailing: FilledButton.tonal(
-                  onPressed: node.upgradeable
-                      ? () {
-                          ref
-                              .read(workshopSkillTreeControllerProvider)
-                              .upgradeNode(node.id);
-                        }
-                      : null,
-                  child: const Text('강화'),
-                ),
-              ),
-            ),
+      body: SkillTreeGraphView(
+        nodes: nodes
+            .map((WorkshopSkillNodeView node) => node.toGraphNode())
+            .toList(growable: false),
+        onNodeTap: (SkillTreeGraphNode node) {
+          showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return SkillTreeNodeDetailDialog(
+                node: node,
+                onUpgrade: () {
+                  ref
+                      .read(workshopSkillTreeControllerProvider)
+                      .upgradeNode(node.id);
+                },
+              );
+            },
           );
-        }).toList(),
+        },
       ),
     );
   }
