@@ -91,7 +91,7 @@
 | `stageClear` | 특정 stage 클리어 | legacy 호환 |
 | `encounterClear` | 특정 encounter 클리어 | 후보 |
 | `stageVictoryCount` | 특정 stage 누적 승리 수 | 후보 |
-| `bossEncounterClear` | 보스 encounter 클리어 | 보스 구현 후 |
+| `bossEncounterClear` | 보스급 encounter 클리어 | 필요 시 일반 encounter 조건으로 처리 |
 | `recommendedPower` | 권장 전투력 도달 | 후보 |
 
 ## 7. 모델 초안

@@ -13,8 +13,8 @@
 | 항목 | 현재 상태 | 문제 |
 | --- | --- | --- |
 | 아군 전투 스탯 | `BattleCombatStats` + `BattleStatModifier` + `BattleModifier` + `BattlePassiveEffect` 구조 반영 | 성장 / 장비 / 인챈트 반영은 됐지만 loadout 보정은 아직 없다 |
-| 적 전투 스탯 | `BattleEnemyDefinition`과 stage / enemy set / encounter catalog 사용 | 일반 적별 액티브 스킬과 패시브 개성은 확장됐고, 보스 전용 패턴은 아직 없다 |
-| 전투 루프 | 속도, 명중, 치명, 물리/마법, 흡혈, 재생, 보호막, 상태이상, 추가 공격, MP/스킬, passive trigger 모델 반영 | 보스 전용 패턴은 아직 없다 |
+| 적 전투 스탯 | `BattleEnemyDefinition`과 stage / enemy set / encounter catalog 사용 | 보스급 적도 같은 enemy definition / skill / passive / modifier 경계에서 다룬다 |
+| 전투 루프 | 속도, 명중, 치명, 물리/마법, 흡혈, 재생, 보호막, 상태이상, 추가 공격, MP/스킬, passive trigger 모델 반영 | 보스급 적을 위한 별도 루프는 두지 않는다 |
 | 연속 run 구조 | 아군 HP와 생존 상태가 encounter 사이에 유지되고, 전멸 시 복구 후 재시작한다 | partial death 보상 규칙과 고급 revive 규칙은 아직 없다 |
 | 전투 결과 표시 | 최근 결과 시트와 실시간 전투 현황 시트 제공, 포션 fallback 사유 노출 | 해금 근거와 전투 외 성장 요약은 아직 더 보강할 수 있다 |
 | 결과 이력 | stage별 최근 로그 10개 보존, loadout fallback 사유 기록 | 해금 / 드롭 상세 근거는 아직 더 보강할 여지가 있다 |
@@ -293,11 +293,12 @@
 3. 전투 현황 시트 보강
    - 완료됨.
    - 현재 보호막 / 상태이상 / active modifier / MP 상태를 전투 중 확인 가능하게 표시한다.
-4. 보스 전용 패턴 설계 및 구현
-   - 현재는 보류한다.
-   - HP 구간, 1회성 패턴, 스크립트성 행동은 일반 적 패턴과 별도 모델로 분리
-   - 이 작업은 일반 몬스터 다양화와 기본 전투 체감 보강 이후 최후순위로 진행한다.
-5. 보스 패턴 구현 이후 보스 회귀 테스트 보강
+4. 보스급 적 구성 기준 정리
+   - 보스급 적을 위한 별도 패턴 모델은 만들지 않는다.
+   - 보스급 적은 기존 `BattleEnemyDefinition`, 액티브 스킬, 패시브, modifier, encounter catalog 조합으로 구성한다.
+   - HP 구간, 1회성 행동, 스크립트성 행동이 필요해지면 먼저 공통 enemy hook으로 표현 가능한지 본다.
+5. 보스급 적 검증
+   - 보스급 적을 추가할 경우 기존 battle service / controller 검증 범위에서 다룬다.
 
 ## 5. 남은 PR 분리 기준
 - 1차 PR
@@ -308,8 +309,8 @@
   - 적별 행동 패턴 / 전투 현황 시트 보강
   - 상태: 완료
 - 3차 PR
-  - 보스 전용 패턴 모델 / 구현
-  - 상태: 보류
+  - 보스급 적 catalog 보강이 필요할 때 기존 enemy definition 변경으로 처리
+  - 상태: 별도 PR 없음
 - 4차 PR
   - 회귀 / 보강 테스트
 

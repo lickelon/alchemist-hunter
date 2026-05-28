@@ -202,7 +202,7 @@
   - 후보가 여러 개면 priority가 높은 스킬을 고른다.
 - 적용 위치:
   - MP 기반 액티브 스킬
-  - 보스 전용 패턴 스킬
+  - 적 고유 패턴 스킬
   - 쿨다운 기반 스킬
 - 넣으면 안 되는 것:
   - passive 추가 공격
@@ -474,7 +474,8 @@
 | 부활 | Encounter Cycle | On Defeat / 종료 판정 | 사망 결과 변경 |
 
 ## 7. 구현 우선순위
-1. 보스 전용 스킬 / 패턴 구현
+1. 신규 적 / 보스급 적이 필요할 때 기존 skill / passive / modifier hook으로 먼저 표현한다.
+2. 기존 hook으로 표현할 수 없는 행동만 공통 enemy action hook으로 확장한다.
 
 ## 8. 무한 루프 방지 기준
 - 전체 encounter guard는 action turn 기준으로 둔다.
