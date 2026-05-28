@@ -187,6 +187,16 @@ void main() {
           .map((BattleActionLog action) => action.lifecycle),
       <int>[1, 2],
     );
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.turn),
+      <int>[1, 1],
+    );
+    expect(first.encounter.turnInEncounter, 1);
+    expect(first.encounter.lifecycleInEncounter, 2);
     expect(first.encounter.pendingActorIds, <String>['enemy_other', 'ally']);
     expect(second.lifecycleActions.single.actorId, 'enemy_other');
   });
@@ -203,6 +213,11 @@ void main() {
           team: BattleTeam.enemy,
           speed: 10,
           passives: const <BattlePassiveEffect>[
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.beforeHitCheck,
+              type: BattlePassiveEffectType.alwaysHit,
+              sourceId: 'enemy_focus',
+            ),
             BattlePassiveEffect(
               trigger: BattlePassiveTrigger.onDamaged,
               type: BattlePassiveEffectType.counterAttack,
@@ -244,9 +259,97 @@ void main() {
           .map((BattleActionLog action) => action.lifecycle),
       <int>[1, 2],
     );
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.turn),
+      <int>[1, 1],
+    );
+    expect(first.encounter.turnInEncounter, 1);
+    expect(first.encounter.lifecycleInEncounter, 2);
     expect(first.encounter.pendingActorIds, <String>['enemy_counter']);
     expect(second.lifecycleActions.single.actorId, 'enemy_counter');
   });
+
+  test(
+    'counter attack chain stays in one action turn and is lifecycle capped',
+    () {
+      final BattleService service = BattleService(random: Random(1));
+      final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+        encounterId: 'encounter_1',
+        encounterIndex: 1,
+        enemySetId: 'enemy_set_1',
+        enemies: <BattleRunUnitState>[
+          unit(
+            id: 'enemy_counter',
+            team: BattleTeam.enemy,
+            speed: 10,
+            currentHp: 10000,
+            passives: const <BattlePassiveEffect>[
+              BattlePassiveEffect(
+                trigger: BattlePassiveTrigger.beforeHitCheck,
+                type: BattlePassiveEffectType.alwaysHit,
+                sourceId: 'enemy_focus',
+              ),
+              BattlePassiveEffect(
+                trigger: BattlePassiveTrigger.onDamaged,
+                type: BattlePassiveEffectType.counterAttack,
+                sourceId: 'enemy_counter',
+                value: 1,
+              ),
+            ],
+          ),
+        ],
+      );
+      final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+        unit(
+          id: 'ally_counter',
+          team: BattleTeam.ally,
+          speed: 20,
+          currentHp: 10000,
+          passives: const <BattlePassiveEffect>[
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.beforeHitCheck,
+              type: BattlePassiveEffectType.alwaysHit,
+              sourceId: 'ally_focus',
+            ),
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.onDamaged,
+              type: BattlePassiveEffectType.counterAttack,
+              sourceId: 'ally_counter',
+              value: 1,
+            ),
+          ],
+        ),
+      ];
+
+      final BattleEncounterStepResult result = service.runEncounterStep(
+        allies: allies,
+        encounter: encounter,
+        potionBoost: 0,
+      );
+      final List<BattleActionLog> attacks = result.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .toList(growable: false);
+
+      expect(attacks, hasLength(64));
+      expect(
+        attacks.map((BattleActionLog action) => action.turn).toSet(),
+        <int>{1},
+      );
+      expect(
+        attacks.map((BattleActionLog action) => action.lifecycle),
+        List<int>.generate(64, (int index) => index + 1),
+      );
+      expect(result.encounter.turnInEncounter, 1);
+      expect(result.encounter.lifecycleInEncounter, 64);
+      expect(result.ended, isFalse);
+    },
+  );
 
   test('first strike only changes initial encounter turn order', () {
     final BattleService service = BattleService(random: Random(1));
