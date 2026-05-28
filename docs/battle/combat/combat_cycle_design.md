@@ -1,9 +1,10 @@
 # Combat Cycle 상세 설계
 
 ## 0. 목적
-- 이 문서는 combat 내부 흐름을 `encounter cycle`과 `action lifecycle`로 분리한다.
+- 이 문서는 combat 내부 흐름을 `encounter cycle`, `action turn`, `action lifecycle`로 분리한다.
 - encounter cycle은 적 조합 하나와 벌이는 전투 전체 단위다.
-- action lifecycle은 행동자 1명이 수행하는 1회 행동 단위다.
+- action turn은 encounter 행동 큐에서 행동자 1명이 기본 행동 기회를 얻는 단위다.
+- action lifecycle은 실제 전투 판정과 로그가 한 번 진행되는 순서 단위다.
 - 어떤 기능이 어느 단계에 들어가야 하는지 판단하는 기준 문서다.
 
 ## 1. 범위
@@ -26,11 +27,30 @@
 ## 2. 용어
 - `encounter`: 적 조합 하나와 벌이는 전투 단위
 - `encounter cycle`: encounter 시작부터 성공 / 전멸 판정까지의 전체 흐름
-- `action lifecycle`: 행동자 1명이 수행하는 1회 행동 흐름
+- `action turn`: encounter 행동 큐에서 선택된 행동자 1명이 기본 행동 기회를 얻는 단위
+- `action lifecycle`: 기본 행동, 추가 공격, 반격처럼 실제 판정과 로그가 진행되는 순서 단위
 - `base action`: 기본 공격 또는 액티브 스킬 중 하나
 - `derived action`: 추가 공격, 반격처럼 base action에서 파생되어 별도 action lifecycle을 수행하는 행동
 - `derived action request`: 훅에서 생성하지만 encounter 행동 큐에는 넣지 않는 파생 행동 요청
 - `hook`: passive가 끼어드는 고정 지점
+
+### 2.1 카운트 기준
+- `turn`은 action turn 번호다.
+- `lifecycle`은 action lifecycle 번호다.
+- `turnInEncounter`는 encounter 안에서 진행된 action turn 수를 뜻한다.
+- 기본 행동에서 추가 공격이나 반격이 여러 번 이어져도 action turn은 1만 증가한다.
+- 추가 공격과 반격은 각각 별도 action lifecycle을 소비한다.
+- 전투 로그는 같은 행동 기회에서 파생된 행동을 같은 `turn`으로 묶고, `lifecycle`로 실제 처리 순서를 구분한다.
+
+예:
+- A 기본 공격 1회, 추가 공격 9회
+  - action turn: 1
+  - action lifecycle: 1~10
+  - 로그 turn: 모두 1
+- A 공격, B 반격, A 재반격
+  - action turn: 1
+  - action lifecycle: 1~3
+  - 로그 turn: 모두 1
 
 ## 3. Encounter Cycle
 
@@ -38,7 +58,7 @@
 1. Encounter 시작
 2. 행동 큐 준비
 3. 행동자 선택
-4. Action Lifecycle 실행
+4. Action Turn 실행
 5. Encounter 종료 판정
 6. Encounter 결과 반환
 
@@ -91,11 +111,11 @@
 현재 구현:
 - encounter 행동 큐에는 기본 행동자 ID만 남긴다.
 
-### 3.5 Action Lifecycle 실행
-- 선택된 행동자가 1회 행동을 수행한다.
-- action lifecycle은 이 문서 4장을 따른다.
+### 3.5 Action Turn 실행
+- 선택된 행동자가 action turn 1회를 시작한다.
+- action turn 안의 기본 행동과 파생 행동은 이 문서 4장의 action lifecycle 규칙을 따른다.
 - encounter cycle은 lifecycle 내부의 명중, 피해, 회복 세부 규칙에 개입하지 않는다.
-- 추가 공격, 반격, 추격타는 encounter 행동 큐에 넣지 않고 lifecycle 내부에서 파생 action lifecycle로 즉시 처리한다.
+- 추가 공격, 반격, 추격타는 encounter 행동 큐에 넣지 않고 같은 action turn 안에서 파생 action lifecycle로 즉시 처리한다.
 
 ### 3.6 Encounter 종료 판정
 - 적 전멸이면 encounter 성공이다.
@@ -362,9 +382,9 @@
 - `extraAttack`은 `derived action request`를 생성하고 `resolveDerivedActionLifecycles`에서 즉시 실행한다.
 
 ### 4.15 `resolveDerivedActionLifecycles`
-- `applyAfterActionHooks`나 `applyOnDamagedHooks`에서 생성된 `derived action request`를 별도 action lifecycle로 즉시 실행한다.
+- `applyAfterActionHooks`나 `applyOnDamagedHooks`에서 생성된 `derived action request`를 같은 action turn 안의 별도 action lifecycle로 즉시 실행한다.
 - encounter 행동 큐에는 어떤 항목도 추가하지 않는다.
-- 파생 action lifecycle도 동일한 함수 단계를 따르되, 재귀 제한 플래그를 반드시 가진다.
+- 파생 action lifecycle도 동일한 함수 단계를 따른다.
 - 실행 순서:
   - 반격처럼 피격자 기준으로 발생한 파생 행동
   - 추가 공격 / 추격타처럼 공격자 기준으로 발생한 파생 행동
@@ -372,7 +392,9 @@
 - 일반 규칙:
   - encounter 종료 조건이 이미 충족되면 실행하지 않는다.
   - 죽은 유닛은 파생 행동을 수행하지 않는다.
-  - 파생 행동은 다시 같은 종류의 파생 행동을 무한 생성할 수 없다.
+  - 추가 공격은 다시 추가 공격을 생성하지 않는다.
+  - 반격은 반격을 다시 유발할 수 있다.
+  - 반격 연쇄는 action turn 안의 lifecycle 제한으로 막는다.
 - 적용 위치:
   - 추가 공격
   - 반격
@@ -419,10 +441,11 @@
 현재 구현:
 - 결과 객체가 action lifecycle 단위로 충분히 분리되어 있지 않다.
 
-## 5. Encounter Cycle과 Action Lifecycle의 경계
+## 5. Encounter Cycle과 Action Turn / Lifecycle의 경계
 - encounter cycle은 행동 순서, 행동 큐, 전투 종료를 관리한다.
-- action lifecycle은 선택된 행동 1회의 판정과 결과를 관리한다.
-- 추가 공격과 반격은 encounter 행동 큐를 변경하지 않고 별도 action lifecycle로 즉시 실행한다.
+- action turn은 encounter 행동 큐에서 선택된 행동자 1명의 기본 행동 기회를 관리한다.
+- action lifecycle은 기본 행동과 파생 행동 각각의 판정과 결과를 관리한다.
+- 추가 공격과 반격은 encounter 행동 큐를 변경하지 않고 같은 action turn 안의 별도 action lifecycle로 즉시 실행한다.
 - encounter 행동 큐는 기본 행동 순서만 관리한다.
 - 보상, 드롭, XP, progression은 encounter cycle 밖의 battle 책임이다.
 
@@ -453,7 +476,15 @@
 ## 7. 구현 우선순위
 1. 보스 전용 스킬 / 패턴 구현
 
-## 8. 주의점
+## 8. 무한 루프 방지 기준
+- 전체 encounter guard는 action turn 기준으로 둔다.
+- 권장 기본값은 `maxActionTurns = 256`이다.
+- action turn guard에 도달하면 encounter는 실패로 종료한다.
+- 같은 action turn 안의 반격 연쇄는 lifecycle 기준으로 별도 제한을 둔다.
+- 권장 기본값은 `maxLifecyclesPerActionTurn = 64`이다.
+- lifecycle 제한에 도달하면 해당 action turn의 파생 행동 연쇄만 중단하고, encounter 자체는 다음 action turn으로 진행한다.
+
+## 9. 주의점
 - 모든 행동은 하나의 action lifecycle 안에서 완료되어야 한다.
 - 추가 공격과 반격은 encounter 행동 큐를 변경하지 않는다.
 - 추가 공격과 반격은 별도 action lifecycle을 즉시 실행한다.
