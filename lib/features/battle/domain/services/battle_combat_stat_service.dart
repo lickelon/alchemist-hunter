@@ -3,6 +3,7 @@ import 'package:alchemist_hunter/features/battle/domain/services/battle_equipmen
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 
 part 'battle_combat_stat_tables.dart';
+part 'battle_combat_skill_tables.dart';
 
 class BattleCombatStatService {
   const BattleCombatStatService({
