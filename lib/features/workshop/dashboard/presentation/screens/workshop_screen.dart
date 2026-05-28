@@ -5,7 +5,7 @@ import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/widg
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/craft_queue_option_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/crafted_inventory_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/workshop_craft_card.dart';
-import 'package:alchemist_hunter/features/workshop/dashboard/presentation/viewmodels/workshop_shared_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/shared/presentation/viewmodels/workshop_shared_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/widgets/workshop_enchant_card.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/widgets/workshop_extraction_card.dart';

@@ -6,7 +6,7 @@ import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/crafted_inventory_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_inventory_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/workshop_display_labels.dart';
-import 'package:alchemist_hunter/features/workshop/presentation/widgets/workshop_resource_detail_dialogs.dart';
+import 'package:alchemist_hunter/features/workshop/inventory/presentation/widgets/workshop_resource_detail_dialogs.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
