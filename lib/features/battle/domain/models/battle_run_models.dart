@@ -28,16 +28,3 @@ class HeroProfile {
   final List<BattleSkillDefinition> skills;
   final int power;
 }
-
-@immutable
-class AutoBattleConfig {
-  const AutoBattleConfig({
-    required this.party,
-    required this.potionLoadout,
-    required this.stageId,
-  });
-
-  final List<HeroProfile> party;
-  final Map<String, int> potionLoadout;
-  final String stageId;
-}

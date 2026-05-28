@@ -30,23 +30,6 @@ class BattleLogEntry {
 }
 
 @immutable
-class BattleResult {
-  const BattleResult({
-    required this.success,
-    required this.turns,
-    required this.loot,
-    required this.failurePenalty,
-    this.actions = const <BattleActionLog>[],
-  });
-
-  final bool success;
-  final int turns;
-  final Map<String, int> loot;
-  final int failurePenalty;
-  final List<BattleActionLog> actions;
-}
-
-@immutable
 class BattlePendingClaim {
   const BattlePendingClaim({
     this.materials = const <String, int>{},

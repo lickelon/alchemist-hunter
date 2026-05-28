@@ -44,18 +44,6 @@ class _BattleUnit {
   ];
 }
 
-class _BattleLoopResult {
-  const _BattleLoopResult({
-    required this.success,
-    required this.turns,
-    required this.actions,
-  });
-
-  final bool success;
-  final int turns;
-  final List<BattleActionLog> actions;
-}
-
 class _DamageRoll {
   const _DamageRoll({required this.damage, required this.school});
 
