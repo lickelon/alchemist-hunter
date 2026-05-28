@@ -2,6 +2,8 @@ part of 'battle_service.dart';
 
 mixin _BattleEncounterRunnerMixin
     on _BattleEncounterUnitMapperMixin, _BattleActionLifecycleMixin {
+  static const int maxLifecyclesPerActionTurn = 64;
+
   BattleEncounterStepResult runEncounterStep({
     required List<BattleRunUnitState> allies,
     required BattleEncounterRuntimeState encounter,
@@ -62,12 +64,17 @@ mixin _BattleEncounterRunnerMixin
       );
     }
 
+    final int actionTurn = encounter.turnInEncounter + 1;
+    final int startLifecycle = encounter.lifecycleInEncounter + 1;
     final _ActionLifecycleResult lifecycleResult = _runActionLifecycle(
       units: units,
       actor: actor,
-      startLifecycle: encounter.turnInEncounter + 1,
+      actionTurn: actionTurn,
+      startLifecycle: startLifecycle,
+      maxLifecycle: startLifecycle + maxLifecyclesPerActionTurn - 1,
       potionBoost: potionBoost,
-      allowDerivedActions: true,
+      allowExtraAttack: true,
+      allowCounterAttack: true,
     );
     final List<BattleActionLog> actions = lifecycleResult.actions;
     final bool success = _livingUnits(units, _BattleSide.enemy).isEmpty;
@@ -82,8 +89,9 @@ mixin _BattleEncounterRunnerMixin
           ...encounter.recentActionLogs,
           ...actions,
         ],
-        turnInEncounter: max(
-          encounter.turnInEncounter,
+        turnInEncounter: actionTurn,
+        lifecycleInEncounter: max(
+          encounter.lifecycleInEncounter,
           lifecycleResult.nextLifecycle - 1,
         ),
       ),
@@ -98,15 +106,19 @@ mixin _BattleEncounterRunnerMixin
 class _ActionLifecycleContext {
   const _ActionLifecycleContext({
     required this.actor,
+    required this.turn,
     required this.lifecycle,
     required this.potionBoost,
-    required this.allowDerivedActions,
+    required this.allowExtraAttack,
+    required this.allowCounterAttack,
   });
 
   final _BattleUnit actor;
+  final int turn;
   final int lifecycle;
   final int potionBoost;
-  final bool allowDerivedActions;
+  final bool allowExtraAttack;
+  final bool allowCounterAttack;
 }
 
 class _ActionLifecycleResult {
@@ -120,7 +132,10 @@ class _ActionLifecycleResult {
 }
 
 class _DerivedActionRequest {
-  const _DerivedActionRequest({required this.actor});
+  const _DerivedActionRequest({required this.actor, required this.type});
 
   final _BattleUnit actor;
+  final _DerivedActionType type;
 }
+
+enum _DerivedActionType { counterAttack, extraAttack }

@@ -7,7 +7,7 @@ mixin _BattleActionFollowupMixin
     _BattleUnit target, {
     required int damage,
   }) {
-    if (!context.allowDerivedActions || damage <= 0 || !target.isAlive) {
+    if (!context.allowCounterAttack || damage <= 0 || !target.isAlive) {
       return const <_DerivedActionRequest>[];
     }
     final int counterAttackCount = _BattleModifierResolver.counterAttackCount(
@@ -18,7 +18,10 @@ mixin _BattleActionFollowupMixin
     }
     return List<_DerivedActionRequest>.filled(
       counterAttackCount,
-      _DerivedActionRequest(actor: target),
+      _DerivedActionRequest(
+        actor: target,
+        type: _DerivedActionType.counterAttack,
+      ),
     );
   }
 
@@ -38,7 +41,7 @@ mixin _BattleActionFollowupMixin
       actions.add(
         BattleActionLog(
           lifecycle: context.lifecycle,
-          turn: context.lifecycle,
+          turn: context.turn,
           type: BattleActionType.lifesteal,
           actorId: context.actor.id,
           actorName: context.actor.name,
@@ -58,7 +61,7 @@ mixin _BattleActionFollowupMixin
       actions.add(
         BattleActionLog(
           lifecycle: context.lifecycle,
-          turn: context.lifecycle,
+          turn: context.turn,
           type: BattleActionType.regen,
           actorId: context.actor.id,
           actorName: context.actor.name,
@@ -78,9 +81,7 @@ mixin _BattleActionFollowupMixin
     _ActionLifecycleContext context, {
     required bool encounterEnded,
   }) {
-    if (!context.allowDerivedActions ||
-        encounterEnded ||
-        !context.actor.isAlive) {
+    if (!context.allowExtraAttack || encounterEnded || !context.actor.isAlive) {
       return const <_DerivedActionRequest>[];
     }
     final int extraAttackCount = _BattleModifierResolver.extraAttackCount(
@@ -91,7 +92,10 @@ mixin _BattleActionFollowupMixin
     }
     return List<_DerivedActionRequest>.filled(
       extraAttackCount,
-      _DerivedActionRequest(actor: context.actor),
+      _DerivedActionRequest(
+        actor: context.actor,
+        type: _DerivedActionType.extraAttack,
+      ),
     );
   }
 
@@ -166,7 +170,7 @@ mixin _BattleActionFollowupMixin
       actions.add(
         BattleActionLog(
           lifecycle: context.lifecycle,
-          turn: context.lifecycle,
+          turn: context.turn,
           type: BattleActionType.status,
           actorId: context.actor.id,
           actorName: context.actor.name,

@@ -25,6 +25,7 @@ class BattleService
         _BattleActionLifecycleMixin,
         _BattleEncounterRunnerMixin {
   BattleService({Random? random}) : _random = random ?? Random();
+  static const int maxActionTurns = 256;
 
   @override
   final Random _random;
@@ -100,6 +101,14 @@ class BattleService
     BattleEncounterRuntimeState nextEncounter = encounter;
     BattleEncounterStepResult step;
     do {
+      if (nextEncounter.turnInEncounter >= maxActionTurns) {
+        return BattleEncounterOutcome(
+          allies: nextAllies,
+          encounter: nextEncounter,
+          success: false,
+          wiped: false,
+        );
+      }
       step = runEncounterStep(
         allies: nextAllies,
         encounter: nextEncounter,

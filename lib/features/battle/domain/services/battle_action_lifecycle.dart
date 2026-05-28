@@ -12,15 +12,26 @@ mixin _BattleActionLifecycleMixin
   _ActionLifecycleResult _runActionLifecycle({
     required Map<String, _BattleUnit> units,
     required _BattleUnit actor,
+    required int actionTurn,
     required int startLifecycle,
+    required int maxLifecycle,
     required int potionBoost,
-    required bool allowDerivedActions,
+    required bool allowExtraAttack,
+    required bool allowCounterAttack,
   }) {
+    if (startLifecycle > maxLifecycle) {
+      return _buildActionLifecycleResult(
+        actions: const <BattleActionLog>[],
+        nextLifecycle: startLifecycle,
+      );
+    }
     final _ActionLifecycleContext? context = _prepareActionContext(
       actor: actor,
+      turn: actionTurn,
       lifecycle: startLifecycle,
       potionBoost: potionBoost,
-      allowDerivedActions: allowDerivedActions,
+      allowExtraAttack: allowExtraAttack,
+      allowCounterAttack: allowCounterAttack,
     );
     if (context == null) {
       return _buildActionLifecycleResult(
@@ -36,7 +47,7 @@ mixin _BattleActionLifecycleMixin
       actions.add(
         BattleActionLog(
           lifecycle: context.lifecycle,
-          turn: context.lifecycle,
+          turn: context.turn,
           type: BattleActionType.status,
           actorId: context.actor.id,
           actorName: context.actor.name,
@@ -126,7 +137,7 @@ mixin _BattleActionLifecycleMixin
           actions.add(
             BattleActionLog(
               lifecycle: context.lifecycle,
-              turn: context.lifecycle,
+              turn: context.turn,
               type: usesSkill
                   ? BattleActionType.skill
                   : BattleActionType.attack,
@@ -169,7 +180,7 @@ mixin _BattleActionLifecycleMixin
         actions.add(
           BattleActionLog(
             lifecycle: context.lifecycle,
-            turn: context.lifecycle,
+            turn: context.turn,
             type: usesSkill ? BattleActionType.skill : BattleActionType.attack,
             actorId: context.actor.id,
             actorName: context.actor.name,
@@ -231,7 +242,9 @@ mixin _BattleActionLifecycleMixin
         _resolveDerivedActionLifecycles(
           units: units,
           requests: derivedRequests,
+          actionTurn: context.turn,
           startLifecycle: context.lifecycle + 1,
+          maxLifecycle: maxLifecycle,
           potionBoost: potionBoost,
         );
     actions.addAll(derivedResult.actions);
@@ -244,18 +257,22 @@ mixin _BattleActionLifecycleMixin
 
   _ActionLifecycleContext? _prepareActionContext({
     required _BattleUnit actor,
+    required int turn,
     required int lifecycle,
     required int potionBoost,
-    required bool allowDerivedActions,
+    required bool allowExtraAttack,
+    required bool allowCounterAttack,
   }) {
     if (!actor.isAlive) {
       return null;
     }
     return _ActionLifecycleContext(
       actor: actor,
+      turn: turn,
       lifecycle: lifecycle,
       potionBoost: actor.side == _BattleSide.ally ? potionBoost : 0,
-      allowDerivedActions: allowDerivedActions,
+      allowExtraAttack: allowExtraAttack,
+      allowCounterAttack: allowCounterAttack,
     );
   }
 
@@ -266,7 +283,7 @@ mixin _BattleActionLifecycleMixin
   }) {
     return BattleActionLog(
       lifecycle: context.lifecycle,
-      turn: context.lifecycle,
+      turn: context.turn,
       type: BattleActionType.skillUse,
       actorId: context.actor.id,
       actorName: context.actor.name,
@@ -282,21 +299,29 @@ mixin _BattleActionLifecycleMixin
   _ActionLifecycleResult _resolveDerivedActionLifecycles({
     required Map<String, _BattleUnit> units,
     required List<_DerivedActionRequest> requests,
+    required int actionTurn,
     required int startLifecycle,
+    required int maxLifecycle,
     required int potionBoost,
   }) {
     final List<BattleActionLog> actions = <BattleActionLog>[];
     int nextLifecycle = startLifecycle;
     for (final _DerivedActionRequest request in requests) {
+      if (nextLifecycle > maxLifecycle) {
+        break;
+      }
       if (_encounterEnded(units) || !request.actor.isAlive) {
         break;
       }
       final _ActionLifecycleResult result = _runActionLifecycle(
         units: units,
         actor: request.actor,
+        actionTurn: actionTurn,
         startLifecycle: nextLifecycle,
+        maxLifecycle: maxLifecycle,
         potionBoost: potionBoost,
-        allowDerivedActions: false,
+        allowExtraAttack: false,
+        allowCounterAttack: true,
       );
       actions.addAll(result.actions);
       nextLifecycle = result.nextLifecycle;

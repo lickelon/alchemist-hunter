@@ -16,7 +16,7 @@ mixin _BattleSkillEffectMixin on _BattleEncounterUnitMapperMixin {
       actions.add(
         BattleActionLog(
           lifecycle: context.lifecycle,
-          turn: context.lifecycle,
+          turn: context.turn,
           type: BattleActionType.heal,
           actorId: context.actor.id,
           actorName: context.actor.name,
@@ -58,7 +58,7 @@ mixin _BattleSkillEffectMixin on _BattleEncounterUnitMapperMixin {
       actions.add(
         BattleActionLog(
           lifecycle: context.lifecycle,
-          turn: context.lifecycle,
+          turn: context.turn,
           type: BattleActionType.modifier,
           actorId: context.actor.id,
           actorName: context.actor.name,
@@ -102,7 +102,7 @@ mixin _BattleSkillEffectMixin on _BattleEncounterUnitMapperMixin {
       actions.add(
         BattleActionLog(
           lifecycle: context.lifecycle,
-          turn: context.lifecycle,
+          turn: context.turn,
           type: BattleActionType.status,
           actorId: context.actor.id,
           actorName: context.actor.name,
@@ -140,7 +140,7 @@ mixin _BattleSkillEffectMixin on _BattleEncounterUnitMapperMixin {
       actions.add(
         BattleActionLog(
           lifecycle: context.lifecycle,
-          turn: context.lifecycle,
+          turn: context.turn,
           type: BattleActionType.shield,
           actorId: context.actor.id,
           actorName: context.actor.name,

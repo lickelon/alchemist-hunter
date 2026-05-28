@@ -16,6 +16,7 @@ class BattleEncounterRuntimeState {
     this.pendingActorIds = const <String>[],
     this.recentActionLogs = const <BattleActionLog>[],
     this.turnInEncounter = 0,
+    this.lifecycleInEncounter = 0,
     this.usedLoadoutFallback = false,
   });
 
@@ -27,6 +28,7 @@ class BattleEncounterRuntimeState {
   final List<String> pendingActorIds;
   final List<BattleActionLog> recentActionLogs;
   final int turnInEncounter;
+  final int lifecycleInEncounter;
   final bool usedLoadoutFallback;
 
   BattleEncounterRuntimeState copyWith({
@@ -35,6 +37,7 @@ class BattleEncounterRuntimeState {
     List<String>? pendingActorIds,
     List<BattleActionLog>? recentActionLogs,
     int? turnInEncounter,
+    int? lifecycleInEncounter,
     bool? usedLoadoutFallback,
   }) {
     return BattleEncounterRuntimeState(
@@ -46,6 +49,7 @@ class BattleEncounterRuntimeState {
       pendingActorIds: pendingActorIds ?? this.pendingActorIds,
       recentActionLogs: recentActionLogs ?? this.recentActionLogs,
       turnInEncounter: turnInEncounter ?? this.turnInEncounter,
+      lifecycleInEncounter: lifecycleInEncounter ?? this.lifecycleInEncounter,
       usedLoadoutFallback: usedLoadoutFallback ?? this.usedLoadoutFallback,
     );
   }
