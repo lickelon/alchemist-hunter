@@ -108,40 +108,104 @@ class _WorkshopBrewTab extends ConsumerWidget {
     if (options.isEmpty) {
       return const AppEmptyState('등록 가능한 포션이 없습니다');
     }
-    return ListView.builder(
-      itemCount: options.length,
-      itemBuilder: (BuildContext context, int index) {
-        final PotionQueueOptionView option = options[index];
-        return ListTile(
-          dense: true,
-          leading: CatalogAssetIcon(
-            assetPath: CatalogIconAssetPaths.potion(option.potionId),
-            size: 36,
-            padding: 5,
-          ),
-          title: Text(option.title),
-          subtitle: Text(
-            option.unlocked ? option.materialHint : '잠김: ${option.lockReason}',
-          ),
-          trailing: FilledButton.tonal(
-            onPressed: option.unlocked && option.craftableNow && !queueFull
-                ? () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return WorkshopEnqueueOptionsDialog(
-                          potionId: option.potionId,
-                          title: option.title,
-                          maxCraftableCount: option.maxCraftableCount,
-                        );
-                      },
+    return ResourceIconGrid(
+      items: options
+          .map((PotionQueueOptionView option) {
+            final String badgeLabel = option.unlocked
+                ? 'x${option.maxCraftableCount}'
+                : '-';
+            return ResourceIconGridItem(
+              key: ValueKey<String>('brew_recipe_${option.potionId}'),
+              assetPath: CatalogIconAssetPaths.potion(option.potionId),
+              badgeLabel: badgeLabel,
+              semanticLabel: '${option.title} $badgeLabel',
+              tooltipMessage:
+                  '${option.title}\n${option.unlocked ? option.materialHint : option.lockReason}',
+              onTap: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return _WorkshopBrewDetailDialog(
+                      option: option,
+                      queueFull: queueFull,
                     );
-                  }
-                : null,
-            child: const Text('등록'),
+                  },
+                );
+              },
+            );
+          })
+          .toList(growable: false),
+    );
+  }
+}
+
+class _WorkshopBrewDetailDialog extends StatelessWidget {
+  const _WorkshopBrewDetailDialog({
+    required this.option,
+    required this.queueFull,
+  });
+
+  final PotionQueueOptionView option;
+  final bool queueFull;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool canRegister =
+        option.unlocked && option.craftableNow && !queueFull;
+    return AppDialogLayout(
+      title: option.title,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              CatalogAssetIcon(
+                assetPath: CatalogIconAssetPaths.potion(option.potionId),
+                size: 48,
+                padding: 6,
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Text(
+                option.unlocked
+                    ? '최대 ${option.maxCraftableCount}회'
+                    : option.lockReason,
+              ),
+            ],
           ),
-        );
-      },
+          const SizedBox(height: AppSpacing.lg),
+          Text(option.unlocked ? option.materialHint : option.lockReason),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton.icon(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.close),
+          label: const Text('닫기'),
+        ),
+        FilledButton(
+          onPressed: canRegister
+              ? () {
+                  final NavigatorState navigator = Navigator.of(context);
+                  final BuildContext rootContext = navigator.context;
+                  navigator.pop();
+                  showDialog<void>(
+                    context: rootContext,
+                    builder: (BuildContext context) {
+                      return WorkshopEnqueueOptionsDialog(
+                        potionId: option.potionId,
+                        title: option.title,
+                        maxCraftableCount: option.maxCraftableCount,
+                      );
+                    },
+                  );
+                }
+              : null,
+          child: const Text('등록'),
+        ),
+      ],
     );
   }
 }

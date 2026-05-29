@@ -44,7 +44,14 @@ void main() {
 
     expect(find.text('양조'), findsOneWidget);
     expect(find.text('제작'), findsWidgets);
-    expect(find.text('활력 포션'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey<String>('brew_recipe_p_1')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey<String>('brew_recipe_p_1')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('활력 포션'), findsWidgets);
     expect(find.widgetWithText(FilledButton, '등록'), findsWidgets);
   });
 
@@ -98,6 +105,9 @@ void main() {
 
     expect(find.text('작업실 큐 가득 참 (4/4)'), findsOneWidget);
     expect(find.text('큐 가득 참 (4/4)'), findsNothing);
+    await tester.tap(find.byKey(const ValueKey<String>('brew_recipe_p_1')));
+    await tester.pumpAndSettle();
+
     final Iterable<FilledButton> registerButtons = tester
         .widgetList<FilledButton>(find.widgetWithText(FilledButton, '등록'));
     expect(registerButtons, isNotEmpty);
