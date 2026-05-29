@@ -51,6 +51,8 @@ class WorkshopMaterialCraftRecipeView {
     required this.resultMaterialId,
     required this.resultQuantity,
     required this.durationLabel,
+    required this.materialCosts,
+    required this.maxCraftableCount,
     required this.craftableNow,
     required this.queueFull,
   });
@@ -61,8 +63,24 @@ class WorkshopMaterialCraftRecipeView {
   final String resultMaterialId;
   final int resultQuantity;
   final String durationLabel;
+  final List<WorkshopMaterialCraftCostView> materialCosts;
+  final int maxCraftableCount;
   final bool craftableNow;
   final bool queueFull;
+}
+
+class WorkshopMaterialCraftCostView {
+  const WorkshopMaterialCraftCostView({
+    required this.materialId,
+    required this.name,
+    required this.requiredQuantity,
+    required this.ownedQuantity,
+  });
+
+  final String materialId;
+  final String name;
+  final int requiredQuantity;
+  final int ownedQuantity;
 }
 
 final Provider<List<PotionQueueOptionView>>
@@ -202,18 +220,10 @@ workshopMaterialCraftRecipeViewsProvider =
 
       return recipes
           .map((WorkshopCraftRecipe recipe) {
-            final bool hasMaterials = recipe.materialCosts.entries.every(
-              (MapEntry<String, int> cost) =>
-                  (state.player.materialInventory[cost.key] ?? 0) >= cost.value,
+            final int maxCraftableCount = _materialRecipeMaxCraftableCount(
+              recipe,
+              state,
             );
-            final bool hasTraits = recipe.traitCosts.entries.every(
-              (MapEntry<String, double> cost) =>
-                  (state.workshop.extractedTraitInventory[cost.key] ?? 0) >=
-                  cost.value,
-            );
-            final bool hasCurrencies =
-                state.player.essence >= recipe.essenceCost &&
-                state.player.arcaneDust >= recipe.arcaneDustCost;
             final MapEntry<String, int> result =
                 recipe.resultMaterials.entries.first;
             return WorkshopMaterialCraftRecipeView(
@@ -227,13 +237,65 @@ workshopMaterialCraftRecipeViewsProvider =
               resultMaterialId: result.key,
               resultQuantity: result.value,
               durationLabel: _durationLabel(recipe.duration),
-              craftableNow:
-                  hasMaterials && hasTraits && hasCurrencies && !queueFull,
+              materialCosts: recipe.materialCosts.entries
+                  .map(
+                    (MapEntry<String, int> cost) =>
+                        WorkshopMaterialCraftCostView(
+                          materialId: cost.key,
+                          name: materialNames[cost.key] ?? cost.key,
+                          requiredQuantity: cost.value,
+                          ownedQuantity:
+                              state.player.materialInventory[cost.key] ?? 0,
+                        ),
+                  )
+                  .toList(growable: false),
+              maxCraftableCount: maxCraftableCount,
+              craftableNow: maxCraftableCount > 0 && !queueFull,
               queueFull: queueFull,
             );
           })
           .toList(growable: false);
     });
+
+int _materialRecipeMaxCraftableCount(
+  WorkshopCraftRecipe recipe,
+  SessionState state,
+) {
+  int maxCount = 999999;
+  for (final MapEntry<String, int> cost in recipe.materialCosts.entries) {
+    if (cost.value <= 0) {
+      continue;
+    }
+    maxCount = _minInt(
+      maxCount,
+      (state.player.materialInventory[cost.key] ?? 0) ~/ cost.value,
+    );
+  }
+  for (final MapEntry<String, double> cost in recipe.traitCosts.entries) {
+    if (cost.value <= 0) {
+      continue;
+    }
+    maxCount = _minInt(
+      maxCount,
+      ((state.workshop.extractedTraitInventory[cost.key] ?? 0) / cost.value)
+          .floor(),
+    );
+  }
+  if (recipe.essenceCost > 0) {
+    maxCount = _minInt(maxCount, state.player.essence ~/ recipe.essenceCost);
+  }
+  if (recipe.arcaneDustCost > 0) {
+    maxCount = _minInt(
+      maxCount,
+      state.player.arcaneDust ~/ recipe.arcaneDustCost,
+    );
+  }
+  return maxCount == 999999 ? 0 : maxCount;
+}
+
+int _minInt(int left, int right) {
+  return left < right ? left : right;
+}
 
 String _craftRecipeCostHint(
   WorkshopCraftRecipe recipe, {

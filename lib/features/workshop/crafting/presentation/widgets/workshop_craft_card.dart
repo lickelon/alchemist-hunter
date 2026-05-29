@@ -250,38 +250,95 @@ class _WorkshopMaterialCraftTab extends ConsumerWidget {
   }
 }
 
-class _WorkshopMaterialCraftDetailDialog extends ConsumerWidget {
+class _WorkshopMaterialCraftDetailDialog extends ConsumerStatefulWidget {
   const _WorkshopMaterialCraftDetailDialog({required this.recipe});
 
   final WorkshopMaterialCraftRecipeView recipe;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_WorkshopMaterialCraftDetailDialog> createState() =>
+      _WorkshopMaterialCraftDetailDialogState();
+}
+
+class _WorkshopMaterialCraftDetailDialogState
+    extends ConsumerState<_WorkshopMaterialCraftDetailDialog> {
+  double _quantityValue = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    final WorkshopMaterialCraftRecipeView recipe = widget.recipe;
+    final int maxQuantity = recipe.maxCraftableCount < 1
+        ? 1
+        : recipe.maxCraftableCount;
+    final double sliderValue = _quantityValue
+        .clamp(1.0, maxQuantity.toDouble())
+        .toDouble();
+    final int selectedQuantity = sliderValue
+        .round()
+        .clamp(1, maxQuantity)
+        .toInt();
+    final bool canRegister =
+        recipe.craftableNow && recipe.maxCraftableCount >= selectedQuantity;
+
     return AppDialogLayout(
       title: recipe.title,
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              CatalogAssetIcon(
-                assetPath: CatalogIconAssetPaths.material(
-                  recipe.resultMaterialId,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                CatalogAssetIcon(
+                  assetPath: CatalogIconAssetPaths.material(
+                    recipe.resultMaterialId,
+                  ),
+                  size: 48,
+                  padding: 6,
+                  fallbackIcon: Icons.auto_fix_high_outlined,
                 ),
-                size: 48,
-                padding: 6,
-                fallbackIcon: Icons.auto_fix_high_outlined,
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Text('결과 x${recipe.resultQuantity}'),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Text('소요 시간 ${recipe.durationLabel}'),
-          const SizedBox(height: AppSpacing.sm),
-          Text(recipe.costHint),
-        ],
+                const SizedBox(width: AppSpacing.md),
+                Text('결과 x${recipe.resultQuantity * selectedQuantity}'),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text('제작 수량'),
+            const SizedBox(height: AppSpacing.md),
+            _CraftQuantitySlider(
+              selectedQuantity: selectedQuantity,
+              value: sliderValue,
+              maxQuantity: maxQuantity,
+              onChanged: (double value) {
+                setState(() {
+                  _quantityValue = value;
+                });
+              },
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text('필요 재료'),
+            const SizedBox(height: AppSpacing.md),
+            Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.md,
+              children: recipe.materialCosts
+                  .map((WorkshopMaterialCraftCostView cost) {
+                    final int requiredQuantity =
+                        cost.requiredQuantity * selectedQuantity;
+                    final bool enough = cost.ownedQuantity >= requiredQuantity;
+                    return _CraftMaterialCostChip(
+                      cost: cost,
+                      requiredQuantity: requiredQuantity,
+                      enough: enough,
+                    );
+                  })
+                  .toList(growable: false),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text('소요 시간 ${recipe.durationLabel} x$selectedQuantity'),
+            const SizedBox(height: AppSpacing.sm),
+            Text(recipe.costHint),
+          ],
+        ),
       ),
       actions: <Widget>[
         TextButton.icon(
@@ -292,11 +349,14 @@ class _WorkshopMaterialCraftDetailDialog extends ConsumerWidget {
           label: const Text('닫기'),
         ),
         FilledButton(
-          onPressed: recipe.craftableNow
+          onPressed: canRegister
               ? () {
                   final WorkshopCraftSubmitResult result = ref
                       .read(workshopCraftQueueControllerProvider)
-                      .enqueueMaterialRecipe(recipe.recipeId);
+                      .enqueueMaterialRecipe(
+                        recipe.recipeId,
+                        repeatCount: selectedQuantity,
+                      );
                   if (result == WorkshopCraftSubmitResult.success) {
                     Navigator.of(context).pop();
                     return;
@@ -314,6 +374,77 @@ class _WorkshopMaterialCraftDetailDialog extends ConsumerWidget {
           child: const Text('등록'),
         ),
       ],
+    );
+  }
+}
+
+class _CraftQuantitySlider extends StatelessWidget {
+  const _CraftQuantitySlider({
+    required this.selectedQuantity,
+    required this.value,
+    required this.maxQuantity,
+    required this.onChanged,
+  });
+
+  final int selectedQuantity;
+  final double value;
+  final int maxQuantity;
+  final ValueChanged<double> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool enabled = maxQuantity > 1;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(child: Text('선택 $selectedQuantity개')),
+            Text(
+              '최대 $maxQuantity개',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+        Slider(
+          value: value,
+          min: 1,
+          max: maxQuantity.toDouble(),
+          divisions: enabled ? maxQuantity - 1 : null,
+          onChanged: enabled ? onChanged : null,
+        ),
+      ],
+    );
+  }
+}
+
+class _CraftMaterialCostChip extends StatelessWidget {
+  const _CraftMaterialCostChip({
+    required this.cost,
+    required this.requiredQuantity,
+    required this.enough,
+  });
+
+  final WorkshopMaterialCraftCostView cost;
+  final int requiredQuantity;
+  final bool enough;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return InputChip(
+      avatar: CatalogAssetIcon(
+        assetPath: CatalogIconAssetPaths.material(cost.materialId),
+        size: 28,
+        padding: 3,
+        fallbackIcon: Icons.auto_fix_high_outlined,
+      ),
+      label: Text('${cost.name} ${cost.ownedQuantity}/$requiredQuantity'),
+      side: BorderSide(
+        color: enough ? colorScheme.outlineVariant : colorScheme.error,
+      ),
     );
   }
 }

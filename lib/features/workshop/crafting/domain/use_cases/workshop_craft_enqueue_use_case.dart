@@ -102,6 +102,7 @@ class WorkshopCraftEnqueueUseCase {
   SessionState enqueueMaterialRecipe({
     required SessionState state,
     required String recipeId,
+    required int repeatCount,
     required DateTime now,
     required WorkshopCraftRecipeRepository craftRecipeRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
@@ -114,7 +115,7 @@ class WorkshopCraftEnqueueUseCase {
           workshopSkillTreeRepository.nodes(),
         ) +
         workshopSupportService.craftQueueCapacityBonus(state);
-    if (state.workshop.queue.length >= queueCapacity) {
+    if (repeatCount <= 0 || state.workshop.queue.length >= queueCapacity) {
       return state;
     }
 
@@ -124,8 +125,8 @@ class WorkshopCraftEnqueueUseCase {
     if (recipe == null || recipe.resultMaterials.isEmpty) {
       return state;
     }
-    if (state.player.essence < recipe.essenceCost ||
-        state.player.arcaneDust < recipe.arcaneDustCost) {
+    if (state.player.essence < recipe.essenceCost * repeatCount ||
+        state.player.arcaneDust < recipe.arcaneDustCost * repeatCount) {
       return state;
     }
 
@@ -133,7 +134,7 @@ class WorkshopCraftEnqueueUseCase {
       ...state.player.materialInventory,
     };
     for (final MapEntry<String, int> cost in recipe.materialCosts.entries) {
-      if ((materials[cost.key] ?? 0) < cost.value) {
+      if ((materials[cost.key] ?? 0) < cost.value * repeatCount) {
         return state;
       }
     }
@@ -142,13 +143,14 @@ class WorkshopCraftEnqueueUseCase {
       ...state.workshop.extractedTraitInventory,
     };
     for (final MapEntry<String, double> cost in recipe.traitCosts.entries) {
-      if ((traits[cost.key] ?? 0) < cost.value) {
+      if ((traits[cost.key] ?? 0) < cost.value * repeatCount) {
         return state;
       }
     }
 
     for (final MapEntry<String, int> cost in recipe.materialCosts.entries) {
-      final int nextValue = (materials[cost.key] ?? 0) - cost.value;
+      final int nextValue =
+          (materials[cost.key] ?? 0) - cost.value * repeatCount;
       if (nextValue <= 0) {
         materials.remove(cost.key);
       } else {
@@ -156,7 +158,8 @@ class WorkshopCraftEnqueueUseCase {
       }
     }
     for (final MapEntry<String, double> cost in recipe.traitCosts.entries) {
-      final double nextValue = (traits[cost.key] ?? 0) - cost.value;
+      final double nextValue =
+          (traits[cost.key] ?? 0) - cost.value * repeatCount;
       if (nextValue <= 0.0001) {
         traits.remove(cost.key);
       } else {
@@ -164,6 +167,19 @@ class WorkshopCraftEnqueueUseCase {
       }
     }
 
+    final Map<String, int> reservedMaterials = <String, int>{
+      for (final MapEntry<String, int> entry in recipe.materialCosts.entries)
+        entry.key: entry.value * repeatCount,
+    };
+    final Map<String, double> reservedTraits = <String, double>{
+      for (final MapEntry<String, double> entry in recipe.traitCosts.entries)
+        entry.key: entry.value * repeatCount,
+    };
+    final Map<String, int> completedMaterials = <String, int>{
+      for (final MapEntry<String, int> entry in recipe.resultMaterials.entries)
+        entry.key: entry.value * repeatCount,
+    };
+    final Duration duration = recipe.duration * repeatCount;
     final bool hasActiveJob = _hasActiveJob(state.workshop.queue);
     final CraftQueueJob job = CraftQueueJob(
       id: 'job_${now.microsecondsSinceEpoch}_craft_${recipe.id}',
@@ -171,19 +187,21 @@ class WorkshopCraftEnqueueUseCase {
       status: hasActiveJob ? QueueJobStatus.queued : QueueJobStatus.processing,
       queuedAt: now,
       startedAt: hasActiveJob ? null : now,
-      duration: recipe.duration,
-      eta: recipe.duration,
+      duration: duration,
+      eta: duration,
       title: recipe.name,
+      repeatCount: repeatCount,
       recipeId: recipe.id,
-      reservedMaterials: recipe.materialCosts,
-      reservedTraits: recipe.traitCosts,
-      completedMaterials: recipe.resultMaterials,
+      reservedMaterials: reservedMaterials,
+      reservedTraits: reservedTraits,
+      completedMaterials: completedMaterials,
     );
 
     return state.copyWith(
       player: state.player.copyWith(
-        essence: state.player.essence - recipe.essenceCost,
-        arcaneDust: state.player.arcaneDust - recipe.arcaneDustCost,
+        essence: state.player.essence - recipe.essenceCost * repeatCount,
+        arcaneDust:
+            state.player.arcaneDust - recipe.arcaneDustCost * repeatCount,
         materialInventory: materials,
       ),
       workshop: state.workshop.copyWith(

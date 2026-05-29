@@ -131,14 +131,14 @@ void main() {
         essence: 100,
         arcaneDust: 2,
         materialInventory: const <String, int>{
-          'm_3': 3,
-          'promo_core_mercenary_2': 1,
+          'm_3': 6,
+          'promo_core_mercenary_2': 2,
         },
       ),
       workshop: session.state.workshop.copyWith(
         extractedTraitInventory: const <String, double>{
-          't_atk': 2,
-          't_focus': 1,
+          't_atk': 4,
+          't_focus': 2,
         },
       ),
     );
@@ -169,7 +169,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('용병 승급 재료 2'), findsWidgets);
-    expect(find.text('소요 시간 45초'), findsOneWidget);
+    expect(find.text('최대 2개'), findsOneWidget);
+    expect(find.text('Mossbone 6/3'), findsOneWidget);
+    expect(find.text('소요 시간 45초 x1'), findsOneWidget);
     expect(find.widgetWithText(FilledButton, '등록'), findsOneWidget);
   });
 

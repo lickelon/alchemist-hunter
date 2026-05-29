@@ -97,7 +97,10 @@ class WorkshopCraftQueueController {
     return WorkshopCraftSubmitResult.success;
   }
 
-  WorkshopCraftSubmitResult enqueueMaterialRecipe(String recipeId) {
+  WorkshopCraftSubmitResult enqueueMaterialRecipe(
+    String recipeId, {
+    int repeatCount = 1,
+  }) {
     final SessionState current = _session.snapshot();
     final int queueCapacity =
         _workshopSkillTreeService.craftQueueCapacity(
@@ -106,12 +109,13 @@ class WorkshopCraftQueueController {
         ) +
         _workshopSupportService.craftQueueCapacityBonus(current);
     if (current.workshop.queue.length >= queueCapacity) {
-      _session.appendLog('작업실 큐 가득 참 / $recipeId');
+      _session.appendLog('작업실 큐 가득 참 / $recipeId x$repeatCount');
       return WorkshopCraftSubmitResult.queueFull;
     }
     final SessionState nextState = _craftEnqueueUseCase.enqueueMaterialRecipe(
       state: current,
       recipeId: recipeId,
+      repeatCount: repeatCount,
       now: _session.now(),
       craftRecipeRepository: _craftRecipeRepository,
       workshopSkillTreeRepository: _workshopSkillTreeRepository,
@@ -119,10 +123,10 @@ class WorkshopCraftQueueController {
       workshopSupportService: _workshopSupportService,
     );
     if (identical(nextState, current)) {
-      _session.appendLog('제작 재료 부족 / $recipeId');
+      _session.appendLog('제작 재료 부족 / $recipeId x$repeatCount');
       return WorkshopCraftSubmitResult.resourceMissing;
     }
-    _apply(nextState, logMessage: '제작 등록 / $recipeId');
+    _apply(nextState, logMessage: '제작 등록 / $recipeId x$repeatCount');
     return WorkshopCraftSubmitResult.success;
   }
 

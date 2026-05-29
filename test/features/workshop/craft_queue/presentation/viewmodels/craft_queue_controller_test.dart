@@ -70,20 +70,20 @@ void main() {
       session.state = session.state.copyWith(
         player: session.state.player.copyWith(
           materialInventory: const <String, int>{
-            'm_3': 3,
-            'promo_core_mercenary_2': 1,
+            'm_3': 6,
+            'promo_core_mercenary_2': 2,
           },
         ),
         workshop: session.state.workshop.copyWith(
           extractedTraitInventory: const <String, double>{
-            't_atk': 2,
-            't_focus': 1,
+            't_atk': 4,
+            't_focus': 2,
           },
         ),
       );
 
       final WorkshopCraftSubmitResult submitResult = controller
-          .enqueueMaterialRecipe('craft_tier_mat_mercenary_2');
+          .enqueueMaterialRecipe('craft_tier_mat_mercenary_2', repeatCount: 2);
 
       expect(submitResult, WorkshopCraftSubmitResult.success);
       expect(session.state.player.materialInventory.containsKey('m_3'), false);
@@ -93,11 +93,13 @@ void main() {
         ),
         false,
       );
-      expect(session.state.player.essence, 80);
-      expect(session.state.player.arcaneDust, 1);
+      expect(session.state.player.essence, 40);
+      expect(session.state.player.arcaneDust, 0);
       expect(session.state.workshop.extractedTraitInventory, isEmpty);
+      expect(session.state.workshop.queue.single.repeatCount, 2);
+      expect(session.state.workshop.queue.single.duration.inSeconds, 90);
       expect(session.state.workshop.queue.single.completedMaterials, {
-        'tier_mat_mercenary_2': 1,
+        'tier_mat_mercenary_2': 2,
       });
 
       final CraftQueueJob completed = session.state.workshop.queue.single
@@ -111,7 +113,7 @@ void main() {
       controller.claimJob(completed.id);
 
       expect(session.state.workshop.queue, isEmpty);
-      expect(session.state.player.materialInventory['tier_mat_mercenary_2'], 1);
+      expect(session.state.player.materialInventory['tier_mat_mercenary_2'], 2);
     },
   );
 
