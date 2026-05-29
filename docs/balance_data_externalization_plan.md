@@ -35,7 +35,8 @@
 | Town skill tree | `lib/features/town/data/catalogs/town_skill_nodes.dart` | 스킬 비용, 선행 조건, 효과량 |
 | Material catalog | `lib/features/workshop/extraction/data/catalogs/material_catalog.dart` | 재료 이름, 희귀도, 원소 구성 |
 | Extraction profile | `lib/features/workshop/extraction/data/catalogs/extraction_profiles.dart` | 추출 수율, 순도, 소요 시간 |
-| Potion catalog | `lib/features/workshop/crafting/data/catalogs/potion_catalog.dart` | 포션 레시피, 품질 규칙, 분기 규칙, 기본 판매가 |
+| Potion catalog | `lib/features/workshop/crafting/data/catalogs/potion_catalog.dart` | 포션 양조 레시피, 품질 규칙, 분기 규칙, 기본 판매가 |
+| Workshop craft recipe | 계획: `lib/features/workshop/crafting/data/catalogs/workshop_craft_recipes.dart` | 원소 + 재료 기반 비포션 제작 레시피, 승급 재료 제작 비용, 제작 시간 |
 | Hatch recipe | `lib/features/workshop/hatchery/data/catalogs/homunculus_hatch_recipes.dart` | 부화 비용, 결과 호문쿨루스, 소요 시간 |
 | Workshop skill tree | `lib/features/workshop/skill_tree/data/catalogs/workshop_skill_nodes.dart` | 스킬 비용, 선행 조건, 효과량 |
 
@@ -69,7 +70,8 @@
 - 상점 가격과 수량
 - 상점 갱신 시간과 강제 갱신 비용
 - 장비 제작 재료와 장비 기본 스탯
-- 포션 레시피와 기본 판매가
+- 포션 양조 레시피와 기본 판매가
+- 원소 + 재료 기반 제작 레시피
 - 추출 프로필 수율, 순도, 시간
 - 부화 비용과 시간
 
