@@ -66,7 +66,10 @@ class WorkshopScreen extends ConsumerWidget {
         ),
         WorkshopQueueCard(jobCount: queueSummary.jobCount),
         WorkshopExtractionCard(materialTypeCount: materials.length),
-        WorkshopCraftCard(craftableCount: craftSummary.craftableCount),
+        WorkshopCraftCard(
+          brewCraftableCount: craftSummary.craftableCount,
+          materialCraftableCount: craftSummary.materialCraftableCount,
+        ),
         WorkshopEnchantCard(
           canEnchant:
               craftedPotionStacks.isNotEmpty &&

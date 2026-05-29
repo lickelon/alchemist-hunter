@@ -29,15 +29,21 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(body: WorkshopCraftCard(craftableCount: 1)),
+          home: Scaffold(
+            body: WorkshopCraftCard(
+              brewCraftableCount: 1,
+              materialCraftableCount: 0,
+            ),
+          ),
         ),
       ),
     );
 
-    await tester.tap(find.text('포션 제작'));
+    await tester.tap(find.text('연금술'));
     await tester.pumpAndSettle();
 
-    expect(find.text('포션 제조'), findsOneWidget);
+    expect(find.text('양조'), findsOneWidget);
+    expect(find.text('제작'), findsWidgets);
     expect(find.text('활력 포션'), findsOneWidget);
     expect(find.widgetWithText(FilledButton, '등록'), findsWidgets);
   });
@@ -77,12 +83,17 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: const MaterialApp(
-          home: Scaffold(body: WorkshopCraftCard(craftableCount: 0)),
+          home: Scaffold(
+            body: WorkshopCraftCard(
+              brewCraftableCount: 0,
+              materialCraftableCount: 0,
+            ),
+          ),
         ),
       ),
     );
 
-    await tester.tap(find.text('포션 제작'));
+    await tester.tap(find.text('연금술'));
     await tester.pumpAndSettle();
 
     expect(find.text('작업실 큐 가득 참 (4/4)'), findsOneWidget);
