@@ -1,10 +1,13 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
+import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
+import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_controller.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/craft_queue_option_selectors.dart';
@@ -155,44 +158,98 @@ class _WorkshopMaterialCraftTab extends ConsumerWidget {
     if (recipes.isEmpty) {
       return const AppEmptyState('등록 가능한 제작 항목이 없습니다');
     }
-    return ListView.builder(
-      itemCount: recipes.length,
-      itemBuilder: (BuildContext context, int index) {
-        final WorkshopMaterialCraftRecipeView recipe = recipes[index];
-        return ListTile(
-          dense: true,
-          leading: CatalogAssetIcon(
-            assetPath: CatalogIconAssetPaths.material(recipe.resultMaterialId),
-            size: 36,
-            padding: 5,
-            fallbackIcon: Icons.auto_fix_high_outlined,
+    return ResourceIconGrid(
+      items: recipes
+          .map((WorkshopMaterialCraftRecipeView recipe) {
+            final String quantityLabel = 'x${recipe.resultQuantity}';
+            return ResourceIconGridItem(
+              key: ValueKey<String>('craft_recipe_${recipe.recipeId}'),
+              assetPath: CatalogIconAssetPaths.material(
+                recipe.resultMaterialId,
+              ),
+              badgeLabel: quantityLabel,
+              semanticLabel: '${recipe.title} $quantityLabel',
+              tooltipMessage:
+                  '${recipe.title} $quantityLabel\n${recipe.costHint}\n${recipe.durationLabel}',
+              onTap: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return _WorkshopMaterialCraftDetailDialog(recipe: recipe);
+                  },
+                );
+              },
+            );
+          })
+          .toList(growable: false),
+    );
+  }
+}
+
+class _WorkshopMaterialCraftDetailDialog extends ConsumerWidget {
+  const _WorkshopMaterialCraftDetailDialog({required this.recipe});
+
+  final WorkshopMaterialCraftRecipeView recipe;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return AppDialogLayout(
+      title: recipe.title,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              CatalogAssetIcon(
+                assetPath: CatalogIconAssetPaths.material(
+                  recipe.resultMaterialId,
+                ),
+                size: 48,
+                padding: 6,
+                fallbackIcon: Icons.auto_fix_high_outlined,
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Text('결과 x${recipe.resultQuantity}'),
+            ],
           ),
-          title: Text(recipe.title),
-          subtitle: Text(recipe.costHint),
-          trailing: FilledButton.tonal(
-            onPressed: recipe.craftableNow
-                ? () {
-                    final WorkshopCraftSubmitResult result = ref
-                        .read(workshopCraftQueueControllerProvider)
-                        .enqueueMaterialRecipe(recipe.recipeId);
-                    if (result == WorkshopCraftSubmitResult.success) {
-                      Navigator.of(context).pop();
-                      return;
-                    }
-                    final String message = switch (result) {
-                      WorkshopCraftSubmitResult.queueFull => '작업실 큐가 가득 찼습니다',
-                      WorkshopCraftSubmitResult.elementMissing => '원소 부족',
-                      WorkshopCraftSubmitResult.resourceMissing => '재료 부족',
-                      WorkshopCraftSubmitResult.success => '',
-                      WorkshopCraftSubmitResult.failed => '제작 등록에 실패했습니다',
-                    };
-                    AppToast.show(context, message);
+          const SizedBox(height: AppSpacing.lg),
+          Text('소요 시간 ${recipe.durationLabel}'),
+          const SizedBox(height: AppSpacing.sm),
+          Text(recipe.costHint),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton.icon(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.close),
+          label: const Text('닫기'),
+        ),
+        FilledButton(
+          onPressed: recipe.craftableNow
+              ? () {
+                  final WorkshopCraftSubmitResult result = ref
+                      .read(workshopCraftQueueControllerProvider)
+                      .enqueueMaterialRecipe(recipe.recipeId);
+                  if (result == WorkshopCraftSubmitResult.success) {
+                    Navigator.of(context).pop();
+                    return;
                   }
-                : null,
-            child: const Text('등록'),
-          ),
-        );
-      },
+                  final String message = switch (result) {
+                    WorkshopCraftSubmitResult.queueFull => '작업실 큐가 가득 찼습니다',
+                    WorkshopCraftSubmitResult.elementMissing => '원소 부족',
+                    WorkshopCraftSubmitResult.resourceMissing => '재료 부족',
+                    WorkshopCraftSubmitResult.success => '',
+                    WorkshopCraftSubmitResult.failed => '제작 등록에 실패했습니다',
+                  };
+                  AppToast.show(context, message);
+                }
+              : null,
+          child: const Text('등록'),
+        ),
+      ],
     );
   }
 }

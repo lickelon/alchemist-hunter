@@ -107,6 +107,62 @@ void main() {
     );
   });
 
+  testWidgets('workshop craft tab opens recipe detail from icon grid', (
+    WidgetTester tester,
+  ) async {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final SessionController session = container.read(
+      sessionControllerProvider.notifier,
+    );
+    session.state = session.state.copyWith(
+      player: session.state.player.copyWith(
+        essence: 100,
+        arcaneDust: 2,
+        materialInventory: const <String, int>{
+          'm_3': 3,
+          'promo_core_mercenary_2': 1,
+        },
+      ),
+      workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{
+          't_atk': 2,
+          't_focus': 1,
+        },
+      ),
+    );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: Scaffold(
+            body: WorkshopCraftCard(
+              brewCraftableCount: 0,
+              materialCraftableCount: 1,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('연금술'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('제작').last);
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(
+        const ValueKey<String>('craft_recipe_craft_tier_mat_mercenary_2'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('용병 승급 재료 2'), findsWidgets);
+    expect(find.text('소요 시간 45초'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, '등록'), findsOneWidget);
+  });
+
   testWidgets('workshop craft sheet shows toast when queue is full', (
     WidgetTester tester,
   ) async {

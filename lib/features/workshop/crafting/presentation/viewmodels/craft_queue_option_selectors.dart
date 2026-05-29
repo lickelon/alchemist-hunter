@@ -49,6 +49,8 @@ class WorkshopMaterialCraftRecipeView {
     required this.title,
     required this.costHint,
     required this.resultMaterialId,
+    required this.resultQuantity,
+    required this.durationLabel,
     required this.craftableNow,
     required this.queueFull,
   });
@@ -57,6 +59,8 @@ class WorkshopMaterialCraftRecipeView {
   final String title;
   final String costHint;
   final String resultMaterialId;
+  final int resultQuantity;
+  final String durationLabel;
   final bool craftableNow;
   final bool queueFull;
 }
@@ -210,7 +214,8 @@ workshopMaterialCraftRecipeViewsProvider =
             final bool hasCurrencies =
                 state.player.essence >= recipe.essenceCost &&
                 state.player.arcaneDust >= recipe.arcaneDustCost;
-            final String resultMaterialId = recipe.resultMaterials.keys.first;
+            final MapEntry<String, int> result =
+                recipe.resultMaterials.entries.first;
             return WorkshopMaterialCraftRecipeView(
               recipeId: recipe.id,
               title: recipe.name,
@@ -219,7 +224,9 @@ workshopMaterialCraftRecipeViewsProvider =
                 materialNames: materialNames,
                 traitNames: traitNames,
               ),
-              resultMaterialId: resultMaterialId,
+              resultMaterialId: result.key,
+              resultQuantity: result.value,
+              durationLabel: _durationLabel(recipe.duration),
               craftableNow:
                   hasMaterials && hasTraits && hasCurrencies && !queueFull,
               queueFull: queueFull,
@@ -249,4 +256,16 @@ String _craftRecipeCostHint(
     );
   });
   return parts.join(' / ');
+}
+
+String _durationLabel(Duration duration) {
+  final int minutes = duration.inMinutes;
+  final int seconds = duration.inSeconds.remainder(60);
+  if (minutes > 0 && seconds > 0) {
+    return '$minutes분 $seconds초';
+  }
+  if (minutes > 0) {
+    return '$minutes분';
+  }
+  return '$seconds초';
 }
