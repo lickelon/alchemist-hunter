@@ -50,6 +50,14 @@ const Map<String, BattleEnemyDefinitionDto> stage2BattleEnemyDefinitionDtos =
         normalDrops: <BattleDropEntryDto>[
           BattleDropEntryDto(materialId: 'm_3', min: 1, max: 2, chance: 0.78),
         ],
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(
+            materialId: 'promo_core_mercenary_2',
+            min: 1,
+            max: 1,
+            chance: 0.12,
+          ),
+        ],
       ),
       'enemy_stalker': BattleEnemyDefinitionDto(
         id: 'enemy_stalker',
@@ -88,6 +96,12 @@ const Map<String, BattleEnemyDefinitionDto> stage2BattleEnemyDefinitionDtos =
         ],
         specialDrops: <BattleDropEntryDto>[
           BattleDropEntryDto(materialId: 'm_26', min: 1, max: 1, chance: 0.22),
+          BattleDropEntryDto(
+            materialId: 'promo_core_homunculus_2',
+            min: 1,
+            max: 1,
+            chance: 0.12,
+          ),
         ],
       ),
       'enemy_bruiser': BattleEnemyDefinitionDto(
@@ -144,6 +158,14 @@ const Map<String, BattleEnemyDefinitionDto> stage2BattleEnemyDefinitionDtos =
         ],
         normalDrops: <BattleDropEntryDto>[
           BattleDropEntryDto(materialId: 'm_4', min: 1, max: 3, chance: 0.8),
+        ],
+        specialDrops: <BattleDropEntryDto>[
+          BattleDropEntryDto(
+            materialId: 'promo_core_mercenary_2',
+            min: 1,
+            max: 1,
+            chance: 0.14,
+          ),
         ],
       ),
       'enemy_raider': BattleEnemyDefinitionDto(
@@ -250,6 +272,12 @@ const Map<String, BattleEnemyDefinitionDto> stage2BattleEnemyDefinitionDtos =
         ],
         specialDrops: <BattleDropEntryDto>[
           BattleDropEntryDto(materialId: 'm_26', min: 1, max: 1, chance: 0.18),
+          BattleDropEntryDto(
+            materialId: 'promo_core_homunculus_2',
+            min: 1,
+            max: 1,
+            chance: 0.12,
+          ),
         ],
       ),
       'enemy_dust_mender': BattleEnemyDefinitionDto(

@@ -150,20 +150,54 @@ const List<String> materialNames = <String>[
   'Moontear Crystal',
 ];
 
-final List<MaterialEntity> materialCatalog = List<MaterialEntity>.generate(
-  30,
-  (int i) => MaterialEntity(
-    id: 'm_${i + 1}',
-    name: materialNames[i],
-    rarity: i < 24 ? MaterialRarity.common : MaterialRarity.rare,
-    traits: <TraitUnit>[
-      traitCatalog[i % traitCatalog.length],
-      traitCatalog[(i + 3) % traitCatalog.length],
-    ],
-    analyzable: true,
-    source: _materialSource(i + 1),
+final List<MaterialEntity> materialCatalog = <MaterialEntity>[
+  ...List<MaterialEntity>.generate(
+    30,
+    (int i) => MaterialEntity(
+      id: 'm_${i + 1}',
+      name: materialNames[i],
+      rarity: i < 24 ? MaterialRarity.common : MaterialRarity.rare,
+      traits: <TraitUnit>[
+        traitCatalog[i % traitCatalog.length],
+        traitCatalog[(i + 3) % traitCatalog.length],
+      ],
+      analyzable: true,
+      source: _materialSource(i + 1),
+    ),
   ),
-);
+  const MaterialEntity(
+    id: 'promo_core_mercenary_2',
+    name: '용병 승급 촉매 2',
+    rarity: MaterialRarity.rare,
+    traits: <TraitUnit>[],
+    analyzable: false,
+    source: 'battle_stage_2',
+  ),
+  const MaterialEntity(
+    id: 'promo_core_homunculus_2',
+    name: '호문쿨루스 승급 촉매 2',
+    rarity: MaterialRarity.rare,
+    traits: <TraitUnit>[],
+    analyzable: false,
+    source: 'battle_stage_2',
+  ),
+  const MaterialEntity(
+    id: 'tier_mat_mercenary_2',
+    name: '용병 승급 재료 2',
+    rarity: MaterialRarity.rare,
+    traits: <TraitUnit>[],
+    analyzable: false,
+    source: 'workshop_craft',
+  ),
+  const MaterialEntity(
+    id: 'tier_mat_homunculus_2',
+    name: '호문쿨루스 승급 재료 2',
+    rarity: MaterialRarity.rare,
+    traits: <TraitUnit>[],
+    analyzable: false,
+    source: 'workshop_craft',
+  ),
+];
 
 String _materialSource(int materialNumber) {
   return switch (materialNumber) {

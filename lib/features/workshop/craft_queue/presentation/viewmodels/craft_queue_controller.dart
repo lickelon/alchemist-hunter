@@ -6,6 +6,7 @@ import 'package:alchemist_hunter/features/workshop/crafting/domain/use_cases/wor
 import 'package:alchemist_hunter/features/workshop/craft_queue/domain/use_cases/workshop_queue_claim_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/services/workshop_skill_tree_service.dart';
@@ -14,7 +15,13 @@ import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmod
 import 'package:alchemist_hunter/features/workshop/skill_tree/presentation/viewmodels/workshop_skill_tree_service_providers.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_service_providers.dart';
 
-enum WorkshopCraftSubmitResult { success, queueFull, elementMissing, failed }
+enum WorkshopCraftSubmitResult {
+  success,
+  queueFull,
+  elementMissing,
+  resourceMissing,
+  failed,
+}
 
 class WorkshopCraftQueueController {
   WorkshopCraftQueueController(
@@ -25,12 +32,14 @@ class WorkshopCraftQueueController {
     WorkshopQueueClaimUseCase queueClaimUseCase =
         const WorkshopQueueClaimUseCase(),
     required PotionCatalogRepository potionCatalogRepository,
+    required WorkshopCraftRecipeRepository craftRecipeRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
     required WorkshopSupportService workshopSupportService,
   }) : _craftEnqueueUseCase = craftEnqueueUseCase,
        _queueClaimUseCase = queueClaimUseCase,
        _potionCatalogRepository = potionCatalogRepository,
+       _craftRecipeRepository = craftRecipeRepository,
        _workshopSkillTreeRepository = workshopSkillTreeRepository,
        _workshopSkillTreeService = workshopSkillTreeService,
        _workshopSupportService = workshopSupportService;
@@ -40,6 +49,7 @@ class WorkshopCraftQueueController {
   final WorkshopCraftEnqueueUseCase _craftEnqueueUseCase;
   final WorkshopQueueClaimUseCase _queueClaimUseCase;
   final PotionCatalogRepository _potionCatalogRepository;
+  final WorkshopCraftRecipeRepository _craftRecipeRepository;
   final WorkshopSkillTreeRepository _workshopSkillTreeRepository;
   final WorkshopSkillTreeService _workshopSkillTreeService;
   final WorkshopSupportService _workshopSupportService;
@@ -87,6 +97,35 @@ class WorkshopCraftQueueController {
     return WorkshopCraftSubmitResult.success;
   }
 
+  WorkshopCraftSubmitResult enqueueMaterialRecipe(String recipeId) {
+    final SessionState current = _session.snapshot();
+    final int queueCapacity =
+        _workshopSkillTreeService.craftQueueCapacity(
+          current,
+          _workshopSkillTreeRepository.nodes(),
+        ) +
+        _workshopSupportService.craftQueueCapacityBonus(current);
+    if (current.workshop.queue.length >= queueCapacity) {
+      _session.appendLog('작업실 큐 가득 참 / $recipeId');
+      return WorkshopCraftSubmitResult.queueFull;
+    }
+    final SessionState nextState = _craftEnqueueUseCase.enqueueMaterialRecipe(
+      state: current,
+      recipeId: recipeId,
+      now: _session.now(),
+      craftRecipeRepository: _craftRecipeRepository,
+      workshopSkillTreeRepository: _workshopSkillTreeRepository,
+      workshopSkillTreeService: _workshopSkillTreeService,
+      workshopSupportService: _workshopSupportService,
+    );
+    if (identical(nextState, current)) {
+      _session.appendLog('제작 재료 부족 / $recipeId');
+      return WorkshopCraftSubmitResult.resourceMissing;
+    }
+    _apply(nextState, logMessage: '제작 등록 / $recipeId');
+    return WorkshopCraftSubmitResult.success;
+  }
+
   void claimPending() {
     final SessionState current = _session.snapshot();
     final SessionState nextState = _queueClaimUseCase.claimPending(
@@ -130,6 +169,7 @@ workshopCraftQueueControllerProvider = Provider<WorkshopCraftQueueController>((
     ref.read(sessionControllerProvider.notifier),
     ref.read(potionCraftingServiceProvider),
     potionCatalogRepository: ref.read(potionCatalogRepositoryProvider),
+    craftRecipeRepository: ref.read(workshopCraftRecipeRepositoryProvider),
     workshopSkillTreeRepository: ref.read(workshopSkillTreeRepositoryProvider),
     workshopSkillTreeService: ref.read(workshopSkillTreeServiceProvider),
     workshopSupportService: ref.read(workshopSupportServiceProvider),

@@ -50,7 +50,9 @@ String? completedResultText(CraftQueueJob job) {
     WorkshopJobType.extraction =>
       '추출 완료 / 원소 ${job.completedExtractedTraits.length}종 / 신비 +${job.completedArcaneDust}',
     WorkshopJobType.craft =>
-      '제조 완료 / ${job.completedPotionStackKey ?? job.potionId ?? job.title} x${job.repeatCount}',
+      job.completedMaterials.isNotEmpty
+          ? '제작 완료 / 재료 ${job.completedMaterials.length}종'
+          : '양조 완료 / ${job.completedPotionStackKey ?? job.potionId ?? job.title} x${job.repeatCount}',
     WorkshopJobType.enchant =>
       job.completedEquipment?.enchant == null
           ? '인챈트 완료'

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_crafting_service.dart';
@@ -26,6 +27,7 @@ void main() {
       session,
       PotionCraftingService(random: Random(craftingSeed)),
       potionCatalogRepository: const StaticPotionCatalogRepository(),
+      craftRecipeRepository: const StaticWorkshopCraftRecipeRepository(),
       workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
       workshopSkillTreeService: const WorkshopSkillTreeService(),
       workshopSupportService: const WorkshopSupportService(),
@@ -59,6 +61,59 @@ void main() {
     expect(session.state.workshop.extractedTraitInventory, isEmpty);
     expect(session.state.workshop.logs.first, '제조 등록 / p_1 x2');
   });
+
+  test(
+    'enqueueMaterialRecipe reserves resources and claims result material',
+    () {
+      final SessionController session = buildSession();
+      final WorkshopCraftQueueController controller = buildController(session);
+      session.state = session.state.copyWith(
+        player: session.state.player.copyWith(
+          materialInventory: const <String, int>{
+            'm_3': 3,
+            'promo_core_mercenary_2': 1,
+          },
+        ),
+        workshop: session.state.workshop.copyWith(
+          extractedTraitInventory: const <String, double>{
+            't_atk': 2,
+            't_focus': 1,
+          },
+        ),
+      );
+
+      final WorkshopCraftSubmitResult submitResult = controller
+          .enqueueMaterialRecipe('craft_tier_mat_mercenary_2');
+
+      expect(submitResult, WorkshopCraftSubmitResult.success);
+      expect(session.state.player.materialInventory.containsKey('m_3'), false);
+      expect(
+        session.state.player.materialInventory.containsKey(
+          'promo_core_mercenary_2',
+        ),
+        false,
+      );
+      expect(session.state.player.essence, 80);
+      expect(session.state.player.arcaneDust, 1);
+      expect(session.state.workshop.extractedTraitInventory, isEmpty);
+      expect(session.state.workshop.queue.single.completedMaterials, {
+        'tier_mat_mercenary_2': 1,
+      });
+
+      final CraftQueueJob completed = session.state.workshop.queue.single
+          .copyWith(status: QueueJobStatus.completed, eta: Duration.zero);
+      session.state = session.state.copyWith(
+        workshop: session.state.workshop.copyWith(
+          queue: <CraftQueueJob>[completed],
+        ),
+      );
+
+      controller.claimJob(completed.id);
+
+      expect(session.state.workshop.queue, isEmpty);
+      expect(session.state.player.materialInventory['tier_mat_mercenary_2'], 1);
+    },
+  );
 
   test('claimJob applies only selected completed potion job', () {
     final SessionController session = buildSession();

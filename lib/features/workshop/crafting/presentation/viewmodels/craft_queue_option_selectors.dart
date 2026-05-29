@@ -33,12 +33,32 @@ class WorkshopCraftMenuSummaryView {
   const WorkshopCraftMenuSummaryView({
     required this.craftableCount,
     required this.unlockedCount,
+    required this.materialCraftableCount,
     required this.description,
   });
 
   final int craftableCount;
   final int unlockedCount;
+  final int materialCraftableCount;
   final String description;
+}
+
+class WorkshopMaterialCraftRecipeView {
+  const WorkshopMaterialCraftRecipeView({
+    required this.recipeId,
+    required this.title,
+    required this.costHint,
+    required this.resultMaterialId,
+    required this.craftableNow,
+    required this.queueFull,
+  });
+
+  final String recipeId;
+  final String title;
+  final String costHint;
+  final String resultMaterialId;
+  final bool craftableNow;
+  final bool queueFull;
 }
 
 final Provider<List<PotionQueueOptionView>>
@@ -135,16 +155,98 @@ final Provider<WorkshopCraftMenuSummaryView> workshopCraftMenuSummaryProvider =
       final List<PotionQueueOptionView> options = ref.watch(
         workshopPotionQueueOptionViewsProvider,
       );
+      final List<WorkshopMaterialCraftRecipeView> materialRecipes = ref.watch(
+        workshopMaterialCraftRecipeViewsProvider,
+      );
       final int unlockedCount = options.where((entry) => entry.unlocked).length;
       final int craftableCount = options
           .where((entry) => entry.craftableNow)
           .length;
+      final int materialCraftableCount = materialRecipes
+          .where((entry) => entry.craftableNow)
+          .length;
       final String description = unlockedCount == 0
-          ? '제조 가능한 포션 없음'
-          : '즉시 제작 가능 $craftableCount종 / 해금 포션 $unlockedCount종';
+          ? '양조 가능한 포션 없음'
+          : '양조 $craftableCount종 / 제작 $materialCraftableCount종';
       return WorkshopCraftMenuSummaryView(
         craftableCount: craftableCount,
         unlockedCount: unlockedCount,
+        materialCraftableCount: materialCraftableCount,
         description: description,
       );
     });
+
+final Provider<List<WorkshopMaterialCraftRecipeView>>
+workshopMaterialCraftRecipeViewsProvider =
+    Provider<List<WorkshopMaterialCraftRecipeView>>((Ref ref) {
+      final SessionState state = ref.watch(sessionControllerProvider);
+      final List<WorkshopCraftRecipe> recipes = ref.watch(
+        workshopCraftRecipesProvider,
+      );
+      final List<MaterialEntity> materials = ref.watch(materialsProvider);
+      final List<TraitUnit> traits = ref.watch(traitsProvider);
+      final int queueLength = state.workshop.queue.length;
+      final int queueCapacity = ref.watch(workshopQueueCapacityProvider);
+      final bool queueFull = queueLength >= queueCapacity;
+      final Map<String, String> materialNames = <String, String>{
+        for (final MaterialEntity material in materials)
+          material.id: material.name,
+      };
+      final Map<String, String> traitNames = <String, String>{
+        for (final TraitUnit trait in traits) trait.id: trait.name,
+      };
+
+      return recipes
+          .map((WorkshopCraftRecipe recipe) {
+            final bool hasMaterials = recipe.materialCosts.entries.every(
+              (MapEntry<String, int> cost) =>
+                  (state.player.materialInventory[cost.key] ?? 0) >= cost.value,
+            );
+            final bool hasTraits = recipe.traitCosts.entries.every(
+              (MapEntry<String, double> cost) =>
+                  (state.workshop.extractedTraitInventory[cost.key] ?? 0) >=
+                  cost.value,
+            );
+            final bool hasCurrencies =
+                state.player.essence >= recipe.essenceCost &&
+                state.player.arcaneDust >= recipe.arcaneDustCost;
+            final String resultMaterialId = recipe.resultMaterials.keys.first;
+            return WorkshopMaterialCraftRecipeView(
+              recipeId: recipe.id,
+              title: recipe.name,
+              costHint: _craftRecipeCostHint(
+                recipe,
+                materialNames: materialNames,
+                traitNames: traitNames,
+              ),
+              resultMaterialId: resultMaterialId,
+              craftableNow:
+                  hasMaterials && hasTraits && hasCurrencies && !queueFull,
+              queueFull: queueFull,
+            );
+          })
+          .toList(growable: false);
+    });
+
+String _craftRecipeCostHint(
+  WorkshopCraftRecipe recipe, {
+  required Map<String, String> materialNames,
+  required Map<String, String> traitNames,
+}) {
+  final List<String> parts = <String>[];
+  if (recipe.essenceCost > 0) {
+    parts.add('정수 ${recipe.essenceCost}');
+  }
+  if (recipe.arcaneDustCost > 0) {
+    parts.add('신비 ${recipe.arcaneDustCost}');
+  }
+  recipe.materialCosts.forEach((String materialId, int quantity) {
+    parts.add('${materialNames[materialId] ?? materialId} x$quantity');
+  });
+  recipe.traitCosts.forEach((String traitId, double amount) {
+    parts.add(
+      '${traitNames[traitId] ?? traitId} 원소 ${amount.toStringAsFixed(1)}',
+    );
+  });
+  return parts.join(' / ');
+}

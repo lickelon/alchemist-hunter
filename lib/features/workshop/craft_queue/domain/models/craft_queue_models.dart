@@ -43,6 +43,7 @@ class CraftQueueJob {
     this.reservedTraits = const <String, double>{},
     this.completedPotionStackKey,
     this.completedPotion,
+    this.completedMaterials = const <String, int>{},
     this.completedExtractedTraits = const <String, double>{},
     this.completedArcaneDust = 0,
     this.completedEquipment,
@@ -77,6 +78,7 @@ class CraftQueueJob {
   final Map<String, double> reservedTraits;
   final String? completedPotionStackKey;
   final CraftedPotion? completedPotion;
+  final Map<String, int> completedMaterials;
   final Map<String, double> completedExtractedTraits;
   final int completedArcaneDust;
   final EquipmentInstance? completedEquipment;
@@ -92,6 +94,7 @@ class CraftQueueJob {
     int? retryCount,
     String? completedPotionStackKey,
     CraftedPotion? completedPotion,
+    Map<String, int>? completedMaterials,
     Map<String, double>? completedExtractedTraits,
     int? completedArcaneDust,
     EquipmentInstance? completedEquipment,
@@ -127,6 +130,7 @@ class CraftQueueJob {
       completedPotionStackKey:
           completedPotionStackKey ?? this.completedPotionStackKey,
       completedPotion: completedPotion ?? this.completedPotion,
+      completedMaterials: completedMaterials ?? this.completedMaterials,
       completedExtractedTraits:
           completedExtractedTraits ?? this.completedExtractedTraits,
       completedArcaneDust: completedArcaneDust ?? this.completedArcaneDust,

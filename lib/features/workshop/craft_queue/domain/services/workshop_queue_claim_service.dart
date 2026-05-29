@@ -66,26 +66,39 @@ class WorkshopQueueClaimService {
   }) {
     final String? stackKey = job.completedPotionStackKey;
     final CraftedPotion? detail = job.completedPotion;
-    if (stackKey == null || detail == null) {
+    if ((stackKey == null || detail == null) &&
+        job.completedMaterials.isEmpty) {
       return state;
     }
+
+    final Map<String, int> materialInventory = <String, int>{
+      ...state.player.materialInventory,
+    };
+    job.completedMaterials.forEach((String materialId, int quantity) {
+      materialInventory[materialId] =
+          (materialInventory[materialId] ?? 0) + quantity;
+    });
 
     final Map<String, int> potionStacks = <String, int>{
       ...state.workshop.craftedPotionStacks,
     };
-    potionStacks[stackKey] = (potionStacks[stackKey] ?? 0) + job.repeatCount;
-
     final Map<String, CraftedPotion> potionDetails = <String, CraftedPotion>{
       ...state.workshop.craftedPotionDetails,
     };
-    potionDetails[stackKey] = detail;
+    if (stackKey != null && detail != null) {
+      potionStacks[stackKey] = (potionStacks[stackKey] ?? 0) + job.repeatCount;
+      potionDetails[stackKey] = detail;
+    }
 
     return state.copyWith(
+      player: state.player.copyWith(materialInventory: materialInventory),
       workshop: state.workshop.copyWith(
         queue: queue,
         craftedPotionStacks: potionStacks,
         craftedPotionDetails: potionDetails,
-        potionCraftCount: state.workshop.potionCraftCount + job.repeatCount,
+        potionCraftCount: stackKey != null && detail != null
+            ? state.workshop.potionCraftCount + job.repeatCount
+            : state.workshop.potionCraftCount,
       ),
     );
   }

@@ -68,6 +68,7 @@ class _WorkshopEnqueueOptionsContent extends ConsumerWidget {
               final String message = switch (result) {
                 WorkshopCraftSubmitResult.queueFull => '작업실 큐가 가득 찼습니다',
                 WorkshopCraftSubmitResult.elementMissing => '원소 부족',
+                WorkshopCraftSubmitResult.resourceMissing => '재료 부족',
                 WorkshopCraftSubmitResult.success => '',
                 WorkshopCraftSubmitResult.failed => '제조 등록에 실패했습니다',
               };

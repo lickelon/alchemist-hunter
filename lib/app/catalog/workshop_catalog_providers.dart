@@ -1,5 +1,7 @@
 import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_material_catalog_repository.dart';
@@ -20,6 +22,11 @@ final Provider<PotionCatalogRepository> potionCatalogRepositoryProvider =
     Provider<PotionCatalogRepository>(
       (Ref ref) => const StaticPotionCatalogRepository(),
     );
+
+final Provider<WorkshopCraftRecipeRepository>
+workshopCraftRecipeRepositoryProvider = Provider<WorkshopCraftRecipeRepository>(
+  (Ref ref) => const StaticWorkshopCraftRecipeRepository(),
+);
 
 final Provider<ExtractionProfileRepository>
 extractionProfileRepositoryProvider = Provider<ExtractionProfileRepository>(
@@ -44,6 +51,11 @@ final Provider<List<MaterialEntity>> materialsProvider =
 final Provider<List<PotionBlueprint>> potionsProvider =
     Provider<List<PotionBlueprint>>((Ref ref) {
       return ref.watch(potionCatalogRepositoryProvider).potions();
+    });
+
+final Provider<List<WorkshopCraftRecipe>> workshopCraftRecipesProvider =
+    Provider<List<WorkshopCraftRecipe>>((Ref ref) {
+      return ref.watch(workshopCraftRecipeRepositoryProvider).recipes();
     });
 
 final Provider<List<TraitUnit>> traitsProvider = Provider<List<TraitUnit>>((

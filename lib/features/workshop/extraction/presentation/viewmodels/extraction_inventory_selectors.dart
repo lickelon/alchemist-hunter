@@ -89,17 +89,24 @@ final Provider<List<MaterialInventoryView>> materialInventoryViewsProvider =
       final Map<String, MaterialEntity> materialMap = <String, MaterialEntity>{
         for (final MaterialEntity material in materials) material.id: material,
       };
-      return inventory.map((MapEntry<String, int> entry) {
-        final MaterialEntity? material = materialMap[entry.key];
-        final String traitSummary = material == null
-            ? '원소 정보 없음'
-            : material.traits.map((TraitUnit trait) => trait.name).join(' / ');
-        return MaterialInventoryView(
-          id: entry.key,
-          name: material?.name ?? entry.key,
-          rarity: material?.rarity ?? MaterialRarity.common,
-          quantity: entry.value,
-          traitSummary: traitSummary,
-        );
-      }).toList();
+      return inventory
+          .where((MapEntry<String, int> entry) {
+            return materialMap[entry.key]?.analyzable ?? false;
+          })
+          .map((MapEntry<String, int> entry) {
+            final MaterialEntity? material = materialMap[entry.key];
+            final String traitSummary = material == null
+                ? '원소 정보 없음'
+                : material.traits
+                      .map((TraitUnit trait) => trait.name)
+                      .join(' / ');
+            return MaterialInventoryView(
+              id: entry.key,
+              name: material?.name ?? entry.key,
+              rarity: material?.rarity ?? MaterialRarity.common,
+              quantity: entry.value,
+              traitSummary: traitSummary,
+            );
+          })
+          .toList();
     });

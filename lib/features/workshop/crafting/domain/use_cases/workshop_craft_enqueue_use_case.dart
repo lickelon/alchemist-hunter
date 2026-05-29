@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/session/session_state.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_crafting_service.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/services/workshop_skill_tree_service.dart';
@@ -93,6 +94,100 @@ class WorkshopCraftEnqueueUseCase {
     return state.copyWith(
       workshop: state.workshop.copyWith(
         extractedTraitInventory: nextExtractedInventory,
+        queue: <CraftQueueJob>[...state.workshop.queue, job],
+      ),
+    );
+  }
+
+  SessionState enqueueMaterialRecipe({
+    required SessionState state,
+    required String recipeId,
+    required DateTime now,
+    required WorkshopCraftRecipeRepository craftRecipeRepository,
+    required WorkshopSkillTreeRepository workshopSkillTreeRepository,
+    required WorkshopSkillTreeService workshopSkillTreeService,
+    required WorkshopSupportService workshopSupportService,
+  }) {
+    final int queueCapacity =
+        workshopSkillTreeService.craftQueueCapacity(
+          state,
+          workshopSkillTreeRepository.nodes(),
+        ) +
+        workshopSupportService.craftQueueCapacityBonus(state);
+    if (state.workshop.queue.length >= queueCapacity) {
+      return state;
+    }
+
+    final WorkshopCraftRecipe? recipe = craftRecipeRepository.findRecipeById(
+      recipeId,
+    );
+    if (recipe == null || recipe.resultMaterials.isEmpty) {
+      return state;
+    }
+    if (state.player.essence < recipe.essenceCost ||
+        state.player.arcaneDust < recipe.arcaneDustCost) {
+      return state;
+    }
+
+    final Map<String, int> materials = <String, int>{
+      ...state.player.materialInventory,
+    };
+    for (final MapEntry<String, int> cost in recipe.materialCosts.entries) {
+      if ((materials[cost.key] ?? 0) < cost.value) {
+        return state;
+      }
+    }
+
+    final Map<String, double> traits = <String, double>{
+      ...state.workshop.extractedTraitInventory,
+    };
+    for (final MapEntry<String, double> cost in recipe.traitCosts.entries) {
+      if ((traits[cost.key] ?? 0) < cost.value) {
+        return state;
+      }
+    }
+
+    for (final MapEntry<String, int> cost in recipe.materialCosts.entries) {
+      final int nextValue = (materials[cost.key] ?? 0) - cost.value;
+      if (nextValue <= 0) {
+        materials.remove(cost.key);
+      } else {
+        materials[cost.key] = nextValue;
+      }
+    }
+    for (final MapEntry<String, double> cost in recipe.traitCosts.entries) {
+      final double nextValue = (traits[cost.key] ?? 0) - cost.value;
+      if (nextValue <= 0.0001) {
+        traits.remove(cost.key);
+      } else {
+        traits[cost.key] = nextValue;
+      }
+    }
+
+    final bool hasActiveJob = _hasActiveJob(state.workshop.queue);
+    final CraftQueueJob job = CraftQueueJob(
+      id: 'job_${now.microsecondsSinceEpoch}_craft_${recipe.id}',
+      type: WorkshopJobType.craft,
+      status: hasActiveJob ? QueueJobStatus.queued : QueueJobStatus.processing,
+      queuedAt: now,
+      startedAt: hasActiveJob ? null : now,
+      duration: recipe.duration,
+      eta: recipe.duration,
+      title: recipe.name,
+      recipeId: recipe.id,
+      reservedMaterials: recipe.materialCosts,
+      reservedTraits: recipe.traitCosts,
+      completedMaterials: recipe.resultMaterials,
+    );
+
+    return state.copyWith(
+      player: state.player.copyWith(
+        essence: state.player.essence - recipe.essenceCost,
+        arcaneDust: state.player.arcaneDust - recipe.arcaneDustCost,
+        materialInventory: materials,
+      ),
+      workshop: state.workshop.copyWith(
+        extractedTraitInventory: traits,
         queue: <CraftQueueJob>[...state.workshop.queue, job],
       ),
     );

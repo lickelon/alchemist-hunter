@@ -57,7 +57,10 @@ final Provider<List<CraftQueueJobView>> craftQueueJobViewsProvider =
       return sortedQueue.take(20).map((CraftQueueJob job) {
         final String title = switch (job.type) {
           WorkshopJobType.extraction => '${job.title} x${job.quantity}',
-          WorkshopJobType.craft => '${job.title} x${job.repeatCount}',
+          WorkshopJobType.craft =>
+            job.completedMaterials.isNotEmpty
+                ? job.title
+                : '${job.title} x${job.repeatCount}',
           WorkshopJobType.enchant => job.title,
           WorkshopJobType.hatch => job.title,
         };
