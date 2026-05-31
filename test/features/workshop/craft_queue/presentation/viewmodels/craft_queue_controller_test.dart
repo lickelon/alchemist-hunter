@@ -7,6 +7,7 @@ import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/st
 import 'package:alchemist_hunter/features/workshop/skill_tree/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_crafting_service.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_discovery_service.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/services/workshop_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_controller.dart';
@@ -31,6 +32,7 @@ void main() {
       workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
       workshopSkillTreeService: const WorkshopSkillTreeService(),
       workshopSupportService: const WorkshopSupportService(),
+      discoveryService: const PotionDiscoveryService(),
     );
   }
 
@@ -60,6 +62,42 @@ void main() {
     );
     expect(session.state.workshop.extractedTraitInventory, isEmpty);
     expect(session.state.workshop.logs.first, '제조 등록 / p_1 x2');
+  });
+
+  test('enqueueBrew reserves input traits and records discovery', () {
+    final SessionController session = buildSession();
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{
+          't_hp': 1.4,
+          't_atk': 0.6,
+        },
+      ),
+    );
+    final WorkshopCraftQueueController controller = buildController(session);
+
+    final WorkshopCraftSubmitResult result = controller.enqueueBrew(
+      const <String, double>{'t_hp': 0.7, 't_atk': 0.3},
+      repeatCount: 2,
+    );
+
+    expect(result, WorkshopCraftSubmitResult.success);
+    expect(session.state.workshop.extractedTraitInventory, isEmpty);
+    expect(session.state.workshop.queue, hasLength(1));
+    expect(session.state.workshop.queue.single.potionId, 'p_1');
+    expect(
+      session.state.workshop.queue.single.completedPotionStackKey,
+      'p_1|a',
+    );
+    expect(session.state.workshop.queue.single.reservedTraits, {
+      't_hp': 1.4,
+      't_atk': 0.6,
+    });
+    expect(
+      session.state.workshop.discoveredPotionRecipes['p_1']?.bestKnownGrade,
+      PotionQualityGrade.a,
+    );
+    expect(session.state.workshop.logs.first, '양조 실험 등록 / p_1 x2');
   });
 
   test(

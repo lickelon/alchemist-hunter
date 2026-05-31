@@ -5,6 +5,7 @@ import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/use_cases/workshop_craft_enqueue_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/domain/use_cases/workshop_queue_claim_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_crafting_service.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_discovery_service.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositories/workshop_skill_tree_repository.dart';
@@ -36,13 +37,15 @@ class WorkshopCraftQueueController {
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
     required WorkshopSupportService workshopSupportService,
+    required PotionDiscoveryService discoveryService,
   }) : _craftEnqueueUseCase = craftEnqueueUseCase,
        _queueClaimUseCase = queueClaimUseCase,
        _potionCatalogRepository = potionCatalogRepository,
        _craftRecipeRepository = craftRecipeRepository,
        _workshopSkillTreeRepository = workshopSkillTreeRepository,
        _workshopSkillTreeService = workshopSkillTreeService,
-       _workshopSupportService = workshopSupportService;
+       _workshopSupportService = workshopSupportService,
+       _discoveryService = discoveryService;
 
   final SessionController _session;
   final PotionCraftingService _craftingService;
@@ -53,6 +56,7 @@ class WorkshopCraftQueueController {
   final WorkshopSkillTreeRepository _workshopSkillTreeRepository;
   final WorkshopSkillTreeService _workshopSkillTreeService;
   final WorkshopSupportService _workshopSupportService;
+  final PotionDiscoveryService _discoveryService;
 
   WorkshopCraftSubmitResult enqueuePotion(String potionId, int repeatCount) {
     final SessionState current = _session.snapshot();
@@ -130,6 +134,54 @@ class WorkshopCraftQueueController {
     return WorkshopCraftSubmitResult.success;
   }
 
+  WorkshopCraftSubmitResult enqueueBrew(
+    Map<String, double> inputTraits, {
+    int repeatCount = 1,
+  }) {
+    final SessionState current = _session.snapshot();
+    final int queueCapacity =
+        _workshopSkillTreeService.craftQueueCapacity(
+          current,
+          _workshopSkillTreeRepository.nodes(),
+        ) +
+        _workshopSupportService.craftQueueCapacityBonus(current);
+    if (current.workshop.queue.length >= queueCapacity) {
+      _session.appendLog('작업실 큐 가득 참 / 양조 실험 x$repeatCount');
+      return WorkshopCraftSubmitResult.queueFull;
+    }
+    final SessionState nextState = _craftEnqueueUseCase.enqueueBrew(
+      state: current,
+      inputTraits: inputTraits,
+      repeatCount: repeatCount,
+      now: _session.now(),
+      craftingService: _craftingService,
+      discoveryService: _discoveryService,
+      potionCatalogRepository: _potionCatalogRepository,
+      workshopSkillTreeRepository: _workshopSkillTreeRepository,
+      workshopSkillTreeService: _workshopSkillTreeService,
+      workshopSupportService: _workshopSupportService,
+    );
+    if (identical(nextState, current)) {
+      final bool hasEnoughTraits = _hasEnoughTraits(
+        inputTraits,
+        current.workshop.extractedTraitInventory,
+        repeatCount,
+      );
+      _session.appendLog(
+        hasEnoughTraits ? '양조 실험 실패 / 조합 불명' : '원소 부족 / 양조 실험 x$repeatCount',
+      );
+      return hasEnoughTraits
+          ? WorkshopCraftSubmitResult.failed
+          : WorkshopCraftSubmitResult.elementMissing;
+    }
+    final CraftQueueJob job = nextState.workshop.queue.last;
+    _apply(
+      nextState,
+      logMessage: '양조 실험 등록 / ${job.potionId ?? 'unknown'} x$repeatCount',
+    );
+    return WorkshopCraftSubmitResult.success;
+  }
+
   void claimPending() {
     final SessionState current = _session.snapshot();
     final SessionState nextState = _queueClaimUseCase.claimPending(
@@ -163,6 +215,24 @@ class WorkshopCraftQueueController {
       _session.appendLog(logMessage);
     }
   }
+
+  bool _hasEnoughTraits(
+    Map<String, double> costs,
+    Map<String, double> inventory,
+    int repeatCount,
+  ) {
+    if (repeatCount <= 0) {
+      return false;
+    }
+    final Iterable<MapEntry<String, double>> positiveCosts = costs.entries
+        .where((MapEntry<String, double> entry) => entry.value > 0);
+    if (positiveCosts.isEmpty) {
+      return false;
+    }
+    return positiveCosts.every((MapEntry<String, double> entry) {
+      return (inventory[entry.key] ?? 0) + 0.0001 >= entry.value * repeatCount;
+    });
+  }
 }
 
 final Provider<WorkshopCraftQueueController>
@@ -177,5 +247,6 @@ workshopCraftQueueControllerProvider = Provider<WorkshopCraftQueueController>((
     workshopSkillTreeRepository: ref.read(workshopSkillTreeRepositoryProvider),
     workshopSkillTreeService: ref.read(workshopSkillTreeServiceProvider),
     workshopSupportService: ref.read(workshopSupportServiceProvider),
+    discoveryService: ref.read(potionDiscoveryServiceProvider),
   );
 });
