@@ -76,3 +76,16 @@ class CraftedPotion {
   final Map<String, double> traits;
   final DateTime createdAt;
 }
+
+@immutable
+class DiscoveredPotionRecipe {
+  const DiscoveredPotionRecipe({
+    required this.potionId,
+    required this.discoveredTraits,
+    required this.bestKnownGrade,
+  });
+
+  final String potionId;
+  final Map<String, double> discoveredTraits;
+  final PotionQualityGrade bestKnownGrade;
+}

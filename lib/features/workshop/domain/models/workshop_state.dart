@@ -8,6 +8,7 @@ class WorkshopState {
     this.pendingClaim = const WorkshopPendingClaim(),
     required this.supportAssignmentsByFunction,
     required this.extractedTraitInventory,
+    this.discoveredPotionRecipes = const <String, DiscoveredPotionRecipe>{},
     required this.craftedPotionStacks,
     required this.craftedPotionDetails,
     required this.logs,
@@ -21,6 +22,7 @@ class WorkshopState {
   final WorkshopPendingClaim pendingClaim;
   final Map<String, String> supportAssignmentsByFunction;
   final Map<String, double> extractedTraitInventory;
+  final Map<String, DiscoveredPotionRecipe> discoveredPotionRecipes;
   final Map<String, int> craftedPotionStacks;
   final Map<String, CraftedPotion> craftedPotionDetails;
   final List<String> logs;
@@ -34,6 +36,7 @@ class WorkshopState {
     WorkshopPendingClaim? pendingClaim,
     Map<String, String>? supportAssignmentsByFunction,
     Map<String, double>? extractedTraitInventory,
+    Map<String, DiscoveredPotionRecipe>? discoveredPotionRecipes,
     Map<String, int>? craftedPotionStacks,
     Map<String, CraftedPotion>? craftedPotionDetails,
     List<String>? logs,
@@ -49,6 +52,8 @@ class WorkshopState {
           supportAssignmentsByFunction ?? this.supportAssignmentsByFunction,
       extractedTraitInventory:
           extractedTraitInventory ?? this.extractedTraitInventory,
+      discoveredPotionRecipes:
+          discoveredPotionRecipes ?? this.discoveredPotionRecipes,
       craftedPotionStacks: craftedPotionStacks ?? this.craftedPotionStacks,
       craftedPotionDetails: craftedPotionDetails ?? this.craftedPotionDetails,
       logs: logs ?? this.logs,
