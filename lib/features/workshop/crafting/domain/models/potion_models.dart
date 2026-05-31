@@ -23,32 +23,26 @@ class PotionBlueprint {
 class PotionRecipeRule {
   const PotionRecipeRule({
     required this.id,
-    required this.requiredTraits,
+    required this.mainTraitId,
+    required this.subTraitId,
+    required this.mainPercent,
+    required this.subPercent,
     required this.resultPotionId,
-    this.optionalTraits = const <String>{},
-    this.forbiddenTraits = const <String>{},
   });
 
   final String id;
-  final Set<String> requiredTraits;
-  final Set<String> optionalTraits;
-  final Set<String> forbiddenTraits;
+  final String mainTraitId;
+  final String subTraitId;
+  final int mainPercent;
+  final int subPercent;
   final String resultPotionId;
-}
 
-@immutable
-class PotionRecipeBranchRule {
-  const PotionRecipeBranchRule({
-    required this.recipeId,
-    required this.dominantTrait,
-    required this.ratioGapMin,
-    required this.branchedPotionId,
-  });
+  Set<String> get requiredTraits => <String>{mainTraitId, subTraitId};
 
-  final String recipeId;
-  final String dominantTrait;
-  final double ratioGapMin;
-  final String branchedPotionId;
+  Map<String, double> get targetTraits => <String, double>{
+    mainTraitId: mainPercent / 100,
+    subTraitId: subPercent / 100,
+  };
 }
 
 @immutable

@@ -35,6 +35,7 @@ class SellCraftedPotionUseCase {
       PotionQualityGrade.a => 1.3,
       PotionQualityGrade.b => 1.0,
       PotionQualityGrade.c => 0.8,
+      PotionQualityGrade.f => 0.5,
     };
     final double saleBonus = townSkillTreeService.potionSaleBonusRate(
       state,

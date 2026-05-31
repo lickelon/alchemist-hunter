@@ -143,8 +143,8 @@ void main() {
     session.state = session.state.copyWith(
       workshop: session.state.workshop.copyWith(
         extractedTraitInventory: const <String, double>{
-          't_hp': 1.0,
-          't_atk': 1.0,
+          't_crit': 1.0,
+          't_focus': 1.0,
         },
       ),
     );
@@ -166,11 +166,11 @@ void main() {
     await tester.tap(find.text('연금술'));
     await tester.pumpAndSettle();
     await tester.tap(
-      find.byKey(const ValueKey<String>('brew_experiment_trait_t_hp')),
+      find.byKey(const ValueKey<String>('brew_experiment_trait_t_crit')),
     );
     await tester.pumpAndSettle();
     await tester.tap(
-      find.byKey(const ValueKey<String>('brew_experiment_trait_t_atk')),
+      find.byKey(const ValueKey<String>('brew_experiment_trait_t_focus')),
     );
     await tester.pumpAndSettle();
     await tester.tap(

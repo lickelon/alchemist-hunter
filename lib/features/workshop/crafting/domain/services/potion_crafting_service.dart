@@ -83,7 +83,6 @@ class PotionCraftingService {
     required PotionBlueprint requestedBlueprint,
     required Map<String, double> extractedTraits,
     required List<PotionRecipeRule> recipeRules,
-    required List<PotionRecipeBranchRule> branchRules,
     required PotionQualityRule qualityRule,
   }) {
     final Map<String, double> normalizedTraits = _normalizeTraits(
@@ -93,7 +92,6 @@ class PotionCraftingService {
         resolvePotionTypeFromTraits(
           inputTraits: normalizedTraits,
           recipeRules: recipeRules,
-          branchRules: branchRules,
         ) ??
         requestedBlueprint.id;
     final ({PotionQualityGrade grade, double score}) quality =
@@ -115,13 +113,11 @@ class PotionCraftingService {
   String? resolvePotionTypeFromTraits({
     required Map<String, double> inputTraits,
     required List<PotionRecipeRule> recipeRules,
-    required List<PotionRecipeBranchRule> branchRules,
   }) {
     final Map<String, double> normalizedTraits = _normalizeTraits(inputTraits);
     return _resolvePotionType(
       normalizedTraits: normalizedTraits,
       recipeRules: recipeRules,
-      branchRules: branchRules,
     );
   }
 
@@ -146,14 +142,12 @@ class PotionCraftingService {
   previewBrew({
     required Map<String, double> inputTraits,
     required List<PotionRecipeRule> recipeRules,
-    required List<PotionRecipeBranchRule> branchRules,
     Set<String> discoveredPotionIds = const <String>{},
   }) {
     final Map<String, double> normalizedTraits = _normalizeTraits(inputTraits);
     final String? potionId = _resolvePotionType(
       normalizedTraits: normalizedTraits,
       recipeRules: recipeRules,
-      branchRules: branchRules,
     );
     final bool alreadyDiscovered =
         potionId != null && discoveredPotionIds.contains(potionId);
@@ -174,55 +168,21 @@ class PotionCraftingService {
   String? _resolvePotionType({
     required Map<String, double> normalizedTraits,
     required List<PotionRecipeRule> recipeRules,
-    required List<PotionRecipeBranchRule> branchRules,
   }) {
-    final Set<String> traitIds = normalizedTraits.keys.toSet();
-    final List<PotionRecipeRule> matchedRules = recipeRules.where((
-      PotionRecipeRule rule,
-    ) {
-      final bool requiredOk = rule.requiredTraits.every(traitIds.contains);
-      final bool forbiddenOk = rule.forbiddenTraits.every(
-        (String id) => !traitIds.contains(id),
-      );
-      return requiredOk && forbiddenOk;
-    }).toList();
-
-    if (matchedRules.isEmpty) {
+    if (normalizedTraits.length != 2) {
       return null;
     }
-
-    matchedRules.sort((PotionRecipeRule a, PotionRecipeRule b) {
-      return b.requiredTraits.length.compareTo(a.requiredTraits.length);
-    });
-    final PotionRecipeRule selectedRule = matchedRules.first;
-
-    final List<PotionRecipeBranchRule> candidates = branchRules
-        .where((PotionRecipeBranchRule b) => b.recipeId == selectedRule.id)
-        .toList();
-    if (candidates.isEmpty) {
-      return selectedRule.resultPotionId;
-    }
-
-    final List<MapEntry<String, double>> sortedTraits =
-        normalizedTraits.entries.toList()..sort(
-          (MapEntry<String, double> a, MapEntry<String, double> b) =>
-              b.value.compareTo(a.value),
-        );
-
-    if (sortedTraits.length < 2) {
-      return selectedRule.resultPotionId;
-    }
-
-    final String dominantTrait = sortedTraits.first.key;
-    final double ratioGap = sortedTraits.first.value - sortedTraits[1].value;
-    for (final PotionRecipeBranchRule branch in candidates) {
-      if (branch.dominantTrait == dominantTrait &&
-          ratioGap >= branch.ratioGapMin) {
-        return branch.branchedPotionId;
+    for (final PotionRecipeRule rule in recipeRules) {
+      final double mainAmount = normalizedTraits[rule.mainTraitId] ?? 0;
+      final double subAmount = normalizedTraits[rule.subTraitId] ?? 0;
+      if (mainAmount > subAmount &&
+          mainAmount > 0 &&
+          subAmount > 0 &&
+          normalizedTraits.keys.every(rule.requiredTraits.contains)) {
+        return rule.resultPotionId;
       }
     }
-
-    return selectedRule.resultPotionId;
+    return null;
   }
 
   double _dominantRatioGap(Map<String, double> normalizedTraits) {
@@ -245,14 +205,19 @@ class PotionCraftingService {
       return 0;
     }
 
-    double diff = 0;
+    int diffPercent = 0;
     targetTraits.forEach((String id, double targetRatio) {
-      final double actualRatio = actualTraits[id] ?? 0;
-      diff += (targetRatio - actualRatio).abs();
+      final int targetPercent = _ratioToPercent(targetRatio);
+      final int actualPercent = _ratioToPercent(actualTraits[id] ?? 0);
+      diffPercent += (targetPercent - actualPercent).abs();
     });
 
-    final double score = 1 - (diff / max(1, targetTraits.length));
+    final double score = 1 - (diffPercent / 100);
     return score.clamp(0, 1);
+  }
+
+  int _ratioToPercent(double ratio) {
+    return (ratio * 100).round().clamp(0, 100);
   }
 
   PotionQualityGrade _resolveGrade(double score, PotionQualityRule rule) {
@@ -266,7 +231,10 @@ class PotionCraftingService {
     if (score >= (thresholds[PotionQualityGrade.b] ?? 0.55)) {
       return PotionQualityGrade.b;
     }
-    return PotionQualityGrade.c;
+    if (score >= (thresholds[PotionQualityGrade.c] ?? 0)) {
+      return PotionQualityGrade.c;
+    }
+    return PotionQualityGrade.f;
   }
 
   Map<String, double> generateCraftInputTraits(PotionBlueprint blueprint) {

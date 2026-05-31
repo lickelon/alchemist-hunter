@@ -87,7 +87,7 @@ void main() {
     expect(session.state.workshop.queue.single.potionId, 'p_1');
     expect(
       session.state.workshop.queue.single.completedPotionStackKey,
-      'p_1|a',
+      'p_1|b',
     );
     expect(session.state.workshop.queue.single.reservedTraits, {
       't_hp': 1.4,
@@ -95,9 +95,42 @@ void main() {
     });
     expect(
       session.state.workshop.discoveredPotionRecipes['p_1']?.bestKnownGrade,
-      PotionQualityGrade.a,
+      PotionQualityGrade.b,
     );
     expect(session.state.workshop.logs.first, '양조 실험 등록 / p_1 x2');
+  });
+
+  test('enqueueBrew updates recipe when new ratio has higher quality', () {
+    final SessionController session = buildSession();
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{
+          't_hp': 0.6,
+          't_atk': 0.4,
+        },
+        discoveredPotionRecipes: const <String, DiscoveredPotionRecipe>{
+          'p_1': DiscoveredPotionRecipe(
+            potionId: 'p_1',
+            discoveredTraits: <String, double>{'t_hp': 0.7, 't_atk': 0.3},
+            bestKnownGrade: PotionQualityGrade.a,
+          ),
+        },
+      ),
+    );
+    final WorkshopCraftQueueController controller = buildController(session);
+
+    final WorkshopCraftSubmitResult result = controller.enqueueBrew(
+      const <String, double>{'t_hp': 0.6, 't_atk': 0.4},
+    );
+
+    final DiscoveredPotionRecipe recipe =
+        session.state.workshop.discoveredPotionRecipes['p_1']!;
+    expect(result, WorkshopCraftSubmitResult.success);
+    expect(recipe.bestKnownGrade, PotionQualityGrade.s);
+    expect(recipe.discoveredTraits, <String, double>{
+      't_hp': 0.6,
+      't_atk': 0.4,
+    });
   });
 
   test(

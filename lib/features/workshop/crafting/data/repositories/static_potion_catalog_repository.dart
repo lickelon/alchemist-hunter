@@ -13,9 +13,6 @@ class StaticPotionCatalogRepository implements PotionCatalogRepository {
   }
 
   @override
-  List<PotionRecipeBranchRule> recipeBranchRules() => potionRecipeBranchCatalog;
-
-  @override
   List<PotionRecipeRule> recipeRules() => potionRecipeCatalog;
 
   @override

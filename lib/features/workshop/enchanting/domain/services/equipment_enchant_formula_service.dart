@@ -23,6 +23,7 @@ class EquipmentEnchantFormulaService {
       PotionQualityGrade.a => 3,
       PotionQualityGrade.b => 2,
       PotionQualityGrade.c => 1,
+      PotionQualityGrade.f => 0,
     };
     final int basePotency = (potion.qualityScore * 5).round() + qualityBonus;
     return max(1, (basePotency * (1 + bonusRate)).round());

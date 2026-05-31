@@ -7,7 +7,5 @@ abstract interface class PotionCatalogRepository {
 
   List<PotionRecipeRule> recipeRules();
 
-  List<PotionRecipeBranchRule> recipeBranchRules();
-
   PotionQualityRule qualityRule();
 }

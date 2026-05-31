@@ -8,6 +8,6 @@ enum PotionUseType { sell, combat, both }
 
 enum QueueJobStatus { queued, processing, completed, blocked }
 
-enum PotionQualityGrade { s, a, b, c }
+enum PotionQualityGrade { s, a, b, c, f }
 
 enum WorkshopJobType { extraction, craft, enchant, hatch }

@@ -130,8 +130,10 @@ class _WorkshopBrewExperimentTab extends ConsumerStatefulWidget {
 
 class _WorkshopBrewExperimentTabState
     extends ConsumerState<_WorkshopBrewExperimentTab> {
+  static const double _defaultPrimaryRatio = 0.55;
+
   final List<String> _selectedTraitIds = <String>[];
-  double _primaryRatio = 0.5;
+  double _primaryRatio = _defaultPrimaryRatio;
 
   @override
   Widget build(BuildContext context) {
@@ -172,9 +174,6 @@ class _WorkshopBrewExperimentTabState
         .previewBrew(
           inputTraits: inputTraits,
           recipeRules: ref.watch(potionCatalogRepositoryProvider).recipeRules(),
-          branchRules: ref
-              .watch(potionCatalogRepositoryProvider)
-              .recipeBranchRules(),
           discoveredPotionIds: ref.watch(
             sessionControllerProvider.select(
               (SessionState state) =>
@@ -252,7 +251,7 @@ class _WorkshopBrewExperimentTabState
                     if (result == WorkshopCraftSubmitResult.success) {
                       setState(() {
                         _selectedTraitIds.clear();
-                        _primaryRatio = 0.5;
+                        _primaryRatio = _defaultPrimaryRatio;
                       });
                     }
                     final String message = switch (result) {
@@ -281,14 +280,14 @@ class _WorkshopBrewExperimentTabState
   void _toggleTrait(String traitId, double ownedAmount) {
     if (_selectedTraitIds.contains(traitId)) {
       _selectedTraitIds.remove(traitId);
-      _primaryRatio = 0.5;
+      _primaryRatio = _defaultPrimaryRatio;
       return;
     }
     if (_selectedTraitIds.length >= 2) {
       _selectedTraitIds.removeAt(0);
     }
     _selectedTraitIds.add(traitId);
-    _primaryRatio = 0.5;
+    _primaryRatio = _defaultPrimaryRatio;
   }
 }
 
@@ -317,7 +316,7 @@ class _BrewRatioSlider extends StatelessWidget {
             children: <Widget>[
               Expanded(child: Text(primaryName)),
               Text(
-                '${(value * 100).round()}%',
+                '메인 ${(value * 100).round()}%',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -325,9 +324,9 @@ class _BrewRatioSlider extends StatelessWidget {
             ],
           ),
           Slider(
-            value: value.clamp(0.1, 0.9).toDouble(),
-            min: 0.1,
-            max: 0.9,
+            value: value.clamp(0.55, 0.95).toDouble(),
+            min: 0.55,
+            max: 0.95,
             divisions: 8,
             onChanged: onChanged,
           ),
@@ -335,7 +334,7 @@ class _BrewRatioSlider extends StatelessWidget {
             children: <Widget>[
               Expanded(child: Text(secondaryName)),
               Text(
-                '${(secondaryValue * 100).round()}%',
+                '서브 ${(secondaryValue * 100).round()}%',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),

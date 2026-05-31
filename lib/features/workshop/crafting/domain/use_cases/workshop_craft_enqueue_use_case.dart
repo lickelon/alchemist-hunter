@@ -69,7 +69,6 @@ class WorkshopCraftEnqueueUseCase {
       requestedBlueprint: blueprint,
       extractedTraits: blueprint.targetTraits,
       recipeRules: potionCatalogRepository.recipeRules(),
-      branchRules: potionCatalogRepository.recipeBranchRules(),
       qualityRule: potionCatalogRepository.qualityRule(),
     );
     final String stackKey =
@@ -249,7 +248,6 @@ class WorkshopCraftEnqueueUseCase {
     final String? potionId = craftingService.resolvePotionTypeFromTraits(
       inputTraits: costs,
       recipeRules: potionCatalogRepository.recipeRules(),
-      branchRules: potionCatalogRepository.recipeBranchRules(),
     );
     if (potionId == null) {
       return state;
@@ -284,7 +282,6 @@ class WorkshopCraftEnqueueUseCase {
       requestedBlueprint: blueprint,
       extractedTraits: costs,
       recipeRules: potionCatalogRepository.recipeRules(),
-      branchRules: potionCatalogRepository.recipeBranchRules(),
       qualityRule: potionCatalogRepository.qualityRule(),
     );
     final String stackKey =

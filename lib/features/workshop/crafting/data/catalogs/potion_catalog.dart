@@ -27,38 +27,45 @@ final List<PotionBlueprint> potionCatalog = List<PotionBlueprint>.generate(
 final List<PotionRecipeRule> potionRecipeCatalog = <PotionRecipeRule>[
   PotionRecipeRule(
     id: 'r_hp_atk',
-    requiredTraits: _requiredTraitsForPotion('p_3'),
+    mainTraitId: 't_hp',
+    subTraitId: 't_atk',
+    mainPercent: 60,
+    subPercent: 40,
+    resultPotionId: 'p_1',
+  ),
+  PotionRecipeRule(
+    id: 'r_atk_hp',
+    mainTraitId: 't_atk',
+    subTraitId: 't_hp',
+    mainPercent: 60,
+    subPercent: 40,
+    resultPotionId: 'p_2',
+  ),
+  PotionRecipeRule(
+    id: 'r_crit_focus',
+    mainTraitId: 't_crit',
+    subTraitId: 't_focus',
+    mainPercent: 55,
+    subPercent: 45,
     resultPotionId: 'p_3',
   ),
   PotionRecipeRule(
     id: 'r_def_spd',
-    requiredTraits: _requiredTraitsForPotion('p_4'),
+    mainTraitId: 't_def',
+    subTraitId: 't_spd',
+    mainPercent: 65,
+    subPercent: 35,
     resultPotionId: 'p_4',
   ),
 ];
 
-const List<PotionRecipeBranchRule> potionRecipeBranchCatalog =
-    <PotionRecipeBranchRule>[
-      PotionRecipeBranchRule(
-        recipeId: 'r_hp_atk',
-        dominantTrait: 't_hp',
-        ratioGapMin: 0.05,
-        branchedPotionId: 'p_1',
-      ),
-      PotionRecipeBranchRule(
-        recipeId: 'r_hp_atk',
-        dominantTrait: 't_atk',
-        ratioGapMin: 0.05,
-        branchedPotionId: 'p_2',
-      ),
-    ];
-
 const PotionQualityRule potionQualityCatalog = PotionQualityRule(
   gradeThresholds: <PotionQualityGrade, double>{
-    PotionQualityGrade.s: 0.92,
-    PotionQualityGrade.a: 0.78,
-    PotionQualityGrade.b: 0.58,
-    PotionQualityGrade.c: 0,
+    PotionQualityGrade.s: 0.999,
+    PotionQualityGrade.a: 0.9,
+    PotionQualityGrade.b: 0.7,
+    PotionQualityGrade.c: 0.4,
+    PotionQualityGrade.f: 0,
   },
 );
 
@@ -67,8 +74,8 @@ PotionBlueprint _buildPotionBlueprint(int i) {
   final Map<String, double> targetTraits = switch (id) {
     'p_1' => const <String, double>{'t_hp': 0.6, 't_atk': 0.4},
     'p_2' => const <String, double>{'t_atk': 0.6, 't_hp': 0.4},
-    'p_3' => const <String, double>{'t_hp': 0.5, 't_atk': 0.5},
-    'p_4' => const <String, double>{'t_def': 0.5, 't_spd': 0.5},
+    'p_3' => const <String, double>{'t_crit': 0.55, 't_focus': 0.45},
+    'p_4' => const <String, double>{'t_def': 0.65, 't_spd': 0.35},
     _ => <String, double>{
       traitCatalog[i % 12].id: 0.6,
       traitCatalog[(i + 1) % 12].id: 0.4,
@@ -81,12 +88,4 @@ PotionBlueprint _buildPotionBlueprint(int i) {
     baseValue: 100 + (i * 25),
     useType: i < 10 ? PotionUseType.both : PotionUseType.combat,
   );
-}
-
-Set<String> _requiredTraitsForPotion(String potionId) {
-  return potionCatalog
-      .firstWhere((PotionBlueprint potion) => potion.id == potionId)
-      .targetTraits
-      .keys
-      .toSet();
 }
