@@ -49,6 +49,7 @@ class DiscoveredPotionRecipeView {
     required this.title,
     required this.qualityLabel,
     required this.traitHint,
+    required this.traits,
     required this.maxCraftableCount,
     required this.craftableNow,
     required this.queueFull,
@@ -58,6 +59,7 @@ class DiscoveredPotionRecipeView {
   final String title;
   final String qualityLabel;
   final String traitHint;
+  final Map<String, double> traits;
   final int maxCraftableCount;
   final bool craftableNow;
   final bool queueFull;
@@ -224,6 +226,7 @@ workshopDiscoveredPotionRecipeViewsProvider =
                 recipe.discoveredTraits,
                 traitNames: traitNames,
               ),
+              traits: recipe.discoveredTraits,
               maxCraftableCount: maxCraftableCount,
               craftableNow: maxCraftableCount > 0 && !queueFull,
               queueFull: queueFull,

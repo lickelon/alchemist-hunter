@@ -429,35 +429,73 @@ class _WorkshopBrewRecipeBookTab extends ConsumerWidget {
   }
 }
 
-class _WorkshopDiscoveredBrewDetailDialog extends StatelessWidget {
+class _WorkshopDiscoveredBrewDetailDialog extends ConsumerStatefulWidget {
   const _WorkshopDiscoveredBrewDetailDialog({required this.recipe});
 
   final DiscoveredPotionRecipeView recipe;
 
   @override
+  ConsumerState<_WorkshopDiscoveredBrewDetailDialog> createState() =>
+      _WorkshopDiscoveredBrewDetailDialogState();
+}
+
+class _WorkshopDiscoveredBrewDetailDialogState
+    extends ConsumerState<_WorkshopDiscoveredBrewDetailDialog> {
+  double _quantityValue = 1;
+
+  @override
   Widget build(BuildContext context) {
+    final DiscoveredPotionRecipeView recipe = widget.recipe;
+    final int maxQuantity = recipe.maxCraftableCount < 1
+        ? 1
+        : recipe.maxCraftableCount;
+    final double sliderValue = _quantityValue
+        .clamp(1.0, maxQuantity.toDouble())
+        .toDouble();
+    final int selectedQuantity = sliderValue
+        .round()
+        .clamp(1, maxQuantity)
+        .toInt();
+    final bool canRegister =
+        recipe.craftableNow && recipe.maxCraftableCount >= selectedQuantity;
+
     return AppDialogLayout(
       title: recipe.title,
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              CatalogAssetIcon(
-                assetPath: CatalogIconAssetPaths.potion(recipe.potionId),
-                size: 48,
-                padding: 6,
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Text('최대 ${recipe.maxCraftableCount}회'),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Text('최고 품질 ${recipe.qualityLabel}'),
-          const SizedBox(height: AppSpacing.sm),
-          Text(recipe.traitHint),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                CatalogAssetIcon(
+                  assetPath: CatalogIconAssetPaths.potion(recipe.potionId),
+                  size: 48,
+                  padding: 6,
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Text('품질 ${recipe.qualityLabel}'),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text('양조 수량'),
+            const SizedBox(height: AppSpacing.md),
+            _CraftQuantitySlider(
+              selectedQuantity: selectedQuantity,
+              value: sliderValue,
+              maxQuantity: maxQuantity,
+              onChanged: (double value) {
+                setState(() {
+                  _quantityValue = value;
+                });
+              },
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text('필요 원소'),
+            const SizedBox(height: AppSpacing.sm),
+            Text(recipe.traitHint),
+          ],
+        ),
       ),
       actions: <Widget>[
         TextButton.icon(
@@ -466,6 +504,31 @@ class _WorkshopDiscoveredBrewDetailDialog extends StatelessWidget {
           },
           icon: const Icon(Icons.close),
           label: const Text('닫기'),
+        ),
+        FilledButton(
+          onPressed: canRegister
+              ? () {
+                  final WorkshopCraftSubmitResult result = ref
+                      .read(workshopCraftQueueControllerProvider)
+                      .enqueueBrew(
+                        recipe.traits,
+                        repeatCount: selectedQuantity,
+                      );
+                  if (result == WorkshopCraftSubmitResult.success) {
+                    Navigator.of(context).pop();
+                    return;
+                  }
+                  final String message = switch (result) {
+                    WorkshopCraftSubmitResult.queueFull => '작업실 큐가 가득 찼습니다',
+                    WorkshopCraftSubmitResult.elementMissing => '원소 부족',
+                    WorkshopCraftSubmitResult.resourceMissing => '재료 부족',
+                    WorkshopCraftSubmitResult.success => '',
+                    WorkshopCraftSubmitResult.failed => '양조 등록에 실패했습니다',
+                  };
+                  AppToast.show(context, message);
+                }
+              : null,
+          child: const Text('등록'),
         ),
       ],
     );

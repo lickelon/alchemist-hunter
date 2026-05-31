@@ -61,7 +61,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('활력 포션'), findsWidgets);
-    expect(find.text('최고 품질 A'), findsOneWidget);
+    expect(find.text('품질 A'), findsOneWidget);
     expect(find.textContaining('Vital 원소'), findsOneWidget);
   });
 
@@ -128,7 +128,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('활력 포션'), findsWidgets);
-    expect(find.text('최고 품질 A'), findsOneWidget);
+    expect(find.text('품질 A'), findsOneWidget);
   });
 
   testWidgets('workshop brew experiment registers selected elements', (
@@ -183,6 +183,62 @@ void main() {
     expect(session.state.workshop.discoveredPotionRecipes['p_3'], isNotNull);
     expect(find.text('양조 실험을 등록했습니다'), findsOneWidget);
     await tester.pump(const Duration(milliseconds: 2000));
+  });
+
+  testWidgets('workshop recipe book registers repeated brew', (
+    WidgetTester tester,
+  ) async {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final SessionController session = container.read(
+      sessionControllerProvider.notifier,
+    );
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{
+          't_hp': 1.2,
+          't_atk': 0.8,
+        },
+        discoveredPotionRecipes: const <String, DiscoveredPotionRecipe>{
+          'p_1': DiscoveredPotionRecipe(
+            potionId: 'p_1',
+            discoveredTraits: <String, double>{'t_hp': 0.6, 't_atk': 0.4},
+            bestKnownGrade: PotionQualityGrade.s,
+          ),
+        },
+      ),
+    );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: Scaffold(
+            body: WorkshopCraftCard(
+              brewCraftableCount: 2,
+              materialCraftableCount: 0,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('연금술'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('레시피북'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey<String>('brew_recipe_p_1')));
+    await tester.pumpAndSettle();
+    await tester.drag(find.byType(Slider).last, const Offset(300, 0));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, '등록'));
+    await tester.pump();
+
+    expect(session.state.workshop.queue, hasLength(1));
+    expect(session.state.workshop.queue.single.potionId, 'p_1');
+    expect(session.state.workshop.queue.single.repeatCount, 2);
+    expect(session.state.workshop.extractedTraitInventory, isEmpty);
   });
 
   testWidgets('workshop craft tab opens recipe detail from icon grid', (
