@@ -76,7 +76,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('활력 포션 x2'), findsOneWidget);
       expect(find.textContaining('수령 대기'), findsOneWidget);
-      expect(find.textContaining('양조 완료'), findsOneWidget);
+      expect(find.textContaining('양조 완료 / 활력 포션 A x2'), findsOneWidget);
+      expect(find.textContaining('p_1|a'), findsNothing);
       expect(find.text('수령'), findsOneWidget);
     },
   );

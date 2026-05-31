@@ -42,7 +42,10 @@ String queueStatusText(CraftQueueJob job) {
   };
 }
 
-String? completedResultText(CraftQueueJob job) {
+String? completedResultText(
+  CraftQueueJob job, {
+  Map<String, String> potionNames = const <String, String>{},
+}) {
   if (job.status != QueueJobStatus.completed) {
     return null;
   }
@@ -52,7 +55,7 @@ String? completedResultText(CraftQueueJob job) {
     WorkshopJobType.craft =>
       job.completedMaterials.isNotEmpty
           ? '제작 완료 / 재료 ${job.completedMaterials.length}종'
-          : '양조 완료 / ${job.completedPotionStackKey ?? job.potionId ?? job.title} x${job.repeatCount}',
+          : '양조 완료 / ${_completedPotionLabel(job, potionNames)} x${job.repeatCount}',
     WorkshopJobType.enchant =>
       job.completedEquipment?.enchant == null
           ? '인챈트 완료'
@@ -62,4 +65,17 @@ String? completedResultText(CraftQueueJob job) {
           ? '부화 완료'
           : '부화 완료 / ${job.completedHomunculus!.homunculusRole}',
   };
+}
+
+String _completedPotionLabel(
+  CraftQueueJob job,
+  Map<String, String> potionNames,
+) {
+  final CraftedPotion? potion = job.completedPotion;
+  final String? potionId = potion?.typePotionId ?? job.potionId;
+  final String name = potionId == null
+      ? job.title
+      : potionNames[potionId] ?? job.title;
+  final String? qualityLabel = potion?.qualityGrade.name.toUpperCase();
+  return qualityLabel == null ? name : '$name $qualityLabel';
 }

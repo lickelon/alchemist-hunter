@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_labels.dart';
 import 'package:alchemist_hunter/features/workshop/shared/presentation/viewmodels/workshop_shared_selectors.dart';
@@ -45,6 +46,11 @@ final Provider<List<CraftQueueJob>> craftQueueProvider =
 final Provider<List<CraftQueueJobView>> craftQueueJobViewsProvider =
     Provider<List<CraftQueueJobView>>((Ref ref) {
       final List<CraftQueueJob> queue = ref.watch(craftQueueProvider);
+      final Map<String, String> potionNames = <String, String>{
+        for (final PotionBlueprint potion
+            in ref.watch(potionCatalogRepositoryProvider).potions())
+          potion.id: potion.name,
+      };
       final List<CraftQueueJob> sortedQueue = <CraftQueueJob>[...queue]
         ..sort((CraftQueueJob left, CraftQueueJob right) {
           final int leftRank = statusRank(left.status);
@@ -69,7 +75,7 @@ final Provider<List<CraftQueueJobView>> craftQueueJobViewsProvider =
           title: title,
           typeLabel: jobTypeLabel(job.type),
           statusText: queueStatusText(job),
-          resultText: completedResultText(job),
+          resultText: completedResultText(job, potionNames: potionNames),
           canClaim: job.status == QueueJobStatus.completed,
         );
       }).toList();
