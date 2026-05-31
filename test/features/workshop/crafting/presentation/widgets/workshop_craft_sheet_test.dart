@@ -22,6 +22,13 @@ void main() {
           't_hp': 1.0,
           't_atk': 1.0,
         },
+        discoveredPotionRecipes: const <String, DiscoveredPotionRecipe>{
+          'p_1': DiscoveredPotionRecipe(
+            potionId: 'p_1',
+            discoveredTraits: <String, double>{'t_hp': 0.6, 't_atk': 0.4},
+            bestKnownGrade: PotionQualityGrade.a,
+          ),
+        },
       ),
     );
 
@@ -44,6 +51,8 @@ void main() {
 
     expect(find.text('양조'), findsOneWidget);
     expect(find.text('제작'), findsWidgets);
+    await tester.tap(find.text('레시피북'));
+    await tester.pumpAndSettle();
     expect(
       find.byKey(const ValueKey<String>('brew_recipe_p_1')),
       findsOneWidget,
@@ -52,7 +61,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('활력 포션'), findsWidgets);
-    expect(find.widgetWithText(FilledButton, '등록'), findsWidgets);
+    expect(find.text('최고 품질 A'), findsOneWidget);
+    expect(find.textContaining('Vital 원소'), findsOneWidget);
   });
 
   testWidgets('workshop craft sheet shows queue-full notice once in header', (
@@ -69,6 +79,13 @@ void main() {
         extractedTraitInventory: const <String, double>{
           't_hp': 1.0,
           't_atk': 1.0,
+        },
+        discoveredPotionRecipes: const <String, DiscoveredPotionRecipe>{
+          'p_1': DiscoveredPotionRecipe(
+            potionId: 'p_1',
+            discoveredTraits: <String, double>{'t_hp': 0.6, 't_atk': 0.4},
+            bestKnownGrade: PotionQualityGrade.a,
+          ),
         },
         queue: List<CraftQueueJob>.generate(
           4,
@@ -105,16 +122,67 @@ void main() {
 
     expect(find.text('작업실 큐 가득 참 (4/4)'), findsOneWidget);
     expect(find.text('큐 가득 참 (4/4)'), findsNothing);
+    await tester.tap(find.text('레시피북'));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey<String>('brew_recipe_p_1')));
     await tester.pumpAndSettle();
 
-    final Iterable<FilledButton> registerButtons = tester
-        .widgetList<FilledButton>(find.widgetWithText(FilledButton, '등록'));
-    expect(registerButtons, isNotEmpty);
-    expect(
-      registerButtons.every((FilledButton button) => button.onPressed == null),
-      true,
+    expect(find.text('활력 포션'), findsWidgets);
+    expect(find.text('최고 품질 A'), findsOneWidget);
+  });
+
+  testWidgets('workshop brew experiment registers selected elements', (
+    WidgetTester tester,
+  ) async {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final SessionController session = container.read(
+      sessionControllerProvider.notifier,
     );
+    session.state = session.state.copyWith(
+      workshop: session.state.workshop.copyWith(
+        extractedTraitInventory: const <String, double>{
+          't_hp': 1.0,
+          't_atk': 1.0,
+        },
+      ),
+    );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: Scaffold(
+            body: WorkshopCraftCard(
+              brewCraftableCount: 0,
+              materialCraftableCount: 0,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('연금술'));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey<String>('brew_experiment_trait_t_hp')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey<String>('brew_experiment_trait_t_atk')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey<String>('brew_experiment_submit_button')),
+    );
+    await tester.pump();
+
+    expect(session.state.workshop.queue, hasLength(1));
+    expect(session.state.workshop.queue.single.potionId, 'p_3');
+    expect(session.state.workshop.discoveredPotionRecipes['p_3'], isNotNull);
+    expect(find.text('양조 실험을 등록했습니다'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 2000));
   });
 
   testWidgets('workshop craft tab opens recipe detail from icon grid', (

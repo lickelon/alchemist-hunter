@@ -238,6 +238,13 @@ class WorkshopCraftEnqueueUseCase {
     if (costs.isEmpty) {
       return state;
     }
+    final double totalCost = costs.values.fold(
+      0,
+      (double previous, double amount) => previous + amount,
+    );
+    if ((totalCost - 1).abs() > 0.0001) {
+      return state;
+    }
 
     final String? potionId = craftingService.resolvePotionTypeFromTraits(
       inputTraits: costs,
