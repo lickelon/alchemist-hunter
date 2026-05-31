@@ -62,6 +62,16 @@ void main() {
     expect(unknown, isNull);
   });
 
+  test('recipe required traits use result potion target traits', () {
+    for (final PotionRecipeRule rule in potionRecipeCatalog) {
+      final PotionBlueprint resultPotion = potionCatalog.firstWhere(
+        (PotionBlueprint potion) => potion.id == rule.resultPotionId,
+      );
+
+      expect(rule.requiredTraits, resultPotion.targetTraits.keys.toSet());
+    }
+  });
+
   test('quality grade is calculated by target ratio score', () {
     final PotionBlueprint blueprint = potionCatalog.firstWhere(
       (PotionBlueprint p) => p.id == 'p_1',
@@ -108,6 +118,32 @@ void main() {
     expect(high.grade, PotionQualityGrade.s);
     expect(low.grade, PotionQualityGrade.c);
     expect(high.score, greaterThan(low.score));
+  });
+
+  test('guard swift recipe grades against guard swift target ratio', () {
+    final PotionBlueprint blueprint = potionCatalog.firstWhere(
+      (PotionBlueprint p) => p.id == 'p_4',
+    );
+
+    final CraftedPotion optimal = service.craftPotion(
+      requestedBlueprint: blueprint,
+      extractedTraits: const <String, double>{'t_def': 0.5, 't_spd': 0.5},
+      recipeRules: potionRecipeCatalog,
+      branchRules: potionRecipeBranchCatalog,
+      qualityRule: potionQualityCatalog,
+    );
+    final CraftedPotion skewed = service.craftPotion(
+      requestedBlueprint: blueprint,
+      extractedTraits: const <String, double>{'t_def': 0.2, 't_spd': 0.8},
+      recipeRules: potionRecipeCatalog,
+      branchRules: potionRecipeBranchCatalog,
+      qualityRule: potionQualityCatalog,
+    );
+
+    expect(optimal.typePotionId, 'p_4');
+    expect(optimal.qualityGrade, PotionQualityGrade.s);
+    expect(skewed.typePotionId, 'p_4');
+    expect(skewed.qualityGrade, PotionQualityGrade.b);
   });
 
   test('previewBrew returns hidden result hint state', () {

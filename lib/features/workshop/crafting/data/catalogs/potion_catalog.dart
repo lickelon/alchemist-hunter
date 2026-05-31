@@ -21,27 +21,18 @@ const List<String> _potionNames = <String>[
 
 final List<PotionBlueprint> potionCatalog = List<PotionBlueprint>.generate(
   15,
-  (int i) => PotionBlueprint(
-    id: 'p_${i + 1}',
-    name: _potionNames[i],
-    targetTraits: <String, double>{
-      traitCatalog[i % 12].id: 0.6,
-      traitCatalog[(i + 1) % 12].id: 0.4,
-    },
-    baseValue: 100 + (i * 25),
-    useType: i < 10 ? PotionUseType.both : PotionUseType.combat,
-  ),
+  _buildPotionBlueprint,
 );
 
-const List<PotionRecipeRule> potionRecipeCatalog = <PotionRecipeRule>[
+final List<PotionRecipeRule> potionRecipeCatalog = <PotionRecipeRule>[
   PotionRecipeRule(
     id: 'r_hp_atk',
-    requiredTraits: <String>{'t_hp', 't_atk'},
+    requiredTraits: _requiredTraitsForPotion('p_3'),
     resultPotionId: 'p_3',
   ),
   PotionRecipeRule(
     id: 'r_def_spd',
-    requiredTraits: <String>{'t_def', 't_spd'},
+    requiredTraits: _requiredTraitsForPotion('p_4'),
     resultPotionId: 'p_4',
   ),
 ];
@@ -70,3 +61,32 @@ const PotionQualityRule potionQualityCatalog = PotionQualityRule(
     PotionQualityGrade.c: 0,
   },
 );
+
+PotionBlueprint _buildPotionBlueprint(int i) {
+  final String id = 'p_${i + 1}';
+  final Map<String, double> targetTraits = switch (id) {
+    'p_1' => const <String, double>{'t_hp': 0.6, 't_atk': 0.4},
+    'p_2' => const <String, double>{'t_atk': 0.6, 't_hp': 0.4},
+    'p_3' => const <String, double>{'t_hp': 0.5, 't_atk': 0.5},
+    'p_4' => const <String, double>{'t_def': 0.5, 't_spd': 0.5},
+    _ => <String, double>{
+      traitCatalog[i % 12].id: 0.6,
+      traitCatalog[(i + 1) % 12].id: 0.4,
+    },
+  };
+  return PotionBlueprint(
+    id: id,
+    name: _potionNames[i],
+    targetTraits: targetTraits,
+    baseValue: 100 + (i * 25),
+    useType: i < 10 ? PotionUseType.both : PotionUseType.combat,
+  );
+}
+
+Set<String> _requiredTraitsForPotion(String potionId) {
+  return potionCatalog
+      .firstWhere((PotionBlueprint potion) => potion.id == potionId)
+      .targetTraits
+      .keys
+      .toSet();
+}
