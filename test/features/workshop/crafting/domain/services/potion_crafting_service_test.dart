@@ -34,6 +34,34 @@ void main() {
     expect(atkDominant.typePotionId, 'p_2');
   });
 
+  test('resolves potion type from input traits without selected blueprint', () {
+    final String? hpDominant = service.resolvePotionTypeFromTraits(
+      inputTraits: const <String, double>{'t_hp': 7, 't_atk': 3},
+      recipeRules: potionRecipeCatalog,
+      branchRules: potionRecipeBranchCatalog,
+    );
+    final String? atkDominant = service.resolvePotionTypeFromTraits(
+      inputTraits: const <String, double>{'t_hp': 3, 't_atk': 7},
+      recipeRules: potionRecipeCatalog,
+      branchRules: potionRecipeBranchCatalog,
+    );
+    final String? balanced = service.resolvePotionTypeFromTraits(
+      inputTraits: const <String, double>{'t_hp': 1, 't_atk': 1},
+      recipeRules: potionRecipeCatalog,
+      branchRules: potionRecipeBranchCatalog,
+    );
+    final String? unknown = service.resolvePotionTypeFromTraits(
+      inputTraits: const <String, double>{'t_luck': 1},
+      recipeRules: potionRecipeCatalog,
+      branchRules: potionRecipeBranchCatalog,
+    );
+
+    expect(hpDominant, 'p_1');
+    expect(atkDominant, 'p_2');
+    expect(balanced, 'p_3');
+    expect(unknown, isNull);
+  });
+
   test('quality grade is calculated by target ratio score', () {
     final PotionBlueprint blueprint = potionCatalog.firstWhere(
       (PotionBlueprint p) => p.id == 'p_1',
@@ -57,6 +85,49 @@ void main() {
     expect(high.qualityGrade.index <= PotionQualityGrade.a.index, true);
     expect(low.qualityGrade, PotionQualityGrade.c);
     expect(high.qualityScore > low.qualityScore, true);
+  });
+
+  test('calculates quality from input traits', () {
+    final PotionBlueprint blueprint = potionCatalog.firstWhere(
+      (PotionBlueprint p) => p.id == 'p_1',
+    );
+
+    final ({PotionQualityGrade grade, double score}) high = service
+        .calculateQualityFromTraits(
+          targetTraits: blueprint.targetTraits,
+          inputTraits: const <String, double>{'t_hp': 6, 't_atk': 4},
+          qualityRule: potionQualityCatalog,
+        );
+    final ({PotionQualityGrade grade, double score}) low = service
+        .calculateQualityFromTraits(
+          targetTraits: blueprint.targetTraits,
+          inputTraits: const <String, double>{'t_hp': 0, 't_atk': 1},
+          qualityRule: potionQualityCatalog,
+        );
+
+    expect(high.grade, PotionQualityGrade.s);
+    expect(low.grade, PotionQualityGrade.c);
+    expect(high.score, greaterThan(low.score));
+  });
+
+  test('previewBrew returns hidden result hint state', () {
+    final ({
+      bool alreadyDiscovered,
+      String hintLabel,
+      String? predictedPotionId,
+      double stability,
+    })
+    preview = service.previewBrew(
+      inputTraits: const <String, double>{'t_hp': 7, 't_atk': 3},
+      recipeRules: potionRecipeCatalog,
+      branchRules: potionRecipeBranchCatalog,
+      discoveredPotionIds: const <String>{'p_1'},
+    );
+
+    expect(preview.predictedPotionId, 'p_1');
+    expect(preview.hintLabel, '기록된 레시피와 유사');
+    expect(preview.alreadyDiscovered, true);
+    expect(preview.stability, closeTo(0.4, 0.0001));
   });
 
   test('prepareCraftFromExtractedInventory consumes matching traits', () {

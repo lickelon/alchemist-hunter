@@ -89,29 +89,89 @@ class PotionCraftingService {
     final Map<String, double> normalizedTraits = _normalizeTraits(
       extractedTraits,
     );
-    final String typePotionId = _resolvePotionType(
-      requestedBlueprint: requestedBlueprint,
-      normalizedTraits: normalizedTraits,
-      recipeRules: recipeRules,
-      branchRules: branchRules,
-    );
-    final double score = _calculateQualityScore(
-      targetTraits: requestedBlueprint.targetTraits,
-      actualTraits: normalizedTraits,
-    );
-    final PotionQualityGrade grade = _resolveGrade(score, qualityRule);
+    final String typePotionId =
+        resolvePotionTypeFromTraits(
+          inputTraits: normalizedTraits,
+          recipeRules: recipeRules,
+          branchRules: branchRules,
+        ) ??
+        requestedBlueprint.id;
+    final ({PotionQualityGrade grade, double score}) quality =
+        calculateQualityFromTraits(
+          targetTraits: requestedBlueprint.targetTraits,
+          inputTraits: normalizedTraits,
+          qualityRule: qualityRule,
+        );
     return CraftedPotion(
       id: 'cp_${DateTime.now().microsecondsSinceEpoch}_${_random.nextInt(999)}',
       typePotionId: typePotionId,
-      qualityGrade: grade,
-      qualityScore: score,
+      qualityGrade: quality.grade,
+      qualityScore: quality.score,
       traits: normalizedTraits,
       createdAt: DateTime.now(),
     );
   }
 
-  String _resolvePotionType({
-    required PotionBlueprint requestedBlueprint,
+  String? resolvePotionTypeFromTraits({
+    required Map<String, double> inputTraits,
+    required List<PotionRecipeRule> recipeRules,
+    required List<PotionRecipeBranchRule> branchRules,
+  }) {
+    final Map<String, double> normalizedTraits = _normalizeTraits(inputTraits);
+    return _resolvePotionType(
+      normalizedTraits: normalizedTraits,
+      recipeRules: recipeRules,
+      branchRules: branchRules,
+    );
+  }
+
+  ({PotionQualityGrade grade, double score}) calculateQualityFromTraits({
+    required Map<String, double> targetTraits,
+    required Map<String, double> inputTraits,
+    required PotionQualityRule qualityRule,
+  }) {
+    final double score = _calculateQualityScore(
+      targetTraits: targetTraits,
+      actualTraits: _normalizeTraits(inputTraits),
+    );
+    return (grade: _resolveGrade(score, qualityRule), score: score);
+  }
+
+  ({
+    String? predictedPotionId,
+    String hintLabel,
+    double stability,
+    bool alreadyDiscovered,
+  })
+  previewBrew({
+    required Map<String, double> inputTraits,
+    required List<PotionRecipeRule> recipeRules,
+    required List<PotionRecipeBranchRule> branchRules,
+    Set<String> discoveredPotionIds = const <String>{},
+  }) {
+    final Map<String, double> normalizedTraits = _normalizeTraits(inputTraits);
+    final String? potionId = _resolvePotionType(
+      normalizedTraits: normalizedTraits,
+      recipeRules: recipeRules,
+      branchRules: branchRules,
+    );
+    final bool alreadyDiscovered =
+        potionId != null && discoveredPotionIds.contains(potionId);
+    final double stability = _dominantRatioGap(normalizedTraits);
+    final String hintLabel = potionId == null
+        ? '알 수 없는 반응'
+        : alreadyDiscovered
+        ? '기록된 레시피와 유사'
+        : '새로운 반응';
+    return (
+      predictedPotionId: potionId,
+      hintLabel: hintLabel,
+      stability: stability,
+      alreadyDiscovered: alreadyDiscovered,
+    );
+  }
+
+  String? _resolvePotionType({
     required Map<String, double> normalizedTraits,
     required List<PotionRecipeRule> recipeRules,
     required List<PotionRecipeBranchRule> branchRules,
@@ -128,7 +188,7 @@ class PotionCraftingService {
     }).toList();
 
     if (matchedRules.isEmpty) {
-      return requestedBlueprint.id;
+      return null;
     }
 
     matchedRules.sort((PotionRecipeRule a, PotionRecipeRule b) {
@@ -163,6 +223,18 @@ class PotionCraftingService {
     }
 
     return selectedRule.resultPotionId;
+  }
+
+  double _dominantRatioGap(Map<String, double> normalizedTraits) {
+    final List<double> values = normalizedTraits.values.toList()
+      ..sort((double a, double b) => b.compareTo(a));
+    if (values.isEmpty) {
+      return 0;
+    }
+    if (values.length == 1) {
+      return values.first.clamp(0, 1);
+    }
+    return (values.first - values[1]).clamp(0, 1);
   }
 
   double _calculateQualityScore({
