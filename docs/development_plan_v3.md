@@ -112,6 +112,7 @@
 - [x] 포션 제조 등록 / 수령
 - [x] [Workshop 양조 / 제작 분리 계획](./workshop_crafting_expansion_plan.md) 기준으로 포션 양조와 원소 + 재료 제작 경계 분리
 - [x] [Workshop 양조 / 제작 분리 계획](./workshop_crafting_expansion_plan.md) 기준으로 승급 재료 제작 경로 추가
+- [ ] [Workshop 양조 / 제작 분리 계획](./workshop_crafting_expansion_plan.md)의 발견형 포션 양조 기준으로 `원소 조합 / 비율 실험 -> 결과 발견 -> 레시피북 반복 양조` 흐름 전환
 - [x] 장비 인챈트 등록 / 수령
 - [x] 호문쿨루스 부화 등록 / 수령
 - [x] 재료 / 원소 / 포션 재고 조회
