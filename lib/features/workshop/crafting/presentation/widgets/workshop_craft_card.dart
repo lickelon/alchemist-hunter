@@ -413,7 +413,7 @@ class _WorkshopBrewRecipeBookTab extends ConsumerWidget {
               badgeLabel: badgeLabel,
               semanticLabel: '${recipe.title} $badgeLabel',
               tooltipMessage:
-                  '${recipe.title}\n품질 ${recipe.qualityLabel}\n${recipe.traitHint}',
+                  '${recipe.title}\n${recipe.summaryLabel}\n양조 가능 ${recipe.maxCraftableCount}',
               onTap: () {
                 showDialog<void>(
                   context: context,
@@ -474,7 +474,7 @@ class _WorkshopDiscoveredBrewDetailDialogState
                   padding: 6,
                 ),
                 const SizedBox(width: AppSpacing.md),
-                Text('품질 ${recipe.qualityLabel}'),
+                Text('최고 등급 ${recipe.qualityLabel}'),
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -491,9 +491,11 @@ class _WorkshopDiscoveredBrewDetailDialogState
               },
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('필요 원소'),
+            Text('발견 비율'),
             const SizedBox(height: AppSpacing.sm),
-            Text(recipe.traitHint),
+            Text(recipe.ratioLabel),
+            const SizedBox(height: AppSpacing.lg),
+            Text('양조 가능 ${recipe.maxCraftableCount}회'),
           ],
         ),
       ),

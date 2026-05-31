@@ -61,8 +61,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('활력 포션'), findsWidgets);
-    expect(find.text('품질 A'), findsOneWidget);
-    expect(find.textContaining('Vital 원소'), findsOneWidget);
+    expect(find.text('최고 등급 A'), findsOneWidget);
+    expect(find.text('발견 비율'), findsOneWidget);
+    expect(find.textContaining('메인 Vital 60 / 서브 Aggro 40'), findsOneWidget);
   });
 
   testWidgets('workshop craft sheet shows queue-full notice once in header', (
@@ -128,7 +129,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('활력 포션'), findsWidgets);
-    expect(find.text('품질 A'), findsOneWidget);
+    expect(find.text('최고 등급 A'), findsOneWidget);
   });
 
   testWidgets('workshop brew experiment registers selected elements', (

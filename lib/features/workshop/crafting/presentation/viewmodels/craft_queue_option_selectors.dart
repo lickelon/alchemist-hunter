@@ -49,6 +49,8 @@ class DiscoveredPotionRecipeView {
     required this.title,
     required this.qualityLabel,
     required this.traitHint,
+    required this.ratioLabel,
+    required this.summaryLabel,
     required this.traits,
     required this.maxCraftableCount,
     required this.craftableNow,
@@ -59,6 +61,8 @@ class DiscoveredPotionRecipeView {
   final String title;
   final String qualityLabel;
   final String traitHint;
+  final String ratioLabel;
+  final String summaryLabel;
   final Map<String, double> traits;
   final int maxCraftableCount;
   final bool craftableNow;
@@ -224,6 +228,15 @@ workshopDiscoveredPotionRecipeViewsProvider =
               qualityLabel: recipe.bestKnownGrade.name.toUpperCase(),
               traitHint: _traitCostHint(
                 recipe.discoveredTraits,
+                traitNames: traitNames,
+              ),
+              ratioLabel: _traitRatioLabel(
+                recipe.discoveredTraits,
+                traitNames: traitNames,
+              ),
+              summaryLabel: _discoveredRecipeSummary(
+                recipe.discoveredTraits,
+                recipe.bestKnownGrade,
                 traitNames: traitNames,
               ),
               traits: recipe.discoveredTraits,
@@ -398,6 +411,38 @@ String _traitCostHint(
             '${traitNames[entry.key] ?? entry.key} 원소 ${entry.value.toStringAsFixed(2)}',
       )
       .join(', ');
+}
+
+String _traitRatioLabel(
+  Map<String, double> requiredTraits, {
+  required Map<String, String> traitNames,
+}) {
+  if (requiredTraits.isEmpty) {
+    return '발견 비율 없음';
+  }
+  final List<MapEntry<String, double>> entries = requiredTraits.entries
+      .where((MapEntry<String, double> entry) => entry.value > 0)
+      .toList(growable: false);
+  if (entries.length < 2) {
+    final MapEntry<String, double> entry = entries.first;
+    return '${traitNames[entry.key] ?? entry.key} ${_ratioPercent(entry.value)}';
+  }
+  final MapEntry<String, double> main = entries[0];
+  final MapEntry<String, double> sub = entries[1];
+  return '메인 ${traitNames[main.key] ?? main.key} ${_ratioPercent(main.value)} / '
+      '서브 ${traitNames[sub.key] ?? sub.key} ${_ratioPercent(sub.value)}';
+}
+
+String _discoveredRecipeSummary(
+  Map<String, double> requiredTraits,
+  PotionQualityGrade quality, {
+  required Map<String, String> traitNames,
+}) {
+  return '${_traitRatioLabel(requiredTraits, traitNames: traitNames)} / 최고 ${quality.name.toUpperCase()}';
+}
+
+String _ratioPercent(double value) {
+  return '${(value * 100).round()}';
 }
 
 String _craftRecipeCostHint(
