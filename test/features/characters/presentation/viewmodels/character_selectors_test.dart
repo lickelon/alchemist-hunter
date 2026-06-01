@@ -5,10 +5,13 @@ import 'package:alchemist_hunter/features/characters/presentation/viewmodels/cha
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../support/catalog_fixtures.dart';
 
 void main() {
   test('character hint selectors reflect rank and tier conditions', () {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(
@@ -59,7 +62,9 @@ void main() {
   });
 
   test('homunculus selector exposes origin role and support labels', () {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(

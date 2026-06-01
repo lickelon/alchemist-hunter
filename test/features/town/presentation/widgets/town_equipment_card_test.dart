@@ -4,12 +4,15 @@ import 'package:alchemist_hunter/features/town/presentation/widgets/town_equipme
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../support/catalog_fixtures.dart';
 
 void main() {
   testWidgets('town equipment sheet shows craftable blueprints', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
     final SessionController session = container.read(
       sessionControllerProvider.notifier,
@@ -49,7 +52,9 @@ void main() {
   testWidgets('crafting from equipment sheet enqueues forge job', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(
@@ -84,7 +89,9 @@ void main() {
   testWidgets('town equipment inventory opens item detail from grid', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(

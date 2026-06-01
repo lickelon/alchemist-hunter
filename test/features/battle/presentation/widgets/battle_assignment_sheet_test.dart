@@ -6,12 +6,15 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_sheet.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import '../../../../support/catalog_fixtures.dart';
 
 void main() {
   testWidgets('battle assignment sheet toggles character for stage', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(
@@ -52,7 +55,9 @@ void main() {
   testWidgets('battle assignment sheet stores stage potion loadout', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(

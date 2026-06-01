@@ -1,10 +1,13 @@
 import 'package:alchemist_hunter/features/workshop/shared/presentation/viewmodels/workshop_shared_selectors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
 void main() {
   test('workshop skill selectors expose resource labels and node counts', () {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     expect(container.read(workshopArcaneDustProvider), 2);

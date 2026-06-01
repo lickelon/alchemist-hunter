@@ -4,12 +4,15 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/presentation/widgets/workshop_skill_tree_card.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
 void main() {
   testWidgets('workshop skill tree sheet upgrades root node', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(

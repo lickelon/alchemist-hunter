@@ -6,6 +6,7 @@ import 'package:alchemist_hunter/features/battle/domain/services/battle_expediti
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/use_cases/battle_expedition_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../support/catalog_fixtures.dart';
 
 void main() {
   const BattleExpeditionProgressService service =
@@ -492,7 +493,7 @@ SessionState _sessionWithExpedition(
   BattleRunState? runState,
   BattlePendingClaim pendingClaim = const BattlePendingClaim(),
 }) {
-  final SessionState state = createInitialSessionState(now);
+  final SessionState state = createTestInitialSessionState(now);
   return state.copyWith(
     battle: state.battle.copyWith(
       stageExpeditions: <String, BattleExpeditionState>{

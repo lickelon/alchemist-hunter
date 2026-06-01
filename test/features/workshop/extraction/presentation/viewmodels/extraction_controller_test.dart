@@ -1,31 +1,33 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_extraction_profile_repository.dart';
-import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_material_catalog_repository.dart';
-import 'package:alchemist_hunter/features/workshop/skill_tree/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_controller.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/domain/services/alchemy_service.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/services/workshop_skill_tree_service.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
 void main() {
   SessionController buildSession() {
-    return SessionController(clock: () => DateTime(2026, 1, 1, 10));
+    final DateTime now = DateTime(2026, 1, 1, 10);
+    return SessionController(
+      initialState: createTestInitialSessionState(now),
+      clock: () => now,
+    );
   }
 
   test('extractMaterial consumes material and stores extracted traits', () {
     final SessionController session = buildSession();
-    final WorkshopExtractionController
-    controller = WorkshopExtractionController(
-      session,
-      AlchemyService(),
-      materialCatalogRepository: const StaticMaterialCatalogRepository(),
-      extractionProfileRepository: const StaticExtractionProfileRepository(),
-      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
-      workshopSkillTreeService: const WorkshopSkillTreeService(),
-      workshopSupportService: const WorkshopSupportService(),
-    );
+    final WorkshopExtractionController controller =
+        WorkshopExtractionController(
+          session,
+          AlchemyService(),
+          materialCatalogRepository: testMaterialCatalogRepository,
+          extractionProfileRepository: testExtractionProfileRepository,
+          workshopSkillTreeRepository: testWorkshopSkillTreeRepository,
+          workshopSkillTreeService: const WorkshopSkillTreeService(),
+          workshopSupportService: const WorkshopSupportService(),
+        );
 
     session.state = session.state.copyWith(
       player: session.state.player.copyWith(
@@ -51,16 +53,16 @@ void main() {
 
   test('extractMaterial supports bulk quantity', () {
     final SessionController session = buildSession();
-    final WorkshopExtractionController
-    controller = WorkshopExtractionController(
-      session,
-      AlchemyService(),
-      materialCatalogRepository: const StaticMaterialCatalogRepository(),
-      extractionProfileRepository: const StaticExtractionProfileRepository(),
-      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
-      workshopSkillTreeService: const WorkshopSkillTreeService(),
-      workshopSupportService: const WorkshopSupportService(),
-    );
+    final WorkshopExtractionController controller =
+        WorkshopExtractionController(
+          session,
+          AlchemyService(),
+          materialCatalogRepository: testMaterialCatalogRepository,
+          extractionProfileRepository: testExtractionProfileRepository,
+          workshopSkillTreeRepository: testWorkshopSkillTreeRepository,
+          workshopSkillTreeService: const WorkshopSkillTreeService(),
+          workshopSupportService: const WorkshopSupportService(),
+        );
 
     session.state = session.state.copyWith(
       player: session.state.player.copyWith(
@@ -84,16 +86,16 @@ void main() {
 
   test('extractMaterial applies alembic yield bonus', () {
     final SessionController session = buildSession();
-    final WorkshopExtractionController
-    controller = WorkshopExtractionController(
-      session,
-      AlchemyService(),
-      materialCatalogRepository: const StaticMaterialCatalogRepository(),
-      extractionProfileRepository: const StaticExtractionProfileRepository(),
-      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
-      workshopSkillTreeService: const WorkshopSkillTreeService(),
-      workshopSupportService: const WorkshopSupportService(),
-    );
+    final WorkshopExtractionController controller =
+        WorkshopExtractionController(
+          session,
+          AlchemyService(),
+          materialCatalogRepository: testMaterialCatalogRepository,
+          extractionProfileRepository: testExtractionProfileRepository,
+          workshopSkillTreeRepository: testWorkshopSkillTreeRepository,
+          workshopSkillTreeService: const WorkshopSkillTreeService(),
+          workshopSupportService: const WorkshopSupportService(),
+        );
 
     session.state = session.state.copyWith(
       player: session.state.player.copyWith(
@@ -117,16 +119,16 @@ void main() {
 
   test('extractMaterial applies workshop support yield bonus', () {
     final SessionController session = buildSession();
-    final WorkshopExtractionController
-    controller = WorkshopExtractionController(
-      session,
-      AlchemyService(),
-      materialCatalogRepository: const StaticMaterialCatalogRepository(),
-      extractionProfileRepository: const StaticExtractionProfileRepository(),
-      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
-      workshopSkillTreeService: const WorkshopSkillTreeService(),
-      workshopSupportService: const WorkshopSupportService(),
-    );
+    final WorkshopExtractionController controller =
+        WorkshopExtractionController(
+          session,
+          AlchemyService(),
+          materialCatalogRepository: testMaterialCatalogRepository,
+          extractionProfileRepository: testExtractionProfileRepository,
+          workshopSkillTreeRepository: testWorkshopSkillTreeRepository,
+          workshopSkillTreeService: const WorkshopSkillTreeService(),
+          workshopSupportService: const WorkshopSupportService(),
+        );
 
     session.state = session.state.copyWith(
       player: session.state.player.copyWith(
@@ -149,16 +151,16 @@ void main() {
 
   test('extractMaterial returns queueFull when queue is full', () {
     final SessionController session = buildSession();
-    final WorkshopExtractionController
-    controller = WorkshopExtractionController(
-      session,
-      AlchemyService(),
-      materialCatalogRepository: const StaticMaterialCatalogRepository(),
-      extractionProfileRepository: const StaticExtractionProfileRepository(),
-      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
-      workshopSkillTreeService: const WorkshopSkillTreeService(),
-      workshopSupportService: const WorkshopSupportService(),
-    );
+    final WorkshopExtractionController controller =
+        WorkshopExtractionController(
+          session,
+          AlchemyService(),
+          materialCatalogRepository: testMaterialCatalogRepository,
+          extractionProfileRepository: testExtractionProfileRepository,
+          workshopSkillTreeRepository: testWorkshopSkillTreeRepository,
+          workshopSkillTreeService: const WorkshopSkillTreeService(),
+          workshopSupportService: const WorkshopSupportService(),
+        );
 
     session.state = session.state.copyWith(
       player: session.state.player.copyWith(

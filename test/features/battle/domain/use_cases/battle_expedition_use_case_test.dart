@@ -1,8 +1,8 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/use_cases/battle_expedition_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../support/catalog_fixtures.dart';
 
 void main() {
   test(
@@ -10,9 +10,9 @@ void main() {
     () {
       final DateTime now = DateTime(2026, 1, 1, 10);
       final BattleExpeditionUseCase useCase = BattleExpeditionUseCase();
-      final SessionState state = createInitialSessionState(now).copyWith(
-        battle: createInitialSessionState(now).battle.copyWith(
-          progress: createInitialSessionState(now).battle.progress.copyWith(
+      final SessionState state = createTestInitialSessionState(now).copyWith(
+        battle: createTestInitialSessionState(now).battle.copyWith(
+          progress: createTestInitialSessionState(now).battle.progress.copyWith(
             clearedStageIds: const <String>{'stage_1'},
           ),
           stageExpeditions: const <String, BattleExpeditionState>{
@@ -35,7 +35,7 @@ void main() {
       final SessionState nextState = useCase.claimStageRewards(
         state: state,
         stageId: 'stage_2',
-        battleCatalogRepository: const StaticBattleCatalogRepository(),
+        battleCatalogRepository: testBattleCatalogRepository,
       );
 
       expect(
@@ -52,7 +52,7 @@ void main() {
   test('claimStageRewards resets visible run outcome counts', () {
     final DateTime now = DateTime(2026, 1, 1, 10);
     final BattleExpeditionUseCase useCase = BattleExpeditionUseCase();
-    final SessionState initialState = createInitialSessionState(now);
+    final SessionState initialState = createTestInitialSessionState(now);
     final SessionState state = initialState.copyWith(
       battle: initialState.battle.copyWith(
         stageExpeditions: const <String, BattleExpeditionState>{
@@ -83,7 +83,7 @@ void main() {
     final SessionState nextState = useCase.claimStageRewards(
       state: state,
       stageId: 'stage_1',
-      battleCatalogRepository: const StaticBattleCatalogRepository(),
+      battleCatalogRepository: testBattleCatalogRepository,
     );
 
     final BattleRunState? nextRunState =

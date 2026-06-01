@@ -1,17 +1,17 @@
-import 'package:alchemist_hunter/features/workshop/extraction/data/catalogs/material_catalog.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_asset_loader.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_data.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/domain/repositories/material_catalog_repository.dart';
 
 class StaticMaterialCatalogRepository implements MaterialCatalogRepository {
-  const StaticMaterialCatalogRepository({WorkshopCatalogAssets? catalog})
-    : _catalog = catalog;
+  const StaticMaterialCatalogRepository({
+    required WorkshopCatalogAssets catalog,
+  }) : _catalog = catalog;
 
-  final WorkshopCatalogAssets? _catalog;
+  final WorkshopCatalogAssets _catalog;
 
-  List<MaterialEntity> get _materials => _catalog?.materials ?? materialCatalog;
+  List<MaterialEntity> get _materials => _catalog.materials;
 
-  List<TraitUnit> get _traits => _catalog?.traits ?? traitCatalog;
+  List<TraitUnit> get _traits => _catalog.traits;
 
   @override
   MaterialEntity? findMaterialById(String materialId) {

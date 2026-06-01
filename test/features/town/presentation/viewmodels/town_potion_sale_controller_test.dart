@@ -1,22 +1,25 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/town/data/repositories/static_town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
-import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_potion_sale_controller.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../support/catalog_fixtures.dart';
 
 void main() {
   SessionController buildSession() {
-    return SessionController(clock: () => DateTime(2026, 1, 1, 10));
+    final DateTime now = DateTime(2026, 1, 1, 10);
+    return SessionController(
+      initialState: createTestInitialSessionState(now),
+      clock: () => now,
+    );
   }
 
   test('sellCraftedPotion removes stack and adds gold', () {
     final SessionController session = buildSession();
     final TownPotionSaleController controller = TownPotionSaleController(
       session,
-      potionCatalogRepository: const StaticPotionCatalogRepository(),
-      townSkillTreeRepository: const StaticTownSkillTreeRepository(),
+      potionCatalogRepository: testPotionCatalogRepository,
+      townSkillTreeRepository: testTownSkillTreeRepository,
       townSkillTreeService: const TownSkillTreeService(),
     );
     const String stackKey = 'p_1|a';
@@ -54,8 +57,8 @@ void main() {
     final SessionController session = buildSession();
     final TownPotionSaleController controller = TownPotionSaleController(
       session,
-      potionCatalogRepository: const StaticPotionCatalogRepository(),
-      townSkillTreeRepository: const StaticTownSkillTreeRepository(),
+      potionCatalogRepository: testPotionCatalogRepository,
+      townSkillTreeRepository: testTownSkillTreeRepository,
       townSkillTreeService: const TownSkillTreeService(),
     );
     const String stackKey = 'p_1|a';

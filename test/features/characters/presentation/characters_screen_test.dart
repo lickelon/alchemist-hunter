@@ -7,12 +7,15 @@ import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../support/catalog_fixtures.dart';
 
 void main() {
   testWidgets('character screen shows rank and tier unlock hints', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(
@@ -160,7 +163,9 @@ void main() {
   testWidgets(
     'character screen shows homunculus origin role and support details',
     (WidgetTester tester) async {
-      final ProviderContainer container = ProviderContainer();
+      final ProviderContainer container = ProviderContainer(
+        overrides: testCatalogProviderOverrides(),
+      );
       addTearDown(container.dispose);
 
       final SessionController session = container.read(

@@ -4,12 +4,15 @@ import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/widg
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
 void main() {
   testWidgets(
     'workshop queue sheet shows queued and completed jobs in one list',
     (WidgetTester tester) async {
-      final ProviderContainer container = ProviderContainer();
+      final ProviderContainer container = ProviderContainer(
+        overrides: testCatalogProviderOverrides(),
+      );
       addTearDown(container.dispose);
 
       final SessionController session = container.read(

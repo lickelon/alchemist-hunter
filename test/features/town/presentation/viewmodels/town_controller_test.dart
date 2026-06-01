@@ -1,25 +1,26 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/town/data/repositories/static_equipment_blueprint_repository.dart';
-import 'package:alchemist_hunter/features/town/data/repositories/static_mercenary_template_repository.dart';
-import 'package:alchemist_hunter/features/town/data/repositories/static_shop_catalog_repository.dart';
-import 'package:alchemist_hunter/features/town/data/repositories/static_town_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../support/catalog_fixtures.dart';
 
 void main() {
   SessionController buildSession({DateTime? now}) {
-    return SessionController(clock: () => now ?? DateTime(2026, 1, 1, 10));
+    final DateTime baseNow = now ?? DateTime(2026, 1, 1, 10);
+    return SessionController(
+      initialState: createTestInitialSessionState(baseNow),
+      clock: () => baseNow,
+    );
   }
 
   ShopController buildShopController(SessionController session) {
     return ShopController(
       session,
       EconomyService(),
-      shopCatalogRepository: const StaticShopCatalogRepository(),
-      townSkillTreeRepository: const StaticTownSkillTreeRepository(),
+      shopCatalogRepository: testShopCatalogRepository,
+      townSkillTreeRepository: testTownSkillTreeRepository,
       townSkillTreeService: const TownSkillTreeService(),
     );
   }
@@ -29,8 +30,8 @@ void main() {
   ) {
     return EquipmentCraftController(
       session,
-      equipmentBlueprintRepository: const StaticEquipmentBlueprintRepository(),
-      townSkillTreeRepository: const StaticTownSkillTreeRepository(),
+      equipmentBlueprintRepository: testEquipmentBlueprintRepository,
+      townSkillTreeRepository: testTownSkillTreeRepository,
       townSkillTreeService: const TownSkillTreeService(),
     );
   }
@@ -38,8 +39,8 @@ void main() {
   MercenaryController buildMercenaryController(SessionController session) {
     return MercenaryController(
       session,
-      mercenaryTemplateRepository: const StaticMercenaryTemplateRepository(),
-      townSkillTreeRepository: const StaticTownSkillTreeRepository(),
+      mercenaryTemplateRepository: testMercenaryTemplateRepository,
+      townSkillTreeRepository: testTownSkillTreeRepository,
       townSkillTreeService: const TownSkillTreeService(),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
@@ -7,8 +8,8 @@ import 'package:alchemist_hunter/features/workshop/support/domain/use_cases/conf
 void main() {
   test('toggleHomunculus assigns and unassigns a function slot', () {
     final SessionState state =
-        createInitialSessionState(DateTime(2026, 1, 1, 10)).copyWith(
-          battle: createInitialSessionState(DateTime(2026, 1, 1, 10)).battle
+        createTestInitialSessionState(DateTime(2026, 1, 1, 10)).copyWith(
+          battle: createTestInitialSessionState(DateTime(2026, 1, 1, 10)).battle
               .copyWith(
                 stageAssignments: const <String, List<String>>{
                   'stage_1': <String>['merc_1'],
@@ -37,8 +38,8 @@ void main() {
 
   test('toggleHomunculus rejects reassignment without prior removal', () {
     final SessionState state =
-        createInitialSessionState(DateTime(2026, 1, 1, 10)).copyWith(
-          battle: createInitialSessionState(DateTime(2026, 1, 1, 10)).battle
+        createTestInitialSessionState(DateTime(2026, 1, 1, 10)).copyWith(
+          battle: createTestInitialSessionState(DateTime(2026, 1, 1, 10)).battle
               .copyWith(
                 stageAssignments: const <String, List<String>>{
                   'stage_1': <String>['merc_1'],
@@ -72,7 +73,7 @@ void main() {
   test(
     'toggleHomunculus rejects mercenary and caps total assigned count at three',
     () {
-      final SessionState baseState = createInitialSessionState(
+      final SessionState baseState = createTestInitialSessionState(
         DateTime(2026, 1, 1, 10),
       );
       final SessionState state = baseState.copyWith(

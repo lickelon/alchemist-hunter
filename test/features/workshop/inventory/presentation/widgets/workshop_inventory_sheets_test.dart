@@ -5,12 +5,15 @@ import 'package:alchemist_hunter/features/workshop/inventory/presentation/widget
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
 void main() {
   testWidgets('workshop inventory sheet shows materials elements and potions', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(
@@ -105,7 +108,9 @@ void main() {
   testWidgets(
     'workshop extraction sheet shows element stock and extraction actions',
     (WidgetTester tester) async {
-      final ProviderContainer container = ProviderContainer();
+      final ProviderContainer container = ProviderContainer(
+        overrides: testCatalogProviderOverrides(),
+      );
       addTearDown(container.dispose);
 
       final SessionController session = container.read(
@@ -153,7 +158,9 @@ void main() {
   testWidgets('workshop extraction detail shows toast when queue is full', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(

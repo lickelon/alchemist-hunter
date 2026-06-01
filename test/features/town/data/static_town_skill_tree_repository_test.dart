@@ -1,10 +1,9 @@
-import 'package:alchemist_hunter/features/town/data/repositories/static_town_skill_tree_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../support/catalog_fixtures.dart';
 
 void main() {
   test('static town skill tree repository exposes nodes and root', () {
-    const StaticTownSkillTreeRepository repository =
-        StaticTownSkillTreeRepository();
+    final repository = testTownSkillTreeRepository;
 
     final nodes = repository.nodes();
 

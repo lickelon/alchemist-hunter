@@ -3,12 +3,15 @@ import 'package:alchemist_hunter/features/town/presentation/widgets/town_mercena
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../support/catalog_fixtures.dart';
 
 void main() {
   testWidgets('town mercenary sheet shows hire candidates', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     await tester.pumpWidget(
@@ -32,7 +35,9 @@ void main() {
   testWidgets('hiring from mercenary sheet updates session state', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
     final SessionController session = container.read(
       sessionControllerProvider.notifier,

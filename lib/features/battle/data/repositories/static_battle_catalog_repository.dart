@@ -1,43 +1,39 @@
-import 'package:alchemist_hunter/features/battle/data/catalogs/battle_tables.dart'
-    as tables;
+import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalog_tables.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 
 class StaticBattleCatalogRepository implements BattleCatalogRepository {
-  const StaticBattleCatalogRepository({tables.BattleCatalogTables? catalog})
+  const StaticBattleCatalogRepository({required BattleCatalogTables catalog})
     : _catalog = catalog;
 
-  final tables.BattleCatalogTables? _catalog;
-
-  tables.BattleCatalogTables get _tables =>
-      _catalog ?? tables.battleCatalogTables;
+  final BattleCatalogTables _catalog;
 
   @override
   List<BattleStageEncounterDefinition> encounterDefinitionsForStage(
     String stageId,
-  ) => _tables.encounterDefinitionsForStage(stageId);
+  ) => _catalog.encounterDefinitionsForStage(stageId);
 
   @override
-  BattleDropTable dropTable(String stageId) => _tables.stageDropTable(stageId);
+  BattleDropTable dropTable(String stageId) => _catalog.stageDropTable(stageId);
 
   @override
   BattleDropTable dropTableForEnemySet({
     required String stageId,
     required String enemySetId,
-  }) => _tables.dropTableForEnemySet(stageId: stageId, enemySetId: enemySetId);
+  }) => _catalog.dropTableForEnemySet(stageId: stageId, enemySetId: enemySetId);
 
   @override
   List<BattleEnemyDefinition> enemyDefinitionsForStage(String stageId) =>
-      _tables.enemyDefinitionsForStage(stageId);
+      _catalog.enemyDefinitionsForStage(stageId);
 
   @override
   List<BattleEnemyDefinition> enemyDefinitionsForSet(String enemySetId) =>
-      _tables.enemyDefinitionsForSet(enemySetId);
+      _catalog.enemyDefinitionsForSet(enemySetId);
 
   @override
   BattleStageDefinition stageDefinition(String stageId) =>
-      _tables.stageDefinition(stageId);
+      _catalog.stageDefinition(stageId);
 
   @override
-  List<String> stageCatalog() => _tables.stageCatalog;
+  List<String> stageCatalog() => _catalog.stageCatalog;
 }

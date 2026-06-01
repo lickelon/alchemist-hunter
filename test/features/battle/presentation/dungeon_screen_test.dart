@@ -7,12 +7,15 @@ import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../support/catalog_fixtures.dart';
 
 void main() {
   testWidgets('dungeon screen shows locked reason for later stages', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
     final SessionController session = container.read(
       sessionControllerProvider.notifier,
@@ -101,7 +104,9 @@ void main() {
   testWidgets('dungeon screen opens recent battle result sheet', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
     final SessionController session = container.read(
       sessionControllerProvider.notifier,
@@ -181,7 +186,9 @@ void main() {
   testWidgets('dungeon screen claims pending rewards from dialog', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
     final SessionController session = container.read(
       sessionControllerProvider.notifier,
@@ -227,7 +234,7 @@ void main() {
     expect(find.text('폐허 입구 보상 수령'), findsOneWidget);
     expect(find.text('성공 2회 / 실패 1회'), findsOneWidget);
     expect(find.text('진행 시간 1분 5초'), findsOneWidget);
-    expect(find.text('경험치 +5'), findsOneWidget);
+    expect(find.text('이미 반영된 경험치 +5'), findsOneWidget);
 
     await tester.tap(find.text('수령').last);
     await tester.pumpAndSettle();

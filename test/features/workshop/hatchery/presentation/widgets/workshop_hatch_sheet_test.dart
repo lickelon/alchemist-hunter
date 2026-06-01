@@ -5,12 +5,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/hatchery/presentation/widgets/workshop_hatch_card.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
 void main() {
   testWidgets('workshop hatch sheet enqueues homunculus hatch job', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(
@@ -61,7 +64,9 @@ void main() {
   testWidgets('workshop hatch sheet shows toast when queue is full', (
     WidgetTester tester,
   ) async {
-    final ProviderContainer container = ProviderContainer();
+    final ProviderContainer container = ProviderContainer(
+      overrides: testCatalogProviderOverrides(),
+    );
     addTearDown(container.dispose);
 
     final SessionController session = container.read(

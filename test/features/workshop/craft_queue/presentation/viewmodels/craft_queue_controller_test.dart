@@ -1,10 +1,9 @@
+import '../../../../../support/catalog_fixtures.dart';
+
 import 'dart:math';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_potion_catalog_repository.dart';
-import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_workshop_craft_recipe_repository.dart';
-import 'package:alchemist_hunter/features/workshop/skill_tree/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/use_cases/workshop_brew_experiment_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_crafting_service.dart';
@@ -18,7 +17,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   SessionController buildSession() {
-    return SessionController(clock: () => DateTime(2026, 1, 1, 10));
+    final DateTime now = DateTime(2026, 1, 1, 10);
+    return SessionController(
+      initialState: createTestInitialSessionState(now),
+      clock: () => now,
+    );
   }
 
   WorkshopCraftQueueController buildController(
@@ -28,9 +31,9 @@ void main() {
     return WorkshopCraftQueueController(
       session,
       PotionCraftingService(random: Random(craftingSeed)),
-      potionCatalogRepository: const StaticPotionCatalogRepository(),
-      craftRecipeRepository: const StaticWorkshopCraftRecipeRepository(),
-      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+      potionCatalogRepository: testPotionCatalogRepository,
+      craftRecipeRepository: testWorkshopCraftRecipeRepository,
+      workshopSkillTreeRepository: testWorkshopSkillTreeRepository,
       workshopSkillTreeService: const WorkshopSkillTreeService(),
       workshopSupportService: const WorkshopSupportService(),
       discoveryService: const PotionDiscoveryService(),
@@ -356,7 +359,9 @@ void main() {
   test(
     'workshop queue option views reflect unlock flags and inventory count',
     () {
-      final ProviderContainer container = ProviderContainer();
+      final ProviderContainer container = ProviderContainer(
+        overrides: testCatalogProviderOverrides(),
+      );
       addTearDown(container.dispose);
 
       final SessionController session = container.read(

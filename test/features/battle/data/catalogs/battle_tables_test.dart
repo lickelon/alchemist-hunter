@@ -1,4 +1,3 @@
-import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/data/catalogs/battle_catalog_dtos.dart';
 import 'package:alchemist_hunter/features/battle/data/catalogs/battle_stage_definitions.dart'
     as stage_catalog;
@@ -8,10 +7,10 @@ import 'package:alchemist_hunter/features/battle/data/catalogs/enemies/battle_en
     as enemy_catalog;
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../support/catalog_fixtures.dart';
 
 void main() {
-  const StaticBattleCatalogRepository repository =
-      StaticBattleCatalogRepository();
+  final repository = testBattleCatalogRepository;
 
   test('raw battle catalogs stay behind DTO boundaries', () {
     final BattleStageDefinitionDto stageDto =

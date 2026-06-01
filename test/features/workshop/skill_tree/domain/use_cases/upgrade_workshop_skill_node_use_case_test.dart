@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
-import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/workshop/skill_tree/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/services/workshop_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/use_cases/upgrade_workshop_skill_node_use_case.dart';
 
@@ -10,12 +9,12 @@ void main() {
     'upgrade workshop root node consumes arcane resource and increases level',
     () {
       final useCase = UpgradeWorkshopSkillNodeUseCase();
-      final state = createInitialSessionState(DateTime(2026, 1, 1, 10));
+      final state = createTestInitialSessionState(DateTime(2026, 1, 1, 10));
 
       final nextState = useCase.upgradeNode(
         state: state,
         nodeId: 'workshop_alembic',
-        repository: const StaticWorkshopSkillTreeRepository(),
+        repository: testWorkshopSkillTreeRepository,
         service: const WorkshopSkillTreeService(),
       );
 
@@ -26,7 +25,7 @@ void main() {
   );
 
   test('upgrade workshop node consumes element cost on next level', () {
-    final initial = createInitialSessionState(DateTime(2026, 1, 1, 10));
+    final initial = createTestInitialSessionState(DateTime(2026, 1, 1, 10));
     final useCase = UpgradeWorkshopSkillNodeUseCase();
     final state = initial.copyWith(
       player: initial.player.copyWith(arcaneDust: 5),
@@ -46,7 +45,7 @@ void main() {
     final nextState = useCase.upgradeNode(
       state: state,
       nodeId: 'workshop_alembic',
-      repository: const StaticWorkshopSkillTreeRepository(),
+      repository: testWorkshopSkillTreeRepository,
       service: const WorkshopSkillTreeService(),
     );
 

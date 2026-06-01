@@ -1,15 +1,14 @@
-import 'package:alchemist_hunter/features/workshop/crafting/data/catalogs/potion_catalog.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_asset_loader.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_data.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
 
 class StaticPotionCatalogRepository implements PotionCatalogRepository {
-  const StaticPotionCatalogRepository({WorkshopCatalogAssets? catalog})
+  const StaticPotionCatalogRepository({required WorkshopCatalogAssets catalog})
     : _catalog = catalog;
 
-  final WorkshopCatalogAssets? _catalog;
+  final WorkshopCatalogAssets _catalog;
 
-  List<PotionBlueprint> get _potions => _catalog?.potions ?? potionCatalog;
+  List<PotionBlueprint> get _potions => _catalog.potions;
 
   @override
   PotionBlueprint? findPotionById(String potionId) {
@@ -19,12 +18,10 @@ class StaticPotionCatalogRepository implements PotionCatalogRepository {
   }
 
   @override
-  List<PotionRecipeRule> recipeRules() =>
-      _catalog?.potionRecipeRules ?? potionRecipeCatalog;
+  List<PotionRecipeRule> recipeRules() => _catalog.potionRecipeRules;
 
   @override
-  PotionQualityRule qualityRule() =>
-      _catalog?.potionQualityRule ?? potionQualityCatalog;
+  PotionQualityRule qualityRule() => _catalog.potionQualityRule;
 
   @override
   List<PotionBlueprint> potions() => _potions;

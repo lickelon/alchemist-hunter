@@ -1,16 +1,15 @@
-import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_asset_loader.dart';
-import 'package:alchemist_hunter/features/workshop/extraction/data/catalogs/extraction_profiles.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_data.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/domain/repositories/extraction_profile_repository.dart';
 
 class StaticExtractionProfileRepository implements ExtractionProfileRepository {
-  const StaticExtractionProfileRepository({WorkshopCatalogAssets? catalog})
-    : _catalog = catalog;
+  const StaticExtractionProfileRepository({
+    required WorkshopCatalogAssets catalog,
+  }) : _catalog = catalog;
 
-  final WorkshopCatalogAssets? _catalog;
+  final WorkshopCatalogAssets _catalog;
 
-  List<ExtractionProfile> get _profiles =>
-      _catalog?.extractionProfiles ?? extractionProfileCatalog;
+  List<ExtractionProfile> get _profiles => _catalog.extractionProfiles;
 
   @override
   ExtractionProfile? findProfileById(String profileId) {

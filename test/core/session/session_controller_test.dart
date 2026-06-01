@@ -1,10 +1,14 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/catalog_fixtures.dart';
+
 void main() {
   test('applyState replaces current snapshot without feature rules', () {
+    final DateTime now = DateTime(2026, 1, 1, 10);
     final SessionController session = SessionController(
-      clock: () => DateTime(2026, 1, 1, 10),
+      initialState: createTestInitialSessionState(now),
+      clock: () => now,
     );
 
     final SessionState nextState = session.state.copyWith(
@@ -16,8 +20,10 @@ void main() {
   });
 
   test('appendLog deduplicates consecutive identical messages', () {
+    final DateTime now = DateTime(2026, 1, 1, 10);
     final SessionController session = SessionController(
-      clock: () => DateTime(2026, 1, 1, 10),
+      initialState: createTestInitialSessionState(now),
+      clock: () => now,
     );
 
     session.appendLog('same message');

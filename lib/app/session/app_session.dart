@@ -21,21 +21,9 @@ SessionState _appendLog(SessionState state, String message) {
   );
 }
 
-SessionState createInitialSessionState(DateTime now) {
-  return createInitialSessionStateFromCatalogs(
-    now,
-    createDefaultInitialSessionCatalogs(),
-  );
-}
-
 class AppSessionController extends core.SessionController<SessionState> {
-  AppSessionController({SessionState? initialState, super.clock})
-    : super(
-        initialState:
-            initialState ??
-            createInitialSessionState((clock ?? DateTime.now)()),
-        logAppender: _appendLog,
-      );
+  AppSessionController({required super.initialState, super.clock})
+    : super(logAppender: _appendLog);
 }
 
 typedef SessionController = AppSessionController;

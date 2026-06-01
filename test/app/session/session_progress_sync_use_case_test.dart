@@ -1,12 +1,11 @@
 import 'dart:math';
+import '../../support/catalog_fixtures.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/app/session/session_progress_sync_use_case.dart';
-import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_resolver.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
-import 'package:alchemist_hunter/features/town/data/repositories/static_shop_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.dart';
@@ -16,7 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('time acceleration progresses search and battle encounters', () {
     final DateTime start = DateTime(2026, 1, 1, 10);
-    final SessionState initial = createInitialSessionState(start);
+    final SessionState initial = createTestInitialSessionState(start);
     final SessionState state = initial.copyWith(
       player: initial.player.copyWith(timeAcceleration: 8),
       workshop: initial.workshop.copyWith(
@@ -51,11 +50,11 @@ void main() {
       now: start.add(const Duration(seconds: 1)),
       townUseCase: const TownUseCase(),
       economyService: EconomyService(),
-      shopCatalogRepository: const StaticShopCatalogRepository(),
+      shopCatalogRepository: testShopCatalogRepository,
       battleExpeditionResolver: DefaultBattleExpeditionResolver(
         battleService: BattleService(random: Random(11)),
       ),
-      battleCatalogRepository: const StaticBattleCatalogRepository(),
+      battleCatalogRepository: testBattleCatalogRepository,
     );
 
     expect(
@@ -69,7 +68,7 @@ void main() {
     'sync marks current battle as loadout fallback when potions are missing',
     () {
       final DateTime start = DateTime(2026, 1, 1, 10);
-      final SessionState initial = createInitialSessionState(start);
+      final SessionState initial = createTestInitialSessionState(start);
       final SessionState state = initial.copyWith(
         player: initial.player.copyWith(timeAcceleration: 8),
         battle: initial.battle.copyWith(
@@ -91,11 +90,11 @@ void main() {
         now: start.add(const Duration(seconds: 1)),
         townUseCase: const TownUseCase(),
         economyService: EconomyService(),
-        shopCatalogRepository: const StaticShopCatalogRepository(),
+        shopCatalogRepository: testShopCatalogRepository,
         battleExpeditionResolver: DefaultBattleExpeditionResolver(
           battleService: BattleService(random: Random(11)),
         ),
-        battleCatalogRepository: const StaticBattleCatalogRepository(),
+        battleCatalogRepository: testBattleCatalogRepository,
       );
 
       expect(
@@ -112,7 +111,7 @@ void main() {
 
   test('time acceleration shortens forge completion time', () {
     final DateTime start = DateTime(2026, 1, 1, 10);
-    final SessionState initial = createInitialSessionState(start);
+    final SessionState initial = createTestInitialSessionState(start);
     final SessionState state = initial.copyWith(
       player: initial.player.copyWith(timeAcceleration: 2),
       town: initial.town.copyWith(
@@ -147,11 +146,11 @@ void main() {
       now: start.add(const Duration(seconds: 15)),
       townUseCase: const TownUseCase(),
       economyService: EconomyService(),
-      shopCatalogRepository: const StaticShopCatalogRepository(),
+      shopCatalogRepository: testShopCatalogRepository,
       battleExpeditionResolver: DefaultBattleExpeditionResolver(
         battleService: BattleService(random: Random(11)),
       ),
-      battleCatalogRepository: const StaticBattleCatalogRepository(),
+      battleCatalogRepository: testBattleCatalogRepository,
     );
 
     expect(

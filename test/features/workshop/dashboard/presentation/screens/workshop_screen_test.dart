@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../../../../support/catalog_fixtures.dart';
+
 void main() {
   testWidgets('workshop screen prioritizes queue and inventory cards', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: Scaffold(body: WorkshopScreen())),
+      ProviderScope(
+        overrides: testCatalogProviderOverrides(),
+        child: const MaterialApp(home: Scaffold(body: WorkshopScreen())),
       ),
     );
     await tester.pumpAndSettle();

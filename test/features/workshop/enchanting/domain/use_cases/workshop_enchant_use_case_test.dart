@@ -1,20 +1,19 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_potion_catalog_repository.dart';
-import 'package:alchemist_hunter/features/workshop/skill_tree/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/domain/services/equipment_enchant_service.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/services/workshop_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/domain/use_cases/workshop_enchant_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
 void main() {
   SessionState buildState() {
     final DateTime now = DateTime(2026, 1, 1, 10);
-    return createInitialSessionState(now).copyWith(
-      workshop: createInitialSessionState(now).workshop.copyWith(
+    return createTestInitialSessionState(now).copyWith(
+      workshop: createTestInitialSessionState(now).workshop.copyWith(
         craftedPotionStacks: const <String, int>{'p_1|a': 1},
         craftedPotionDetails: <String, CraftedPotion>{
           'p_1|a': CraftedPotion(
@@ -56,8 +55,8 @@ void main() {
         equipmentId: 'eq_instance_1',
         potionStackKey: 'p_1|a',
         enchantService: const EquipmentEnchantService(),
-        potionCatalogRepository: const StaticPotionCatalogRepository(),
-        workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+        potionCatalogRepository: testPotionCatalogRepository,
+        workshopSkillTreeRepository: testWorkshopSkillTreeRepository,
         workshopSkillTreeService: const WorkshopSkillTreeService(),
         workshopSupportService: const WorkshopSupportService(),
       );
@@ -104,8 +103,8 @@ void main() {
       equipmentId: 'eq_instance_1',
       potionStackKey: 'p_1|a',
       enchantService: const EquipmentEnchantService(),
-      potionCatalogRepository: const StaticPotionCatalogRepository(),
-      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+      potionCatalogRepository: testPotionCatalogRepository,
+      workshopSkillTreeRepository: testWorkshopSkillTreeRepository,
       workshopSkillTreeService: const WorkshopSkillTreeService(),
       workshopSupportService: const WorkshopSupportService(),
     );
@@ -159,8 +158,8 @@ void main() {
       equipmentId: 'eq_instance_1',
       potionStackKey: 'p_1|a',
       enchantService: const EquipmentEnchantService(),
-      potionCatalogRepository: const StaticPotionCatalogRepository(),
-      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+      potionCatalogRepository: testPotionCatalogRepository,
+      workshopSkillTreeRepository: testWorkshopSkillTreeRepository,
       workshopSkillTreeService: const WorkshopSkillTreeService(),
       workshopSupportService: const WorkshopSupportService(),
     );
@@ -217,8 +216,8 @@ void main() {
       equipmentId: 'eq_instance_1',
       potionStackKey: 'p_1|a',
       enchantService: const EquipmentEnchantService(),
-      potionCatalogRepository: const StaticPotionCatalogRepository(),
-      workshopSkillTreeRepository: const StaticWorkshopSkillTreeRepository(),
+      potionCatalogRepository: testPotionCatalogRepository,
+      workshopSkillTreeRepository: testWorkshopSkillTreeRepository,
       workshopSkillTreeService: const WorkshopSkillTreeService(),
       workshopSupportService: const WorkshopSupportService(),
     );

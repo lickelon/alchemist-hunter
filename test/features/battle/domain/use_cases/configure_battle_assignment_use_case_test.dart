@@ -1,15 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../support/catalog_fixtures.dart';
 
-import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/use_cases/configure_battle_assignment_use_case.dart';
 
 void main() {
   test('toggleCharacter adds and removes stage assignment', () {
-    final state = createInitialSessionState(DateTime(2026, 1, 1, 10)).copyWith(
-      battle: createInitialSessionState(
-        DateTime(2026, 1, 1, 10),
-      ).battle.copyWith(stageAssignments: const <String, List<String>>{}),
-    );
+    final state = createTestInitialSessionState(DateTime(2026, 1, 1, 10))
+        .copyWith(
+          battle: createTestInitialSessionState(
+            DateTime(2026, 1, 1, 10),
+          ).battle.copyWith(stageAssignments: const <String, List<String>>{}),
+        );
     const ConfigureBattleAssignmentUseCase useCase =
         ConfigureBattleAssignmentUseCase();
 

@@ -5,15 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../../../support/catalog_fixtures.dart';
+
 void main() {
   testWidgets('town shop sheet shows stock policy and disables sold out item', (
     WidgetTester tester,
   ) async {
     final ProviderContainer container = ProviderContainer(
       overrides: <Override>[
-        sessionControllerProvider.overrideWith(
-          (Ref ref) => SessionController(clock: () => DateTime(2026, 1, 1, 10)),
-        ),
+        ...testCatalogProviderOverrides(),
+        sessionControllerProvider.overrideWith((Ref ref) {
+          final DateTime now = DateTime(2026, 1, 1, 10);
+          return SessionController(
+            initialState: createTestInitialSessionState(now),
+            clock: () => now,
+          );
+        }),
       ],
     );
     addTearDown(container.dispose);

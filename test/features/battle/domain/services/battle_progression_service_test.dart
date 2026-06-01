@@ -1,12 +1,11 @@
-import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../support/catalog_fixtures.dart';
 
 void main() {
   const BattleProgressionService service = BattleProgressionService();
-  const StaticBattleCatalogRepository repository =
-      StaticBattleCatalogRepository();
+  final repository = testBattleCatalogRepository;
 
   test('stage unlocks depend on previous stage win streak', () {
     const ProgressState progress = ProgressState(

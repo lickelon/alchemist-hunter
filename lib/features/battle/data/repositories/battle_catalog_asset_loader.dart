@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:alchemist_hunter/features/battle/data/catalogs/battle_catalog_dtos.dart';
-import 'package:alchemist_hunter/features/battle/data/catalogs/battle_tables.dart';
+import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalog_tables.dart';
 import 'package:flutter/services.dart';
 
 class BattleCatalogAssetLoader {

@@ -1,28 +1,28 @@
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/workshop/hatchery/data/repositories/static_homunculus_hatch_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/hatchery/domain/use_cases/workshop_hatch_use_case.dart';
 
 void main() {
   test('hatchHomunculus reserves resources and enqueues homunculus job', () {
-    final state = createInitialSessionState(DateTime(2026, 1, 1, 10)).copyWith(
-      player: createInitialSessionState(DateTime(2026, 1, 1, 10)).player
-          .copyWith(
-            essence: 120,
-            arcaneDust: 2,
-            materialInventory: const <String, int>{'m_1': 2, 'm_3': 1},
-          ),
-      workshop: createInitialSessionState(DateTime(2026, 1, 1, 10)).workshop
-          .copyWith(
-            extractedTraitInventory: const <String, double>{'t_hp': 0.8},
-          ),
-    );
-    final recipe = const StaticHomunculusHatchRepository().findById(
-      'hatch_vital_seed',
-    )!;
+    final state = createTestInitialSessionState(DateTime(2026, 1, 1, 10))
+        .copyWith(
+          player: createTestInitialSessionState(DateTime(2026, 1, 1, 10)).player
+              .copyWith(
+                essence: 120,
+                arcaneDust: 2,
+                materialInventory: const <String, int>{'m_1': 2, 'm_3': 1},
+              ),
+          workshop: createTestInitialSessionState(DateTime(2026, 1, 1, 10))
+              .workshop
+              .copyWith(
+                extractedTraitInventory: const <String, double>{'t_hp': 0.8},
+              ),
+        );
+    final recipe = testHomunculusHatchRepository.findById('hatch_vital_seed')!;
 
     final nextState = const WorkshopHatchUseCase().hatchHomunculus(
       state: state,
@@ -63,14 +63,15 @@ void main() {
 
   test('hatchHomunculus applies hatch slot arcane discount', () {
     final SessionState state =
-        createInitialSessionState(DateTime(2026, 1, 1, 10)).copyWith(
-          player: createInitialSessionState(DateTime(2026, 1, 1, 10)).player
+        createTestInitialSessionState(DateTime(2026, 1, 1, 10)).copyWith(
+          player: createTestInitialSessionState(DateTime(2026, 1, 1, 10)).player
               .copyWith(
                 essence: 120,
                 arcaneDust: 1,
                 materialInventory: const <String, int>{'m_1': 2, 'm_3': 1},
               ),
-          workshop: createInitialSessionState(DateTime(2026, 1, 1, 10)).workshop
+          workshop: createTestInitialSessionState(DateTime(2026, 1, 1, 10))
+              .workshop
               .copyWith(
                 extractedTraitInventory: const <String, double>{'t_hp': 0.8},
                 supportAssignmentsByFunction: const <String, String>{
@@ -78,9 +79,7 @@ void main() {
                 },
               ),
         );
-    final recipe = const StaticHomunculusHatchRepository().findById(
-      'hatch_vital_seed',
-    )!;
+    final recipe = testHomunculusHatchRepository.findById('hatch_vital_seed')!;
 
     final nextState = const WorkshopHatchUseCase().hatchHomunculus(
       state: state,

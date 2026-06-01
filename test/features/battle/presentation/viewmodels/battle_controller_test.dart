@@ -1,7 +1,8 @@
+import '../../../../support/catalog_fixtures.dart';
+
 import 'dart:math';
 
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_controller.dart';
-import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
@@ -12,7 +13,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   SessionController buildSession() {
-    return SessionController(clock: () => DateTime(2026, 1, 1, 10));
+    final DateTime now = DateTime(2026, 1, 1, 10);
+    return SessionController(
+      initialState: createTestInitialSessionState(now),
+      clock: () => now,
+    );
   }
 
   BattleController buildController(
@@ -24,7 +29,7 @@ void main() {
       session,
       battleService: BattleService(random: Random(battleSeed)),
       encounterRandom: Random(encounterSeed),
-      battleCatalogRepository: const StaticBattleCatalogRepository(),
+      battleCatalogRepository: testBattleCatalogRepository,
     );
   }
 

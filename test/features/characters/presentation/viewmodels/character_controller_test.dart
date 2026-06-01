@@ -4,9 +4,15 @@ import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../../../support/catalog_fixtures.dart';
+
 void main() {
   SessionController buildSession() {
-    return SessionController(clock: () => DateTime(2026, 1, 1, 10));
+    final DateTime now = DateTime(2026, 1, 1, 10);
+    return SessionController(
+      initialState: createTestInitialSessionState(now),
+      clock: () => now,
+    );
   }
 
   test('rankUp resets level/xp and increases rank', () {

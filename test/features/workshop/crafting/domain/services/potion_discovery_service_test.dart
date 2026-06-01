@@ -1,13 +1,13 @@
-import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_discovery_service.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
 void main() {
   const PotionDiscoveryService service = PotionDiscoveryService();
 
   test('recordDiscovery adds new potion recipe', () {
-    final WorkshopState workshop = createInitialSessionState(
+    final WorkshopState workshop = createTestInitialSessionState(
       DateTime(2026, 1, 1, 10),
     ).workshop;
 
@@ -28,7 +28,9 @@ void main() {
 
   test('recordDiscovery keeps existing recipe when new grade is lower', () {
     final WorkshopState workshop =
-        createInitialSessionState(DateTime(2026, 1, 1, 10)).workshop.copyWith(
+        createTestInitialSessionState(
+          DateTime(2026, 1, 1, 10),
+        ).workshop.copyWith(
           discoveredPotionRecipes: const <String, DiscoveredPotionRecipe>{
             'p_1': DiscoveredPotionRecipe(
               potionId: 'p_1',
@@ -53,7 +55,9 @@ void main() {
 
   test('recordDiscovery replaces existing recipe when new grade is higher', () {
     final WorkshopState workshop =
-        createInitialSessionState(DateTime(2026, 1, 1, 10)).workshop.copyWith(
+        createTestInitialSessionState(
+          DateTime(2026, 1, 1, 10),
+        ).workshop.copyWith(
           discoveredPotionRecipes: const <String, DiscoveredPotionRecipe>{
             'p_1': DiscoveredPotionRecipe(
               potionId: 'p_1',

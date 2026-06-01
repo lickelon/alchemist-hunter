@@ -2,7 +2,7 @@ import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/st
 import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/workshop_craft_recipe_repository.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_asset_loader.dart';
+import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_data.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_material_catalog_repository.dart';
@@ -56,8 +56,10 @@ final Provider<HomunculusHatchRepository> homunculusHatchRepositoryProvider =
       ),
     );
 
-final Provider<WorkshopCatalogAssets?> workshopCatalogAssetsProvider =
-    Provider<WorkshopCatalogAssets?>((Ref ref) => null);
+final Provider<WorkshopCatalogAssets> workshopCatalogAssetsProvider =
+    Provider<WorkshopCatalogAssets>(
+      (Ref ref) => throw StateError('Workshop catalog assets are not loaded'),
+    );
 
 final Provider<List<MaterialEntity>> materialsProvider =
     Provider<List<MaterialEntity>>((Ref ref) {

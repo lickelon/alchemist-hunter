@@ -1,10 +1,9 @@
-import 'package:alchemist_hunter/features/workshop/skill_tree/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../support/catalog_fixtures.dart';
 
 void main() {
   test('static workshop skill tree repository exposes nodes and root', () {
-    const StaticWorkshopSkillTreeRepository repository =
-        StaticWorkshopSkillTreeRepository();
+    final repository = testWorkshopSkillTreeRepository;
 
     final nodes = repository.nodes();
 
