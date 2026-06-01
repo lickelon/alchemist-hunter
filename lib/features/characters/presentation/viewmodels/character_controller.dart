@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/use_cases/character_equipment_use_case.dart';
 import 'package:alchemist_hunter/features/characters/domain/use_cases/character_progression_use_case.dart';
+import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_controller_log_messages.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,14 +32,7 @@ class CharacterController {
       type: type,
       characterId: characterId,
     );
-    _apply(
-      nextState,
-      logMessage: currentCharacter == null
-          ? '캐릭터를 찾을 수 없음'
-          : !currentCharacter.canRankUp
-          ? '랭크업 조건 미충족'
-          : '${currentCharacter.name} 랭크업 -> 랭크 ${currentCharacter.rank + 1}',
-    );
+    _apply(nextState, logMessage: characterRankUpLogMessage(currentCharacter));
   }
 
   void tierUp(CharacterType type, String characterId) {
@@ -55,16 +49,14 @@ class CharacterController {
     );
     final String? requiredMaterial = currentCharacter == null
         ? null
-        : _tierMaterialKey(currentCharacter);
+        : characterTierMaterialKey(currentCharacter);
     _apply(
       nextState,
-      logMessage: currentCharacter == null
-          ? '캐릭터를 찾을 수 없음'
-          : !currentCharacter.canTierUp
-          ? '티어업 조건 미충족'
-          : (current.player.materialInventory[requiredMaterial] ?? 0) < 1
-          ? '승급 재료 부족'
-          : '${currentCharacter.name} 티어업 -> 티어 ${currentCharacter.tierIndex + 1}',
+      logMessage: characterTierUpLogMessage(
+        current: current,
+        character: currentCharacter,
+        requiredMaterial: requiredMaterial,
+      ),
     );
   }
 
@@ -84,11 +76,10 @@ class CharacterController {
     );
     _apply(
       nextState,
-      logMessage: currentCharacter == null
-          ? '캐릭터를 찾을 수 없음'
-          : item == null
-          ? '장비를 찾을 수 없음'
-          : '${currentCharacter.name}에 ${item.name} 장착',
+      logMessage: characterEquipLogMessage(
+        character: currentCharacter,
+        item: item,
+      ),
     );
   }
 
@@ -110,11 +101,11 @@ class CharacterController {
     );
     _apply(
       nextState,
-      logMessage: currentCharacter == null
-          ? '캐릭터를 찾을 수 없음'
-          : item == null
-          ? '${_slotLabel(slot)} 슬롯에 장착된 장비 없음'
-          : '${currentCharacter.name}에서 ${item.name} 해제',
+      logMessage: characterUnequipLogMessage(
+        character: currentCharacter,
+        item: item,
+        slot: slot,
+      ),
     );
   }
 
@@ -134,14 +125,6 @@ class CharacterController {
     return null;
   }
 
-  String _tierMaterialKey(CharacterProgress character) {
-    final int nextTier = character.tierIndex + 1;
-    if (character.type == CharacterType.mercenary) {
-      return 'tier_mat_mercenary_$nextTier';
-    }
-    return 'tier_mat_homunculus_$nextTier';
-  }
-
   EquipmentInstance? _findInventoryItem(
     SessionState state,
     String equipmentId,
@@ -152,14 +135,6 @@ class CharacterController {
       }
     }
     return null;
-  }
-
-  String _slotLabel(EquipmentSlot slot) {
-    return switch (slot) {
-      EquipmentSlot.weapon => '무기',
-      EquipmentSlot.armor => '방어구',
-      EquipmentSlot.accessory => '장신구',
-    };
   }
 
   void _apply(SessionState nextState, {required String logMessage}) {

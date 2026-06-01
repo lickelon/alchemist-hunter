@@ -1,5 +1,5 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_combat_stat_service.dart';
+import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_combat_stat_service.dart';
 
 String characterCombatPowerLabel({
   required int power,
