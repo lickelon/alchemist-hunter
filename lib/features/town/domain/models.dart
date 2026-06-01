@@ -1,4 +1,7 @@
-export 'models/equipment_models.dart';
+export 'models/equipment/equipment_blueprint.dart';
+export 'models/equipment/equipment_enchant.dart';
+export 'models/equipment/equipment_instance.dart';
+export 'models/equipment/equipment_slot.dart';
 export 'models/forge_models.dart';
 export 'models/mercenary_models.dart';
 export 'models/shop_models.dart';

@@ -1,7 +1,11 @@
 import 'package:alchemist_hunter/common/widgets/app_screen_body.dart';
 import 'package:alchemist_hunter/common/widgets/info_card.dart';
 import 'package:alchemist_hunter/features/town/presentation/widgets/town_sections.dart';
-import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_forge_selectors.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_mercenary_selectors.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_potion_sale_selectors.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_resource_selectors.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_shop_selectors.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

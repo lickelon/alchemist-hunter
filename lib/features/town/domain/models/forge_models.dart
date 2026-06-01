@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import 'equipment_models.dart';
+import 'equipment/equipment_instance.dart';
 
 enum TownForgeJobStatus { queued, processing, completed }
 

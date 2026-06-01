@@ -2,7 +2,9 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
-import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/controllers/equipment_craft_controller.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/controllers/mercenary_controller.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/controllers/shop_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../../../../support/catalog_fixtures.dart';
 

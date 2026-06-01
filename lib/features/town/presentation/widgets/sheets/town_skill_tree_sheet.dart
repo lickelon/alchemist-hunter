@@ -4,7 +4,9 @@ import 'package:alchemist_hunter/common/widgets/skill_tree_node_detail_dialog.da
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/controllers/town_skill_tree_controller.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_resource_selectors.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_skill_tree_selectors.dart';
 
 class TownSkillTreeSheet extends ConsumerWidget {
   const TownSkillTreeSheet({super.key});

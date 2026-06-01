@@ -4,7 +4,8 @@ import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
-import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_potion_sale_controller.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_potion_sale_selectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

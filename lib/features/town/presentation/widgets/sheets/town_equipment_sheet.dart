@@ -7,7 +7,11 @@ import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/common/widgets/section_card.dart';
-import 'package:alchemist_hunter/features/town/presentation/town_providers.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/controllers/equipment_craft_controller.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_equipment_blueprint_selectors.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_equipment_inventory_selectors.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_equipment_view_models.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_forge_selectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

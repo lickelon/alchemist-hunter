@@ -1,4 +1,4 @@
-import 'equipment_models.dart';
+import 'equipment/equipment_instance.dart';
 import 'forge_models.dart';
 import 'mercenary_models.dart';
 import 'shop_models.dart';
