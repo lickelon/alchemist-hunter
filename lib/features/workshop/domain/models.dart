@@ -1,4 +1,6 @@
-export '../craft_queue/domain/models/craft_queue_models.dart';
+export '../craft_queue/domain/models/craft_queue_job.dart';
+export '../craft_queue/domain/models/craft_retry_policy.dart';
+export '../craft_queue/domain/models/workshop_pending_claim.dart';
 export '../crafting/domain/models/potion_models.dart';
 export '../crafting/domain/models/workshop_craft_recipe_models.dart';
 export '../extraction/domain/models/extraction_models.dart';

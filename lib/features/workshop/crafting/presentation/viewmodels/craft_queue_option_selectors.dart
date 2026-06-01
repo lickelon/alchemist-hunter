@@ -1,10 +1,12 @@
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/discovered_potion_recipe_selectors.dart';
-import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/material_craft_recipe_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/material_craft_recipe_provider.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/material_craft_recipe_view_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 export 'craft_queue_potion_option_selectors.dart';
 export 'discovered_potion_recipe_selectors.dart';
-export 'material_craft_recipe_selectors.dart';
+export 'material_craft_recipe_provider.dart';
+export 'material_craft_recipe_view_models.dart';
 
 class WorkshopCraftMenuSummaryView {
   const WorkshopCraftMenuSummaryView({

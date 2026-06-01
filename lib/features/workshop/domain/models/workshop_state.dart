@@ -1,4 +1,5 @@
-import 'package:alchemist_hunter/features/workshop/craft_queue/domain/models/craft_queue_models.dart';
+import 'package:alchemist_hunter/features/workshop/craft_queue/domain/models/craft_queue_job.dart';
+import 'package:alchemist_hunter/features/workshop/craft_queue/domain/models/workshop_pending_claim.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/models/potion_models.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/models/workshop_skill_tree_models.dart';
 

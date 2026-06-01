@@ -16,7 +16,7 @@ import 'package:alchemist_hunter/features/workshop/hatchery/presentation/viewmod
 import 'package:alchemist_hunter/features/workshop/inventory/presentation/widgets/workshop_inventory_card.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/presentation/widgets/workshop_skill_tree_card.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/widgets/workshop_support_card.dart';
-import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_assignment_selectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

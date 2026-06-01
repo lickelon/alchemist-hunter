@@ -10,7 +10,9 @@ import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewm
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_potion_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_preview_selector.dart';
-import 'package:alchemist_hunter/features/workshop/enchanting/presentation/widgets/workshop_enchant_sections.dart';
+import 'package:alchemist_hunter/features/workshop/enchanting/presentation/widgets/workshop_enchant_equipment_selector.dart';
+import 'package:alchemist_hunter/features/workshop/enchanting/presentation/widgets/workshop_enchant_potion_selector.dart';
+import 'package:alchemist_hunter/features/workshop/enchanting/presentation/widgets/workshop_enchant_preview_section.dart';
 
 class WorkshopEnchantSheet extends ConsumerStatefulWidget {
   const WorkshopEnchantSheet({super.key});

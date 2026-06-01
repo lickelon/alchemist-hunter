@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/features/town/equipment_display_labels.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_slot_labels.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_lookup.dart';
 
 class EnchantEquipmentView {

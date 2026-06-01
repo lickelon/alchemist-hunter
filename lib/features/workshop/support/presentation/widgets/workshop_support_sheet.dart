@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_controller.dart';
-import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_assignment_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_candidate_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_view_models.dart';
 
 class WorkshopSupportSheet extends ConsumerWidget {
   const WorkshopSupportSheet({super.key});
