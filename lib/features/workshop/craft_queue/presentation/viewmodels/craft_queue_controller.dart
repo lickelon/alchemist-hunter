@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/domain/use_cases/workshop_brew_experiment_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/use_cases/workshop_craft_enqueue_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/domain/use_cases/workshop_queue_claim_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_crafting_service.dart';
@@ -24,10 +25,34 @@ enum WorkshopCraftSubmitResult {
   failed,
 }
 
+class WorkshopBrewExperimentSubmitResult {
+  const WorkshopBrewExperimentSubmitResult({
+    required this.status,
+    this.potionId,
+    this.qualityGrade,
+    this.qualityScore,
+    this.discoveryChanged = false,
+    this.isNewDiscovery = false,
+    this.previousGrade,
+    this.recordedGrade,
+  });
+
+  final WorkshopBrewExperimentStatus status;
+  final String? potionId;
+  final PotionQualityGrade? qualityGrade;
+  final double? qualityScore;
+  final bool discoveryChanged;
+  final bool isNewDiscovery;
+  final PotionQualityGrade? previousGrade;
+  final PotionQualityGrade? recordedGrade;
+}
+
 class WorkshopCraftQueueController {
   WorkshopCraftQueueController(
     this._session,
     this._craftingService, {
+    WorkshopBrewExperimentUseCase brewExperimentUseCase =
+        const WorkshopBrewExperimentUseCase(),
     WorkshopCraftEnqueueUseCase craftEnqueueUseCase =
         const WorkshopCraftEnqueueUseCase(),
     WorkshopQueueClaimUseCase queueClaimUseCase =
@@ -38,7 +63,8 @@ class WorkshopCraftQueueController {
     required WorkshopSkillTreeService workshopSkillTreeService,
     required WorkshopSupportService workshopSupportService,
     required PotionDiscoveryService discoveryService,
-  }) : _craftEnqueueUseCase = craftEnqueueUseCase,
+  }) : _brewExperimentUseCase = brewExperimentUseCase,
+       _craftEnqueueUseCase = craftEnqueueUseCase,
        _queueClaimUseCase = queueClaimUseCase,
        _potionCatalogRepository = potionCatalogRepository,
        _craftRecipeRepository = craftRecipeRepository,
@@ -49,6 +75,7 @@ class WorkshopCraftQueueController {
 
   final SessionController _session;
   final PotionCraftingService _craftingService;
+  final WorkshopBrewExperimentUseCase _brewExperimentUseCase;
   final WorkshopCraftEnqueueUseCase _craftEnqueueUseCase;
   final WorkshopQueueClaimUseCase _queueClaimUseCase;
   final PotionCatalogRepository _potionCatalogRepository;
@@ -155,7 +182,6 @@ class WorkshopCraftQueueController {
       repeatCount: repeatCount,
       now: _session.now(),
       craftingService: _craftingService,
-      discoveryService: _discoveryService,
       potionCatalogRepository: _potionCatalogRepository,
       workshopSkillTreeRepository: _workshopSkillTreeRepository,
       workshopSkillTreeService: _workshopSkillTreeService,
@@ -168,7 +194,7 @@ class WorkshopCraftQueueController {
         repeatCount,
       );
       _session.appendLog(
-        hasEnoughTraits ? '양조 실험 실패 / 조합 불명' : '원소 부족 / 양조 실험 x$repeatCount',
+        hasEnoughTraits ? '양조 등록 실패' : '원소 부족 / 양조 x$repeatCount',
       );
       return hasEnoughTraits
           ? WorkshopCraftSubmitResult.failed
@@ -177,9 +203,52 @@ class WorkshopCraftQueueController {
     final CraftQueueJob job = nextState.workshop.queue.last;
     _apply(
       nextState,
-      logMessage: '양조 실험 등록 / ${job.potionId ?? 'unknown'} x$repeatCount',
+      logMessage: '양조 등록 / ${job.potionId ?? 'unknown'} x$repeatCount',
     );
     return WorkshopCraftSubmitResult.success;
+  }
+
+  WorkshopBrewExperimentSubmitResult experimentBrew(
+    Map<String, double> inputTraits,
+  ) {
+    final SessionState current = _session.snapshot();
+    final WorkshopBrewExperimentResult result = _brewExperimentUseCase
+        .experiment(
+          state: current,
+          inputTraits: inputTraits,
+          craftingService: _craftingService,
+          discoveryService: _discoveryService,
+          potionCatalogRepository: _potionCatalogRepository,
+        );
+    if (!identical(result.state, current)) {
+      _apply(
+        result.state,
+        logMessage: switch (result.status) {
+          WorkshopBrewExperimentStatus.success =>
+            '양조 실험 완료 / ${result.potionId ?? 'unknown'} ${result.qualityGrade?.name ?? ''}',
+          WorkshopBrewExperimentStatus.unknownReaction => '양조 실험 실패 / 조합 불명',
+          WorkshopBrewExperimentStatus.elementMissing => '원소 부족 / 양조 실험',
+          WorkshopBrewExperimentStatus.failed => '양조 실험 실패',
+        },
+      );
+    } else {
+      _session.appendLog(
+        result.status == WorkshopBrewExperimentStatus.elementMissing
+            ? '원소 부족 / 양조 실험'
+            : '양조 실험 실패',
+      );
+    }
+
+    return WorkshopBrewExperimentSubmitResult(
+      status: result.status,
+      potionId: result.potionId,
+      qualityGrade: result.qualityGrade,
+      qualityScore: result.qualityScore,
+      discoveryChanged: result.discoveryChanged,
+      isNewDiscovery: result.isNewDiscovery,
+      previousGrade: result.previousGrade,
+      recordedGrade: result.recordedGrade,
+    );
   }
 
   void claimPending() {

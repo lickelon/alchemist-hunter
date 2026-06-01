@@ -4,7 +4,6 @@ import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_crafting_service.dart';
-import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_discovery_service.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/services/workshop_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
 
@@ -217,7 +216,6 @@ class WorkshopCraftEnqueueUseCase {
     required int repeatCount,
     required DateTime now,
     required PotionCraftingService craftingService,
-    required PotionDiscoveryService discoveryService,
     required PotionCatalogRepository potionCatalogRepository,
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
@@ -307,15 +305,9 @@ class WorkshopCraftEnqueueUseCase {
       completedPotionStackKey: stackKey,
       completedPotion: craftedPotion,
     );
-    final WorkshopState discoveredWorkshop = discoveryService.recordDiscovery(
-      workshop: state.workshop.copyWith(extractedTraitInventory: traits),
-      potionId: craftedPotion.typePotionId,
-      discoveredTraits: craftedPotion.traits,
-      grade: craftedPotion.qualityGrade,
-    );
-
     return state.copyWith(
-      workshop: discoveredWorkshop.copyWith(
+      workshop: state.workshop.copyWith(
+        extractedTraitInventory: traits,
         queue: <CraftQueueJob>[...state.workshop.queue, job],
       ),
     );

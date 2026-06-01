@@ -51,8 +51,6 @@ void main() {
 
     expect(find.text('양조'), findsOneWidget);
     expect(find.text('제작'), findsWidgets);
-    await tester.tap(find.text('레시피북'));
-    await tester.pumpAndSettle();
     expect(
       find.byKey(const ValueKey<String>('brew_recipe_p_1')),
       findsOneWidget,
@@ -123,67 +121,11 @@ void main() {
 
     expect(find.text('작업실 큐 가득 참 (4/4)'), findsOneWidget);
     expect(find.text('큐 가득 참 (4/4)'), findsNothing);
-    await tester.tap(find.text('레시피북'));
-    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey<String>('brew_recipe_p_1')));
     await tester.pumpAndSettle();
 
     expect(find.text('활력 포션'), findsWidgets);
     expect(find.text('최고 등급 A'), findsOneWidget);
-  });
-
-  testWidgets('workshop brew experiment registers selected elements', (
-    WidgetTester tester,
-  ) async {
-    final ProviderContainer container = ProviderContainer();
-    addTearDown(container.dispose);
-
-    final SessionController session = container.read(
-      sessionControllerProvider.notifier,
-    );
-    session.state = session.state.copyWith(
-      workshop: session.state.workshop.copyWith(
-        extractedTraitInventory: const <String, double>{
-          't_crit': 1.0,
-          't_focus': 1.0,
-        },
-      ),
-    );
-
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: const MaterialApp(
-          home: Scaffold(
-            body: WorkshopCraftCard(
-              brewCraftableCount: 0,
-              materialCraftableCount: 0,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    await tester.tap(find.text('연금술'));
-    await tester.pumpAndSettle();
-    await tester.tap(
-      find.byKey(const ValueKey<String>('brew_experiment_trait_t_crit')),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(
-      find.byKey(const ValueKey<String>('brew_experiment_trait_t_focus')),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(
-      find.byKey(const ValueKey<String>('brew_experiment_submit_button')),
-    );
-    await tester.pump();
-
-    expect(session.state.workshop.queue, hasLength(1));
-    expect(session.state.workshop.queue.single.potionId, 'p_3');
-    expect(session.state.workshop.discoveredPotionRecipes['p_3'], isNotNull);
-    expect(find.text('양조 실험을 등록했습니다'), findsOneWidget);
-    await tester.pump(const Duration(milliseconds: 2000));
   });
 
   testWidgets('workshop recipe book registers repeated brew', (
@@ -226,8 +168,6 @@ void main() {
     );
 
     await tester.tap(find.text('연금술'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('레시피북'));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey<String>('brew_recipe_p_1')));
     await tester.pumpAndSettle();
