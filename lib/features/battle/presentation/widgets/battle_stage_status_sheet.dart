@@ -6,11 +6,13 @@ import 'package:alchemist_hunter/features/battle/domain/repositories/battle_cata
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_stage_status_view_model.dart';
-import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_smooth_progress_bar.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_actions.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_layout.dart';
+import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_progress_body.dart';
+import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_timeline_body.dart';
+import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_timeline_buffer.dart';
+import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_unit_board.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_status_card.dart';
-import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_unit_board_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,13 +28,12 @@ class BattleStageStatusSheet extends ConsumerStatefulWidget {
 
 class _BattleStageStatusSheetState
     extends ConsumerState<BattleStageStatusSheet> {
-  final List<String> _timelineLines = <String>[];
-  final Set<String> _timelineKeys = <String>{};
-  final ScrollController _timelineScrollController = ScrollController();
+  final BattleStageStatusTimelineBuffer _timelineBuffer =
+      BattleStageStatusTimelineBuffer();
 
   @override
   void dispose() {
-    _timelineScrollController.dispose();
+    _timelineBuffer.dispose();
     super.dispose();
   }
 
@@ -53,12 +54,15 @@ class _BattleStageStatusSheetState
     ref.listen<List<BattleActionLog>>(
       battleStageCurrentActionLogsProvider(widget.stageId),
       (_, List<BattleActionLog> next) {
-        _appendTimelineActions(
-          ref
+        _timelineBuffer.appendActions(
+          encounter: ref
               .read(battleStageExpeditionStateProvider(widget.stageId))
               .runState
               ?.currentEncounter,
-          next,
+          actions: next,
+          onChanged: () {
+            setState(() {});
+          },
         );
       },
     );
@@ -73,12 +77,12 @@ class _BattleStageStatusSheetState
       stage: stage,
       battleActionInterval: battleActionInterval,
     );
-    final List<String> timelineLines = _timelineLines.isEmpty
+    final List<String> timelineLines = _timelineBuffer.lines.isEmpty
         ? battleStageTimelineLines(
             expedition: expedition,
             currentActions: const <BattleActionLog>[],
           )
-        : _timelineLines;
+        : _timelineBuffer.lines;
 
     return AppSheetLayout(
       title: '${battleStageDisplayName(stage.id, fallback: stage.name)} 전투 현황',
@@ -98,22 +102,11 @@ class _BattleStageStatusSheetState
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: SizedBox(
                   height: unitBoardHeight,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: <Widget>[
-                        BattleUnitBoardSection(
-                          units:
-                              runState?.allies ?? const <BattleRunUnitState>[],
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        BattleUnitBoardSection(
-                          units:
-                              currentEncounter?.enemies ??
-                              const <BattleRunUnitState>[],
-                          enemy: true,
-                        ),
-                      ],
-                    ),
+                  child: BattleStageStatusUnitBoard(
+                    allies: runState?.allies ?? const <BattleRunUnitState>[],
+                    enemies:
+                        currentEncounter?.enemies ??
+                        const <BattleRunUnitState>[],
                   ),
                 ),
               ),
@@ -121,7 +114,7 @@ class _BattleStageStatusSheetState
               BattleStatusCard(
                 child: SizedBox(
                   height: BattleStageStatusLayout.progressCardHeight,
-                  child: _BattleStageProgressBody(
+                  child: BattleStageStatusProgressBody(
                     statusLabel: statusLabel,
                     progress: progress,
                   ),
@@ -135,8 +128,8 @@ class _BattleStageStatusSheetState
               const SizedBox(height: AppSpacing.lg),
               Expanded(
                 child: BattleStatusCard(
-                  child: _BattleStageTimelineBody(
-                    controller: _timelineScrollController,
+                  child: BattleStageStatusTimelineBody(
+                    controller: _timelineBuffer.scrollController,
                     lines: timelineLines,
                   ),
                 ),
@@ -145,122 +138,6 @@ class _BattleStageStatusSheetState
           );
         },
       ),
-    );
-  }
-
-  void _appendTimelineActions(
-    BattleEncounterRuntimeState? encounter,
-    List<BattleActionLog> actions,
-  ) {
-    if (encounter == null || actions.isEmpty) {
-      return;
-    }
-
-    final bool shouldFollow =
-        !_timelineScrollController.hasClients ||
-        _timelineScrollController.position.pixels >=
-            _timelineScrollController.position.maxScrollExtent -
-                BattleStageStatusLayout.timelineFollowThreshold;
-    bool appended = false;
-    for (final BattleActionLog action in actions) {
-      final String key = _timelineActionKey(encounter, action);
-      if (_timelineKeys.add(key)) {
-        _timelineLines.add(battleActionTimelineLabel(action));
-        appended = true;
-      }
-    }
-    if (appended) {
-      setState(() {});
-      if (shouldFollow) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!_timelineScrollController.hasClients) {
-            return;
-          }
-          _timelineScrollController.jumpTo(
-            _timelineScrollController.position.maxScrollExtent,
-          );
-        });
-      }
-    }
-  }
-
-  String _timelineActionKey(
-    BattleEncounterRuntimeState encounter,
-    BattleActionLog action,
-  ) {
-    return <Object?>[
-      encounter.encounterId,
-      encounter.encounterIndex,
-      action.lifecycle,
-      action.turn,
-      action.type,
-      action.actorId,
-      action.targetId,
-      action.skillId,
-      action.statusType?.name,
-      action.hit,
-      action.critical,
-      action.damage,
-      action.healing,
-      action.mpSpent,
-      action.actorHpAfter,
-      action.actorMpAfter,
-      action.targetHpAfter,
-      action.targetShieldAfter,
-      action.message,
-    ].join('|');
-  }
-}
-
-class _BattleStageProgressBody extends StatelessWidget {
-  const _BattleStageProgressBody({
-    required this.statusLabel,
-    required this.progress,
-  });
-
-  final String statusLabel;
-  final BattleStagePhaseProgress progress;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(statusLabel, maxLines: 1, overflow: TextOverflow.ellipsis),
-        const SizedBox(height: AppSpacing.sm),
-        BattleSmoothProgressBar(value: progress.value.clamp(0, 1)),
-      ],
-    );
-  }
-}
-
-class _BattleStageTimelineBody extends StatelessWidget {
-  const _BattleStageTimelineBody({
-    required this.controller,
-    required this.lines,
-  });
-
-  final ScrollController controller;
-  final List<String> lines;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      controller: controller,
-      itemExtent: MediaQuery.textScalerOf(
-        context,
-      ).scale(BattleStageStatusLayout.timelineLineHeight),
-      itemCount: lines.length,
-      itemBuilder: (BuildContext context, int index) {
-        return Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            lines[index],
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        );
-      },
     );
   }
 }

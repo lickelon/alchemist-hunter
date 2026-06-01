@@ -1,7 +1,7 @@
 import 'package:alchemist_hunter/features/battle/presentation/screens/dungeon_screen.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_party_power_service.dart';
+import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter/material.dart';

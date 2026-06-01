@@ -1,6 +1,6 @@
-import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_unit_card.dart';
 import 'package:flutter/material.dart';
 
 class BattleUnitBoardSection extends StatelessWidget {
@@ -28,148 +28,12 @@ class BattleUnitBoardSection extends StatelessWidget {
           Text(emptyLabel!)
         else if (units.isNotEmpty)
           ...units.map((BattleRunUnitState unit) {
-            final ColorScheme colorScheme = Theme.of(context).colorScheme;
-            final double hpRatio = unit.maxHp == 0
-                ? 0
-                : unit.currentHp / unit.maxHp;
-            final double manaRatio = unit.maxMp == 0
-                ? 0
-                : unit.currentMp / unit.maxMp;
-            final List<String> effectLabels = _unitEffectLabels(unit);
-            final Color backgroundColor = !unit.isAlive
-                ? colorScheme.surfaceContainerLow
-                : enemy
-                ? colorScheme.errorContainer
-                : colorScheme.surfaceContainerLowest;
-            final Color foregroundColor = !unit.isAlive
-                ? colorScheme.onSurface.withValues(alpha: 0.5)
-                : enemy
-                ? colorScheme.onErrorContainer
-                : colorScheme.onSurface;
-            return Container(
-              margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-              padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: BoxDecoration(
-                color: backgroundColor,
-                borderRadius: AppRadius.interactive,
-                border: enemy && unit.isAlive
-                    ? Border.all(color: colorScheme.error, width: 1.5)
-                    : null,
-              ),
-              child: DefaultTextStyle.merge(
-                style: TextStyle(color: foregroundColor),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Expanded(child: Text(unit.name)),
-                        if (!unit.isAlive)
-                          Text(
-                            '사망',
-                            style: TextStyle(color: colorScheme.error),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    _ResourceBar(
-                      semanticsLabel: '체력',
-                      value: hpRatio,
-                      color: Colors.redAccent,
-                    ),
-                    if (unit.maxMp > 0) ...<Widget>[
-                      const SizedBox(height: AppSpacing.xs),
-                      _ResourceBar(
-                        semanticsLabel: '마나',
-                        value: manaRatio,
-                        color: Colors.blueAccent,
-                      ),
-                    ],
-                    if (unit.shield > 0) ...<Widget>[
-                      const SizedBox(height: AppSpacing.xs),
-                      Text('보호막 ${unit.shield}'),
-                    ],
-                    if (effectLabels.isNotEmpty) ...<Widget>[
-                      const SizedBox(height: AppSpacing.sm),
-                      Wrap(
-                        spacing: AppSpacing.xs,
-                        runSpacing: AppSpacing.xs,
-                        children: effectLabels
-                            .map(
-                              (String label) => Chip(
-                                label: Text(label),
-                                visualDensity: VisualDensity.compact,
-                              ),
-                            )
-                            .toList(growable: false),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
+            return Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: BattleUnitCard(unit: unit, enemy: enemy),
             );
           }),
       ],
     );
   }
-}
-
-class _ResourceBar extends StatelessWidget {
-  const _ResourceBar({
-    required this.semanticsLabel,
-    required this.value,
-    required this.color,
-  });
-
-  final String semanticsLabel;
-  final double value;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      label: semanticsLabel,
-      value: '${(value.clamp(0, 1) * 100).round()}%',
-      child: LinearProgressIndicator(
-        value: value.clamp(0, 1),
-        minHeight: 8,
-        color: color,
-        backgroundColor: color.withValues(alpha: 0.18),
-      ),
-    );
-  }
-}
-
-List<String> _unitEffectLabels(BattleRunUnitState unit) {
-  return <String>[
-    ...unit.statuses.map(_statusLabel),
-    ...unit.activeModifiers.map(_modifierLabel),
-  ];
-}
-
-String _statusLabel(BattleStatusEffect status) {
-  final String typeLabel = switch (status.type) {
-    BattleStatusType.poison => '중독',
-    BattleStatusType.stun => '기절',
-  };
-  final String powerLabel = status.power > 0 ? ' ${status.power}' : '';
-  return '$typeLabel$powerLabel / ${status.remainingLifecycles}행동';
-}
-
-String _modifierLabel(BattleTimedModifier timedModifier) {
-  final BattleModifier modifier = timedModifier.modifier;
-  final String typeLabel = switch (modifier.type) {
-    BattleModifierType.damageDealt => '주는 피해',
-    BattleModifierType.damageTaken => '받는 피해',
-  };
-  final String valueLabel = _modifierValueLabel(modifier);
-  return '$typeLabel $valueLabel / ${timedModifier.remainingLifecycles}행동';
-}
-
-String _modifierValueLabel(BattleModifier modifier) {
-  final String sign = modifier.value > 0 ? '+' : '';
-  if (modifier.mode == BattleModifierMode.percent) {
-    return '$sign${(modifier.value * 100).round()}%';
-  }
-  return '$sign${modifier.value.toStringAsFixed(1)}';
 }

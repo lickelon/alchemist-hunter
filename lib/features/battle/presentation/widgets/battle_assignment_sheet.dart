@@ -1,7 +1,6 @@
-import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
-import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
+import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_character_section.dart';
+import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_potion_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,130 +30,14 @@ class BattleAssignmentSheet extends ConsumerWidget {
       header: Text('배치 ${assignedIds.length}/3명 / 전투력 $partyPower'),
       body: ListView(
         children: <Widget>[
-          ...characters.map((BattleAssignmentCharacterView character) {
-            return CheckboxListTile(
-              value: character.assigned,
-              onChanged: character.assignable
-                  ? (_) {
-                      ref
-                          .read(battleControllerProvider)
-                          .toggleStageAssignment(stageId, character.id);
-                    }
-                  : null,
-              title: Text(character.name),
-              subtitle: _AssignmentSubtitle(character: character),
-              controlAffinity: ListTileControlAffinity.trailing,
-            );
-          }),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.xl,
-              AppSpacing.md,
-              AppSpacing.xl,
-              AppSpacing.sm,
-            ),
-            child: Text(
-              '포션 로드아웃',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+          BattleAssignmentCharacterSection(
+            stageId: stageId,
+            characters: characters,
           ),
-          if (potions.isEmpty)
-            const ListTile(
-              title: Text('전투용 포션 없음'),
-              subtitle: Text('제조 완료된 전투 포션이 있으면 여기서 선택할 수 있습니다'),
-            )
-          else
-            ...potions.map((BattleAssignmentPotionView potion) {
-              return ListTile(
-                leading: CatalogAssetIcon(
-                  assetPath: CatalogIconAssetPaths.potion(potion.potionId),
-                  size: 36,
-                  padding: 5,
-                ),
-                title: Text(potion.label),
-                subtitle: Text(
-                  '보유 ${potion.ownedCount} / 선택 ${potion.selectedCount}',
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    IconButton(
-                      onPressed: potion.selectedCount == 0
-                          ? null
-                          : () {
-                              ref
-                                  .read(battleControllerProvider)
-                                  .setStagePotionCount(
-                                    stageId,
-                                    potion.stackKey,
-                                    count: potion.selectedCount - 1,
-                                    maxOwned: potion.ownedCount,
-                                  );
-                            },
-                      icon: const Icon(Icons.remove_circle_outline),
-                    ),
-                    Text('${potion.selectedCount}'),
-                    IconButton(
-                      onPressed: potion.selectedCount >= potion.ownedCount
-                          ? null
-                          : () {
-                              ref
-                                  .read(battleControllerProvider)
-                                  .setStagePotionCount(
-                                    stageId,
-                                    potion.stackKey,
-                                    count: potion.selectedCount + 1,
-                                    maxOwned: potion.ownedCount,
-                                  );
-                            },
-                      icon: const Icon(Icons.add_circle_outline),
-                    ),
-                  ],
-                ),
-              );
-            }),
+          const Divider(),
+          BattleAssignmentPotionSection(stageId: stageId, potions: potions),
         ],
       ),
-    );
-  }
-}
-
-class _AssignmentSubtitle extends StatelessWidget {
-  const _AssignmentSubtitle({required this.character});
-
-  final BattleAssignmentCharacterView character;
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final TextStyle? detailStyle = theme.textTheme.bodySmall?.copyWith(
-      color: theme.colorScheme.onSurfaceVariant,
-    );
-    final TextStyle? errorStyle = theme.textTheme.bodySmall?.copyWith(
-      color: theme.colorScheme.error,
-    );
-    final String? statusLine = character.assignmentHint.isNotEmpty
-        ? character.assignmentHint
-        : character.assignable
-        ? null
-        : '파티가 가득 참';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          '${character.typeLabel} / 전투력 ${character.power}',
-          style: detailStyle,
-        ),
-        if (statusLine != null) ...<Widget>[
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            statusLine,
-            style: character.assignmentHint.isEmpty ? errorStyle : detailStyle,
-          ),
-        ],
-      ],
     );
   }
 }

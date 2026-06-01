@@ -3,12 +3,11 @@ import 'dart:math';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_resolver.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_potion_loadout_service.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_service.dart';
+import 'package:alchemist_hunter/features/battle/expedition/domain/services/battle_expedition_resolver.dart';
+import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_service.dart';
 import 'package:alchemist_hunter/features/battle/domain/use_cases/battle_expedition_use_case.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_auto_reward_builder.dart';
 import 'package:alchemist_hunter/features/characters/domain/services/character_progression_service.dart';
 
 class BattleAutoController {
@@ -33,10 +32,6 @@ class BattleAutoController {
   final CharacterProgressionService _characterProgressionService;
   final Random _encounterRandom;
   final BattleCatalogRepository _battleCatalogRepository;
-  static const BattlePotionLoadoutService _battlePotionLoadoutService =
-      BattlePotionLoadoutService();
-  static const BattleProgressionService _battleProgressionService =
-      BattleProgressionService();
 
   void runAutoBattle(String stageId) {
     final SessionState current = _session.snapshot();
@@ -93,62 +88,21 @@ class BattleAutoController {
         : const <String, int>{};
     final List<String> assignedCharacterIds =
         started.battle.stageAssignments[stageId] ?? const <String>[];
-    final ProgressState nextProgress = _battleProgressionService
-        .applyStageEncounterResult(
-          currentProgress: started.battle.progress,
-          stage: stage,
-          success: outcome.success,
+    final DateTime resolvedAt = _session.now();
+    final SessionState rewardedState =
+        BattleAutoRewardBuilder(
           battleCatalogRepository: _battleCatalogRepository,
+          characterProgressionService: _characterProgressionService,
+        ).buildRewardedState(
+          started: started,
+          stageId: stageId,
+          stage: stage,
+          resolution: resolution,
+          outcome: outcome,
+          materials: materials,
+          assignedCharacterIds: assignedCharacterIds,
+          resolvedAt: resolvedAt,
         );
-    final SessionState rewardedState = started.copyWith(
-      workshop: _battlePotionLoadoutService.consumeLoadout(
-        workshop: started.workshop,
-        appliedLoadout: resolution.consumedPotionLoadout,
-      ),
-      characters: outcome.success
-          ? _characterProgressionService.grantBattleXp(
-              state: started.characters,
-              xpGain: stage.xpSuccessBase,
-              participantIds: assignedCharacterIds,
-            )
-          : started.characters,
-      battle: started.battle.copyWith(
-        progress: nextProgress,
-        stageExpeditions: <String, BattleExpeditionState>{
-          ...started.battle.stageExpeditions,
-          stageId: BattleExpeditionState(
-            status: BattleExpeditionStatus.idle,
-            lastProgressedAt: _session.now(),
-            phaseProgress: Duration.zero,
-            pendingClaim: BattlePendingClaim(
-              materials: materials,
-              gold: outcome.success ? stage.goldSuccess : 0,
-              essence: outcome.success ? stage.essenceSuccess : 0,
-              xp: outcome.success ? stage.xpSuccessBase : 0,
-              victoryCount: outcome.success ? 1 : 0,
-              wipeCount: outcome.wiped ? 1 : 0,
-              hasSuccessfulBattle: outcome.success,
-            ),
-            recentLogs: <BattleLogEntry>[
-              BattleLogEntry(
-                resolvedAt: _session.now(),
-                encounterIndex: outcome.encounter.encounterIndex,
-                success: outcome.success,
-                wipedParty: outcome.wiped,
-                gold: outcome.success ? stage.goldSuccess : 0,
-                essence: outcome.success ? stage.essenceSuccess : 0,
-                materials: materials,
-                turns: outcome.encounter.turnInEncounter,
-                actions: outcome.encounter.recentActionLogs,
-                usedLoadoutFallback: outcome.encounter.usedLoadoutFallback,
-              ),
-              ...started.battle.stageExpeditions[stageId]?.recentLogs ??
-                  const <BattleLogEntry>[],
-            ].take(10).toList(growable: false),
-          ),
-        },
-      ),
-    );
     final SessionState claimedState = _battleExpeditionUseCase
         .claimStageRewards(
           state: rewardedState,

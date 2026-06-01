@@ -1,0 +1,1036 @@
+import 'dart:math';
+
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_service.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  HeroProfile hero({
+    required String id,
+    required CombatFaction faction,
+    required CombatDiscipline discipline,
+    required BattleCombatStats stats,
+    required int power,
+    List<BattleModifier> modifiers = const <BattleModifier>[],
+    List<BattlePassiveEffect> passives = const <BattlePassiveEffect>[],
+    List<BattleSkillDefinition> skills = const <BattleSkillDefinition>[],
+  }) {
+    return HeroProfile(
+      id: id,
+      name: id,
+      faction: faction,
+      discipline: discipline,
+      jobId: '${faction.name}_${discipline.name}',
+      stats: stats,
+      modifiers: modifiers,
+      passives: passives,
+      skills: skills,
+      power: power,
+    );
+  }
+
+  BattleCombatStats stats({
+    required int maxHp,
+    required int speed,
+    int maxMp = 0,
+    int mpRegen = 0,
+    int physicalAttack = 1,
+    int physicalDefense = 50,
+    double accuracy = 1,
+    double evasion = 0,
+  }) {
+    return BattleCombatStats(
+      maxHp: maxHp,
+      maxMp: maxMp,
+      physicalAttack: physicalAttack,
+      physicalDefense: physicalDefense,
+      magicalAttack: 0,
+      magicalDefense: physicalDefense,
+      speed: speed,
+      critChance: 0,
+      critDamage: 0.5,
+      accuracy: accuracy,
+      evasion: evasion,
+      statusAccuracy: 0,
+      statusResistance: 0,
+      physicalPenetration: 0,
+      magicalPenetration: 0,
+      lifesteal: 0,
+      healingPower: 0,
+      regen: 0,
+      mpRegen: mpRegen,
+    );
+  }
+
+  BattleRunUnitState unit({
+    required String id,
+    required BattleTeam team,
+    required int speed,
+    int maxMp = 0,
+    int currentHp = 200,
+    int currentMp = 0,
+    int mpRegen = 0,
+    double accuracy = 1,
+    double evasion = 0,
+    int physicalAttack = 1,
+    List<BattlePassiveEffect> passives = const <BattlePassiveEffect>[],
+    List<BattleSkillDefinition> skills = const <BattleSkillDefinition>[],
+    List<BattleStatusEffect> statuses = const <BattleStatusEffect>[],
+    int shield = 0,
+  }) {
+    return BattleRunUnitState(
+      unitId: id,
+      name: id,
+      team: team,
+      faction: CombatFaction.homunculus,
+      stats: stats(
+        maxHp: 200,
+        maxMp: maxMp,
+        mpRegen: mpRegen,
+        speed: speed,
+        physicalAttack: physicalAttack,
+        accuracy: accuracy,
+        evasion: evasion,
+      ),
+      passives: passives,
+      skills: skills,
+      statuses: statuses,
+      shield: shield,
+      currentHp: currentHp,
+      currentMp: currentMp,
+    );
+  }
+
+  test('run unit state carries mp and skills from hero profile', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_firebolt',
+      name: 'Firebolt',
+      summary: '단일 마법 피해',
+      cooldownLifecycles: 2,
+      targetType: BattleSkillTargetType.randomEnemy,
+      effectType: BattleSkillEffectType.damage,
+      school: DamageSchool.magical,
+      powerMultiplier: 1.4,
+    );
+
+    final List<BattleRunUnitState> allies = service.createRunAllies(
+      party: <HeroProfile>[
+        hero(
+          id: 'hero_1',
+          faction: CombatFaction.mercenary,
+          discipline: CombatDiscipline.mage,
+          stats: stats(maxHp: 100, maxMp: 40, speed: 10),
+          skills: const <BattleSkillDefinition>[skill],
+          power: 1,
+        ),
+      ],
+    );
+
+    expect(allies.single.maxMp, 40);
+    expect(allies.single.currentMp, 0);
+    expect(allies.single.skills.single.id, 'skill_firebolt');
+    expect(allies.single.hasUsableSkill, isFalse);
+  });
+
+  test('extra attack does not recursively grant another extra attack', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(
+          id: 'enemy_stalker',
+          team: BattleTeam.enemy,
+          speed: 30,
+          passives: const <BattlePassiveEffect>[
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.afterAction,
+              type: BattlePassiveEffectType.extraAttack,
+              sourceId: 'stalker_flurry',
+              value: 1,
+            ),
+          ],
+        ),
+        unit(id: 'enemy_other', team: BattleTeam.enemy, speed: 20),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(id: 'ally', team: BattleTeam.ally, speed: 10),
+    ];
+
+    final BattleEncounterStepResult first = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult second = service.runEncounterStep(
+      allies: first.allies,
+      encounter: first.encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.actorId),
+      <String>['enemy_stalker', 'enemy_stalker'],
+    );
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.lifecycle),
+      <int>[1, 2],
+    );
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.turn),
+      <int>[1, 1],
+    );
+    expect(first.encounter.turnInEncounter, 1);
+    expect(first.encounter.lifecycleInEncounter, 2);
+    expect(first.encounter.pendingActorIds, <String>['enemy_other', 'ally']);
+    expect(second.lifecycleActions.single.actorId, 'enemy_other');
+  });
+
+  test('counter attack runs as derived lifecycle without queue insert', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(
+          id: 'enemy_counter',
+          team: BattleTeam.enemy,
+          speed: 10,
+          passives: const <BattlePassiveEffect>[
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.beforeHitCheck,
+              type: BattlePassiveEffectType.alwaysHit,
+              sourceId: 'enemy_focus',
+            ),
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.onDamaged,
+              type: BattlePassiveEffectType.counterAttack,
+              sourceId: 'counter_guard',
+              value: 1,
+            ),
+          ],
+        ),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(id: 'ally', team: BattleTeam.ally, speed: 20),
+    ];
+
+    final BattleEncounterStepResult first = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult second = service.runEncounterStep(
+      allies: first.allies,
+      encounter: first.encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.actorId),
+      <String>['ally', 'enemy_counter'],
+    );
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.lifecycle),
+      <int>[1, 2],
+    );
+    expect(
+      first.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .map((BattleActionLog action) => action.turn),
+      <int>[1, 1],
+    );
+    expect(first.encounter.turnInEncounter, 1);
+    expect(first.encounter.lifecycleInEncounter, 2);
+    expect(first.encounter.pendingActorIds, <String>['enemy_counter']);
+    expect(second.lifecycleActions.single.actorId, 'enemy_counter');
+  });
+
+  test(
+    'counter attack chain stays in one action turn and is lifecycle capped',
+    () {
+      final BattleService service = BattleService(random: Random(1));
+      final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+        encounterId: 'encounter_1',
+        encounterIndex: 1,
+        enemySetId: 'enemy_set_1',
+        enemies: <BattleRunUnitState>[
+          unit(
+            id: 'enemy_counter',
+            team: BattleTeam.enemy,
+            speed: 10,
+            currentHp: 10000,
+            passives: const <BattlePassiveEffect>[
+              BattlePassiveEffect(
+                trigger: BattlePassiveTrigger.beforeHitCheck,
+                type: BattlePassiveEffectType.alwaysHit,
+                sourceId: 'enemy_focus',
+              ),
+              BattlePassiveEffect(
+                trigger: BattlePassiveTrigger.onDamaged,
+                type: BattlePassiveEffectType.counterAttack,
+                sourceId: 'enemy_counter',
+                value: 1,
+              ),
+            ],
+          ),
+        ],
+      );
+      final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+        unit(
+          id: 'ally_counter',
+          team: BattleTeam.ally,
+          speed: 20,
+          currentHp: 10000,
+          passives: const <BattlePassiveEffect>[
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.beforeHitCheck,
+              type: BattlePassiveEffectType.alwaysHit,
+              sourceId: 'ally_focus',
+            ),
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.onDamaged,
+              type: BattlePassiveEffectType.counterAttack,
+              sourceId: 'ally_counter',
+              value: 1,
+            ),
+          ],
+        ),
+      ];
+
+      final BattleEncounterStepResult result = service.runEncounterStep(
+        allies: allies,
+        encounter: encounter,
+        potionBoost: 0,
+      );
+      final List<BattleActionLog> attacks = result.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.attack,
+          )
+          .toList(growable: false);
+
+      expect(attacks, hasLength(64));
+      expect(
+        attacks.map((BattleActionLog action) => action.turn).toSet(),
+        <int>{1},
+      );
+      expect(
+        attacks.map((BattleActionLog action) => action.lifecycle),
+        List<int>.generate(64, (int index) => index + 1),
+      );
+      expect(result.encounter.turnInEncounter, 1);
+      expect(result.encounter.lifecycleInEncounter, 64);
+      expect(result.ended, isFalse);
+    },
+  );
+
+  test('run encounter step applies the shared action turn timeout', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      turnInEncounter: BattleService.maxActionTurns,
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 10),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(id: 'ally', team: BattleTeam.ally, speed: 10),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(result.ended, isTrue);
+    expect(result.success, isFalse);
+    expect(result.wiped, isFalse);
+    expect(result.encounter.turnInEncounter, BattleService.maxActionTurns);
+    expect(result.lifecycleActions, isEmpty);
+  });
+
+  test('first strike only changes initial encounter turn order', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy_fast', team: BattleTeam.enemy, speed: 30),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'ally_slow',
+        team: BattleTeam.ally,
+        speed: 1,
+        passives: const <BattlePassiveEffect>[
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.battleStart,
+            type: BattlePassiveEffectType.firstStrike,
+            sourceId: 'opening_move',
+          ),
+        ],
+      ),
+    ];
+
+    final BattleEncounterStepResult first = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult second = service.runEncounterStep(
+      allies: first.allies,
+      encounter: first.encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult third = service.runEncounterStep(
+      allies: second.allies,
+      encounter: second.encounter,
+      potionBoost: 0,
+    );
+
+    expect(first.lifecycleActions.single.actorId, 'ally_slow');
+    expect(second.lifecycleActions.single.actorId, 'enemy_fast');
+    expect(third.lifecycleActions.single.actorId, 'enemy_fast');
+  });
+
+  test(
+    'grant modifier passive applies debuff and expires on owner turn end',
+    () {
+      final BattleService service = BattleService(random: Random(1));
+      final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+        encounterId: 'encounter_1',
+        encounterIndex: 1,
+        enemySetId: 'enemy_set_1',
+        enemies: <BattleRunUnitState>[
+          unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+        ],
+      );
+      final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+        unit(
+          id: 'debuffer',
+          team: BattleTeam.ally,
+          speed: 30,
+          passives: const <BattlePassiveEffect>[
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.afterHit,
+              type: BattlePassiveEffectType.grantModifier,
+              sourceId: 'mark',
+              durationLifecycles: 1,
+              modifier: BattleModifier(
+                type: BattleModifierType.damageTaken,
+                mode: BattleModifierMode.percent,
+                value: 1,
+                sourceId: 'mark_damage_taken',
+              ),
+            ),
+          ],
+        ),
+        unit(
+          id: 'striker',
+          team: BattleTeam.ally,
+          speed: 20,
+          physicalAttack: 40,
+        ),
+      ];
+
+      final BattleEncounterStepResult first = service.runEncounterStep(
+        allies: allies,
+        encounter: encounter,
+        potionBoost: 0,
+      );
+      final BattleEncounterStepResult second = service.runEncounterStep(
+        allies: first.allies,
+        encounter: first.encounter,
+        potionBoost: 0,
+      );
+      final BattleEncounterStepResult third = service.runEncounterStep(
+        allies: second.allies,
+        encounter: second.encounter,
+        potionBoost: 0,
+      );
+
+      expect(first.encounter.enemies.single.activeModifiers, hasLength(1));
+      expect(
+        first.lifecycleActions.any(
+          (BattleActionLog action) => action.type == BattleActionType.modifier,
+        ),
+        isTrue,
+      );
+      expect(second.lifecycleActions.single.damage, greaterThan(10));
+      expect(third.encounter.enemies.single.activeModifiers, isEmpty);
+    },
+  );
+
+  test('status passive applies poison damage and expires on turn end', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'poisoner',
+        team: BattleTeam.ally,
+        speed: 20,
+        passives: const <BattlePassiveEffect>[
+          BattlePassiveEffect(
+            trigger: BattlePassiveTrigger.afterHit,
+            type: BattlePassiveEffectType.grantStatus,
+            sourceId: 'poison_blade',
+            statusType: BattleStatusType.poison,
+            durationLifecycles: 1,
+            value: 7,
+          ),
+        ],
+      ),
+    ];
+
+    final BattleEncounterStepResult first = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult second = service.runEncounterStep(
+      allies: first.allies,
+      encounter: first.encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      first.encounter.enemies.single.statuses.single.type,
+      BattleStatusType.poison,
+    );
+    expect(
+      second.lifecycleActions.any(
+        (BattleActionLog action) =>
+            action.type == BattleActionType.status &&
+            action.statusType == BattleStatusType.poison &&
+            action.damage == 7,
+      ),
+      isTrue,
+    );
+    expect(second.encounter.enemies.single.statuses, isEmpty);
+  });
+
+  test('shield passive absorbs incoming hp damage before health', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(
+          id: 'enemy_guard',
+          team: BattleTeam.enemy,
+          speed: 20,
+          passives: const <BattlePassiveEffect>[
+            BattlePassiveEffect(
+              trigger: BattlePassiveTrigger.beforeAction,
+              type: BattlePassiveEffectType.grantShield,
+              sourceId: 'guard',
+              value: 50,
+            ),
+          ],
+        ),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(id: 'ally', team: BattleTeam.ally, speed: 10, physicalAttack: 40),
+    ];
+
+    final BattleEncounterStepResult first = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleEncounterStepResult second = service.runEncounterStep(
+      allies: first.allies,
+      encounter: first.encounter,
+      potionBoost: 0,
+    );
+
+    expect(first.encounter.enemies.single.shield, greaterThan(0));
+    expect(second.lifecycleActions.single.damage, 0);
+    expect(second.encounter.enemies.single.currentHp, 200);
+    expect(second.encounter.enemies.single.shield, lessThan(50));
+  });
+
+  test('always hit only applies on before hit check trigger', () {
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1, evasion: 1),
+      ],
+    );
+    final BattleRunUnitState wrongTriggerAlly = unit(
+      id: 'ally',
+      team: BattleTeam.ally,
+      speed: 20,
+      accuracy: 0,
+      passives: const <BattlePassiveEffect>[
+        BattlePassiveEffect(
+          trigger: BattlePassiveTrigger.beforeAction,
+          type: BattlePassiveEffectType.alwaysHit,
+          sourceId: 'wrong_hook',
+        ),
+      ],
+    );
+    final BattleRunUnitState correctTriggerAlly = unit(
+      id: 'ally',
+      team: BattleTeam.ally,
+      speed: 20,
+      accuracy: 0,
+      passives: const <BattlePassiveEffect>[
+        BattlePassiveEffect(
+          trigger: BattlePassiveTrigger.beforeHitCheck,
+          type: BattlePassiveEffectType.alwaysHit,
+          sourceId: 'right_hook',
+        ),
+      ],
+    );
+
+    final BattleEncounterStepResult wrongTriggerResult =
+        BattleService(random: _FixedRandom(0.99)).runEncounterStep(
+          allies: <BattleRunUnitState>[wrongTriggerAlly],
+          encounter: encounter,
+          potionBoost: 0,
+        );
+    final BattleEncounterStepResult correctTriggerResult =
+        BattleService(random: _FixedRandom(0.99)).runEncounterStep(
+          allies: <BattleRunUnitState>[correctTriggerAlly],
+          encounter: encounter,
+          potionBoost: 0,
+        );
+
+    expect(wrongTriggerResult.lifecycleActions.first.hit, isFalse);
+    expect(correctTriggerResult.lifecycleActions.first.hit, isTrue);
+  });
+
+  test('normal attack restores fixed mp regen without action log', () {
+    final BattleService service = BattleService(random: Random(1));
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(id: 'ally', team: BattleTeam.ally, speed: 20, maxMp: 10, mpRegen: 4),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(result.allies.single.currentMp, 4);
+    expect(
+      result.lifecycleActions.any(
+        (BattleActionLog action) => action.type == BattleActionType.mpRegen,
+      ),
+      isFalse,
+    );
+  });
+
+  test('unit at max mp uses active skill and spends all mp', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_burst',
+      name: 'Burst',
+      summary: '강한 단일 공격',
+      cooldownLifecycles: 2,
+      powerMultiplier: 2,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'ally',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        mpRegen: 4,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+    final BattleActionLog skillAction = result.lifecycleActions.first;
+
+    expect(skillAction.type, BattleActionType.skillUse);
+    expect(skillAction.skillId, 'skill_burst');
+    expect(skillAction.mpSpent, 10);
+    expect(skillAction.actorMpAfter, 0);
+    expect(result.allies.single.currentMp, 0);
+    expect(result.allies.single.skillCooldowns['skill_burst'], 2);
+    expect(
+      result.lifecycleActions.any(
+        (BattleActionLog action) => action.type == BattleActionType.mpRegen,
+      ),
+      isFalse,
+    );
+  });
+
+  test('area damage skill hits all enemies in one lifecycle', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_sweep',
+      name: 'Sweep',
+      summary: '전체 공격',
+      targetType: BattleSkillTargetType.allEnemies,
+      effectType: BattleSkillEffectType.damage,
+      powerMultiplier: 1.5,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy_a', team: BattleTeam.enemy, speed: 1),
+        unit(id: 'enemy_b', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'ally',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        physicalAttack: 40,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.skill,
+          )
+          .map((BattleActionLog action) => action.targetId),
+      <String>['enemy_a', 'enemy_b'],
+    );
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) =>
+                action.type == BattleActionType.skillUse,
+          )
+          .map((BattleActionLog action) => action.skillId),
+      <String>['skill_sweep'],
+    );
+    expect(
+      result.encounter.enemies.every(
+        (BattleRunUnitState enemy) => enemy.currentHp < 200,
+      ),
+      isTrue,
+    );
+  });
+
+  test('ally heal skill restores all ally targets', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_mend',
+      name: 'Mend',
+      summary: '전체 회복',
+      targetType: BattleSkillTargetType.allAllies,
+      effectType: BattleSkillEffectType.heal,
+      flatPower: 25,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'healer',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        currentHp: 150,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+      unit(id: 'wounded', team: BattleTeam.ally, speed: 10, currentHp: 120),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.heal,
+          )
+          .map((BattleActionLog action) => action.targetId),
+      <String>['healer', 'wounded'],
+    );
+    expect(result.allies.first.currentHp, 175);
+    expect(result.allies.last.currentHp, 145);
+  });
+
+  test('modifier skill grants active modifier to enemy target', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleModifier modifier = BattleModifier(
+      type: BattleModifierType.damageTaken,
+      mode: BattleModifierMode.percent,
+      value: 0.25,
+      sourceId: 'skill_weaken',
+    );
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_weaken',
+      name: 'Weaken',
+      summary: '방어 약화',
+      effectType: BattleSkillEffectType.grantModifier,
+      modifier: modifier,
+      durationLifecycles: 2,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'ally',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) =>
+                action.type == BattleActionType.skillUse,
+          )
+          .single
+          .skillId,
+      'skill_weaken',
+    );
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) =>
+                action.type == BattleActionType.modifier,
+          )
+          .single
+          .type,
+      BattleActionType.modifier,
+    );
+    expect(
+      result.encounter.enemies.single.activeModifiers.single.modifier.sourceId,
+      'skill_weaken',
+    );
+  });
+
+  test('status skill grants status to enemy target', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_poison',
+      name: 'Poison',
+      summary: '독 부여',
+      effectType: BattleSkillEffectType.grantStatus,
+      statusType: BattleStatusType.poison,
+      flatPower: 7,
+      durationLifecycles: 2,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'ally',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) =>
+                action.type == BattleActionType.skillUse,
+          )
+          .single
+          .skillId,
+      'skill_poison',
+    );
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.status,
+          )
+          .single
+          .statusType,
+      BattleStatusType.poison,
+    );
+    expect(
+      result.encounter.enemies.single.statuses.single.type,
+      BattleStatusType.poison,
+    );
+    expect(result.encounter.enemies.single.statuses.single.power, 7);
+  });
+
+  test('shield skill grants shield to all ally targets', () {
+    final BattleService service = BattleService(random: Random(1));
+    const BattleSkillDefinition skill = BattleSkillDefinition(
+      id: 'skill_barrier',
+      name: 'Barrier',
+      summary: '전체 보호막',
+      targetType: BattleSkillTargetType.allAllies,
+      effectType: BattleSkillEffectType.grantShield,
+      shieldValue: 30,
+    );
+    final BattleEncounterRuntimeState encounter = BattleEncounterRuntimeState(
+      encounterId: 'encounter_1',
+      encounterIndex: 1,
+      enemySetId: 'enemy_set_1',
+      enemies: <BattleRunUnitState>[
+        unit(id: 'enemy', team: BattleTeam.enemy, speed: 1),
+      ],
+    );
+    final List<BattleRunUnitState> allies = <BattleRunUnitState>[
+      unit(
+        id: 'caster',
+        team: BattleTeam.ally,
+        speed: 20,
+        maxMp: 10,
+        currentMp: 10,
+        skills: const <BattleSkillDefinition>[skill],
+      ),
+      unit(id: 'ally', team: BattleTeam.ally, speed: 10),
+    ];
+
+    final BattleEncounterStepResult result = service.runEncounterStep(
+      allies: allies,
+      encounter: encounter,
+      potionBoost: 0,
+    );
+
+    expect(
+      result.lifecycleActions
+          .where(
+            (BattleActionLog action) => action.type == BattleActionType.shield,
+          )
+          .map((BattleActionLog action) => action.targetId),
+      <String>['caster', 'ally'],
+    );
+    expect(result.allies.map((BattleRunUnitState ally) => ally.shield), <int>[
+      30,
+      30,
+    ]);
+  });
+}
+
+class _FixedRandom implements Random {
+  const _FixedRandom(this.value);
+
+  final double value;
+
+  @override
+  bool nextBool() {
+    return value < 0.5;
+  }
+
+  @override
+  double nextDouble() {
+    return value;
+  }
+
+  @override
+  int nextInt(int max) {
+    return 0;
+  }
+}

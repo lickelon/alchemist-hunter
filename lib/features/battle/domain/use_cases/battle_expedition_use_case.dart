@@ -1,7 +1,7 @@
 import 'package:alchemist_hunter/app/session/session_state.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_progression_service.dart';
+import 'package:alchemist_hunter/features/battle/expedition/domain/services/battle_progression_service.dart';
 
 class BattleExpeditionUseCase {
   const BattleExpeditionUseCase({

@@ -1,8 +1,8 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_resolver.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_expedition_progress_service.dart';
-import 'package:alchemist_hunter/features/battle/domain/services/battle_potion_loadout_service.dart';
+import 'package:alchemist_hunter/features/battle/expedition/domain/services/battle_expedition_resolver.dart';
+import 'package:alchemist_hunter/features/battle/expedition/domain/services/battle_expedition_progress_service.dart';
+import 'package:alchemist_hunter/features/battle/expedition/domain/services/battle_potion_loadout_service.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/services/economy_service.dart';
 import 'package:alchemist_hunter/features/town/domain/services/forge_queue_progress_service.dart';
