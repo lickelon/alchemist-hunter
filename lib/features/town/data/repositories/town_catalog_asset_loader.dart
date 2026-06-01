@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:alchemist_hunter/app/catalog/combat_effect_dtos.dart';
 import 'package:alchemist_hunter/core/catalog/json_catalog_helpers.dart' as j;
-import 'package:alchemist_hunter/features/battle/data/catalogs/battle_catalog_dtos.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/town_catalog_data.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
