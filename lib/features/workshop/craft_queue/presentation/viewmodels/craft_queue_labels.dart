@@ -12,10 +12,20 @@ int statusRank(QueueJobStatus status) {
 String jobTypeLabel(WorkshopJobType type) {
   return switch (type) {
     WorkshopJobType.extraction => '추출',
-    WorkshopJobType.craft => '제조',
+    WorkshopJobType.craft => '제작',
     WorkshopJobType.enchant => '인챈트',
     WorkshopJobType.hatch => '부화',
   };
+}
+
+String craftQueueJobTypeLabel(CraftQueueJob job) {
+  if (job.type != WorkshopJobType.craft) {
+    return jobTypeLabel(job.type);
+  }
+  if (job.potionId != null || job.completedPotion != null) {
+    return '양조';
+  }
+  return '제작';
 }
 
 String formatTraitRequirements(

@@ -73,7 +73,7 @@ final Provider<List<CraftQueueJobView>> craftQueueJobViewsProvider =
         return CraftQueueJobView(
           id: job.id,
           title: title,
-          typeLabel: jobTypeLabel(job.type),
+          typeLabel: craftQueueJobTypeLabel(job),
           statusText: queueStatusText(job),
           resultText: completedResultText(job, potionNames: potionNames),
           canClaim: job.status == QueueJobStatus.completed,

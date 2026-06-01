@@ -65,7 +65,10 @@ class WorkshopScreen extends ConsumerWidget {
           subtitle: '${dashboard.essenceLabel} / ${dashboard.arcaneDustLabel}',
           icon: Icons.science_outlined,
         ),
-        WorkshopQueueCard(jobCount: queueSummary.jobCount),
+        WorkshopQueueCard(
+          jobCount: queueSummary.jobCount,
+          description: queueSummary.description,
+        ),
         WorkshopExtractionCard(materialTypeCount: materials.length),
         WorkshopResearchCard(traitTypeCount: inventorySummary.traitTypeCount),
         WorkshopCraftCard(

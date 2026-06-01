@@ -24,7 +24,7 @@ class WorkshopQueueSheet extends ConsumerWidget {
       title: '제작 큐',
       header: Text('슬롯 ${jobs.length}/$queueCapacity'),
       body: jobs.isEmpty
-          ? const AppEmptyState('큐가 비어있습니다')
+          ? const AppEmptyState('대기 중인 작업이 없습니다')
           : WorkshopQueueJobList(jobs: jobs, onClaimJob: controller.claimJob),
     );
   }

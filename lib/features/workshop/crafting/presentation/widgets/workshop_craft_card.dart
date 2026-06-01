@@ -59,16 +59,30 @@ class WorkshopCraftSheet extends ConsumerWidget {
     );
     final int queueCapacity = ref.watch(workshopQueueCapacityProvider);
     final bool queueFull = queueLength >= queueCapacity;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return DefaultTabController(
       length: 2,
       child: AppSheetLayout(
-        title: '제작',
+        title: '연금술',
         header: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             if (queueFull) ...<Widget>[
-              Text('작업실 큐 가득 참 ($queueLength/$queueCapacity)'),
+              Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.warning_amber_outlined,
+                    color: colorScheme.error,
+                    size: 18,
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Text(
+                    '작업실 큐 가득 참 ($queueLength/$queueCapacity)',
+                    style: TextStyle(color: colorScheme.error),
+                  ),
+                ],
+              ),
               const SizedBox(height: 12),
             ],
             const TabBar(
@@ -111,7 +125,7 @@ class _WorkshopBrewRecipeBookTab extends ConsumerWidget {
               badgeLabel: badgeLabel,
               semanticLabel: '${recipe.title} $badgeLabel',
               tooltipMessage:
-                  '${recipe.title}\n${recipe.summaryLabel}\n양조 가능 ${recipe.maxCraftableCount}',
+                  '${recipe.title}\n${recipe.summaryLabel}\n양조 가능 ${recipe.maxCraftableCount}회',
               onTap: () {
                 showDialog<void>(
                   context: context,
@@ -177,6 +191,8 @@ class _WorkshopDiscoveredBrewDetailDialogState
             ),
             const SizedBox(height: AppSpacing.lg),
             Text('양조 수량'),
+            const SizedBox(height: AppSpacing.sm),
+            Text('양조 가능 ${recipe.maxCraftableCount}회'),
             const SizedBox(height: AppSpacing.md),
             _CraftQuantitySlider(
               selectedQuantity: selectedQuantity,
@@ -192,8 +208,6 @@ class _WorkshopDiscoveredBrewDetailDialogState
             Text('발견 비율'),
             const SizedBox(height: AppSpacing.sm),
             Text(recipe.ratioLabel),
-            const SizedBox(height: AppSpacing.lg),
-            Text('양조 가능 ${recipe.maxCraftableCount}회'),
           ],
         ),
       ),
@@ -359,7 +373,9 @@ class _WorkshopMaterialCraftDetailDialogState
                   .toList(growable: false),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('소요 시간 ${recipe.durationLabel} x$selectedQuantity'),
+            Text(
+              '소요 시간 1회 ${recipe.durationLabel} / 총 ${recipe.totalDurationLabel(selectedQuantity)}',
+            ),
             const SizedBox(height: AppSpacing.sm),
             Text(recipe.costHint),
           ],
@@ -424,7 +440,12 @@ class _CraftQuantitySlider extends StatelessWidget {
       children: <Widget>[
         Row(
           children: <Widget>[
-            Expanded(child: Text('선택 $selectedQuantity개')),
+            Expanded(
+              child: Text(
+                '선택 $selectedQuantity개',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            ),
             Text(
               '최대 $maxQuantity개',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(

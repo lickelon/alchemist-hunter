@@ -77,6 +77,7 @@ class WorkshopMaterialCraftRecipeView {
     required this.resultMaterialId,
     required this.resultQuantity,
     required this.durationLabel,
+    required this.duration,
     required this.materialCosts,
     required this.maxCraftableCount,
     required this.craftableNow,
@@ -89,6 +90,7 @@ class WorkshopMaterialCraftRecipeView {
   final String resultMaterialId;
   final int resultQuantity;
   final String durationLabel;
+  final Duration duration;
   final List<WorkshopMaterialCraftCostView> materialCosts;
   final int maxCraftableCount;
   final bool craftableNow;
@@ -318,6 +320,7 @@ workshopMaterialCraftRecipeViewsProvider =
               resultMaterialId: result.key,
               resultQuantity: result.value,
               durationLabel: _durationLabel(recipe.duration),
+              duration: recipe.duration,
               materialCosts: recipe.materialCosts.entries
                   .map(
                     (MapEntry<String, int> cost) =>
@@ -466,6 +469,13 @@ String _craftRecipeCostHint(
     );
   });
   return parts.join(' / ');
+}
+
+extension WorkshopMaterialCraftRecipeDurationView
+    on WorkshopMaterialCraftRecipeView {
+  String totalDurationLabel(int repeatCount) {
+    return _durationLabel(duration * repeatCount);
+  }
 }
 
 String _durationLabel(Duration duration) {

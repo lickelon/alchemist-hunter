@@ -129,23 +129,20 @@ class _WorkshopBrewExperimentTabState
               })
               .toList(growable: false),
         ),
-        if (_selectedTraitIds.isNotEmpty) ...<Widget>[
+        if (_selectedTraitIds.length == 2) ...<Widget>[
           const SizedBox(height: AppSpacing.lg),
-          if (_selectedTraitIds.length == 2)
-            _BrewRatioSlider(
-              primaryName:
-                  traitMap[_selectedTraitIds[0]]?.name ?? _selectedTraitIds[0],
-              secondaryName:
-                  traitMap[_selectedTraitIds[1]]?.name ?? _selectedTraitIds[1],
-              value: _primaryRatio,
-              onChanged: (double nextValue) {
-                setState(() {
-                  _primaryRatio = nextValue;
-                });
-              },
-            )
-          else
-            const Text('원소를 하나 더 선택하세요'),
+          _BrewRatioSlider(
+            primaryName:
+                traitMap[_selectedTraitIds[0]]?.name ?? _selectedTraitIds[0],
+            secondaryName:
+                traitMap[_selectedTraitIds[1]]?.name ?? _selectedTraitIds[1],
+            value: _primaryRatio,
+            onChanged: (double nextValue) {
+              setState(() {
+                _primaryRatio = nextValue;
+              });
+            },
+          ),
         ],
         const SizedBox(height: AppSpacing.lg),
         _BrewPreviewPanel(
@@ -248,7 +245,7 @@ class _BrewRatioSlider extends StatelessWidget {
             children: <Widget>[
               Expanded(child: Text(primaryName)),
               Text(
-                '메인 ${(value * 100).round()}%',
+                '주 ${(value * 100).round()}%',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -266,7 +263,7 @@ class _BrewRatioSlider extends StatelessWidget {
             children: <Widget>[
               Expanded(child: Text(secondaryName)),
               Text(
-                '서브 ${(secondaryValue * 100).round()}%',
+                '부 ${(secondaryValue * 100).round()}%',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -292,7 +289,11 @@ class _BrewPreviewPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String status = selectedCount < 2 ? '원소 2종 선택 필요' : hintLabel;
+    final String status = switch (selectedCount) {
+      0 => '원소 2종 선택 필요',
+      1 => '원소를 하나 더 선택하세요',
+      _ => hintLabel,
+    };
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(

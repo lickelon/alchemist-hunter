@@ -58,7 +58,12 @@ void main() {
         UncontrolledProviderScope(
           container: container,
           child: const MaterialApp(
-            home: Scaffold(body: WorkshopQueueCard(jobCount: 2)),
+            home: Scaffold(
+              body: WorkshopQueueCard(
+                jobCount: 2,
+                description: '진행 Emberroot / 슬롯 2/4 / 수령 대기 1건',
+              ),
+            ),
           ),
         ),
       );
@@ -75,7 +80,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('활력 포션 x2'), findsOneWidget);
-      expect(find.textContaining('수령 대기'), findsOneWidget);
+      expect(find.textContaining('양조 / 수령 대기'), findsOneWidget);
       expect(find.textContaining('양조 완료 / 활력 포션 A x2'), findsOneWidget);
       expect(find.textContaining('p_1|a'), findsNothing);
       expect(find.text('수령'), findsOneWidget);

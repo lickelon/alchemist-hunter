@@ -236,7 +236,7 @@ void main() {
     expect(find.text('용병 승급 재료 2'), findsWidgets);
     expect(find.text('최대 2개'), findsOneWidget);
     expect(find.text('Mossbone 6/3'), findsOneWidget);
-    expect(find.text('소요 시간 45초 x1'), findsOneWidget);
+    expect(find.text('소요 시간 1회 45초 / 총 45초'), findsOneWidget);
     expect(find.widgetWithText(FilledButton, '등록'), findsOneWidget);
   });
 
