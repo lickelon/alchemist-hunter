@@ -6,6 +6,7 @@ import 'package:alchemist_hunter/features/town/domain/services/economy_service.d
 import 'package:alchemist_hunter/features/town/domain/services/town_skill_tree_service.dart';
 import 'package:alchemist_hunter/features/town/domain/use_cases/town_use_case.dart';
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
+import 'package:alchemist_hunter/features/town/presentation/viewmodels/controllers/shop_controller_log_messages.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -41,7 +42,7 @@ class ShopController {
     );
     _apply(
       nextState,
-      logMessage: _purchaseLogMessage(
+      logMessage: shopPurchaseLogMessage(
         current: current,
         nextState: nextState,
         shopType: ShopType.general,
@@ -63,7 +64,7 @@ class ShopController {
     );
     _apply(
       nextState,
-      logMessage: _purchaseLogMessage(
+      logMessage: shopPurchaseLogMessage(
         current: current,
         nextState: nextState,
         shopType: ShopType.catalyst,
@@ -88,8 +89,13 @@ class ShopController {
     _apply(
       nextState,
       logMessage: identical(nextState, current)
-          ? _forceRefreshFailureLog(current, shopType)
-          : '상점 갱신 / ${_shopLabel(shopType)}',
+          ? shopForceRefreshFailureLog(
+              current: current,
+              shopType: shopType,
+              townSkillTreeRepository: _townSkillTreeRepository,
+              townSkillTreeService: _townSkillTreeService,
+            )
+          : '상점 갱신 / ${shopTypeLabel(shopType)}',
     );
   }
 
@@ -112,71 +118,6 @@ class ShopController {
     if (logMessage != null) {
       _session.appendLog(logMessage);
     }
-  }
-
-  String _purchaseLogMessage({
-    required SessionState current,
-    required SessionState nextState,
-    required ShopType shopType,
-    required String materialId,
-    required int quantity,
-  }) {
-    final ShopItem? item = _findShopItem(current, shopType, materialId);
-    final String itemName = item?.name ?? materialId;
-    if (!identical(nextState, current)) {
-      return '재료 구매 / $itemName x$quantity / ${_shopLabel(shopType)}';
-    }
-    if (quantity < 1) {
-      return '구매 수량 오류 / $itemName';
-    }
-    if (item == null || item.quantity < quantity) {
-      return '재료 부족 / $itemName x$quantity';
-    }
-    if (current.player.gold < item.price * quantity) {
-      return '골드 부족 / $itemName x$quantity';
-    }
-    return '구매 실패 / $itemName x$quantity';
-  }
-
-  String _forceRefreshFailureLog(SessionState current, ShopType shopType) {
-    final ShopState shop = _shopFor(current, shopType);
-    final int effectiveCost = _townSkillTreeService.discountedGoldCost(
-      baseCost: shop.forcedRefreshCost,
-      discountRate: _townSkillTreeService.shopRefreshDiscountRate(
-        current,
-        _townSkillTreeRepository.nodes(),
-      ),
-    );
-    if (current.player.gold < effectiveCost) {
-      return '골드 부족 / ${_shopLabel(shopType)} 갱신';
-    }
-    return '상점 갱신 실패 / ${_shopLabel(shopType)}';
-  }
-
-  ShopState _shopFor(SessionState state, ShopType shopType) {
-    return shopType == ShopType.general
-        ? state.town.generalShop
-        : state.town.catalystShop;
-  }
-
-  ShopItem? _findShopItem(
-    SessionState state,
-    ShopType shopType,
-    String materialId,
-  ) {
-    for (final ShopItem item in _shopFor(state, shopType).items) {
-      if (item.materialId == materialId) {
-        return item;
-      }
-    }
-    return null;
-  }
-
-  String _shopLabel(ShopType shopType) {
-    return switch (shopType) {
-      ShopType.general => '일반 상점',
-      ShopType.catalyst => '촉매 상점',
-    };
   }
 }
 

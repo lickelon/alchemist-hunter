@@ -2,6 +2,9 @@ import 'package:alchemist_hunter/app/session/session_state.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'dart:math';
 
+part 'town_skill_tree_cost_service.dart';
+part 'town_skill_tree_effect_service.dart';
+
 class TownSkillTreeService {
   const TownSkillTreeService();
 
@@ -74,18 +77,20 @@ class TownSkillTreeService {
     SessionState state,
     List<TownSkillNode> nodes,
   ) {
-    return _percentModifierTotal(
-      state,
-      nodes,
-      TownSkillEffectType.shopRefreshDiscount,
+    return townSkillPercentModifierTotal(
+      service: this,
+      state: state,
+      nodes: nodes,
+      effectType: TownSkillEffectType.shopRefreshDiscount,
     );
   }
 
   double potionSaleBonusRate(SessionState state, List<TownSkillNode> nodes) {
-    return _percentModifierTotal(
-      state,
-      nodes,
-      TownSkillEffectType.potionSaleBonus,
+    return townSkillPercentModifierTotal(
+      service: this,
+      state: state,
+      nodes: nodes,
+      effectType: TownSkillEffectType.potionSaleBonus,
     );
   }
 
@@ -93,10 +98,11 @@ class TownSkillTreeService {
     SessionState state,
     List<TownSkillNode> nodes,
   ) {
-    return _percentModifierTotal(
-      state,
-      nodes,
-      TownSkillEffectType.equipmentCraftEfficiency,
+    return townSkillPercentModifierTotal(
+      service: this,
+      state: state,
+      nodes: nodes,
+      effectType: TownSkillEffectType.equipmentCraftEfficiency,
     );
   }
 
@@ -104,10 +110,11 @@ class TownSkillTreeService {
     SessionState state,
     List<TownSkillNode> nodes,
   ) {
-    return _percentModifierTotal(
-      state,
-      nodes,
-      TownSkillEffectType.mercenaryHireDiscount,
+    return townSkillPercentModifierTotal(
+      service: this,
+      state: state,
+      nodes: nodes,
+      effectType: TownSkillEffectType.mercenaryHireDiscount,
     );
   }
 
@@ -115,82 +122,19 @@ class TownSkillTreeService {
     required int baseCost,
     required double discountRate,
   }) {
-    if (baseCost <= 0 || discountRate <= 0) {
-      return baseCost;
-    }
-    return max(0, (baseCost * (1 - discountRate)).round());
+    return townSkillDiscountedGoldCost(
+      baseCost: baseCost,
+      discountRate: discountRate,
+    );
   }
 
   Map<String, int> adjustedMaterialCosts({
     required Map<String, int> baseCosts,
     required double efficiencyRate,
   }) {
-    if (efficiencyRate <= 0 || baseCosts.isEmpty) {
-      return <String, int>{...baseCosts};
-    }
-
-    final Map<String, int> adjusted = <String, int>{...baseCosts};
-    final int totalCost = adjusted.values.fold<int>(
-      0,
-      (int sum, int value) => sum + value,
+    return townSkillAdjustedMaterialCosts(
+      baseCosts: baseCosts,
+      efficiencyRate: efficiencyRate,
     );
-    final int minimumTotal = adjusted.length;
-    final int maxReducible = totalCost - minimumTotal;
-    if (maxReducible <= 0) {
-      return adjusted;
-    }
-
-    int remainingReduction = min(
-      maxReducible,
-      max(1, (totalCost * efficiencyRate).round()),
-    );
-
-    while (remainingReduction > 0) {
-      final List<MapEntry<String, int>> entries = adjusted.entries.toList()
-        ..sort(
-          (MapEntry<String, int> left, MapEntry<String, int> right) =>
-              right.value.compareTo(left.value),
-        );
-
-      bool changed = false;
-      for (final MapEntry<String, int> entry in entries) {
-        if (entry.value <= 1) {
-          continue;
-        }
-        adjusted[entry.key] = entry.value - 1;
-        remainingReduction -= 1;
-        changed = true;
-        if (remainingReduction <= 0) {
-          break;
-        }
-      }
-      if (!changed) {
-        break;
-      }
-    }
-
-    return adjusted;
-  }
-
-  double _percentModifierTotal(
-    SessionState state,
-    List<TownSkillNode> nodes,
-    TownSkillEffectType effectType,
-  ) {
-    double total = 0;
-    for (final TownSkillNode node in nodes) {
-      final int level = levelOf(state.town.skillTree, node.id);
-      if (level <= 0) {
-        continue;
-      }
-      for (final TownSkillEffect effect in node.effects) {
-        if (effect.type != effectType ||
-            effect.modifierType != TownSkillModifierType.percent) {
-          continue;
-        }
-        total += effect.value * level;
-      }
-    }
-    return total;
   }
 }
