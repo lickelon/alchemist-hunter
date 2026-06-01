@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/features/town/data/catalogs/equipment_blueprints.dart';
+import 'package:alchemist_hunter/features/town/data/repositories/town_catalog_asset_loader.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_equipment_blueprint_repository.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_mercenary_template_repository.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_shop_catalog_repository.dart';
@@ -12,22 +13,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final Provider<ShopCatalogRepository> shopCatalogRepositoryProvider =
     Provider<ShopCatalogRepository>(
-      (Ref ref) => const StaticShopCatalogRepository(),
+      (Ref ref) => StaticShopCatalogRepository(
+        catalog: ref.watch(townCatalogAssetsProvider)?.shopCatalog,
+      ),
     );
 
 final Provider<EquipmentBlueprintRepository>
 equipmentBlueprintRepositoryProvider = Provider<EquipmentBlueprintRepository>(
-  (Ref ref) => const StaticEquipmentBlueprintRepository(),
+  (Ref ref) => StaticEquipmentBlueprintRepository(
+    blueprints: ref.watch(townCatalogAssetsProvider)?.equipmentBlueprints,
+  ),
 );
 
 final Provider<MercenaryTemplateRepository>
 mercenaryTemplateRepositoryProvider = Provider<MercenaryTemplateRepository>(
-  (Ref ref) => const StaticMercenaryTemplateRepository(),
+  (Ref ref) => StaticMercenaryTemplateRepository(
+    templates: ref.watch(townCatalogAssetsProvider)?.mercenaryTemplates,
+  ),
 );
 
 final Provider<TownSkillTreeRepository> townSkillTreeRepositoryProvider =
     Provider<TownSkillTreeRepository>(
-      (Ref ref) => const StaticTownSkillTreeRepository(),
+      (Ref ref) => StaticTownSkillTreeRepository(
+        nodes: ref.watch(townCatalogAssetsProvider)?.skillNodes,
+      ),
     );
 
 final Provider<List<EquipmentBlueprint>> townEquipmentBlueprintsProvider =
@@ -36,7 +45,14 @@ final Provider<List<EquipmentBlueprint>> townEquipmentBlueprintsProvider =
     });
 
 final Provider<Map<String, String>> townEquipmentMaterialNamesProvider =
-    Provider<Map<String, String>>((Ref ref) => townEquipmentMaterialNames);
+    Provider<Map<String, String>>(
+      (Ref ref) =>
+          ref.watch(townCatalogAssetsProvider)?.equipmentMaterialNames ??
+          townEquipmentMaterialNames,
+    );
+
+final Provider<TownCatalogAssets?> townCatalogAssetsProvider =
+    Provider<TownCatalogAssets?>((Ref ref) => null);
 
 final Provider<List<TownSkillNode>> townSkillNodesProvider =
     Provider<List<TownSkillNode>>((Ref ref) {

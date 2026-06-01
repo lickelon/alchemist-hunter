@@ -29,9 +29,11 @@ SessionState createInitialSessionState(DateTime now) {
 }
 
 class AppSessionController extends core.SessionController<SessionState> {
-  AppSessionController({super.clock})
+  AppSessionController({SessionState? initialState, super.clock})
     : super(
-        initialState: createInitialSessionState((clock ?? DateTime.now)()),
+        initialState:
+            initialState ??
+            createInitialSessionState((clock ?? DateTime.now)()),
         logAppender: _appendLog,
       );
 }
@@ -41,5 +43,16 @@ typedef SessionController = AppSessionController;
 final StateNotifierProvider<AppSessionController, SessionState>
 sessionControllerProvider =
     StateNotifierProvider<AppSessionController, SessionState>((Ref ref) {
-      return AppSessionController();
+      return AppSessionController(
+        initialState: createInitialSessionStateFromCatalogs(
+          DateTime.now(),
+          InitialSessionCatalogs(
+            shopCatalogRepository: ref.read(shopCatalogRepositoryProvider),
+            mercenaryTemplateRepository: ref.read(
+              mercenaryTemplateRepositoryProvider,
+            ),
+            townSkillTreeRepository: ref.read(townSkillTreeRepositoryProvider),
+          ),
+        ),
+      );
     });

@@ -4,14 +4,21 @@ import 'package:alchemist_hunter/features/town/domain/repositories/equipment_blu
 
 class StaticEquipmentBlueprintRepository
     implements EquipmentBlueprintRepository {
-  const StaticEquipmentBlueprintRepository();
+  const StaticEquipmentBlueprintRepository({
+    List<EquipmentBlueprint>? blueprints,
+  }) : _blueprints = blueprints;
+
+  final List<EquipmentBlueprint>? _blueprints;
+
+  List<EquipmentBlueprint> get _catalog =>
+      _blueprints ?? townEquipmentBlueprints;
 
   @override
-  List<EquipmentBlueprint> blueprints() => townEquipmentBlueprints;
+  List<EquipmentBlueprint> blueprints() => _catalog;
 
   @override
   EquipmentBlueprint? findById(String blueprintId) {
-    return townEquipmentBlueprints
+    return _catalog
         .where((EquipmentBlueprint blueprint) => blueprint.id == blueprintId)
         .firstOrNull;
   }

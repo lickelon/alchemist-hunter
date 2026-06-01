@@ -1,0 +1,367 @@
+{
+  "shops": {
+    "general": {
+      "refreshIntervalSeconds": 900,
+      "purchaseLimitPerItem": 20,
+      "baseRefreshCost": 25,
+      "refreshCostStep": 15,
+      "items": [
+        {
+          "materialId": "m_1",
+          "name": "Emberroot",
+          "price": 50,
+          "quantity": 20
+        },
+        {
+          "materialId": "m_2",
+          "name": "Ironbloom Bark",
+          "price": 50,
+          "quantity": 20
+        },
+        {
+          "materialId": "m_3",
+          "name": "Mossbone",
+          "price": 50,
+          "quantity": 20
+        },
+        {
+          "materialId": "m_4",
+          "name": "Gale Petal",
+          "price": 50,
+          "quantity": 20
+        },
+        {
+          "materialId": "m_5",
+          "name": "Sunleaf",
+          "price": 50,
+          "quantity": 20
+        },
+        {
+          "materialId": "m_6",
+          "name": "Nightsap Resin",
+          "price": 50,
+          "quantity": 20
+        },
+        {
+          "materialId": "m_7",
+          "name": "Thornspike Vine",
+          "price": 50,
+          "quantity": 20
+        },
+        {
+          "materialId": "m_8",
+          "name": "Dewcap Mushroom",
+          "price": 50,
+          "quantity": 20
+        }
+      ]
+    },
+    "catalyst": {
+      "refreshIntervalSeconds": 1800,
+      "purchaseLimitPerItem": 8,
+      "baseRefreshCost": 90,
+      "refreshCostStep": 45,
+      "items": [
+        {
+          "materialId": "m_25",
+          "name": "Aether Bloom",
+          "price": 180,
+          "quantity": 8
+        },
+        {
+          "materialId": "m_26",
+          "name": "Void Thistle",
+          "price": 180,
+          "quantity": 8
+        },
+        {
+          "materialId": "m_27",
+          "name": "Starfire Pollen",
+          "price": 180,
+          "quantity": 8
+        },
+        {
+          "materialId": "m_28",
+          "name": "Phantom Moss",
+          "price": 180,
+          "quantity": 8
+        },
+        {
+          "materialId": "m_29",
+          "name": "Dragonbone Shard",
+          "price": 180,
+          "quantity": 8
+        },
+        {
+          "materialId": "m_30",
+          "name": "Moontear Crystal",
+          "price": 180,
+          "quantity": 8
+        }
+      ]
+    }
+  },
+  "equipmentMaterialNames": {
+    "m_1": "Emberroot",
+    "m_2": "Ironbloom Bark",
+    "m_3": "Mossbone",
+    "m_4": "Gale Petal",
+    "m_5": "Sunleaf",
+    "m_6": "Nightsap Resin"
+  },
+  "equipmentBlueprints": [
+    {
+      "id": "eq_1",
+      "name": "Bronze Sword",
+      "slot": "weapon",
+      "materialCosts": {
+        "m_1": 2,
+        "m_2": 1
+      },
+      "craftDurationSeconds": 30,
+      "maxHp": 0,
+      "physicalAttack": 9,
+      "physicalDefense": 0,
+      "magicalAttack": 0,
+      "magicalDefense": 0,
+      "speed": 0,
+      "statModifiers": [],
+      "modifiers": [
+        {
+          "type": "damageDealt",
+          "mode": "percent",
+          "value": 0.03,
+          "school": "any",
+          "sourceId": "eq_1_edge"
+        }
+      ],
+      "passives": []
+    },
+    {
+      "id": "eq_2",
+      "name": "Iron Buckler",
+      "slot": "armor",
+      "materialCosts": {
+        "m_2": 2,
+        "m_3": 1
+      },
+      "craftDurationSeconds": 30,
+      "maxHp": 10,
+      "physicalAttack": 0,
+      "physicalDefense": 8,
+      "magicalAttack": 0,
+      "magicalDefense": 3,
+      "speed": 0,
+      "statModifiers": [],
+      "modifiers": [
+        {
+          "type": "damageTaken",
+          "mode": "percent",
+          "value": -0.03,
+          "school": "any",
+          "sourceId": "eq_2_guard"
+        }
+      ],
+      "passives": []
+    },
+    {
+      "id": "eq_3",
+      "name": "Hunter Charm",
+      "slot": "accessory",
+      "materialCosts": {
+        "m_4": 1,
+        "m_5": 1,
+        "m_6": 1
+      },
+      "craftDurationSeconds": 30,
+      "maxHp": 12,
+      "physicalAttack": 2,
+      "physicalDefense": 0,
+      "magicalAttack": 2,
+      "magicalDefense": 0,
+      "speed": 1,
+      "statModifiers": [
+        {
+          "type": "accuracy",
+          "mode": "flat",
+          "value": 0.04,
+          "sourceId": "eq_3_focus"
+        }
+      ],
+      "modifiers": [],
+      "passives": []
+    }
+  ],
+  "mercenaryTemplates": [
+    {
+      "id": "merc_template_sellsword",
+      "name": "Apprentice Sellsword",
+      "roleLabel": "전열 돌격",
+      "combatJobId": "mercenary_warrior",
+      "hireCost": 180,
+      "tierIndex": 1
+    },
+    {
+      "id": "merc_template_guard",
+      "name": "Hedge Guard",
+      "roleLabel": "방어 전담",
+      "combatJobId": "mercenary_warrior",
+      "hireCost": 160,
+      "tierIndex": 1
+    },
+    {
+      "id": "merc_template_scout",
+      "name": "Dusk Scout",
+      "roleLabel": "후열 지원",
+      "combatJobId": "mercenary_archer",
+      "hireCost": 170,
+      "tierIndex": 1
+    },
+    {
+      "id": "merc_template_adept",
+      "name": "Ash Adept",
+      "roleLabel": "전투 보조",
+      "combatJobId": "mercenary_mage",
+      "hireCost": 190,
+      "tierIndex": 1
+    }
+  ],
+  "skillNodes": [
+    {
+      "id": "town_trade_ledger",
+      "name": "Trade Ledger",
+      "description": "판매 수익 관리와 상점 운영 효율을 높인다.",
+      "maxLevel": 2,
+      "costsByLevel": [
+        {
+          "costs": [
+            {
+              "type": "townInsight",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "costs": [
+            {
+              "type": "townInsight",
+              "amount": 2
+            },
+            {
+              "type": "gold",
+              "amount": 150
+            }
+          ]
+        }
+      ],
+      "prerequisiteNodeIds": [],
+      "requirements": [],
+      "effects": [
+        {
+          "type": "potionSaleBonus",
+          "modifierType": "percent",
+          "value": 0.05,
+          "label": "포션 판매가 +5%"
+        },
+        {
+          "type": "shopRefreshDiscount",
+          "modifierType": "percent",
+          "value": 0.1,
+          "label": "강제 갱신 비용 -10%"
+        }
+      ]
+    },
+    {
+      "id": "town_hiring_board",
+      "name": "Hiring Board",
+      "description": "더 나은 고용 공고를 붙여 용병 모집 효율을 높인다.",
+      "maxLevel": 2,
+      "costsByLevel": [
+        {
+          "costs": [
+            {
+              "type": "townInsight",
+              "amount": 2
+            }
+          ]
+        },
+        {
+          "costs": [
+            {
+              "type": "townInsight",
+              "amount": 3
+            },
+            {
+              "type": "gold",
+              "amount": 220
+            }
+          ]
+        }
+      ],
+      "prerequisiteNodeIds": [
+        "town_trade_ledger"
+      ],
+      "requirements": [
+        {
+          "type": "mercenaryCount",
+          "threshold": 2,
+          "label": "용병 2명 보유"
+        }
+      ],
+      "effects": [
+        {
+          "type": "mercenaryHireDiscount",
+          "modifierType": "percent",
+          "value": 0.08,
+          "label": "용병 고용 비용 -8%"
+        }
+      ]
+    },
+    {
+      "id": "town_forge_rack",
+      "name": "Forge Rack",
+      "description": "장비 작업대를 확장해 제작 효율을 높인다.",
+      "maxLevel": 2,
+      "costsByLevel": [
+        {
+          "costs": [
+            {
+              "type": "townInsight",
+              "amount": 2
+            }
+          ]
+        },
+        {
+          "costs": [
+            {
+              "type": "townInsight",
+              "amount": 4
+            },
+            {
+              "type": "gold",
+              "amount": 280
+            }
+          ]
+        }
+      ],
+      "prerequisiteNodeIds": [
+        "town_trade_ledger"
+      ],
+      "requirements": [
+        {
+          "type": "equipmentCraftCount",
+          "threshold": 3,
+          "label": "장비 제작 3회"
+        }
+      ],
+      "effects": [
+        {
+          "type": "equipmentCraftEfficiency",
+          "modifierType": "percent",
+          "value": 0.1,
+          "label": "장비 제작 효율 +10%"
+        }
+      ]
+    }
+  ]
+}
