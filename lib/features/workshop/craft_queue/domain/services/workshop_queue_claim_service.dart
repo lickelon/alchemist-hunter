@@ -1,6 +1,8 @@
 import 'package:alchemist_hunter/app/session/session_state.dart';
-import 'package:alchemist_hunter/features/characters/domain/models.dart';
-import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/craft_queue/domain/services/workshop_queue_craft_claim.dart';
+import 'package:alchemist_hunter/features/workshop/craft_queue/domain/services/workshop_queue_enchant_claim.dart';
+import 'package:alchemist_hunter/features/workshop/craft_queue/domain/services/workshop_queue_extraction_claim.dart';
+import 'package:alchemist_hunter/features/workshop/craft_queue/domain/services/workshop_queue_hatch_claim.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
 class WorkshopQueueClaimService {
@@ -12,203 +14,26 @@ class WorkshopQueueClaimService {
     required CraftQueueJob job,
   }) {
     return switch (job.type) {
-      WorkshopJobType.extraction => _claimExtractionJob(
+      WorkshopJobType.extraction => claimExtractionJob(
         state: state,
         queue: queue,
         job: job,
       ),
-      WorkshopJobType.craft => _claimCraftJob(
+      WorkshopJobType.craft => claimCraftJob(
         state: state,
         queue: queue,
         job: job,
       ),
-      WorkshopJobType.enchant => _claimEnchantJob(
+      WorkshopJobType.enchant => claimEnchantJob(
         state: state,
         queue: queue,
         job: job,
       ),
-      WorkshopJobType.hatch => _claimHatchJob(
+      WorkshopJobType.hatch => claimHatchJob(
         state: state,
         queue: queue,
         job: job,
       ),
     };
-  }
-
-  SessionState _claimExtractionJob({
-    required SessionState state,
-    required List<CraftQueueJob> queue,
-    required CraftQueueJob job,
-  }) {
-    final Map<String, double> extractedTraits = <String, double>{
-      ...state.workshop.extractedTraitInventory,
-    };
-    job.completedExtractedTraits.forEach((String key, double value) {
-      extractedTraits[key] = (extractedTraits[key] ?? 0) + value;
-    });
-
-    return state.copyWith(
-      player: state.player.copyWith(
-        arcaneDust: state.player.arcaneDust + job.completedArcaneDust,
-      ),
-      workshop: state.workshop.copyWith(
-        queue: queue,
-        extractedTraitInventory: extractedTraits,
-        extractionCount: state.workshop.extractionCount + job.quantity,
-      ),
-    );
-  }
-
-  SessionState _claimCraftJob({
-    required SessionState state,
-    required List<CraftQueueJob> queue,
-    required CraftQueueJob job,
-  }) {
-    final String? stackKey = job.completedPotionStackKey;
-    final CraftedPotion? detail = job.completedPotion;
-    if ((stackKey == null || detail == null) &&
-        job.completedMaterials.isEmpty) {
-      return state;
-    }
-
-    final Map<String, int> materialInventory = <String, int>{
-      ...state.player.materialInventory,
-    };
-    job.completedMaterials.forEach((String materialId, int quantity) {
-      materialInventory[materialId] =
-          (materialInventory[materialId] ?? 0) + quantity;
-    });
-
-    final Map<String, int> potionStacks = <String, int>{
-      ...state.workshop.craftedPotionStacks,
-    };
-    final Map<String, CraftedPotion> potionDetails = <String, CraftedPotion>{
-      ...state.workshop.craftedPotionDetails,
-    };
-    if (stackKey != null && detail != null) {
-      potionStacks[stackKey] = (potionStacks[stackKey] ?? 0) + job.repeatCount;
-      potionDetails[stackKey] = detail;
-    }
-
-    return state.copyWith(
-      player: state.player.copyWith(materialInventory: materialInventory),
-      workshop: state.workshop.copyWith(
-        queue: queue,
-        craftedPotionStacks: potionStacks,
-        craftedPotionDetails: potionDetails,
-        potionCraftCount: stackKey != null && detail != null
-            ? state.workshop.potionCraftCount + job.repeatCount
-            : state.workshop.potionCraftCount,
-      ),
-    );
-  }
-
-  SessionState _claimEnchantJob({
-    required SessionState state,
-    required List<CraftQueueJob> queue,
-    required CraftQueueJob job,
-  }) {
-    final EquipmentInstance? equipment = job.completedEquipment;
-    if (equipment == null) {
-      return state;
-    }
-    List<EquipmentInstance> townInventory = <EquipmentInstance>[
-      ...state.town.equipmentInventory,
-    ];
-    List<CharacterProgress> mercenaries = <CharacterProgress>[
-      ...state.characters.mercenaries,
-    ];
-    List<CharacterProgress> homunculi = <CharacterProgress>[
-      ...state.characters.homunculi,
-    ];
-
-    final CharacterType? ownerType = job.equipmentOwnerType;
-    final String? ownerCharacterId = job.equipmentOwnerId;
-    if (ownerType == null || ownerCharacterId == null) {
-      townInventory = <EquipmentInstance>[equipment, ...townInventory];
-    } else if (ownerType == CharacterType.mercenary) {
-      final ({List<CharacterProgress> characters, bool equipped}) result =
-          _applyEquipmentClaimToList(
-            characters: mercenaries,
-            ownerCharacterId: ownerCharacterId,
-            equipment: equipment,
-          );
-      mercenaries = result.characters;
-      if (!result.equipped) {
-        townInventory = <EquipmentInstance>[equipment, ...townInventory];
-      }
-    } else {
-      final ({List<CharacterProgress> characters, bool equipped}) result =
-          _applyEquipmentClaimToList(
-            characters: homunculi,
-            ownerCharacterId: ownerCharacterId,
-            equipment: equipment,
-          );
-      homunculi = result.characters;
-      if (!result.equipped) {
-        townInventory = <EquipmentInstance>[equipment, ...townInventory];
-      }
-    }
-
-    return state.copyWith(
-      town: state.town.copyWith(equipmentInventory: townInventory),
-      workshop: state.workshop.copyWith(
-        queue: queue,
-        enchantCount: state.workshop.enchantCount + 1,
-      ),
-      characters: state.characters.copyWith(
-        mercenaries: mercenaries,
-        homunculi: homunculi,
-      ),
-    );
-  }
-
-  SessionState _claimHatchJob({
-    required SessionState state,
-    required List<CraftQueueJob> queue,
-    required CraftQueueJob job,
-  }) {
-    final CharacterProgress? homunculus = job.completedHomunculus;
-    if (homunculus == null) {
-      return state;
-    }
-
-    return state.copyWith(
-      workshop: state.workshop.copyWith(queue: queue),
-      characters: state.characters.copyWith(
-        homunculi: <CharacterProgress>[
-          ...state.characters.homunculi,
-          homunculus,
-        ],
-      ),
-    );
-  }
-
-  ({List<CharacterProgress> characters, bool equipped})
-  _applyEquipmentClaimToList({
-    required List<CharacterProgress> characters,
-    required String ownerCharacterId,
-    required EquipmentInstance equipment,
-  }) {
-    final List<CharacterProgress> nextCharacters = <CharacterProgress>[
-      ...characters,
-    ];
-    for (int index = 0; index < nextCharacters.length; index++) {
-      final CharacterProgress character = nextCharacters[index];
-      if (character.id != ownerCharacterId) {
-        continue;
-      }
-      final EquipmentInstance? current = character.equipment.itemForSlot(
-        equipment.slot,
-      );
-      if (current != null) {
-        return (characters: nextCharacters, equipped: false);
-      }
-      nextCharacters[index] = character.copyWith(
-        equipment: character.equipment.equip(equipment),
-      );
-      return (characters: nextCharacters, equipped: true);
-    }
-    return (characters: nextCharacters, equipped: false);
   }
 }
