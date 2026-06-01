@@ -3,8 +3,8 @@ import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalo
 import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalog_tables.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/town_catalog_asset_loader.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/town_catalog_data.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_asset_loader.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_data.dart';
+import 'package:alchemist_hunter/app/catalog/workshop_catalog_asset_loader.dart';
+import 'package:alchemist_hunter/app/catalog/workshop_catalog_data.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 

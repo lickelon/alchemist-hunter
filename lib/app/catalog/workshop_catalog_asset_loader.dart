@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:alchemist_hunter/app/catalog/workshop_catalog_data.dart';
 import 'package:alchemist_hunter/core/catalog/json_catalog_helpers.dart' as j;
-import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_data.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:flutter/services.dart';
 

@@ -1,8 +1,8 @@
+import 'package:alchemist_hunter/app/catalog/workshop_catalog_data.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/workshop_craft_recipe_repository.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_data.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_material_catalog_repository.dart';
@@ -15,44 +15,53 @@ import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositorie
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final Provider<MaterialCatalogRepository> materialCatalogRepositoryProvider =
-    Provider<MaterialCatalogRepository>(
-      (Ref ref) => StaticMaterialCatalogRepository(
-        catalog: ref.watch(workshopCatalogAssetsProvider),
-      ),
-    );
+    Provider<MaterialCatalogRepository>((Ref ref) {
+      final WorkshopCatalogAssets catalog = ref.watch(
+        workshopCatalogAssetsProvider,
+      );
+      return StaticMaterialCatalogRepository(
+        materials: catalog.materials,
+        traits: catalog.traits,
+      );
+    });
 
 final Provider<PotionCatalogRepository> potionCatalogRepositoryProvider =
-    Provider<PotionCatalogRepository>(
-      (Ref ref) => StaticPotionCatalogRepository(
-        catalog: ref.watch(workshopCatalogAssetsProvider),
-      ),
-    );
+    Provider<PotionCatalogRepository>((Ref ref) {
+      final WorkshopCatalogAssets catalog = ref.watch(
+        workshopCatalogAssetsProvider,
+      );
+      return StaticPotionCatalogRepository(
+        potions: catalog.potions,
+        recipeRules: catalog.potionRecipeRules,
+        qualityRule: catalog.potionQualityRule,
+      );
+    });
 
 final Provider<WorkshopCraftRecipeRepository>
 workshopCraftRecipeRepositoryProvider = Provider<WorkshopCraftRecipeRepository>(
   (Ref ref) => StaticWorkshopCraftRecipeRepository(
-    catalog: ref.watch(workshopCatalogAssetsProvider),
+    recipes: ref.watch(workshopCatalogAssetsProvider).craftRecipes,
   ),
 );
 
 final Provider<ExtractionProfileRepository>
 extractionProfileRepositoryProvider = Provider<ExtractionProfileRepository>(
   (Ref ref) => StaticExtractionProfileRepository(
-    catalog: ref.watch(workshopCatalogAssetsProvider),
+    profiles: ref.watch(workshopCatalogAssetsProvider).extractionProfiles,
   ),
 );
 
 final Provider<WorkshopSkillTreeRepository>
 workshopSkillTreeRepositoryProvider = Provider<WorkshopSkillTreeRepository>(
   (Ref ref) => StaticWorkshopSkillTreeRepository(
-    catalog: ref.watch(workshopCatalogAssetsProvider),
+    nodes: ref.watch(workshopCatalogAssetsProvider).skillNodes,
   ),
 );
 
 final Provider<HomunculusHatchRepository> homunculusHatchRepositoryProvider =
     Provider<HomunculusHatchRepository>(
       (Ref ref) => StaticHomunculusHatchRepository(
-        catalog: ref.watch(workshopCatalogAssetsProvider),
+        recipes: ref.watch(workshopCatalogAssetsProvider).hatchRecipes,
       ),
     );
 
