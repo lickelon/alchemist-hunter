@@ -29,59 +29,87 @@ class WorkshopCatalogAssets {
 }
 
 class WorkshopCatalogAssetLoader {
-  const WorkshopCatalogAssetLoader({
-    this.assetPath = 'assets/data/workshop_catalog.json',
-  });
+  const WorkshopCatalogAssetLoader({this.assetRoot = 'assets/data/workshop'});
 
-  final String assetPath;
+  final String assetRoot;
 
   Future<WorkshopCatalogAssets> load(AssetBundle bundle) async {
-    final String source = await bundle.loadString(assetPath);
-    final Object? decoded = jsonDecode(source);
-    if (decoded is! Map<String, Object?>) {
-      throw const FormatException('Workshop catalog root must be an object');
-    }
-    final List<TraitUnit> traits = j
-        .readObjectList(decoded, 'traits')
-        .map(_readTrait)
-        .toList(growable: false);
+    final List<TraitUnit> traits = (await _readObjectList(
+      bundle,
+      'traits.json',
+    )).map(_readTrait).toList(growable: false);
     final Map<String, TraitUnit> traitsById = <String, TraitUnit>{
       for (final TraitUnit trait in traits) trait.id: trait,
     };
     return WorkshopCatalogAssets(
       traits: traits,
-      materials: j
-          .readObjectList(decoded, 'materials')
+      materials: (await _readObjectList(bundle, 'materials.json'))
           .map((Map<String, Object?> json) => _readMaterial(json, traitsById))
           .toList(growable: false),
-      extractionProfiles: j
-          .readObjectList(decoded, 'extractionProfiles')
-          .map(_readExtractionProfile)
-          .toList(growable: false),
-      potions: j
-          .readObjectList(decoded, 'potions')
-          .map(_readPotion)
-          .toList(growable: false),
-      potionRecipeRules: j
-          .readObjectList(decoded, 'potionRecipeRules')
-          .map(_readPotionRecipeRule)
-          .toList(growable: false),
+      extractionProfiles: (await _readObjectList(
+        bundle,
+        'extraction_profiles.json',
+      )).map(_readExtractionProfile).toList(growable: false),
+      potions: (await _readObjectList(
+        bundle,
+        'potions.json',
+      )).map(_readPotion).toList(growable: false),
+      potionRecipeRules: (await _readObjectList(
+        bundle,
+        'potion_recipes.json',
+      )).map(_readPotionRecipeRule).toList(growable: false),
       potionQualityRule: _readPotionQualityRule(
-        j.readObject(decoded, 'potionQualityRule'),
+        await _readObject(bundle, 'potion_quality.json'),
       ),
-      craftRecipes: j
-          .readObjectList(decoded, 'craftRecipes')
-          .map(_readCraftRecipe)
-          .toList(growable: false),
-      hatchRecipes: j
-          .readObjectList(decoded, 'hatchRecipes')
-          .map(_readHatchRecipe)
-          .toList(growable: false),
-      skillNodes: j
-          .readObjectList(decoded, 'skillNodes')
-          .map(_readWorkshopSkillNode)
-          .toList(growable: false),
+      craftRecipes: (await _readObjectList(
+        bundle,
+        'craft_recipes.json',
+      )).map(_readCraftRecipe).toList(growable: false),
+      hatchRecipes: (await _readObjectList(
+        bundle,
+        'hatch_recipes.json',
+      )).map(_readHatchRecipe).toList(growable: false),
+      skillNodes: (await _readObjectList(
+        bundle,
+        'skill_tree.json',
+      )).map(_readWorkshopSkillNode).toList(growable: false),
     );
+  }
+
+  Future<Map<String, Object?>> _readObject(
+    AssetBundle bundle,
+    String fileName,
+  ) async {
+    final Object? decoded = await _readJson(bundle, fileName);
+    if (decoded is Map<String, Object?>) {
+      return decoded;
+    }
+    throw FormatException('Workshop catalog $fileName must be an object');
+  }
+
+  Future<List<Map<String, Object?>>> _readObjectList(
+    AssetBundle bundle,
+    String fileName,
+  ) async {
+    final Object? decoded = await _readJson(bundle, fileName);
+    if (decoded is List<Object?>) {
+      return decoded
+          .map((Object? entry) {
+            if (entry is Map<String, Object?>) {
+              return entry;
+            }
+            throw FormatException(
+              'Workshop catalog $fileName entry must be object',
+            );
+          })
+          .toList(growable: false);
+    }
+    throw FormatException('Workshop catalog $fileName must be a list');
+  }
+
+  Future<Object?> _readJson(AssetBundle bundle, String fileName) async {
+    final String source = await bundle.loadString('$assetRoot/$fileName');
+    return jsonDecode(source);
   }
 
   TraitUnit _readTrait(Map<String, Object?> json) {

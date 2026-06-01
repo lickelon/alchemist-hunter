@@ -1,0 +1,363 @@
+[
+  {
+    "id": "stage_1",
+    "name": "폐허 입구",
+    "recommendedPower": 210,
+    "searchDurationSeconds": 7,
+    "recoveryDurationSeconds": 10,
+    "encounters": [
+      {
+        "id": "stage_1_patrol",
+        "enemySetId": "enemy_set_stage_1_patrol",
+        "chance": 0.16
+      },
+      {
+        "id": "stage_1_haunt",
+        "enemySetId": "enemy_set_stage_1_haunt",
+        "chance": 0.13
+      },
+      {
+        "id": "stage_1_swarm",
+        "enemySetId": "enemy_set_stage_1_swarm",
+        "chance": 0.11
+      },
+      {
+        "id": "stage_1_resin",
+        "enemySetId": "enemy_set_stage_1_resin",
+        "chance": 0.11
+      },
+      {
+        "id": "stage_1_mix_5",
+        "enemySetId": "enemy_set_stage_1_mix_5",
+        "chance": 0.1
+      },
+      {
+        "id": "stage_1_mix_6",
+        "enemySetId": "enemy_set_stage_1_mix_6",
+        "chance": 0.09
+      },
+      {
+        "id": "stage_1_mix_7",
+        "enemySetId": "enemy_set_stage_1_mix_7",
+        "chance": 0.09
+      },
+      {
+        "id": "stage_1_mix_8",
+        "enemySetId": "enemy_set_stage_1_mix_8",
+        "chance": 0.08
+      },
+      {
+        "id": "stage_1_mix_9",
+        "enemySetId": "enemy_set_stage_1_mix_9",
+        "chance": 0.07
+      },
+      {
+        "id": "stage_1_mix_10",
+        "enemySetId": "enemy_set_stage_1_mix_10",
+        "chance": 0.06
+      }
+    ],
+    "goldSuccess": 24,
+    "goldFailurePenalty": 0,
+    "essenceSuccess": 4,
+    "essenceFailure": 0,
+    "xpSuccessBase": 16,
+    "xpFailureBase": 0,
+    "clearUnlockFlags": [
+      "stage_2"
+    ]
+  },
+  {
+    "id": "stage_2",
+    "name": "먼지 회랑",
+    "recommendedPower": 300,
+    "searchDurationSeconds": 9,
+    "recoveryDurationSeconds": 12,
+    "encounters": [
+      {
+        "id": "stage_2_crossfire",
+        "enemySetId": "enemy_set_stage_2_crossfire",
+        "chance": 0.16
+      },
+      {
+        "id": "stage_2_ambush",
+        "enemySetId": "enemy_set_stage_2_ambush",
+        "chance": 0.14
+      },
+      {
+        "id": "stage_2_assault",
+        "enemySetId": "enemy_set_stage_2_assault",
+        "chance": 0.13
+      },
+      {
+        "id": "stage_2_salvage",
+        "enemySetId": "enemy_set_stage_2_salvage",
+        "chance": 0.12
+      },
+      {
+        "id": "stage_2_mix_5",
+        "enemySetId": "enemy_set_stage_2_mix_5",
+        "chance": 0.1
+      },
+      {
+        "id": "stage_2_mix_6",
+        "enemySetId": "enemy_set_stage_2_mix_6",
+        "chance": 0.09
+      },
+      {
+        "id": "stage_2_mix_7",
+        "enemySetId": "enemy_set_stage_2_mix_7",
+        "chance": 0.09
+      },
+      {
+        "id": "stage_2_mix_8",
+        "enemySetId": "enemy_set_stage_2_mix_8",
+        "chance": 0.07
+      },
+      {
+        "id": "stage_2_mix_9",
+        "enemySetId": "enemy_set_stage_2_mix_9",
+        "chance": 0.06
+      },
+      {
+        "id": "stage_2_mix_10",
+        "enemySetId": "enemy_set_stage_2_mix_10",
+        "chance": 0.04
+      }
+    ],
+    "goldSuccess": 42,
+    "goldFailurePenalty": 0,
+    "essenceSuccess": 6,
+    "essenceFailure": 0,
+    "xpSuccessBase": 24,
+    "xpFailureBase": 0,
+    "unlockCondition": {
+      "requiredStageId": "stage_1",
+      "requiredWinStreakCount": 3,
+      "label": "잠금 조건: 폐허 입구에서 실패 없이 3회 연속 승리"
+    },
+    "clearUnlockFlags": [
+      "stage_3"
+    ]
+  },
+  {
+    "id": "stage_3",
+    "name": "재의 공방",
+    "recommendedPower": 390,
+    "searchDurationSeconds": 11,
+    "recoveryDurationSeconds": 14,
+    "encounters": [
+      {
+        "id": "stage_3_furnace",
+        "enemySetId": "enemy_set_stage_3_furnace",
+        "chance": 0.15
+      },
+      {
+        "id": "stage_3_relay",
+        "enemySetId": "enemy_set_stage_3_relay",
+        "chance": 0.14
+      },
+      {
+        "id": "stage_3_overheat",
+        "enemySetId": "enemy_set_stage_3_overheat",
+        "chance": 0.13
+      },
+      {
+        "id": "stage_3_engraving",
+        "enemySetId": "enemy_set_stage_3_engraving",
+        "chance": 0.12
+      },
+      {
+        "id": "stage_3_mix_5",
+        "enemySetId": "enemy_set_stage_3_mix_5",
+        "chance": 0.1
+      },
+      {
+        "id": "stage_3_mix_6",
+        "enemySetId": "enemy_set_stage_3_mix_6",
+        "chance": 0.09
+      },
+      {
+        "id": "stage_3_mix_7",
+        "enemySetId": "enemy_set_stage_3_mix_7",
+        "chance": 0.09
+      },
+      {
+        "id": "stage_3_mix_8",
+        "enemySetId": "enemy_set_stage_3_mix_8",
+        "chance": 0.07
+      },
+      {
+        "id": "stage_3_mix_9",
+        "enemySetId": "enemy_set_stage_3_mix_9",
+        "chance": 0.06
+      },
+      {
+        "id": "stage_3_mix_10",
+        "enemySetId": "enemy_set_stage_3_mix_10",
+        "chance": 0.05
+      }
+    ],
+    "goldSuccess": 60,
+    "goldFailurePenalty": 0,
+    "essenceSuccess": 9,
+    "essenceFailure": 0,
+    "xpSuccessBase": 34,
+    "xpFailureBase": 0,
+    "unlockCondition": {
+      "requiredStageId": "stage_2",
+      "requiredWinStreakCount": 3,
+      "label": "잠금 조건: 먼지 회랑에서 실패 없이 3회 연속 승리"
+    },
+    "clearUnlockFlags": [
+      "stage_4",
+      "potion_special_1"
+    ]
+  },
+  {
+    "id": "stage_4",
+    "name": "폭풍 전시실",
+    "recommendedPower": 490,
+    "searchDurationSeconds": 14,
+    "recoveryDurationSeconds": 16,
+    "encounters": [
+      {
+        "id": "stage_4_lattice",
+        "enemySetId": "enemy_set_stage_4_lattice",
+        "chance": 0.15
+      },
+      {
+        "id": "stage_4_volley",
+        "enemySetId": "enemy_set_stage_4_volley",
+        "chance": 0.14
+      },
+      {
+        "id": "stage_4_hunt",
+        "enemySetId": "enemy_set_stage_4_hunt",
+        "chance": 0.13
+      },
+      {
+        "id": "stage_4_conduit",
+        "enemySetId": "enemy_set_stage_4_conduit",
+        "chance": 0.12
+      },
+      {
+        "id": "stage_4_mix_5",
+        "enemySetId": "enemy_set_stage_4_mix_5",
+        "chance": 0.1
+      },
+      {
+        "id": "stage_4_mix_6",
+        "enemySetId": "enemy_set_stage_4_mix_6",
+        "chance": 0.09
+      },
+      {
+        "id": "stage_4_mix_7",
+        "enemySetId": "enemy_set_stage_4_mix_7",
+        "chance": 0.09
+      },
+      {
+        "id": "stage_4_mix_8",
+        "enemySetId": "enemy_set_stage_4_mix_8",
+        "chance": 0.07
+      },
+      {
+        "id": "stage_4_mix_9",
+        "enemySetId": "enemy_set_stage_4_mix_9",
+        "chance": 0.06
+      },
+      {
+        "id": "stage_4_mix_10",
+        "enemySetId": "enemy_set_stage_4_mix_10",
+        "chance": 0.05
+      }
+    ],
+    "goldSuccess": 86,
+    "goldFailurePenalty": 0,
+    "essenceSuccess": 13,
+    "essenceFailure": 0,
+    "xpSuccessBase": 46,
+    "xpFailureBase": 0,
+    "unlockCondition": {
+      "requiredStageId": "stage_3",
+      "requiredWinStreakCount": 3,
+      "label": "잠금 조건: 재의 공방에서 실패 없이 3회 연속 승리"
+    },
+    "clearUnlockFlags": [
+      "stage_5"
+    ]
+  },
+  {
+    "id": "stage_5",
+    "name": "문물의 핵",
+    "recommendedPower": 580,
+    "searchDurationSeconds": 15,
+    "recoveryDurationSeconds": 18,
+    "encounters": [
+      {
+        "id": "stage_5_guarded",
+        "enemySetId": "enemy_set_stage_5_guarded",
+        "chance": 0.22
+      },
+      {
+        "id": "stage_5_signal",
+        "enemySetId": "enemy_set_stage_5_signal",
+        "chance": 0.17
+      },
+      {
+        "id": "stage_5_awakened",
+        "enemySetId": "enemy_set_stage_5_awakened",
+        "chance": 0.12
+      },
+      {
+        "id": "stage_5_core_line",
+        "enemySetId": "enemy_set_stage_5_core_line",
+        "chance": 0.1
+      },
+      {
+        "id": "stage_5_mix_5",
+        "enemySetId": "enemy_set_stage_5_mix_5",
+        "chance": 0.09
+      },
+      {
+        "id": "stage_5_mix_6",
+        "enemySetId": "enemy_set_stage_5_mix_6",
+        "chance": 0.08
+      },
+      {
+        "id": "stage_5_mix_7",
+        "enemySetId": "enemy_set_stage_5_mix_7",
+        "chance": 0.07
+      },
+      {
+        "id": "stage_5_mix_8",
+        "enemySetId": "enemy_set_stage_5_mix_8",
+        "chance": 0.06
+      },
+      {
+        "id": "stage_5_mix_9",
+        "enemySetId": "enemy_set_stage_5_mix_9",
+        "chance": 0.05
+      },
+      {
+        "id": "stage_5_mix_10",
+        "enemySetId": "enemy_set_stage_5_mix_10",
+        "chance": 0.04
+      }
+    ],
+    "goldSuccess": 112,
+    "goldFailurePenalty": 0,
+    "essenceSuccess": 18,
+    "essenceFailure": 0,
+    "xpSuccessBase": 58,
+    "xpFailureBase": 0,
+    "unlockCondition": {
+      "requiredStageId": "stage_4",
+      "requiredWinStreakCount": 3,
+      "label": "잠금 조건: 폭풍 전시실에서 실패 없이 3회 연속 승리"
+    },
+    "clearUnlockFlags": [
+      "potion_special_2"
+    ]
+  }
+]

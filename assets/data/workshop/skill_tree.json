@@ -1,0 +1,135 @@
+[
+  {
+    "id": "workshop_alembic",
+    "name": "Alembic Array",
+    "description": "추출 설비를 정돈해 수율을 안정적으로 끌어올린다.",
+    "maxLevel": 2,
+    "costsByLevel": [
+      {
+        "costs": [
+          {
+            "type": "arcaneDust",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "costs": [
+          {
+            "type": "arcaneDust",
+            "amount": 2
+          },
+          {
+            "type": "element",
+            "amount": 1,
+            "elementId": "t_hp"
+          }
+        ]
+      }
+    ],
+    "prerequisiteNodeIds": [],
+    "requirements": [],
+    "effects": [
+      {
+        "type": "extractionYield",
+        "modifierType": "percent",
+        "value": 0.08,
+        "label": "추출 수율 +8%"
+      }
+    ]
+  },
+  {
+    "id": "workshop_queue_matrix",
+    "name": "Queue Matrix",
+    "description": "제작 흐름을 정리해 연속 작업을 더 부드럽게 만든다.",
+    "maxLevel": 2,
+    "costsByLevel": [
+      {
+        "costs": [
+          {
+            "type": "arcaneDust",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "costs": [
+          {
+            "type": "arcaneDust",
+            "amount": 3
+          },
+          {
+            "type": "element",
+            "amount": 1,
+            "elementId": "t_atk"
+          }
+        ]
+      }
+    ],
+    "prerequisiteNodeIds": [
+      "workshop_alembic"
+    ],
+    "requirements": [
+      {
+        "type": "potionCraftCount",
+        "threshold": 5,
+        "label": "포션 제작 5회"
+      }
+    ],
+    "effects": [
+      {
+        "type": "craftQueueCapacity",
+        "modifierType": "flat",
+        "value": 1.0,
+        "label": "제작 큐 용량 +1"
+      }
+    ]
+  },
+  {
+    "id": "workshop_sigil_press",
+    "name": "Sigil Press",
+    "description": "인챈트 각인을 정밀하게 눌러 강화량을 높인다.",
+    "maxLevel": 2,
+    "costsByLevel": [
+      {
+        "costs": [
+          {
+            "type": "arcaneDust",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "costs": [
+          {
+            "type": "arcaneDust",
+            "amount": 4
+          },
+          {
+            "type": "element",
+            "amount": 1,
+            "elementId": "t_def"
+          }
+        ]
+      }
+    ],
+    "prerequisiteNodeIds": [
+      "workshop_alembic"
+    ],
+    "requirements": [
+      {
+        "type": "enchantCount",
+        "threshold": 3,
+        "label": "인챈트 3회"
+      }
+    ],
+    "effects": [
+      {
+        "type": "enchantPotency",
+        "modifierType": "percent",
+        "value": 0.12,
+        "label": "인챈트 강화량 +12%"
+      }
+    ]
+  }
+]

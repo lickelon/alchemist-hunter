@@ -71,34 +71,71 @@ class ShopDefinitionData {
 }
 
 class TownCatalogAssetLoader {
-  const TownCatalogAssetLoader({
-    this.assetPath = 'assets/data/town_catalog.json',
-  });
+  const TownCatalogAssetLoader({this.assetRoot = 'assets/data/town'});
 
-  final String assetPath;
+  final String assetRoot;
 
   Future<TownCatalogAssets> load(AssetBundle bundle) async {
-    final String source = await bundle.loadString(assetPath);
-    final Object? decoded = jsonDecode(source);
-    if (decoded is! Map<String, Object?>) {
-      throw const FormatException('Town catalog root must be an object');
-    }
+    final Map<String, Object?> shops = await _readObject(bundle, 'shops.json');
+    final Map<String, Object?> equipment = await _readObject(
+      bundle,
+      'equipment.json',
+    );
     return TownCatalogAssets(
-      shopCatalog: _readShopCatalog(j.readObject(decoded, 'shops')),
+      shopCatalog: _readShopCatalog(shops),
       equipmentBlueprints: j
-          .readObjectList(decoded, 'equipmentBlueprints')
+          .readObjectList(equipment, 'equipmentBlueprints')
           .map(_readEquipmentBlueprint)
           .toList(growable: false),
-      equipmentMaterialNames: _readStringMap(decoded, 'equipmentMaterialNames'),
-      mercenaryTemplates: j
-          .readObjectList(decoded, 'mercenaryTemplates')
-          .map(_readMercenaryTemplate)
-          .toList(growable: false),
-      skillNodes: j
-          .readObjectList(decoded, 'skillNodes')
-          .map(_readTownSkillNode)
-          .toList(growable: false),
+      equipmentMaterialNames: _readStringMap(
+        equipment,
+        'equipmentMaterialNames',
+      ),
+      mercenaryTemplates: (await _readObjectList(
+        bundle,
+        'mercenaries.json',
+      )).map(_readMercenaryTemplate).toList(growable: false),
+      skillNodes: (await _readObjectList(
+        bundle,
+        'skill_tree.json',
+      )).map(_readTownSkillNode).toList(growable: false),
     );
+  }
+
+  Future<Map<String, Object?>> _readObject(
+    AssetBundle bundle,
+    String fileName,
+  ) async {
+    final Object? decoded = await _readJson(bundle, fileName);
+    if (decoded is Map<String, Object?>) {
+      return decoded;
+    }
+    throw FormatException('Town catalog $fileName must be an object');
+  }
+
+  Future<List<Map<String, Object?>>> _readObjectList(
+    AssetBundle bundle,
+    String fileName,
+  ) async {
+    final Object? decoded = await _readJson(bundle, fileName);
+    if (decoded is List<Object?>) {
+      return decoded
+          .map((Object? entry) {
+            if (entry is Map<String, Object?>) {
+              return entry;
+            }
+            throw FormatException(
+              'Town catalog $fileName entry must be object',
+            );
+          })
+          .toList(growable: false);
+    }
+    throw FormatException('Town catalog $fileName must be a list');
+  }
+
+  Future<Object?> _readJson(AssetBundle bundle, String fileName) async {
+    final String source = await bundle.loadString('$assetRoot/$fileName');
+    return jsonDecode(source);
   }
 
   ShopCatalogData _readShopCatalog(Map<String, Object?> json) {

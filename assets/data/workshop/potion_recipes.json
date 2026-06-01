@@ -1,0 +1,34 @@
+[
+  {
+    "id": "r_hp_atk",
+    "mainTraitId": "t_hp",
+    "subTraitId": "t_atk",
+    "mainPercent": 60,
+    "subPercent": 40,
+    "resultPotionId": "p_1"
+  },
+  {
+    "id": "r_atk_hp",
+    "mainTraitId": "t_atk",
+    "subTraitId": "t_hp",
+    "mainPercent": 60,
+    "subPercent": 40,
+    "resultPotionId": "p_2"
+  },
+  {
+    "id": "r_crit_focus",
+    "mainTraitId": "t_crit",
+    "subTraitId": "t_focus",
+    "mainPercent": 55,
+    "subPercent": 45,
+    "resultPotionId": "p_3"
+  },
+  {
+    "id": "r_def_spd",
+    "mainTraitId": "t_def",
+    "subTraitId": "t_spd",
+    "mainPercent": 65,
+    "subPercent": 35,
+    "resultPotionId": "p_4"
+  }
+]

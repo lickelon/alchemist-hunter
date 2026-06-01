@@ -57,6 +57,9 @@ dev_dependencies:
 flutter:
   assets:
     - assets/data/
+    - assets/data/battle/
+    - assets/data/town/
+    - assets/data/workshop/
     - assets/icons/materials/
     - assets/icons/equipment/
     - assets/icons/elements/

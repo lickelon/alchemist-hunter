@@ -5,75 +5,85 @@ import 'package:alchemist_hunter/features/battle/data/catalogs/battle_tables.dar
 import 'package:flutter/services.dart';
 
 class BattleCatalogAssetLoader {
-  const BattleCatalogAssetLoader({
-    this.assetPath = 'assets/data/battle_catalog.json',
-  });
+  const BattleCatalogAssetLoader({this.assetRoot = 'assets/data/battle'});
 
-  final String assetPath;
+  final String assetRoot;
 
   Future<BattleCatalogTables> load(AssetBundle bundle) async {
-    final String source = await bundle.loadString(assetPath);
-    final Object? decoded = jsonDecode(source);
-    if (decoded is! Map<String, Object?>) {
-      throw const FormatException('Battle catalog root must be an object');
-    }
     return BattleCatalogTables.fromDtos(
       enemyDtos: _readDtoMap(
-        decoded,
-        'enemies',
+        await _readObjectList(bundle, 'enemies.json'),
+        'enemies.json',
         BattleEnemyDefinitionDto.fromJson,
       ),
       enemySetDtos: _readDtoMap(
-        decoded,
-        'enemySets',
+        await _readObjectList(bundle, 'enemy_sets.json'),
+        'enemy_sets.json',
         BattleEnemySetDefinitionDto.fromJson,
       ),
       stageDtos: _readDtoMap(
-        decoded,
-        'stages',
+        await _readObjectList(bundle, 'stages.json'),
+        'stages.json',
         BattleStageDefinitionDto.fromJson,
       ),
-      stageCatalog: _readStringList(decoded, 'stageCatalog'),
+      stageCatalog: await _readStringList(bundle, 'stage_catalog.json'),
     );
   }
 
   Map<String, T> _readDtoMap<T>(
-    Map<String, Object?> json,
-    String key,
+    List<Map<String, Object?>> entries,
+    String label,
     T Function(Map<String, Object?> json) convert,
   ) {
-    final Object? value = json[key];
-    if (value is! List<Object?>) {
-      throw FormatException('Battle catalog $key must be a list');
-    }
     return <String, T>{
-      for (final Map<String, Object?> entry in value.map(
-        (Object? entry) => _readObjectEntry(key, entry),
-      ))
+      for (final Map<String, Object?> entry in entries)
         _readId(entry): convert(entry),
     };
   }
 
-  Map<String, Object?> _readObjectEntry(String key, Object? entry) {
-    if (entry is Map<String, Object?>) {
-      return entry;
+  Future<List<Map<String, Object?>>> _readObjectList(
+    AssetBundle bundle,
+    String fileName,
+  ) async {
+    final Object? decoded = await _readJson(bundle, fileName);
+    if (decoded is List<Object?>) {
+      return decoded
+          .map((Object? entry) {
+            if (entry is Map<String, Object?>) {
+              return entry;
+            }
+            throw FormatException(
+              'Battle catalog $fileName entry must be object',
+            );
+          })
+          .toList(growable: false);
     }
-    throw FormatException('Battle catalog $key entry must be an object');
+    throw FormatException('Battle catalog $fileName must be a list');
   }
 
-  List<String> _readStringList(Map<String, Object?> json, String key) {
-    final Object? value = json[key];
-    if (value is! List<Object?>) {
-      throw FormatException('Battle catalog $key must be a list');
+  Future<List<String>> _readStringList(
+    AssetBundle bundle,
+    String fileName,
+  ) async {
+    final Object? decoded = await _readJson(bundle, fileName);
+    if (decoded is List<Object?>) {
+      return decoded
+          .map((Object? entry) {
+            if (entry is String) {
+              return entry;
+            }
+            throw FormatException(
+              'Battle catalog $fileName entry must be a string',
+            );
+          })
+          .toList(growable: false);
     }
-    return value
-        .map((Object? entry) {
-          if (entry is String) {
-            return entry;
-          }
-          throw FormatException('Battle catalog $key entry must be a string');
-        })
-        .toList(growable: false);
+    throw FormatException('Battle catalog $fileName must be a list');
+  }
+
+  Future<Object?> _readJson(AssetBundle bundle, String fileName) async {
+    final String source = await bundle.loadString('$assetRoot/$fileName');
+    return jsonDecode(source);
   }
 
   String _readId(Map<String, Object?> json) {

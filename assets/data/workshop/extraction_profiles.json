@@ -1,0 +1,16 @@
+[
+  {
+    "id": "full_basic",
+    "mode": "full",
+    "yieldRate": 0.85,
+    "purityRate": 0.75,
+    "timeCostSeconds": 20
+  },
+  {
+    "id": "sel_precise",
+    "mode": "selective",
+    "yieldRate": 0.65,
+    "purityRate": 0.92,
+    "timeCostSeconds": 30
+  }
+]

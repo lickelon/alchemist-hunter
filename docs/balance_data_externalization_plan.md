@@ -43,7 +43,7 @@
 ## 4. 외부화 우선순위
 
 ### 1차: Battle stage / enemy / encounter
-완료됐다. `assets/data/battle_catalog.json`에서 로딩한다.
+완료됐다. `assets/data/battle/` 아래 stage / enemy set / enemy 파일로 나눠 로딩한다.
 
 이유는 다음과 같다.
 
@@ -63,7 +63,7 @@
 - encounter 조합과 확률
 
 ### 2차: Town / Workshop 경제 테이블
-완료됐다. Town은 `assets/data/town_catalog.json`, Workshop은 `assets/data/workshop_catalog.json`에서 로딩한다.
+완료됐다. Town은 `assets/data/town/`, Workshop은 `assets/data/workshop/` 아래 도메인별 파일로 나눠 로딩한다.
 
 포함 범위는 다음과 같다.
 
@@ -88,7 +88,7 @@
 - 최대 레벨
 
 ### 4차: 캐릭터 / 용병 템플릿
-용병 템플릿은 완료됐다. `assets/data/town_catalog.json`에 포함한다.
+용병 템플릿은 완료됐다. `assets/data/town/mercenaries.json`에 둔다.
 
 캐릭터 성장 테이블은 아직 코드에 남긴다. 저장 데이터에 직접 남는 개체이므로, 템플릿 변경이 기존 캐릭터에 미치는 영향을 먼저 정의해야 한다.
 
@@ -134,10 +134,10 @@
 - enemy가 유효한 stat과 drop을 가짐
 
 ## 8. 현재 결론
-Battle stage / enemy / encounter 카탈로그는 `assets/data/battle_catalog.json` 로컬 asset에서 읽고, `data/catalogs`의 DTO 파서를 거쳐 도메인 모델로 변환한다.
+Battle stage / enemy / encounter 카탈로그는 `assets/data/battle/` 로컬 asset에서 읽고, `data/catalogs`의 DTO 파서를 거쳐 도메인 모델로 변환한다.
 
-Town 카탈로그는 `assets/data/town_catalog.json` 로컬 asset에서 읽는다. 포함 범위는 상점 가격 / 수량 / 갱신 시간, 장비 제작, 용병 템플릿, Town 스킬트리다.
+Town 카탈로그는 `assets/data/town/` 로컬 asset에서 읽는다. 포함 범위는 상점 가격 / 수량 / 갱신 시간, 장비 제작, 용병 템플릿, Town 스킬트리다.
 
-Workshop 카탈로그는 `assets/data/workshop_catalog.json` 로컬 asset에서 읽는다. 포함 범위는 재료 / 원소, 추출 프로필, 포션 양조 레시피, 원소 + 재료 제작 레시피, 부화 레시피, Workshop 스킬트리다.
+Workshop 카탈로그는 `assets/data/workshop/` 로컬 asset에서 읽는다. 포함 범위는 재료 / 원소, 추출 프로필, 포션 양조 레시피, 원소 + 재료 제작 레시피, 부화 레시피, Workshop 스킬트리다.
 
 기존 Dart catalog 상수는 테스트와 fallback 용도로 남겨두며, 앱 런타임의 기준 데이터는 로컬 JSON asset이다.

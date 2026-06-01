@@ -1,0 +1,443 @@
+[
+  {
+    "id": "enemy_set_stage_1_patrol",
+    "name": "Ruins Patrol",
+    "enemyIds": [
+      "enemy_scavenger",
+      "enemy_mite"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_1_haunt",
+    "name": "Crystal Haunt",
+    "enemyIds": [
+      "enemy_scavenger",
+      "enemy_wisp"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_1_swarm",
+    "name": "Mite Swarm",
+    "enemyIds": [
+      "enemy_mite",
+      "enemy_wisp"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_1_resin",
+    "name": "Resin Patch",
+    "enemyIds": [
+      "enemy_rust_slug",
+      "enemy_glowcap",
+      "enemy_scavenger"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_1_mix_5",
+    "name": "Stage 1 Set 5",
+    "enemyIds": [
+      "enemy_scavenger",
+      "enemy_rust_slug",
+      "enemy_wisp"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_1_mix_6",
+    "name": "Stage 1 Set 6",
+    "enemyIds": [
+      "enemy_mite",
+      "enemy_glowcap",
+      "enemy_wisp"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_1_mix_7",
+    "name": "Stage 1 Set 7",
+    "enemyIds": [
+      "enemy_rust_slug",
+      "enemy_mite",
+      "enemy_glowcap"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_1_mix_8",
+    "name": "Stage 1 Set 8",
+    "enemyIds": [
+      "enemy_scavenger",
+      "enemy_glowcap"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_1_mix_9",
+    "name": "Stage 1 Set 9",
+    "enemyIds": [
+      "enemy_rust_slug",
+      "enemy_wisp"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_1_mix_10",
+    "name": "Stage 1 Set 10",
+    "enemyIds": [
+      "enemy_scavenger",
+      "enemy_mite",
+      "enemy_glowcap"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_2_crossfire",
+    "name": "Crossfire Line",
+    "enemyIds": [
+      "enemy_scout",
+      "enemy_stalker",
+      "enemy_bruiser"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_2_ambush",
+    "name": "Ambush Knot",
+    "enemyIds": [
+      "enemy_scout",
+      "enemy_stalker",
+      "enemy_raider"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_2_assault",
+    "name": "Assault Wedge",
+    "enemyIds": [
+      "enemy_scout",
+      "enemy_bruiser",
+      "enemy_raider"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_2_salvage",
+    "name": "Salvage Guard",
+    "enemyIds": [
+      "enemy_glassback",
+      "enemy_dust_mender",
+      "enemy_raider"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_2_mix_5",
+    "name": "Stage 2 Set 5",
+    "enemyIds": [
+      "enemy_stalker",
+      "enemy_glassback",
+      "enemy_scout"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_2_mix_6",
+    "name": "Stage 2 Set 6",
+    "enemyIds": [
+      "enemy_bruiser",
+      "enemy_dust_mender",
+      "enemy_scout"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_2_mix_7",
+    "name": "Stage 2 Set 7",
+    "enemyIds": [
+      "enemy_glassback",
+      "enemy_stalker",
+      "enemy_dust_mender"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_2_mix_8",
+    "name": "Stage 2 Set 8",
+    "enemyIds": [
+      "enemy_raider",
+      "enemy_stalker",
+      "enemy_dust_mender"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_2_mix_9",
+    "name": "Stage 2 Set 9",
+    "enemyIds": [
+      "enemy_bruiser",
+      "enemy_glassback",
+      "enemy_raider"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_2_mix_10",
+    "name": "Stage 2 Set 10",
+    "enemyIds": [
+      "enemy_scout",
+      "enemy_glassback",
+      "enemy_dust_mender"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_3_furnace",
+    "name": "Furnace Front",
+    "enemyIds": [
+      "enemy_sentinel",
+      "enemy_crucible",
+      "enemy_apprentice"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_3_relay",
+    "name": "Arcane Relay",
+    "enemyIds": [
+      "enemy_sentinel",
+      "enemy_apprentice",
+      "enemy_distiller"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_3_overheat",
+    "name": "Overheat Wing",
+    "enemyIds": [
+      "enemy_crucible",
+      "enemy_apprentice",
+      "enemy_distiller"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_3_engraving",
+    "name": "Cinder Engraving",
+    "enemyIds": [
+      "enemy_furnace_leech",
+      "enemy_cinder_scribe",
+      "enemy_crucible"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_3_mix_5",
+    "name": "Stage 3 Set 5",
+    "enemyIds": [
+      "enemy_sentinel",
+      "enemy_furnace_leech",
+      "enemy_cinder_scribe"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_3_mix_6",
+    "name": "Stage 3 Set 6",
+    "enemyIds": [
+      "enemy_distiller",
+      "enemy_furnace_leech",
+      "enemy_apprentice"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_3_mix_7",
+    "name": "Stage 3 Set 7",
+    "enemyIds": [
+      "enemy_sentinel",
+      "enemy_cinder_scribe",
+      "enemy_distiller"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_3_mix_8",
+    "name": "Stage 3 Set 8",
+    "enemyIds": [
+      "enemy_crucible",
+      "enemy_furnace_leech",
+      "enemy_distiller"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_3_mix_9",
+    "name": "Stage 3 Set 9",
+    "enemyIds": [
+      "enemy_sentinel",
+      "enemy_cinder_scribe",
+      "enemy_apprentice"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_3_mix_10",
+    "name": "Stage 3 Set 10",
+    "enemyIds": [
+      "enemy_furnace_leech",
+      "enemy_cinder_scribe",
+      "enemy_distiller"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_4_lattice",
+    "name": "Storm Lattice",
+    "enemyIds": [
+      "enemy_sniper",
+      "enemy_weaver",
+      "enemy_tempest"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_4_volley",
+    "name": "Phantom Volley",
+    "enemyIds": [
+      "enemy_sniper",
+      "enemy_weaver",
+      "enemy_mirage"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_4_hunt",
+    "name": "Chain Hunt",
+    "enemyIds": [
+      "enemy_sniper",
+      "enemy_tempest",
+      "enemy_mirage"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_4_conduit",
+    "name": "Storm Conduit",
+    "enemyIds": [
+      "enemy_thunder_moth",
+      "enemy_gale_channeler",
+      "enemy_tempest"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_4_mix_5",
+    "name": "Stage 4 Set 5",
+    "enemyIds": [
+      "enemy_sniper",
+      "enemy_thunder_moth",
+      "enemy_gale_channeler"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_4_mix_6",
+    "name": "Stage 4 Set 6",
+    "enemyIds": [
+      "enemy_weaver",
+      "enemy_thunder_moth",
+      "enemy_mirage"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_4_mix_7",
+    "name": "Stage 4 Set 7",
+    "enemyIds": [
+      "enemy_gale_channeler",
+      "enemy_sniper",
+      "enemy_mirage"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_4_mix_8",
+    "name": "Stage 4 Set 8",
+    "enemyIds": [
+      "enemy_tempest",
+      "enemy_thunder_moth",
+      "enemy_mirage"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_4_mix_9",
+    "name": "Stage 4 Set 9",
+    "enemyIds": [
+      "enemy_weaver",
+      "enemy_gale_channeler",
+      "enemy_sniper"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_4_mix_10",
+    "name": "Stage 4 Set 10",
+    "enemyIds": [
+      "enemy_thunder_moth",
+      "enemy_gale_channeler",
+      "enemy_mirage"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_5_guarded",
+    "name": "Core Keeper",
+    "enemyIds": [
+      "enemy_chimera",
+      "enemy_warden"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_5_signal",
+    "name": "Signal Choir",
+    "enemyIds": [
+      "enemy_chimera",
+      "enemy_herald"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_5_awakened",
+    "name": "Full Awakening",
+    "enemyIds": [
+      "enemy_chimera",
+      "enemy_herald",
+      "enemy_warden"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_5_core_line",
+    "name": "Core Line",
+    "enemyIds": [
+      "enemy_core_siphon",
+      "enemy_moonvault_aegis",
+      "enemy_herald"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_5_mix_5",
+    "name": "Stage 5 Set 5",
+    "enemyIds": [
+      "enemy_chimera",
+      "enemy_core_siphon"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_5_mix_6",
+    "name": "Stage 5 Set 6",
+    "enemyIds": [
+      "enemy_moonvault_aegis",
+      "enemy_warden",
+      "enemy_herald"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_5_mix_7",
+    "name": "Stage 5 Set 7",
+    "enemyIds": [
+      "enemy_chimera",
+      "enemy_core_siphon",
+      "enemy_moonvault_aegis"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_5_mix_8",
+    "name": "Stage 5 Set 8",
+    "enemyIds": [
+      "enemy_core_siphon",
+      "enemy_herald"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_5_mix_9",
+    "name": "Stage 5 Set 9",
+    "enemyIds": [
+      "enemy_moonvault_aegis",
+      "enemy_chimera",
+      "enemy_warden"
+    ]
+  },
+  {
+    "id": "enemy_set_stage_5_mix_10",
+    "name": "Stage 5 Set 10",
+    "enemyIds": [
+      "enemy_core_siphon",
+      "enemy_herald",
+      "enemy_moonvault_aegis"
+    ]
+  }
+]

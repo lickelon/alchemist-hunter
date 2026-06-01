@@ -1,0 +1,34 @@
+[
+  {
+    "id": "merc_template_sellsword",
+    "name": "Apprentice Sellsword",
+    "roleLabel": "전열 돌격",
+    "combatJobId": "mercenary_warrior",
+    "hireCost": 180,
+    "tierIndex": 1
+  },
+  {
+    "id": "merc_template_guard",
+    "name": "Hedge Guard",
+    "roleLabel": "방어 전담",
+    "combatJobId": "mercenary_warrior",
+    "hireCost": 160,
+    "tierIndex": 1
+  },
+  {
+    "id": "merc_template_scout",
+    "name": "Dusk Scout",
+    "roleLabel": "후열 지원",
+    "combatJobId": "mercenary_archer",
+    "hireCost": 170,
+    "tierIndex": 1
+  },
+  {
+    "id": "merc_template_adept",
+    "name": "Ash Adept",
+    "roleLabel": "전투 보조",
+    "combatJobId": "mercenary_mage",
+    "hireCost": 190,
+    "tierIndex": 1
+  }
+]

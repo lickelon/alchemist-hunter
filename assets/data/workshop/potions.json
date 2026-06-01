@@ -1,0 +1,152 @@
+[
+  {
+    "id": "p_1",
+    "name": "활력 포션",
+    "targetTraits": {
+      "t_hp": 0.6,
+      "t_atk": 0.4
+    },
+    "baseValue": 100,
+    "useType": "both"
+  },
+  {
+    "id": "p_2",
+    "name": "돌격 포션",
+    "targetTraits": {
+      "t_atk": 0.6,
+      "t_hp": 0.4
+    },
+    "baseValue": 125,
+    "useType": "both"
+  },
+  {
+    "id": "p_3",
+    "name": "투지 포션",
+    "targetTraits": {
+      "t_crit": 0.55,
+      "t_focus": 0.45
+    },
+    "baseValue": 150,
+    "useType": "both"
+  },
+  {
+    "id": "p_4",
+    "name": "수호 기동 포션",
+    "targetTraits": {
+      "t_def": 0.65,
+      "t_spd": 0.35
+    },
+    "baseValue": 175,
+    "useType": "both"
+  },
+  {
+    "id": "p_5",
+    "name": "정밀 포션",
+    "targetTraits": {
+      "t_crit": 0.6,
+      "t_life": 0.4
+    },
+    "baseValue": 200,
+    "useType": "both"
+  },
+  {
+    "id": "p_6",
+    "name": "흡수 포션",
+    "targetTraits": {
+      "t_life": 0.6,
+      "t_focus": 0.4
+    },
+    "baseValue": 225,
+    "useType": "both"
+  },
+  {
+    "id": "p_7",
+    "name": "집중 포션",
+    "targetTraits": {
+      "t_focus": 0.6,
+      "t_drop": 0.4
+    },
+    "baseValue": 250,
+    "useType": "both"
+  },
+  {
+    "id": "p_8",
+    "name": "행운 포션",
+    "targetTraits": {
+      "t_drop": 0.6,
+      "t_dark": 0.4
+    },
+    "baseValue": 275,
+    "useType": "both"
+  },
+  {
+    "id": "p_9",
+    "name": "황혼 포션",
+    "targetTraits": {
+      "t_dark": 0.6,
+      "t_pure": 0.4
+    },
+    "baseValue": 300,
+    "useType": "both"
+  },
+  {
+    "id": "p_10",
+    "name": "정화 포션",
+    "targetTraits": {
+      "t_pure": 0.6,
+      "t_mana": 0.4
+    },
+    "baseValue": 325,
+    "useType": "both"
+  },
+  {
+    "id": "p_11",
+    "name": "마력 포션",
+    "targetTraits": {
+      "t_mana": 0.6,
+      "t_regen": 0.4
+    },
+    "baseValue": 350,
+    "useType": "combat"
+  },
+  {
+    "id": "p_12",
+    "name": "재생 포션",
+    "targetTraits": {
+      "t_regen": 0.6,
+      "t_hp": 0.4
+    },
+    "baseValue": 375,
+    "useType": "combat"
+  },
+  {
+    "id": "p_13",
+    "name": "강인 혼합 포션",
+    "targetTraits": {
+      "t_hp": 0.6,
+      "t_atk": 0.4
+    },
+    "baseValue": 400,
+    "useType": "combat"
+  },
+  {
+    "id": "p_14",
+    "name": "사냥꾼 혼합 포션",
+    "targetTraits": {
+      "t_atk": 0.6,
+      "t_def": 0.4
+    },
+    "baseValue": 425,
+    "useType": "combat"
+  },
+  {
+    "id": "p_15",
+    "name": "연금 혼합 포션",
+    "targetTraits": {
+      "t_def": 0.6,
+      "t_spd": 0.4
+    },
+    "baseValue": 450,
+    "useType": "combat"
+  }
+]

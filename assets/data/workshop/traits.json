@@ -1,0 +1,146 @@
+[
+  {
+    "id": "t_hp",
+    "name": "Vital",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "t_atk",
+    "name": "Aggro",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "t_def",
+    "name": "Guard",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "t_spd",
+    "name": "Swift",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "t_crit",
+    "name": "Ruthless",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "t_life",
+    "name": "Leech",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "t_focus",
+    "name": "Focus",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "t_drop",
+    "name": "Fortune",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "t_dark",
+    "name": "Light",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "t_pure",
+    "name": "Purity",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "t_mana",
+    "name": "Mana",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "t_regen",
+    "name": "Regen",
+    "type": "single",
+    "potency": 1.0,
+    "components": {}
+  },
+  {
+    "id": "c_vigor",
+    "name": "Vigor Blend",
+    "type": "compound",
+    "potency": 2.0,
+    "components": {
+      "t_hp": 0.6,
+      "t_regen": 0.4
+    }
+  },
+  {
+    "id": "c_hunter",
+    "name": "Hunter Blend",
+    "type": "compound",
+    "potency": 2.0,
+    "components": {
+      "t_atk": 0.5,
+      "t_focus": 0.5
+    }
+  },
+  {
+    "id": "c_guardian",
+    "name": "Guardian Blend",
+    "type": "compound",
+    "potency": 2.0,
+    "components": {
+      "t_def": 0.7,
+      "t_hp": 0.3
+    }
+  },
+  {
+    "id": "c_luck",
+    "name": "Lucky Blend",
+    "type": "compound",
+    "potency": 2.0,
+    "components": {
+      "t_drop": 0.6,
+      "t_crit": 0.4
+    }
+  },
+  {
+    "id": "c_twilight",
+    "name": "Twilight Blend",
+    "type": "compound",
+    "potency": 2.0,
+    "components": {
+      "t_dark": 0.5,
+      "t_mana": 0.5
+    }
+  },
+  {
+    "id": "c_alch",
+    "name": "Alchemist Blend",
+    "type": "compound",
+    "potency": 2.0,
+    "components": {
+      "t_pure": 0.5,
+      "t_focus": 0.5
+    }
+  }
+]

@@ -1,0 +1,93 @@
+{
+  "equipmentMaterialNames": {
+    "m_1": "Emberroot",
+    "m_2": "Ironbloom Bark",
+    "m_3": "Mossbone",
+    "m_4": "Gale Petal",
+    "m_5": "Sunleaf",
+    "m_6": "Nightsap Resin"
+  },
+  "equipmentBlueprints": [
+    {
+      "id": "eq_1",
+      "name": "Bronze Sword",
+      "slot": "weapon",
+      "materialCosts": {
+        "m_1": 2,
+        "m_2": 1
+      },
+      "craftDurationSeconds": 30,
+      "maxHp": 0,
+      "physicalAttack": 9,
+      "physicalDefense": 0,
+      "magicalAttack": 0,
+      "magicalDefense": 0,
+      "speed": 0,
+      "statModifiers": [],
+      "modifiers": [
+        {
+          "type": "damageDealt",
+          "mode": "percent",
+          "value": 0.03,
+          "school": "any",
+          "sourceId": "eq_1_edge"
+        }
+      ],
+      "passives": []
+    },
+    {
+      "id": "eq_2",
+      "name": "Iron Buckler",
+      "slot": "armor",
+      "materialCosts": {
+        "m_2": 2,
+        "m_3": 1
+      },
+      "craftDurationSeconds": 30,
+      "maxHp": 10,
+      "physicalAttack": 0,
+      "physicalDefense": 8,
+      "magicalAttack": 0,
+      "magicalDefense": 3,
+      "speed": 0,
+      "statModifiers": [],
+      "modifiers": [
+        {
+          "type": "damageTaken",
+          "mode": "percent",
+          "value": -0.03,
+          "school": "any",
+          "sourceId": "eq_2_guard"
+        }
+      ],
+      "passives": []
+    },
+    {
+      "id": "eq_3",
+      "name": "Hunter Charm",
+      "slot": "accessory",
+      "materialCosts": {
+        "m_4": 1,
+        "m_5": 1,
+        "m_6": 1
+      },
+      "craftDurationSeconds": 30,
+      "maxHp": 12,
+      "physicalAttack": 2,
+      "physicalDefense": 0,
+      "magicalAttack": 2,
+      "magicalDefense": 0,
+      "speed": 1,
+      "statModifiers": [
+        {
+          "type": "accuracy",
+          "mode": "flat",
+          "value": 0.04,
+          "sourceId": "eq_3_focus"
+        }
+      ],
+      "modifiers": [],
+      "passives": []
+    }
+  ]
+}
