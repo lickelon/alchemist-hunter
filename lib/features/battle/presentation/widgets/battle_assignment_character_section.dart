@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
-import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_assignment_view_models.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

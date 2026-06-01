@@ -1,4 +1,5 @@
-import 'package:alchemist_hunter/features/battle/data/catalogs/battle_catalog_dtos.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/battle_enemy_dtos.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/battle_stage_dtos.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 
 part 'battle_catalog_table_drops.dart';

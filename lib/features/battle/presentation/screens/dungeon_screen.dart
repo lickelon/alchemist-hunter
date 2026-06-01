@@ -1,7 +1,10 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
-import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_controller.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_stage_progress_selectors.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_stage_runtime_selectors.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_stage_status_label_selectors.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_sheet.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_claim_dialog.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_status_sheet.dart';

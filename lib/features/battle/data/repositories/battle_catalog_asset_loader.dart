@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:alchemist_hunter/features/battle/data/catalogs/battle_catalog_dtos.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/battle_enemy_dtos.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/battle_stage_dtos.dart';
 import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalog_tables.dart';
 import 'package:flutter/services.dart';
 

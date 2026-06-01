@@ -1,6 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
-import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_drop_selectors.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_drop_line.dart';
 import 'package:flutter/material.dart';
 

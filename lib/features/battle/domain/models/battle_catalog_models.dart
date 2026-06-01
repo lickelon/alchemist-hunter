@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 
 import 'battle_drop_models.dart';
-import 'combat_models.dart';
+import 'combat/battle_combat_stats.dart';
+import 'combat/battle_effect_models.dart';
+import 'combat/battle_skill_models.dart';
+import 'combat/combat_enums.dart';
 
 @immutable
 class BattleEnemyDefinition {

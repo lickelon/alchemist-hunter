@@ -4,7 +4,11 @@ import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_ass
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_assignment_character_selectors.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_assignment_potion_selectors.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_assignment_view_models.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_stage_progress_selectors.dart';
+import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_stage_runtime_selectors.dart';
 
 class BattleAssignmentSheet extends ConsumerWidget {
   const BattleAssignmentSheet({super.key, required this.stageId});

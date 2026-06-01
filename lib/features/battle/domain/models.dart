@@ -1,5 +1,4 @@
 export 'models/battle_catalog_models.dart';
-export 'models/combat_models.dart';
 export 'models/battle_drop_models.dart';
 export 'models/battle_expedition_models.dart';
 export 'models/battle_playback_models.dart';
@@ -7,4 +6,8 @@ export 'models/battle_progress_models.dart';
 export 'models/battle_result_models.dart';
 export 'models/battle_run_models.dart';
 export 'models/battle_state.dart';
+export 'models/combat/battle_combat_stats.dart';
+export 'models/combat/battle_effect_models.dart';
+export 'models/combat/battle_skill_models.dart';
+export 'models/combat/combat_enums.dart';
 export 'models/dungeon_summary.dart';
