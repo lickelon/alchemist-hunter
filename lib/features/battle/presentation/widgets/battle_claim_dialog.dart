@@ -2,7 +2,9 @@ import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
+import 'package:alchemist_hunter/common/widgets/section_card.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/battle_providers.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
@@ -34,15 +36,6 @@ class BattleClaimDialog extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             _ClaimSection(
-              title: '런 요약',
-              lines: <String>[
-                '성공 ${claim.victoryCount}회 / 실패 ${claim.wipeCount}회',
-                '진행 시간 ${_durationLabel(claim.elapsedRealTime)}',
-                '경험치 ${battleSignedValueLabel(claim.xp)}',
-              ],
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            _ClaimSection(
               title: '수령 예정',
               lines: <String>[
                 '골드 ${battleSignedValueLabel(claim.gold)}',
@@ -53,6 +46,15 @@ class BattleClaimDialog extends ConsumerWidget {
             _MaterialRewardGrid(
               materials: claim.materials,
               materialCatalog: materialCatalog,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            _ClaimSection(
+              title: '런 요약',
+              lines: <String>[
+                '성공 ${claim.victoryCount}회 / 실패 ${claim.wipeCount}회',
+                '진행 시간 ${_durationLabel(claim.elapsedRealTime)}',
+                '이미 반영된 경험치 ${battleSignedValueLabel(claim.xp)}',
+              ],
             ),
           ],
         ),
@@ -111,18 +113,10 @@ class _ClaimSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(title, style: Theme.of(context).textTheme.titleSmall),
-        const SizedBox(height: AppSpacing.sm),
-        ...lines.map((String line) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-            child: Text(line),
-          );
-        }),
-      ],
+    return SectionCard(
+      title: title,
+      margin: EdgeInsets.zero,
+      child: DetailLines(lines: lines),
     );
   }
 }

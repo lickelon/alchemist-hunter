@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,13 +31,15 @@ class _WorkshopEnchantSheetState extends ConsumerState<WorkshopEnchantSheet> {
         builder: (BuildContext context) {
           return AppDialogLayout(
             title: '기존 인챈트 교체',
-            body: Text(
-              '${preview.equipmentName}\n'
-              '현재 ${preview.currentEnchantLabel}\n'
-              '변경 ${preview.nextEnchantLabel}\n'
-              '${preview.currentStatLabel}\n'
-              '${preview.nextStatLabel}\n'
-              '${preview.deltaStatLabel}',
+            body: DetailLines(
+              description: preview.equipmentName,
+              lines: <String>[
+                '현재 ${preview.currentEnchantLabel}',
+                '변경 ${preview.nextEnchantLabel}',
+                preview.currentStatLabel,
+                preview.nextStatLabel,
+                preview.deltaStatLabel,
+              ],
             ),
             actions: <Widget>[
               TextButton(
@@ -110,20 +113,28 @@ class _WorkshopEnchantSheetState extends ConsumerState<WorkshopEnchantSheet> {
             ),
             const SizedBox(height: AppSpacing.lg),
             WorkshopEnchantPreviewSection(preview: preview),
-            const SizedBox(height: AppSpacing.md),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: preview == null
-                    ? null
-                    : () => _submitEnchant(preview),
-                child: Text(
-                  preview?.replaceRequired == true ? '인챈트 교체 등록' : '인챈트 등록',
-                ),
-              ),
-            ),
           ],
         ),
+      ),
+      footer: Row(
+        children: <Widget>[
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).pop(),
+              icon: const Icon(Icons.close),
+              label: const Text('닫기'),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: FilledButton(
+              onPressed: preview == null ? null : () => _submitEnchant(preview),
+              child: Text(
+                preview?.replaceRequired == true ? '인챈트 교체 등록' : '인챈트 등록',
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

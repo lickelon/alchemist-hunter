@@ -1,5 +1,5 @@
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/crafted_inventory_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_inventory_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/workshop_display_labels.dart';
@@ -17,8 +17,8 @@ class WorkshopMaterialResourceDetailDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppDialogLayout(
       title: material.name,
-      body: _DetailRows(
-        rows: <String>[
+      body: DetailLines(
+        lines: <String>[
           '보유 수량 x${material.quantity}',
           '희귀도 ${workshopMaterialRarityLabel(material.rarity)}',
           '원소 ${material.traitSummary}',
@@ -37,8 +37,8 @@ class WorkshopTraitResourceDetailDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppDialogLayout(
       title: trait.name,
-      body: _DetailRows(
-        rows: <String>['보유량 ${workshopTraitAmountLabel(trait.amount)}'],
+      body: DetailLines(
+        lines: <String>['보유량 ${workshopTraitAmountLabel(trait.amount)}'],
       ),
     );
   }
@@ -53,36 +53,14 @@ class WorkshopPotionResourceDetailDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppDialogLayout(
       title: potion.name,
-      body: _DetailRows(
-        rows: <String>[
+      body: DetailLines(
+        lines: <String>[
           '보유 수량 x${potion.quantity}',
           '품질 ${potion.qualityLabel}',
           '점수 ${potion.scoreLabel}',
           '원소 ${potion.traitsLabel}',
         ],
       ),
-    );
-  }
-}
-
-class _DetailRows extends StatelessWidget {
-  const _DetailRows({required this.rows});
-
-  final List<String> rows;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: rows
-          .map((String row) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-              child: Text(row),
-            );
-          })
-          .toList(growable: false),
     );
   }
 }

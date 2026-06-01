@@ -3,6 +3,7 @@ import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_potion_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_preview_selector.dart';
@@ -125,6 +126,7 @@ class WorkshopEnchantPreviewSection extends StatelessWidget {
     final TextStyle subsectionTitleStyle = AppTextStyles.of(
       context,
     ).subsectionTitle;
+    final TextStyle dataEmphasisStyle = AppTextStyles.of(context).dataEmphasis;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -144,12 +146,16 @@ class WorkshopEnchantPreviewSection extends StatelessWidget {
                   children: <Widget>[
                     Text(preview!.equipmentName, style: subsectionTitleStyle),
                     const SizedBox(height: AppSpacing.sm),
-                    Text('현재 ${preview!.currentEnchantLabel}'),
-                    Text('예상 ${preview!.nextEnchantLabel}'),
+                    DetailLines(
+                      lines: <String>[
+                        '현재 ${preview!.currentEnchantLabel}',
+                        '예상 ${preview!.nextEnchantLabel}',
+                        preview!.currentStatLabel,
+                        preview!.nextStatLabel,
+                      ],
+                    ),
                     const SizedBox(height: AppSpacing.sm),
-                    Text(preview!.currentStatLabel),
-                    Text(preview!.nextStatLabel),
-                    Text(preview!.deltaStatLabel),
+                    Text(preview!.deltaStatLabel, style: dataEmphasisStyle),
                     if (preview!.replaceRequired) ...<Widget>[
                       const SizedBox(height: AppSpacing.sm),
                       const Text('기존 인챈트가 교체됩니다'),

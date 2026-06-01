@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
@@ -36,10 +37,14 @@ class SkillTreeNodeDetailDialog extends StatelessWidget {
             description: node.description,
             lines: <String>[
               '현재 효과 ${node.currentEffectLabel}',
-              '다음 효과 ${node.nextEffectLabel}',
               node.prerequisiteLabel,
               '비용 ${node.costLabel}',
             ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            '다음 효과 ${node.nextEffectLabel}',
+            style: AppTextStyles.of(context).dataEmphasis,
           ),
         ],
       ),

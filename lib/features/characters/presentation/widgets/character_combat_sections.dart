@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_detail_section.dart';
 import 'package:flutter/material.dart';
 
@@ -38,17 +39,7 @@ class CharacterCombatEffectSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return CharacterDetailSection(
       title: '전투 효과',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: effectLines
-            .map(
-              (String line) => Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                child: Text(line),
-              ),
-            )
-            .toList(growable: false),
-      ),
+      child: DetailLines(lines: effectLines),
     );
   }
 }
