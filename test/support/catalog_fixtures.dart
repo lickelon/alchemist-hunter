@@ -1,9 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:alchemist_hunter/app/session/session_factory.dart';
 import 'package:alchemist_hunter/app/session/session_state.dart';
 import 'package:alchemist_hunter/app/catalog/battle_catalog_providers.dart';
 import 'package:alchemist_hunter/app/catalog/town_catalog_providers.dart';
+import 'package:alchemist_hunter/app/catalog/workshop_catalog_data.dart';
 import 'package:alchemist_hunter/app/catalog/workshop_catalog_providers.dart';
-import 'package:alchemist_hunter/features/battle/data/catalogs/battle_tables.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/battle_catalog_dtos.dart';
+import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalog_tables.dart';
 import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/data/catalogs/equipment_blueprints.dart';
@@ -26,7 +31,6 @@ import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/st
 import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/workshop_craft_recipe_repository.dart';
-import 'package:alchemist_hunter/features/workshop/data/repositories/workshop_catalog_data.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/catalogs/extraction_profiles.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/catalogs/material_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_extraction_profile_repository.dart';
@@ -64,8 +68,11 @@ final WorkshopCatalogAssets testWorkshopCatalogAssets = WorkshopCatalogAssets(
   skillNodes: workshopSkillNodes,
 );
 
+final BattleCatalogTables testBattleCatalogTables =
+    _loadBattleCatalogTablesFromAssets();
+
 final BattleCatalogRepository testBattleCatalogRepository =
-    StaticBattleCatalogRepository(catalog: battleCatalogTables);
+    StaticBattleCatalogRepository(catalog: testBattleCatalogTables);
 
 final ShopCatalogRepository testShopCatalogRepository =
     StaticShopCatalogRepository(catalog: testTownCatalogAssets.shopCatalog);
@@ -84,22 +91,37 @@ final TownSkillTreeRepository testTownSkillTreeRepository =
     StaticTownSkillTreeRepository(nodes: testTownCatalogAssets.skillNodes);
 
 final MaterialCatalogRepository testMaterialCatalogRepository =
-    StaticMaterialCatalogRepository(catalog: testWorkshopCatalogAssets);
+    StaticMaterialCatalogRepository(
+      materials: testWorkshopCatalogAssets.materials,
+      traits: testWorkshopCatalogAssets.traits,
+    );
 
 final ExtractionProfileRepository testExtractionProfileRepository =
-    StaticExtractionProfileRepository(catalog: testWorkshopCatalogAssets);
+    StaticExtractionProfileRepository(
+      profiles: testWorkshopCatalogAssets.extractionProfiles,
+    );
 
 final PotionCatalogRepository testPotionCatalogRepository =
-    StaticPotionCatalogRepository(catalog: testWorkshopCatalogAssets);
+    StaticPotionCatalogRepository(
+      potions: testWorkshopCatalogAssets.potions,
+      recipeRules: testWorkshopCatalogAssets.potionRecipeRules,
+      qualityRule: testWorkshopCatalogAssets.potionQualityRule,
+    );
 
 final WorkshopCraftRecipeRepository testWorkshopCraftRecipeRepository =
-    StaticWorkshopCraftRecipeRepository(catalog: testWorkshopCatalogAssets);
+    StaticWorkshopCraftRecipeRepository(
+      recipes: testWorkshopCatalogAssets.craftRecipes,
+    );
 
 final WorkshopSkillTreeRepository testWorkshopSkillTreeRepository =
-    StaticWorkshopSkillTreeRepository(catalog: testWorkshopCatalogAssets);
+    StaticWorkshopSkillTreeRepository(
+      nodes: testWorkshopCatalogAssets.skillNodes,
+    );
 
 final HomunculusHatchRepository testHomunculusHatchRepository =
-    StaticHomunculusHatchRepository(catalog: testWorkshopCatalogAssets);
+    StaticHomunculusHatchRepository(
+      recipes: testWorkshopCatalogAssets.hatchRecipes,
+    );
 
 InitialSessionCatalogs createTestInitialSessionCatalogs() {
   return InitialSessionCatalogs(
@@ -124,6 +146,81 @@ List<Override> testCatalogProviderOverrides() {
       testBattleCatalogRepository,
     ),
   ];
+}
+
+BattleCatalogTables _loadBattleCatalogTablesFromAssets() {
+  return BattleCatalogTables.fromDtos(
+    enemyDtos: _readBattleDtoMap(
+      _readBattleObjectList('enemies.json'),
+      BattleEnemyDefinitionDto.fromJson,
+    ),
+    enemySetDtos: _readBattleDtoMap(
+      _readBattleObjectList('enemy_sets.json'),
+      BattleEnemySetDefinitionDto.fromJson,
+    ),
+    stageDtos: _readBattleDtoMap(
+      _readBattleObjectList('stages.json'),
+      BattleStageDefinitionDto.fromJson,
+    ),
+    stageCatalog: _readBattleStringList('stage_catalog.json'),
+  );
+}
+
+Map<String, T> _readBattleDtoMap<T>(
+  List<Map<String, Object?>> entries,
+  T Function(Map<String, Object?> json) convert,
+) {
+  return <String, T>{
+    for (final Map<String, Object?> entry in entries)
+      _readBattleId(entry): convert(entry),
+  };
+}
+
+List<Map<String, Object?>> _readBattleObjectList(String fileName) {
+  final Object? decoded = _readBattleJson(fileName);
+  if (decoded is List<Object?>) {
+    return decoded
+        .map((Object? entry) {
+          if (entry is Map<String, Object?>) {
+            return entry;
+          }
+          throw FormatException(
+            'Battle catalog $fileName entry must be object',
+          );
+        })
+        .toList(growable: false);
+  }
+  throw FormatException('Battle catalog $fileName must be a list');
+}
+
+List<String> _readBattleStringList(String fileName) {
+  final Object? decoded = _readBattleJson(fileName);
+  if (decoded is List<Object?>) {
+    return decoded
+        .map((Object? entry) {
+          if (entry is String) {
+            return entry;
+          }
+          throw FormatException(
+            'Battle catalog $fileName entry must be a string',
+          );
+        })
+        .toList(growable: false);
+  }
+  throw FormatException('Battle catalog $fileName must be a list');
+}
+
+Object? _readBattleJson(String fileName) {
+  final String source = File('assets/data/battle/$fileName').readAsStringSync();
+  return jsonDecode(source);
+}
+
+String _readBattleId(Map<String, Object?> json) {
+  final Object? value = json['id'];
+  if (value is String) {
+    return value;
+  }
+  throw FormatException('Battle catalog entry must define an id: $json');
 }
 
 ShopDefinitionData _shopDefinition(ShopState state) {

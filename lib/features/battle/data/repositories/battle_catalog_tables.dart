@@ -1,6 +1,10 @@
 import 'package:alchemist_hunter/features/battle/data/catalogs/battle_catalog_dtos.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 
+part 'battle_catalog_table_drops.dart';
+part 'battle_catalog_table_factory.dart';
+part 'battle_catalog_table_validation.dart';
+
 class BattleCatalogTables {
   BattleCatalogTables({
     required this.enemyDefinitions,
@@ -17,23 +21,11 @@ class BattleCatalogTables {
     required Map<String, BattleStageDefinitionDto> stageDtos,
     required List<String> stageCatalog,
   }) {
-    return BattleCatalogTables(
-      enemyDefinitions: enemyDtos.map(
-        (String id, BattleEnemyDefinitionDto definition) =>
-            MapEntry<String, BattleEnemyDefinition>(id, definition.toDomain()),
-      ),
-      enemySetDefinitions: enemySetDtos.map(
-        (String id, BattleEnemySetDefinitionDto definition) =>
-            MapEntry<String, BattleEnemySetDefinition>(
-              id,
-              definition.toDomain(),
-            ),
-      ),
-      stageDefinitions: stageDtos.map(
-        (String id, BattleStageDefinitionDto definition) =>
-            MapEntry<String, BattleStageDefinition>(id, definition.toDomain()),
-      ),
-      stageCatalog: List<String>.unmodifiable(stageCatalog),
+    return _battleCatalogTablesFromDtos(
+      enemyDtos: enemyDtos,
+      enemySetDtos: enemySetDtos,
+      stageDtos: stageDtos,
+      stageCatalog: stageCatalog,
     );
   }
 
@@ -96,82 +88,16 @@ class BattleCatalogTables {
     required String stageId,
     required String enemySetId,
   }) {
-    final List<BattleEnemyDefinition> enemies = enemyDefinitionsForSet(
-      enemySetId,
-    );
-    return BattleDropTable(
+    return _dropTableFromEnemies(
       stageId: stageId,
-      normalDrops: enemies
-          .expand((BattleEnemyDefinition enemy) => enemy.normalDrops)
-          .toList(growable: false),
-      specialDrops: enemies
-          .expand((BattleEnemyDefinition enemy) => enemy.specialDrops)
-          .toList(growable: false),
+      enemies: enemyDefinitionsForSet(enemySetId),
     );
   }
 
   BattleDropTable stageDropTable(String stageId) {
-    final List<BattleEnemyDefinition> enemies = enemyDefinitionsForStage(
-      stageId,
-    );
-    return BattleDropTable(
+    return _dropTableFromEnemies(
       stageId: stageId,
-      normalDrops: enemies
-          .expand((BattleEnemyDefinition enemy) => enemy.normalDrops)
-          .toList(growable: false),
-      specialDrops: enemies
-          .expand((BattleEnemyDefinition enemy) => enemy.specialDrops)
-          .toList(growable: false),
+      enemies: enemyDefinitionsForStage(stageId),
     );
-  }
-
-  void _validate() {
-    for (final String stageId in stageCatalog) {
-      if (!stageDefinitions.containsKey(stageId)) {
-        throw StateError('Unknown stage in catalog order: $stageId');
-      }
-    }
-    for (final BattleEnemySetDefinition enemySet
-        in enemySetDefinitions.values) {
-      for (final String enemyId in enemySet.enemyIds) {
-        if (!enemyDefinitions.containsKey(enemyId)) {
-          throw StateError('Unknown enemy in ${enemySet.id}: $enemyId');
-        }
-      }
-    }
-    for (final BattleStageDefinition stage in stageDefinitions.values) {
-      if (stage.encounters.isEmpty) {
-        throw StateError('Stage must define encounters: ${stage.id}');
-      }
-      if (stage.searchDuration <= Duration.zero) {
-        throw StateError('Stage search duration must be positive: ${stage.id}');
-      }
-      if (stage.recoveryDuration <= Duration.zero) {
-        throw StateError(
-          'Stage recovery duration must be positive: ${stage.id}',
-        );
-      }
-      if (stage.unlockCondition != null &&
-          !stageDefinitions.containsKey(
-            stage.unlockCondition!.requiredStageId,
-          )) {
-        throw StateError(
-          'Unknown unlock stage for ${stage.id}: '
-          '${stage.unlockCondition!.requiredStageId}',
-        );
-      }
-      for (final BattleStageEncounterDefinition encounter in stage.encounters) {
-        if (!enemySetDefinitions.containsKey(encounter.enemySetId)) {
-          throw StateError(
-            'Unknown enemy set in ${stage.id}: ${encounter.enemySetId}',
-          );
-        }
-        if (encounter.chance <= 0) {
-          throw StateError(
-            'Encounter chance must be positive: ${encounter.id}',
-          );
-        }
-      }
-    }
   }
 }

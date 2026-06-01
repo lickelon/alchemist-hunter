@@ -1,10 +1,3 @@
-import 'package:alchemist_hunter/features/battle/data/catalogs/battle_catalog_dtos.dart';
-import 'package:alchemist_hunter/features/battle/data/catalogs/battle_stage_definitions.dart'
-    as stage_catalog;
-import 'package:alchemist_hunter/features/battle/data/catalogs/encounters/battle_enemy_set_definitions.dart'
-    as encounter_catalog;
-import 'package:alchemist_hunter/features/battle/data/catalogs/enemies/battle_enemy_definitions.dart'
-    as enemy_catalog;
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../../../../support/catalog_fixtures.dart';
@@ -12,24 +5,16 @@ import '../../../../support/catalog_fixtures.dart';
 void main() {
   final repository = testBattleCatalogRepository;
 
-  test('raw battle catalogs stay behind DTO boundaries', () {
-    final BattleStageDefinitionDto stageDto =
-        stage_catalog.battleStageDefinitionDtos['stage_1']!;
-    final BattleEnemySetDefinitionDto enemySetDto = encounter_catalog
-        .battleEnemySetDefinitionDtos[stageDto.encounters.first.enemySetId]!;
-    final BattleEnemyDefinitionDto enemyDto =
-        enemy_catalog.battleEnemyDefinitionDtos[enemySetDto.enemyIds.first]!;
+  test('asset battle catalogs load behind repository boundaries', () {
+    final BattleStageDefinition stage = repository.stageDefinition('stage_1');
+    final List<BattleEnemyDefinition> enemySet = repository
+        .enemyDefinitionsForSet(stage.encounters.first.enemySetId);
+    final BattleEnemyDefinition enemy = enemySet.first;
 
-    expect(stageDto.searchDurationSeconds, greaterThan(0));
-    expect(enemySetDto.enemyIds, isNotEmpty);
-    expect(enemyDto.stats.maxHp, greaterThan(0));
-
-    final BattleStageDefinition stage = repository.stageDefinition(stageDto.id);
-    expect(
-      stage.searchDuration,
-      Duration(seconds: stageDto.searchDurationSeconds),
-    );
-    expect(stage.encounters.first.id, stageDto.encounters.first.id);
+    expect(stage.searchDuration, greaterThan(Duration.zero));
+    expect(enemySet, isNotEmpty);
+    expect(enemy.stats.maxHp, greaterThan(0));
+    expect(testBattleCatalogTables.stageCatalog, contains(stage.id));
   });
 
   test('stage enemy catalog exposes executable active skills', () {
