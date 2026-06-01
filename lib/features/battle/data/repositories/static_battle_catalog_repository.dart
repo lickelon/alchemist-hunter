@@ -4,34 +4,40 @@ import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 
 class StaticBattleCatalogRepository implements BattleCatalogRepository {
-  const StaticBattleCatalogRepository();
+  const StaticBattleCatalogRepository({tables.BattleCatalogTables? catalog})
+    : _catalog = catalog;
+
+  final tables.BattleCatalogTables? _catalog;
+
+  tables.BattleCatalogTables get _tables =>
+      _catalog ?? tables.battleCatalogTables;
 
   @override
   List<BattleStageEncounterDefinition> encounterDefinitionsForStage(
     String stageId,
-  ) => tables.encounterDefinitionsForStage(stageId);
+  ) => _tables.encounterDefinitionsForStage(stageId);
 
   @override
-  BattleDropTable dropTable(String stageId) => tables.stageDropTable(stageId);
+  BattleDropTable dropTable(String stageId) => _tables.stageDropTable(stageId);
 
   @override
   BattleDropTable dropTableForEnemySet({
     required String stageId,
     required String enemySetId,
-  }) => tables.dropTableForEnemySet(stageId: stageId, enemySetId: enemySetId);
+  }) => _tables.dropTableForEnemySet(stageId: stageId, enemySetId: enemySetId);
 
   @override
   List<BattleEnemyDefinition> enemyDefinitionsForStage(String stageId) =>
-      tables.enemyDefinitionsForStage(stageId);
+      _tables.enemyDefinitionsForStage(stageId);
 
   @override
   List<BattleEnemyDefinition> enemyDefinitionsForSet(String enemySetId) =>
-      tables.enemyDefinitionsForSet(enemySetId);
+      _tables.enemyDefinitionsForSet(enemySetId);
 
   @override
   BattleStageDefinition stageDefinition(String stageId) =>
-      tables.stageDefinition(stageId);
+      _tables.stageDefinition(stageId);
 
   @override
-  List<String> stageCatalog() => tables.stageCatalog;
+  List<String> stageCatalog() => _tables.stageCatalog;
 }

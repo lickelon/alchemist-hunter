@@ -22,6 +22,15 @@ class BattleDropEntryDto {
     required this.chance,
   });
 
+  factory BattleDropEntryDto.fromJson(Map<String, Object?> json) {
+    return BattleDropEntryDto(
+      materialId: _readString(json, 'materialId'),
+      min: _readInt(json, 'min'),
+      max: _readInt(json, 'max'),
+      chance: _readDouble(json, 'chance'),
+    );
+  }
+
   final String materialId;
   final int min;
   final int max;
@@ -55,6 +64,26 @@ class BattleModifierDto {
   final CombatFaction? targetFaction;
   final String sourceId;
 
+  factory BattleModifierDto.fromJson(Map<String, Object?> json) {
+    return BattleModifierDto(
+      type: _readEnum(json, 'type', BattleModifierType.values),
+      mode: _readEnum(json, 'mode', BattleModifierMode.values),
+      value: _readDouble(json, 'value'),
+      school: _readEnum(
+        json,
+        'school',
+        DamageSchool.values,
+        fallback: DamageSchool.any,
+      ),
+      targetFaction: _readOptionalEnum(
+        json,
+        'targetFaction',
+        CombatFaction.values,
+      ),
+      sourceId: _readString(json, 'sourceId'),
+    );
+  }
+
   BattleModifier toDomain() {
     return BattleModifier(
       type: type,
@@ -80,6 +109,24 @@ class BattlePassiveConditionDto {
   final double threshold;
   final CombatFaction? faction;
   final BattleStatusType? statusType;
+
+  factory BattlePassiveConditionDto.fromJson(Map<String, Object?> json) {
+    return BattlePassiveConditionDto(
+      type: _readEnum(
+        json,
+        'type',
+        BattlePassiveConditionType.values,
+        fallback: BattlePassiveConditionType.always,
+      ),
+      threshold: _readDouble(json, 'threshold', fallback: 0),
+      faction: _readOptionalEnum(json, 'faction', CombatFaction.values),
+      statusType: _readOptionalEnum(
+        json,
+        'statusType',
+        BattleStatusType.values,
+      ),
+    );
+  }
 
   BattlePassiveCondition toDomain() {
     return BattlePassiveCondition(
@@ -112,6 +159,29 @@ class BattlePassiveEffectDto {
   final BattleModifierDto? modifier;
   final BattleStatusType? statusType;
   final BattlePassiveConditionDto condition;
+
+  factory BattlePassiveEffectDto.fromJson(Map<String, Object?> json) {
+    return BattlePassiveEffectDto(
+      trigger: _readEnum(json, 'trigger', BattlePassiveTrigger.values),
+      type: _readEnum(json, 'type', BattlePassiveEffectType.values),
+      sourceId: _readString(json, 'sourceId'),
+      value: _readOptionalInt(json, 'value'),
+      durationLifecycles: _readInt(json, 'durationLifecycles', fallback: 1),
+      modifier: _readOptionalMap(json, 'modifier', BattleModifierDto.fromJson),
+      statusType: _readOptionalEnum(
+        json,
+        'statusType',
+        BattleStatusType.values,
+      ),
+      condition:
+          _readOptionalMap(
+            json,
+            'condition',
+            BattlePassiveConditionDto.fromJson,
+          ) ??
+          const BattlePassiveConditionDto(),
+    );
+  }
 
   BattlePassiveEffect toDomain() {
     return BattlePassiveEffect(
@@ -160,6 +230,44 @@ class BattleSkillDefinitionDto {
   final BattleModifierDto? modifier;
   final BattleStatusType? statusType;
   final int shieldValue;
+
+  factory BattleSkillDefinitionDto.fromJson(Map<String, Object?> json) {
+    return BattleSkillDefinitionDto(
+      id: _readString(json, 'id'),
+      name: _readString(json, 'name'),
+      summary: _readString(json, 'summary'),
+      cooldownLifecycles: _readInt(json, 'cooldownLifecycles', fallback: 0),
+      priority: _readInt(json, 'priority', fallback: 0),
+      targetType: _readEnum(
+        json,
+        'targetType',
+        BattleSkillTargetType.values,
+        fallback: BattleSkillTargetType.randomEnemy,
+      ),
+      effectType: _readEnum(
+        json,
+        'effectType',
+        BattleSkillEffectType.values,
+        fallback: BattleSkillEffectType.damage,
+      ),
+      school: _readEnum(
+        json,
+        'school',
+        DamageSchool.values,
+        fallback: DamageSchool.any,
+      ),
+      powerMultiplier: _readDouble(json, 'powerMultiplier', fallback: 1),
+      flatPower: _readInt(json, 'flatPower', fallback: 0),
+      durationLifecycles: _readInt(json, 'durationLifecycles', fallback: 1),
+      modifier: _readOptionalMap(json, 'modifier', BattleModifierDto.fromJson),
+      statusType: _readOptionalEnum(
+        json,
+        'statusType',
+        BattleStatusType.values,
+      ),
+      shieldValue: _readInt(json, 'shieldValue', fallback: 0),
+    );
+  }
 
   BattleSkillDefinition toDomain() {
     return BattleSkillDefinition(
@@ -225,6 +333,30 @@ class BattleCombatStatsDto {
   final double regen;
   final int mpRegen;
 
+  factory BattleCombatStatsDto.fromJson(Map<String, Object?> json) {
+    return BattleCombatStatsDto(
+      maxHp: _readInt(json, 'maxHp'),
+      maxMp: _readInt(json, 'maxMp', fallback: 0),
+      physicalAttack: _readInt(json, 'physicalAttack'),
+      physicalDefense: _readInt(json, 'physicalDefense'),
+      magicalAttack: _readInt(json, 'magicalAttack'),
+      magicalDefense: _readInt(json, 'magicalDefense'),
+      speed: _readInt(json, 'speed'),
+      critChance: _readDouble(json, 'critChance'),
+      critDamage: _readDouble(json, 'critDamage'),
+      accuracy: _readDouble(json, 'accuracy'),
+      evasion: _readDouble(json, 'evasion'),
+      statusAccuracy: _readDouble(json, 'statusAccuracy'),
+      statusResistance: _readDouble(json, 'statusResistance'),
+      physicalPenetration: _readDouble(json, 'physicalPenetration'),
+      magicalPenetration: _readDouble(json, 'magicalPenetration'),
+      lifesteal: _readDouble(json, 'lifesteal'),
+      healingPower: _readDouble(json, 'healingPower'),
+      regen: _readDouble(json, 'regen'),
+      mpRegen: _readInt(json, 'mpRegen', fallback: 0),
+    );
+  }
+
   BattleCombatStats toDomain() {
     return BattleCombatStats(
       maxHp: maxHp,
@@ -276,6 +408,25 @@ class BattleEnemyDefinitionDto {
   final List<BattleDropEntryDto> normalDrops;
   final List<BattleDropEntryDto> specialDrops;
 
+  factory BattleEnemyDefinitionDto.fromJson(Map<String, Object?> json) {
+    return BattleEnemyDefinitionDto(
+      id: _readString(json, 'id'),
+      name: _readString(json, 'name'),
+      faction: _readEnum(json, 'faction', CombatFaction.values),
+      summary: _readString(json, 'summary'),
+      stats: _readMap(json, 'stats', BattleCombatStatsDto.fromJson),
+      modifiers: _readList(json, 'modifiers', BattleModifierDto.fromJson),
+      passives: _readList(json, 'passives', BattlePassiveEffectDto.fromJson),
+      skills: _readList(json, 'skills', BattleSkillDefinitionDto.fromJson),
+      normalDrops: _readList(json, 'normalDrops', BattleDropEntryDto.fromJson),
+      specialDrops: _readList(
+        json,
+        'specialDrops',
+        BattleDropEntryDto.fromJson,
+      ),
+    );
+  }
+
   BattleEnemyDefinition toDomain() {
     return BattleEnemyDefinition(
       id: id,
@@ -314,6 +465,14 @@ class BattleEnemySetDefinitionDto {
   final String name;
   final List<String> enemyIds;
 
+  factory BattleEnemySetDefinitionDto.fromJson(Map<String, Object?> json) {
+    return BattleEnemySetDefinitionDto(
+      id: _readString(json, 'id'),
+      name: _readString(json, 'name'),
+      enemyIds: _readStringList(json, 'enemyIds'),
+    );
+  }
+
   BattleEnemySetDefinition toDomain() {
     return BattleEnemySetDefinition(id: id, name: name, enemyIds: enemyIds);
   }
@@ -330,6 +489,14 @@ class BattleStageUnlockConditionDto {
   final String requiredStageId;
   final int requiredWinStreakCount;
   final String label;
+
+  factory BattleStageUnlockConditionDto.fromJson(Map<String, Object?> json) {
+    return BattleStageUnlockConditionDto(
+      requiredStageId: _readString(json, 'requiredStageId'),
+      requiredWinStreakCount: _readInt(json, 'requiredWinStreakCount'),
+      label: _readString(json, 'label'),
+    );
+  }
 
   BattleStageUnlockCondition toDomain() {
     return BattleStageUnlockCondition(
@@ -351,6 +518,16 @@ class BattleStageEncounterDefinitionDto {
   final String id;
   final String enemySetId;
   final double chance;
+
+  factory BattleStageEncounterDefinitionDto.fromJson(
+    Map<String, Object?> json,
+  ) {
+    return BattleStageEncounterDefinitionDto(
+      id: _readString(json, 'id'),
+      enemySetId: _readString(json, 'enemySetId'),
+      chance: _readDouble(json, 'chance'),
+    );
+  }
 
   BattleStageEncounterDefinition toDomain() {
     return BattleStageEncounterDefinition(
@@ -395,6 +572,37 @@ class BattleStageDefinitionDto {
   final BattleStageUnlockConditionDto? unlockCondition;
   final Set<String> clearUnlockFlags;
 
+  factory BattleStageDefinitionDto.fromJson(Map<String, Object?> json) {
+    return BattleStageDefinitionDto(
+      id: _readString(json, 'id'),
+      name: _readString(json, 'name'),
+      recommendedPower: _readInt(json, 'recommendedPower'),
+      searchDurationSeconds: _readInt(json, 'searchDurationSeconds'),
+      recoveryDurationSeconds: _readInt(
+        json,
+        'recoveryDurationSeconds',
+        fallback: 10,
+      ),
+      encounters: _readList(
+        json,
+        'encounters',
+        BattleStageEncounterDefinitionDto.fromJson,
+      ),
+      goldSuccess: _readInt(json, 'goldSuccess'),
+      goldFailurePenalty: _readInt(json, 'goldFailurePenalty'),
+      essenceSuccess: _readInt(json, 'essenceSuccess'),
+      essenceFailure: _readInt(json, 'essenceFailure'),
+      xpSuccessBase: _readInt(json, 'xpSuccessBase'),
+      xpFailureBase: _readInt(json, 'xpFailureBase'),
+      unlockCondition: _readOptionalMap(
+        json,
+        'unlockCondition',
+        BattleStageUnlockConditionDto.fromJson,
+      ),
+      clearUnlockFlags: _readStringList(json, 'clearUnlockFlags').toSet(),
+    );
+  }
+
   BattleStageDefinition toDomain() {
     return BattleStageDefinition(
       id: id,
@@ -418,4 +626,143 @@ class BattleStageDefinitionDto {
       clearUnlockFlags: clearUnlockFlags,
     );
   }
+}
+
+T _readEnum<T extends Enum>(
+  Map<String, Object?> json,
+  String key,
+  List<T> values, {
+  T? fallback,
+}) {
+  final Object? value = json[key];
+  if (value == null && fallback != null) {
+    return fallback;
+  }
+  if (value is String) {
+    for (final T entry in values) {
+      if (entry.name == value) {
+        return entry;
+      }
+    }
+  }
+  throw FormatException('Invalid enum value for $key: $value');
+}
+
+T? _readOptionalEnum<T extends Enum>(
+  Map<String, Object?> json,
+  String key,
+  List<T> values,
+) {
+  if (!json.containsKey(key) || json[key] == null) {
+    return null;
+  }
+  return _readEnum(json, key, values);
+}
+
+String _readString(Map<String, Object?> json, String key) {
+  final Object? value = json[key];
+  if (value is String) {
+    return value;
+  }
+  throw FormatException('Invalid string value for $key: $value');
+}
+
+int _readInt(Map<String, Object?> json, String key, {int? fallback}) {
+  final Object? value = json[key];
+  if (value == null && fallback != null) {
+    return fallback;
+  }
+  if (value is int) {
+    return value;
+  }
+  throw FormatException('Invalid int value for $key: $value');
+}
+
+int? _readOptionalInt(Map<String, Object?> json, String key) {
+  final Object? value = json[key];
+  if (value == null) {
+    return null;
+  }
+  if (value is int) {
+    return value;
+  }
+  throw FormatException('Invalid int value for $key: $value');
+}
+
+double _readDouble(Map<String, Object?> json, String key, {double? fallback}) {
+  final Object? value = json[key];
+  if (value == null && fallback != null) {
+    return fallback;
+  }
+  if (value is num) {
+    return value.toDouble();
+  }
+  throw FormatException('Invalid number value for $key: $value');
+}
+
+T _readMap<T>(
+  Map<String, Object?> json,
+  String key,
+  T Function(Map<String, Object?> json) convert,
+) {
+  final Object? value = json[key];
+  if (value is Map<String, Object?>) {
+    return convert(value);
+  }
+  throw FormatException('Invalid object value for $key: $value');
+}
+
+T? _readOptionalMap<T>(
+  Map<String, Object?> json,
+  String key,
+  T Function(Map<String, Object?> json) convert,
+) {
+  final Object? value = json[key];
+  if (value == null) {
+    return null;
+  }
+  if (value is Map<String, Object?>) {
+    return convert(value);
+  }
+  throw FormatException('Invalid object value for $key: $value');
+}
+
+List<T> _readList<T>(
+  Map<String, Object?> json,
+  String key,
+  T Function(Map<String, Object?> json) convert,
+) {
+  final Object? value = json[key];
+  if (value == null) {
+    return <T>[];
+  }
+  if (value is List<Object?>) {
+    return value
+        .map((Object? entry) {
+          if (entry is Map<String, Object?>) {
+            return convert(entry);
+          }
+          throw FormatException('Invalid list entry for $key: $entry');
+        })
+        .toList(growable: false);
+  }
+  throw FormatException('Invalid list value for $key: $value');
+}
+
+List<String> _readStringList(Map<String, Object?> json, String key) {
+  final Object? value = json[key];
+  if (value == null) {
+    return const <String>[];
+  }
+  if (value is List<Object?>) {
+    return value
+        .map((Object? entry) {
+          if (entry is String) {
+            return entry;
+          }
+          throw FormatException('Invalid string list entry for $key: $entry');
+        })
+        .toList(growable: false);
+  }
+  throw FormatException('Invalid string list value for $key: $value');
 }
