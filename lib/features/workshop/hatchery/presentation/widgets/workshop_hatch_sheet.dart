@@ -16,14 +16,13 @@ class WorkshopHatchSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final int essence = ref.watch(workshopEssenceProvider);
     final int arcaneDust = ref.watch(workshopArcaneDustProvider);
-    final int homunculusCount = ref.watch(workshopHomunculusCountProvider);
     final List<HomunculusHatchRecipeView> recipes = ref.watch(
       homunculusHatchRecipeViewsProvider,
     );
 
     return AppSheetLayout(
       title: '호문쿨루스 부화',
-      header: Text('정수 $essence / 신비 $arcaneDust / 보유 호문쿨루스 $homunculusCount체'),
+      header: Text('정수 $essence / 신비 $arcaneDust'),
       body: recipes.isEmpty
           ? const AppEmptyState('부화 가능한 레시피가 없습니다')
           : ListView(

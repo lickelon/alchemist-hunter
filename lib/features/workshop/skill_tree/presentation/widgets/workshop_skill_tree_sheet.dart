@@ -20,7 +20,7 @@ class WorkshopSkillTreeSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: '작업실 스킬트리',
-      header: Text('신비 $arcaneDust'),
+      header: Text('보유 신비: $arcaneDust'),
       body: SkillTreeGraphView(
         nodes: nodes
             .map((WorkshopSkillNodeView node) => node.toGraphNode())

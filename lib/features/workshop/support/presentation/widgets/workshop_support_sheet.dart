@@ -26,59 +26,69 @@ class WorkshopSupportSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: '작업실 보조 슬롯',
-      header: Text('배치 $assignedCount/$slotLimit명 / $summary'),
+      header: Text('배치 $assignedCount/$slotLimit명'),
       body: ListView(
-        children: slots
-            .map((WorkshopSupportSlotView slot) {
-              final List<WorkshopSupportCandidateView> candidates = ref.watch(
-                workshopSupportCandidateViewsProvider(slot.slotId),
-              );
-              return Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                child: SectionCard(
-                  title: '${slot.slotLabel} 슬롯',
-                  titleStyle: subsectionTitleStyle,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '현재 ${slot.assignedCharacterName} / 효과 ${slot.effectLabel}',
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      ...candidates.map((WorkshopSupportCandidateView item) {
-                        final String label = item.assignedToSlotLabel == null
-                            ? item.name
-                            : '${item.name} (${item.assignedToSlotLabel})';
-                        return Card.outlined(
-                          margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-                          child: ListTile(
-                            dense: true,
-                            title: Text(label),
-                            subtitle: DetailLines(
-                              lines: <String>[
-                                '역할 ${item.roleLabel}',
-                                '보조효과 ${item.supportEffectLabel}',
-                              ],
-                            ),
-                            trailing: item.selectedForSlot
-                                ? const Icon(Icons.check_circle_outline)
-                                : null,
-                            onTap: item.assignable
-                                ? () {
-                                    ref
-                                        .read(workshopSupportControllerProvider)
-                                        .toggleAssignment(slot.slotId, item.id);
-                                  }
-                                : null,
+        children: <Widget>[
+          Text(
+            summary,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          ...slots.map((WorkshopSupportSlotView slot) {
+            final List<WorkshopSupportCandidateView> candidates = ref.watch(
+              workshopSupportCandidateViewsProvider(slot.slotId),
+            );
+            return Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+              child: SectionCard(
+                title: '${slot.slotLabel} 슬롯',
+                titleStyle: subsectionTitleStyle,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    DetailLines(
+                      lines: <String>[
+                        '현재 ${slot.assignedCharacterName}',
+                        '효과 ${slot.effectLabel}',
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    ...candidates.map((WorkshopSupportCandidateView item) {
+                      final String label = item.assignedToSlotLabel == null
+                          ? item.name
+                          : '${item.name} (${item.assignedToSlotLabel})';
+                      return Card.outlined(
+                        margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+                        child: ListTile(
+                          dense: true,
+                          title: Text(label),
+                          subtitle: DetailLines(
+                            lines: <String>[
+                              '역할 ${item.roleLabel}',
+                              '보조효과 ${item.supportEffectLabel}',
+                            ],
                           ),
-                        );
-                      }),
-                    ],
-                  ),
+                          trailing: item.selectedForSlot
+                              ? const Icon(Icons.check_circle_outline)
+                              : null,
+                          onTap: item.assignable
+                              ? () {
+                                  ref
+                                      .read(workshopSupportControllerProvider)
+                                      .toggleAssignment(slot.slotId, item.id);
+                                }
+                              : null,
+                        ),
+                      );
+                    }),
+                  ],
                 ),
-              );
-            })
-            .toList(growable: false),
+              ),
+            );
+          }),
+        ],
       ),
     );
   }
