@@ -2,10 +2,10 @@ import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
-import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
+import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_view_models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_equipment_detail_dialog.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
-import 'package:alchemist_hunter/features/town/equipment_display_labels.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
 import 'package:flutter/material.dart';
 
 class CharacterEquipmentItemGrid extends StatelessWidget {

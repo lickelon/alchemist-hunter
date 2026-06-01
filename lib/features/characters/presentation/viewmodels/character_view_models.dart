@@ -1,6 +1,6 @@
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
-import 'package:alchemist_hunter/features/town/equipment_display_labels.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
 
 class CharacterEquipmentSlotView {
   const CharacterEquipmentSlotView({

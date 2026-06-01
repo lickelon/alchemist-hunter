@@ -1,4 +1,6 @@
-import 'package:alchemist_hunter/features/characters/presentation/character_providers.dart';
+import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_controller.dart';
+import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_list_selectors.dart';
+import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_view_models.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_list.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
