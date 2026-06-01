@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/app.dart';
 import 'package:alchemist_hunter/app/catalog/battle_catalog_providers.dart';
+import 'package:alchemist_hunter/app/catalog/catalog_asset_validator.dart';
 import 'package:alchemist_hunter/app/catalog/town_catalog_providers.dart';
 import 'package:alchemist_hunter/app/catalog/workshop_catalog_providers.dart';
 import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalog_asset_loader.dart';
@@ -16,6 +17,11 @@ Future<void> bootstrap() async {
   final townCatalog = await const TownCatalogAssetLoader().load(rootBundle);
   final workshopCatalog = await const WorkshopCatalogAssetLoader().load(
     rootBundle,
+  );
+  validateCatalogAssets(
+    battle: battleCatalog,
+    town: townCatalog,
+    workshop: workshopCatalog,
   );
   runApp(
     ProviderScope(
