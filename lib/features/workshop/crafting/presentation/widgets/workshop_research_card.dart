@@ -6,6 +6,8 @@ import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_toast.dart';
+import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_controller.dart';
@@ -213,6 +215,7 @@ class _WorkshopBrewExperimentTabState
       builder: (BuildContext context) {
         return _BrewExperimentResultDialog(
           result: result,
+          potionId: result.potionId,
           potionName: potionMap[result.potionId]?.name,
         );
       },
@@ -315,20 +318,23 @@ class _BrewPreviewPanel extends StatelessWidget {
   }
 }
 
-class _BrewExperimentResultDialog extends StatelessWidget {
+class _BrewExperimentResultDialog extends ConsumerWidget {
   const _BrewExperimentResultDialog({
     required this.result,
+    required this.potionId,
     required this.potionName,
   });
 
   final WorkshopBrewExperimentSubmitResult result;
+  final String? potionId;
   final String? potionName;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final bool success = result.status == WorkshopBrewExperimentStatus.success;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final String title = switch (result.status) {
-      WorkshopBrewExperimentStatus.success => potionName ?? '포션 반응',
+      WorkshopBrewExperimentStatus.success => '실험 결과',
       WorkshopBrewExperimentStatus.elementMissing => '원소 부족',
       WorkshopBrewExperimentStatus.unknownReaction => '알 수 없는 반응',
       WorkshopBrewExperimentStatus.failed => '실험 실패',
@@ -341,6 +347,34 @@ class _BrewExperimentResultDialog extends StatelessWidget {
         : result.discoveryChanged
         ? '레시피 갱신 ${result.previousGrade?.name.toUpperCase()} → $gradeLabel'
         : '기존 기록 유지';
+    final String? qualityLabel = result.qualityScore == null
+        ? null
+        : '$gradeLabel · ${(result.qualityScore! * 100).round()}점';
+    final bool canPinRecipe =
+        success &&
+        !result.isNewDiscovery &&
+        result.potionId != null &&
+        result.discoveredTraits != null &&
+        result.qualityGrade != null;
+    final String recipeActionLabel = canPinRecipe
+        ? '이 비율로 레시피 고정'
+        : discoveryLabel;
+    final IconData statusIcon = switch (result.status) {
+      WorkshopBrewExperimentStatus.success =>
+        result.discoveryChanged
+            ? Icons.auto_awesome_outlined
+            : Icons.bookmark_added_outlined,
+      WorkshopBrewExperimentStatus.elementMissing => Icons.inventory_2_outlined,
+      WorkshopBrewExperimentStatus.unknownReaction => Icons.science_outlined,
+      WorkshopBrewExperimentStatus.failed => Icons.error_outline,
+    };
+    final Color statusColor = switch (result.status) {
+      WorkshopBrewExperimentStatus.success =>
+        result.discoveryChanged ? colorScheme.primary : colorScheme.tertiary,
+      WorkshopBrewExperimentStatus.elementMissing => colorScheme.error,
+      WorkshopBrewExperimentStatus.unknownReaction => colorScheme.outline,
+      WorkshopBrewExperimentStatus.failed => colorScheme.error,
+    };
 
     return AppDialogLayout(
       title: title,
@@ -348,14 +382,74 @@ class _BrewExperimentResultDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(switch (result.status) {
-            WorkshopBrewExperimentStatus.success => '품질 $gradeLabel',
-            WorkshopBrewExperimentStatus.elementMissing => '보유 원소가 부족합니다',
-            WorkshopBrewExperimentStatus.unknownReaction => '조합을 판정할 수 없습니다',
-            WorkshopBrewExperimentStatus.failed => '실험을 진행할 수 없습니다',
-          }),
-          const SizedBox(height: AppSpacing.md),
-          Text(discoveryLabel),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              if (success && potionId != null)
+                CatalogAssetIcon(
+                  assetPath: CatalogIconAssetPaths.potion(potionId!),
+                  size: 48,
+                  padding: 6,
+                  fallbackIcon: Icons.local_drink_outlined,
+                )
+              else
+                _ExperimentStatusIcon(icon: statusIcon, color: statusColor),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      success
+                          ? potionName ?? '포션 반응'
+                          : switch (result.status) {
+                              WorkshopBrewExperimentStatus.elementMissing =>
+                                '보유 원소가 부족합니다',
+                              WorkshopBrewExperimentStatus.unknownReaction =>
+                                '조합을 판정할 수 없습니다',
+                              WorkshopBrewExperimentStatus.failed =>
+                                '실험을 진행할 수 없습니다',
+                              WorkshopBrewExperimentStatus.success => '',
+                            },
+                      style: success
+                          ? Theme.of(context).textTheme.titleMedium
+                          : Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    if (success && qualityLabel != null) ...<Widget>[
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        qualityLabel,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _ExperimentStatusBanner(
+            icon: statusIcon,
+            color: statusColor,
+            label: recipeActionLabel,
+            onTap: canPinRecipe
+                ? () {
+                    ref
+                        .read(workshopCraftQueueControllerProvider)
+                        .pinBrewExperimentRecipe(
+                          potionId: result.potionId!,
+                          discoveredTraits: result.discoveredTraits!,
+                          grade: result.qualityGrade!,
+                        );
+                    AppToast.show(context, '레시피 비율을 고정했습니다');
+                    Navigator.of(context).pop();
+                  }
+                : null,
+          ),
         ],
       ),
       actions: <Widget>[
@@ -367,6 +461,73 @@ class _BrewExperimentResultDialog extends StatelessWidget {
           label: const Text('닫기'),
         ),
       ],
+    );
+  }
+}
+
+class _ExperimentStatusIcon extends StatelessWidget {
+  const _ExperimentStatusIcon({required this.icon, required this.color});
+
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: SizedBox(width: 56, height: 56, child: Icon(icon, color: color)),
+    );
+  }
+}
+
+class _ExperimentStatusBanner extends StatelessWidget {
+  const _ExperimentStatusBanner({
+    required this.icon,
+    required this.color,
+    required this.label,
+    this.onTap,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final BorderRadius borderRadius = BorderRadius.circular(8);
+    return Material(
+      color: color.withValues(alpha: 0.1),
+      shape: RoundedRectangleBorder(
+        borderRadius: borderRadius,
+        side: BorderSide(color: color.withValues(alpha: 0.35)),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: borderRadius,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
+          child: Row(
+            children: <Widget>[
+              Icon(icon, color: color, size: 20),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(child: Text(label)),
+              if (onTap != null)
+                Icon(
+                  Icons.chevron_right,
+                  color: color.withValues(alpha: 0.72),
+                  size: 20,
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -31,6 +31,7 @@ class WorkshopBrewExperimentSubmitResult {
     this.potionId,
     this.qualityGrade,
     this.qualityScore,
+    this.discoveredTraits,
     this.discoveryChanged = false,
     this.isNewDiscovery = false,
     this.previousGrade,
@@ -41,6 +42,7 @@ class WorkshopBrewExperimentSubmitResult {
   final String? potionId;
   final PotionQualityGrade? qualityGrade;
   final double? qualityScore;
+  final Map<String, double>? discoveredTraits;
   final bool discoveryChanged;
   final bool isNewDiscovery;
   final PotionQualityGrade? previousGrade;
@@ -244,11 +246,35 @@ class WorkshopCraftQueueController {
       potionId: result.potionId,
       qualityGrade: result.qualityGrade,
       qualityScore: result.qualityScore,
+      discoveredTraits: result.discoveredTraits,
       discoveryChanged: result.discoveryChanged,
       isNewDiscovery: result.isNewDiscovery,
       previousGrade: result.previousGrade,
       recordedGrade: result.recordedGrade,
     );
+  }
+
+  bool pinBrewExperimentRecipe({
+    required String potionId,
+    required Map<String, double> discoveredTraits,
+    required PotionQualityGrade grade,
+  }) {
+    final SessionState current = _session.snapshot();
+    final WorkshopState nextWorkshop = current.workshop.copyWith(
+      discoveredPotionRecipes: <String, DiscoveredPotionRecipe>{
+        ...current.workshop.discoveredPotionRecipes,
+        potionId: DiscoveredPotionRecipe(
+          potionId: potionId,
+          discoveredTraits: Map<String, double>.unmodifiable(discoveredTraits),
+          bestKnownGrade: grade,
+        ),
+      },
+    );
+    _apply(
+      current.copyWith(workshop: nextWorkshop),
+      logMessage: '양조 레시피 고정 / $potionId ${grade.name}',
+    );
+    return true;
   }
 
   void claimPending() {

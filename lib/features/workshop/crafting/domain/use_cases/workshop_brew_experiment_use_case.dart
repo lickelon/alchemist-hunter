@@ -18,6 +18,7 @@ class WorkshopBrewExperimentResult {
     this.potionId,
     this.qualityGrade,
     this.qualityScore,
+    this.discoveredTraits,
     this.discoveryChanged = false,
     this.isNewDiscovery = false,
     this.previousGrade,
@@ -29,6 +30,7 @@ class WorkshopBrewExperimentResult {
   final String? potionId;
   final PotionQualityGrade? qualityGrade;
   final double? qualityScore;
+  final Map<String, double>? discoveredTraits;
   final bool discoveryChanged;
   final bool isNewDiscovery;
   final PotionQualityGrade? previousGrade;
@@ -132,6 +134,7 @@ class WorkshopBrewExperimentUseCase {
       potionId: craftedPotion.typePotionId,
       qualityGrade: craftedPotion.qualityGrade,
       qualityScore: craftedPotion.qualityScore,
+      discoveredTraits: craftedPotion.traits,
       discoveryChanged: discovery.changed,
       isNewDiscovery: discovery.isNew,
       previousGrade: discovery.previousGrade,
