@@ -255,11 +255,14 @@
 ### 7.5 P5 밸런스 데이터 외부화
 - [x] [밸런스 데이터 외부화 사전 정리](./balance_data_externalization_plan.md) 기준으로 가격 / 드롭 / 제작시간 / 승급 재료 테이블 위치 정리
 - [x] Battle stage / enemy / encounter 데이터를 외부화 가능한 DTO 경계로 정리
+- [x] Battle stage / enemy / encounter / drop 데이터를 로컬 JSON asset에서 로딩
+- [x] Town shop / equipment / mercenary / skill tree 데이터를 로컬 JSON asset에서 로딩
+- [x] Workshop material / extraction / potion / craft / hatch / skill tree 데이터를 로컬 JSON asset에서 로딩
 - [x] 상점별 구매 제한 / 품절 / 재입고 정책을 경제 테이블 기준으로 정의
 - [x] [가격 / 드롭 / 제작시간 곡선과 경제 지표](./economy_balance_guidelines.md) 기준 문서화
 - [x] 후반 점검형 전이 지표 정의: 평균 접속 간격, 접속당 처리 액션 수, 큐 대기시간
 - [x] 경제 인플레이션 / 병목 / 이탈 지표 정의
-- [ ] 다음 필요사항: stage / enemy / encounter / drop / shop / workshop recipe 데이터를 실제 외부화한다.
+- [x] shop / workshop recipe / extraction / hatch 데이터를 실제 외부화한다.
 - [ ] 다음 필요사항: 외부화된 밸런스 테이블의 ID 안정성, 중복 ID, 참조 무결성 검증을 추가한다.
 - [ ] 다음 필요사항: 경제 / 밸런스 기준 문서를 실제 플레이 데이터 기준으로 갱신한다.
 - [ ] 다음 필요사항: 가격 / 드롭 / 제작시간 / 승급 재료 공급량의 1차 튜닝 값을 확정한다.
@@ -272,6 +275,6 @@
 - [ ] 앱 종료 / 복귀 복원과 오프라인 진행을 실제 구현한다.
 
 ## 8. 즉시 실행 우선순위
-1. 밸런스 데이터 외부화: stage / enemy / encounter / drop / shop / workshop recipe 테이블을 코드 상수에서 분리한다.
+1. 외부화된 밸런스 테이블 검증: ID 안정성, 중복 ID, 참조 무결성, 비용 / 시간 유효성을 점검한다.
 2. 경제 / 밸런스 기준 보강: 실제 플레이 데이터 기준으로 가격 / 드롭 / 제작시간 / 승급 재료 공급 곡선을 조정한다.
 3. 티어업 / 승급 루프 확장: T3 이상 승급 재료와 제작 레시피를 stage 확장에 맞춰 추가한다.
