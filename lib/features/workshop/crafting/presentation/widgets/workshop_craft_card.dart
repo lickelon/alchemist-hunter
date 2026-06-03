@@ -5,7 +5,7 @@ import 'package:alchemist_hunter/common/widgets/list_card.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/workshop_brew_recipe_book_tab.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/workshop_material_craft_tab.dart';
-import 'package:alchemist_hunter/features/workshop/shared/presentation/viewmodels/workshop_shared_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/shared/presentation/viewmodels/workshop_resource_selectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
