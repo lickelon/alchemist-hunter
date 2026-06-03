@@ -15,7 +15,8 @@ String equipmentBlueprintDetailLabel(EquipmentBlueprint blueprint) {
 String equipmentInstanceDetailLabel(EquipmentInstance equipment) {
   final List<String> lines = <String>[
     equipmentInstanceStatLabel(equipment),
-    if (equipment.enchant != null) '인챈트 ${equipment.enchant!.label}',
+    if (equipment.enchant != null)
+      '인챈트 ${equipmentEnchantLabel(equipment.enchant!)}',
   ];
   if (equipment.totalStatModifiers.isNotEmpty ||
       equipment.totalModifiers.isNotEmpty ||
@@ -23,4 +24,8 @@ String equipmentInstanceDetailLabel(EquipmentInstance equipment) {
     lines.add(equipmentInstanceEffectLabel(equipment));
   }
   return lines.join('\n');
+}
+
+String equipmentEnchantLabel(EquipmentEnchant enchant) {
+  return '${enchant.potionName} ${enchant.qualityLabel}';
 }

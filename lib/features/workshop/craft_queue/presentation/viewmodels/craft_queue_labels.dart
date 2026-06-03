@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
 
 int statusRank(QueueJobStatus status) {
   return switch (status) {
@@ -69,7 +70,8 @@ String? completedResultText(
     WorkshopJobType.enchant =>
       job.completedEquipment?.enchant == null
           ? '인챈트 완료'
-          : '인챈트 완료 / ${job.completedEquipment!.enchant!.label}',
+          : '인챈트 완료 / '
+                '${equipmentEnchantLabel(job.completedEquipment!.enchant!)}',
     WorkshopJobType.hatch =>
       job.completedHomunculus?.homunculusRole == null
           ? '부화 완료'

@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_assignment_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_labels.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_service_providers.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_view_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,8 +31,12 @@ final workshopSupportCandidateViewsProvider =
           .characters
           .homunculi
           .map((CharacterProgress character) {
-            final String? assignedSlot = supportService
-                .assignedSlotLabelForCharacter(state, character.id);
+            final String? assignedSlot =
+                assignedWorkshopSupportSlotLabelForCharacter(
+                  supportService,
+                  state,
+                  character.id,
+                );
             final String? assignedStage = stageAssignments.entries
                 .where((MapEntry<String, List<String>> entry) {
                   return entry.value.contains(character.id);
@@ -43,7 +48,7 @@ final workshopSupportCandidateViewsProvider =
             final bool selectedForSlot = assignments[slotId] == character.id;
             final bool assignedElsewhere =
                 (assignedSlot != null &&
-                    assignedSlot != supportService.slotLabel(slotId)) ||
+                    assignedSlot != workshopSupportSlotLabel(slotId)) ||
                 assignedStage != null;
             final bool assignable =
                 selectedForSlot ||

@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/domain/services/equipment_enchant_service.dart';
@@ -39,7 +40,7 @@ void main() {
       blueprint: blueprint,
     );
 
-    expect(enchant.label, '활력 포션 A');
+    expect(equipmentEnchantLabel(enchant), '활력 포션 A');
     expect(enchant.attackBonus, 6);
     expect(enchant.defenseBonus, 1);
     expect(enchant.healthBonus, 7);

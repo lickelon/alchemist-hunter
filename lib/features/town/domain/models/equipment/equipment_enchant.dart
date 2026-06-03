@@ -47,6 +47,4 @@ class EquipmentEnchant {
   int get defenseBonus => physicalDefenseBonus;
 
   int get healthBonus => maxHpBonus;
-
-  String get label => '$potionName $qualityLabel';
 }

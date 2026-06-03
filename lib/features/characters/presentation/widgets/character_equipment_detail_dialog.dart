@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_equipment_item_grid.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
 import 'package:alchemist_hunter/features/town/equipment/equipment_effect_labels.dart';
 import 'package:alchemist_hunter/features/town/equipment/equipment_stat_labels.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class CharacterEquipmentDetailDialog extends StatelessWidget {
           Text(equipmentInstanceStatLabel(item)),
           if (item.enchant != null) ...<Widget>[
             const SizedBox(height: AppSpacing.sm),
-            Text('인챈트 ${item.enchant!.label}'),
+            Text('인챈트 ${equipmentEnchantLabel(item.enchant!)}'),
           ],
           if (item.totalStatModifiers.isNotEmpty ||
               item.totalModifiers.isNotEmpty ||

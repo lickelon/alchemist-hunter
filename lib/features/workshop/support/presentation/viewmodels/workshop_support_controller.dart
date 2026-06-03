@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/use_cases/configure_workshop_support_assignment_use_case.dart';
+import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_labels.dart';
 
 class WorkshopSupportController {
   WorkshopSupportController(
@@ -56,8 +56,8 @@ class WorkshopSupportController {
 
     _session.appendLog(
       wasAssignedToSlot
-          ? '${character.name} / 작업실 ${_slotLabel(slotId)} 해제'
-          : '${character.name} / 작업실 ${_slotLabel(slotId)} 배치',
+          ? '${character.name} / 작업실 ${workshopSupportSlotLabel(slotId)} 해제'
+          : '${character.name} / 작업실 ${workshopSupportSlotLabel(slotId)} 배치',
     );
   }
 
@@ -80,19 +80,7 @@ class WorkshopSupportController {
     return null;
   }
 
-  String _slotLabel(String slotId) {
-    switch (slotId) {
-      case WorkshopSupportService.extractionSlot:
-        return '추출';
-      case WorkshopSupportService.craftingSlot:
-        return '제조';
-      case WorkshopSupportService.enchantSlot:
-        return '인챈트';
-      case WorkshopSupportService.hatchSlot:
-        return '부화';
-    }
-    return slotId;
-  }
+  String _slotLabel(String slotId) => workshopSupportSlotLabel(slotId);
 }
 
 final Provider<WorkshopSupportController> workshopSupportControllerProvider =

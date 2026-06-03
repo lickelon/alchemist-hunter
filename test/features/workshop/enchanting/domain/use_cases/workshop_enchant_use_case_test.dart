@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/domain/services/equipment_enchant_service.dart';
@@ -66,7 +67,9 @@ void main() {
       expect(nextState.workshop.queue, hasLength(1));
       expect(nextState.workshop.queue.first.type, WorkshopJobType.enchant);
       expect(
-        nextState.workshop.queue.first.completedEquipment?.enchant?.label,
+        equipmentEnchantLabel(
+          nextState.workshop.queue.first.completedEquipment!.enchant!,
+        ),
         '활력 포션 A',
       );
       expect(
@@ -114,7 +117,9 @@ void main() {
     expect(nextState.workshop.queue, hasLength(1));
     expect(nextState.workshop.queue.first.equipmentOwnerId, 'merc_1');
     expect(
-      nextState.workshop.queue.first.completedEquipment?.enchant?.label,
+      equipmentEnchantLabel(
+        nextState.workshop.queue.first.completedEquipment!.enchant!,
+      ),
       '활력 포션 A',
     );
     expect(nextState.workshop.queue.first.completedEquipment?.totalAttack, 18);

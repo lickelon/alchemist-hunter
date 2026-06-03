@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/widgets/workshop_enchant_card.dart';
@@ -88,7 +89,9 @@ void main() {
     expect(session.state.workshop.queue, hasLength(1));
     expect(session.state.workshop.queue.first.type, WorkshopJobType.enchant);
     expect(
-      session.state.workshop.queue.first.completedEquipment?.enchant?.label,
+      equipmentEnchantLabel(
+        session.state.workshop.queue.first.completedEquipment!.enchant!,
+      ),
       '활력 포션 A',
     );
   });
@@ -183,7 +186,9 @@ void main() {
 
     expect(session.state.workshop.craftedPotionStacks['p_1|a'], 1);
     expect(
-      session.state.town.equipmentInventory.first.enchant?.label,
+      equipmentEnchantLabel(
+        session.state.town.equipmentInventory.first.enchant!,
+      ),
       'Old Brew B',
     );
 
@@ -197,7 +202,9 @@ void main() {
     expect(session.state.town.equipmentInventory, isEmpty);
     expect(session.state.workshop.queue, hasLength(1));
     expect(
-      session.state.workshop.queue.first.completedEquipment?.enchant?.label,
+      equipmentEnchantLabel(
+        session.state.workshop.queue.first.completedEquipment!.enchant!,
+      ),
       '활력 포션 A',
     );
   });

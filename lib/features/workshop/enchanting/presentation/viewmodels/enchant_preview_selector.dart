@@ -6,7 +6,7 @@ import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
 import 'package:alchemist_hunter/features/town/equipment/equipment_stat_labels.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/shared/presentation/viewmodels/workshop_shared_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/shared/presentation/viewmodels/workshop_resource_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchant_equipment_lookup.dart';
 import 'package:alchemist_hunter/features/workshop/enchanting/presentation/viewmodels/enchanting_service_providers.dart';
 
@@ -75,8 +75,10 @@ final enchantPreviewProvider =
 
       return EnchantPreviewView(
         equipmentName: equipment.name,
-        currentEnchantLabel: equipment.enchant?.label ?? '인챈트 없음',
-        nextEnchantLabel: nextEnchant.label,
+        currentEnchantLabel: equipment.enchant == null
+            ? '인챈트 없음'
+            : equipmentEnchantLabel(equipment.enchant!),
+        nextEnchantLabel: equipmentEnchantLabel(nextEnchant),
         currentStatLabel: equipmentInstanceDetailLabel(equipment),
         nextStatLabel: equipmentInstanceDetailLabel(previewEquipment),
         deltaStatLabel:

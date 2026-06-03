@@ -1,7 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_display_service.dart';
+import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/potion_display_labels.dart';
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -44,7 +44,6 @@ final Provider<List<TownPotionSaleView>> townPotionSaleViewsProvider =
         ref.watch(townSkillNodesProvider),
       );
       final potionRepository = ref.watch(potionCatalogRepositoryProvider);
-      const PotionDisplayService displayService = PotionDisplayService();
 
       final List<TownPotionSaleView> views = stacks.entries.map((
         MapEntry<String, int> entry,
@@ -64,7 +63,7 @@ final Provider<List<TownPotionSaleView>> townPotionSaleViewsProvider =
         return TownPotionSaleView(
           stackKey: entry.key,
           potionId: detail?.typePotionId ?? entry.key,
-          name: displayService.potionName(
+          name: potionNameLabel(
             stackKey: entry.key,
             detail: detail,
             potionCatalogRepository: potionRepository,

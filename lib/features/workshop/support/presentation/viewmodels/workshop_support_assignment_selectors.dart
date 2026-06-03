@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
+import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_labels.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_service_providers.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_view_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,7 +33,10 @@ final Provider<String> workshopSupportSummaryProvider = Provider<String>((
   Ref ref,
 ) {
   final SessionState state = ref.watch(sessionControllerProvider);
-  return ref.watch(workshopSupportServiceProvider).summaryLabel(state);
+  return workshopSupportSummaryLabel(
+    ref.watch(workshopSupportServiceProvider),
+    state,
+  );
 });
 
 final Provider<List<WorkshopSupportSlotView>> workshopSupportSlotViewsProvider =
@@ -56,8 +60,8 @@ final Provider<List<WorkshopSupportSlotView>> workshopSupportSlotViewsProvider =
             );
             return WorkshopSupportSlotView(
               slotId: slotId,
-              slotLabel: supportService.slotLabel(slotId),
-              effectLabel: supportService.slotEffectLabel(slotId),
+              slotLabel: workshopSupportSlotLabel(slotId),
+              effectLabel: workshopSupportSlotEffectLabel(slotId),
               assignedCharacterId: characterId,
               assignedCharacterName: characterId == null
                   ? '비어 있음'
