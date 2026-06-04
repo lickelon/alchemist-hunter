@@ -93,12 +93,14 @@ void main() {
 
     expect(find.text('포션 로드아웃'), findsOneWidget);
     expect(find.text('활력 포션 A'), findsOneWidget);
-    expect(find.text('보유 2, 선택 0'), findsOneWidget);
+    expect(find.text('보유 2'), findsOneWidget);
+    expect(find.text('선택 0'), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.add_circle_outline).first);
     await tester.pumpAndSettle();
 
     expect(session.state.battle.stagePotionLoadouts['stage_2']?['p_1|a'], 1);
-    expect(find.text('보유 2, 선택 1'), findsOneWidget);
+    expect(find.text('보유 2'), findsOneWidget);
+    expect(find.text('선택 1'), findsOneWidget);
   });
 }
