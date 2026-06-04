@@ -1,5 +1,7 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_assignment_view_models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_controller.dart';
@@ -34,9 +36,9 @@ class BattleAssignmentPotionSection extends ConsumerWidget {
           ),
         ),
         if (potions.isEmpty)
-          const ListTile(
-            title: Text('전투용 포션 없음'),
-            subtitle: Text('제조 완료된 전투 포션이 있으면 여기서 선택할 수 있습니다'),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+            child: AppEmptyState('포션 없음'),
           )
         else
           ...potions.map((BattleAssignmentPotionView potion) {
@@ -47,8 +49,16 @@ class BattleAssignmentPotionSection extends ConsumerWidget {
                 padding: 5,
               ),
               title: Text(potion.label),
-              subtitle: Text(
-                '보유 ${potion.ownedCount}, 선택 ${potion.selectedCount}',
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.sm),
+                child: Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: <Widget>[
+                    AppBadge(label: '보유 ${potion.ownedCount}'),
+                    AppBadge(label: '선택 ${potion.selectedCount}'),
+                  ],
+                ),
               ),
               trailing: _PotionCountControls(stageId: stageId, potion: potion),
             );
