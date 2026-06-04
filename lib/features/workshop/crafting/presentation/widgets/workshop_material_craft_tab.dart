@@ -29,8 +29,7 @@ class WorkshopMaterialCraftTab extends ConsumerWidget {
               ),
               badgeLabel: quantityLabel,
               semanticLabel: '${recipe.title} $quantityLabel',
-              tooltipMessage:
-                  '${recipe.title} $quantityLabel\n${recipe.costHint}\n${recipe.durationLabel}',
+              tooltipMessage: recipe.title,
               onTap: () {
                 showDialog<void>(
                   context: context,

@@ -1,9 +1,11 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_submit_results.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/workshop_craft_queue_controller_provider.dart';
@@ -32,8 +34,7 @@ class WorkshopBrewRecipeBookTab extends ConsumerWidget {
               assetPath: CatalogIconAssetPaths.potion(recipe.potionId),
               badgeLabel: badgeLabel,
               semanticLabel: '${recipe.title} $badgeLabel',
-              tooltipMessage:
-                  '${recipe.title}\n${recipe.summaryLabel}\n양조 가능 ${recipe.maxCraftableCount}회',
+              tooltipMessage: recipe.title,
               onTap: () {
                 showDialog<void>(
                   context: context,
@@ -80,7 +81,7 @@ class _WorkshopDiscoveredBrewDetailDialogState
         recipe.craftableNow && recipe.maxCraftableCount >= selectedQuantity;
 
     return AppDialogLayout(
-      title: recipe.title,
+      title: '양조 등록',
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -94,13 +95,30 @@ class _WorkshopDiscoveredBrewDetailDialogState
                   padding: 6,
                 ),
                 const SizedBox(width: AppSpacing.md),
-                Text('최고 등급 ${recipe.qualityLabel}'),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        recipe.title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
+                        children: <Widget>[
+                          AppBadge(label: recipe.qualityLabel),
+                          AppBadge(label: '최대 ${recipe.maxCraftableCount}회'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
             Text('양조 수량'),
-            const SizedBox(height: AppSpacing.sm),
-            Text('양조 가능 ${recipe.maxCraftableCount}회'),
             const SizedBox(height: AppSpacing.md),
             CraftQuantitySlider(
               selectedQuantity: selectedQuantity,
@@ -113,9 +131,10 @@ class _WorkshopDiscoveredBrewDetailDialogState
               },
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('발견 비율'),
-            const SizedBox(height: AppSpacing.sm),
-            Text(recipe.ratioLabel),
+            DetailLines(
+              description: '발견 비율',
+              lines: <String>[recipe.ratioLabel],
+            ),
           ],
         ),
       ),

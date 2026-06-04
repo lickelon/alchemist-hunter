@@ -62,7 +62,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('활력 포션'), findsWidgets);
-    expect(find.text('최고 등급 A'), findsOneWidget);
+    expect(find.text('A'), findsOneWidget);
+    expect(find.text('최고 등급 A'), findsNothing);
     expect(find.text('발견 비율'), findsOneWidget);
     expect(find.textContaining('메인 Vital 60 / 서브 Aggro 40'), findsOneWidget);
   });
@@ -130,7 +131,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('활력 포션'), findsWidgets);
-    expect(find.text('최고 등급 A'), findsOneWidget);
+    expect(find.text('A'), findsOneWidget);
+    expect(find.text('최고 등급 A'), findsNothing);
   });
 
   testWidgets('workshop recipe book registers repeated brew', (
