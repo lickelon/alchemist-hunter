@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/section_card.dart';
@@ -58,20 +59,12 @@ class WorkshopSupportSheet extends ConsumerWidget {
                     ),
                     const SizedBox(height: AppSpacing.md),
                     ...candidates.map((WorkshopSupportCandidateView item) {
-                      final String label = item.assignedToSlotLabel == null
-                          ? item.name
-                          : '${item.name} (${item.assignedToSlotLabel})';
                       return Card.outlined(
                         margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                         child: ListTile(
                           dense: true,
-                          title: Text(label),
-                          subtitle: DetailLines(
-                            lines: <String>[
-                              '역할 ${item.roleLabel}',
-                              '보조효과 ${item.supportEffectLabel}',
-                            ],
-                          ),
+                          title: Text(item.name),
+                          subtitle: _SupportCandidateSummary(item: item),
                           trailing: item.selectedForSlot
                               ? const Icon(Icons.check_circle_outline)
                               : null,
@@ -90,6 +83,43 @@ class WorkshopSupportSheet extends ConsumerWidget {
               ),
             );
           }),
+        ],
+      ),
+    );
+  }
+}
+
+class _SupportCandidateSummary extends StatelessWidget {
+  const _SupportCandidateSummary({required this.item});
+
+  final WorkshopSupportCandidateView item;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              AppBadge(label: item.roleLabel),
+              if (item.assignedToSlotLabel != null)
+                AppBadge(label: item.assignedToSlotLabel!),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            item.supportEffectLabel,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
