@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_controller.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_stage_progress_selectors.dart';
@@ -39,7 +40,6 @@ class DungeonScreen extends ConsumerWidget {
         final bool canStart = assignedCount > 0 && !expedition.isActive;
         final bool canStop = expedition.isActive;
         final bool canClaim = !expedition.pendingClaim.isEmpty;
-        final String cardSummary = '편성 $assignedCount명\n상태: $statusLabel';
 
         return Card(
           child: InkWell(
@@ -66,7 +66,14 @@ class DungeonScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Text(cardSummary),
+                  Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
+                    children: <Widget>[
+                      AppBadge(label: '편성 $assignedCount명'),
+                      AppBadge(label: statusLabel),
+                    ],
+                  ),
                   const SizedBox(height: AppSpacing.lg),
                   Wrap(
                     spacing: AppSpacing.md,
