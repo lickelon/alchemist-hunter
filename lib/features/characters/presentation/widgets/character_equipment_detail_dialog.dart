@@ -1,5 +1,5 @@
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_equipment_item_grid.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
@@ -21,27 +21,19 @@ class CharacterEquipmentDetailDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<String> lines = <String>[
+      _slotLabel(item.slot),
+      equipmentInstanceStatLabel(item),
+      if (item.enchant != null) '인챈트 ${equipmentEnchantLabel(item.enchant!)}',
+      if (item.totalStatModifiers.isNotEmpty ||
+          item.totalModifiers.isNotEmpty ||
+          item.totalPassives.isNotEmpty)
+        equipmentInstanceEffectLabel(item),
+    ];
+
     return AppDialogLayout(
       title: item.name,
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(_slotLabel(item.slot)),
-          const SizedBox(height: AppSpacing.sm),
-          Text(equipmentInstanceStatLabel(item)),
-          if (item.enchant != null) ...<Widget>[
-            const SizedBox(height: AppSpacing.sm),
-            Text('인챈트 ${equipmentEnchantLabel(item.enchant!)}'),
-          ],
-          if (item.totalStatModifiers.isNotEmpty ||
-              item.totalModifiers.isNotEmpty ||
-              item.totalPassives.isNotEmpty) ...<Widget>[
-            const SizedBox(height: AppSpacing.sm),
-            Text(equipmentInstanceEffectLabel(item)),
-          ],
-        ],
-      ),
+      body: DetailLines(lines: lines),
       actions: <Widget>[
         TextButton.icon(
           onPressed: () {
