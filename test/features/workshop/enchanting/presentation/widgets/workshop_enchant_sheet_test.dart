@@ -75,13 +75,13 @@ void main() {
       find.byKey(const ValueKey<String>('enchant_equipment_eq_instance_1')),
     );
     await tester.pumpAndSettle();
-    expect(find.text('예상 결과'), findsOneWidget);
-    expect(find.text('현재 인챈트 없음'), findsOneWidget);
-    expect(find.text('예상 활력 포션 A'), findsOneWidget);
+    expect(find.text('결과'), findsOneWidget);
+    expect(find.text('인챈트 없음'), findsOneWidget);
+    expect(find.text('활력 포션 A'), findsOneWidget);
     expect(find.textContaining('물공 +6'), findsOneWidget);
     expect(find.textContaining('주는 피해 +4%'), findsOneWidget);
-    await tester.ensureVisible(find.text('인챈트 등록'));
-    await tester.tap(find.text('인챈트 등록'));
+    await tester.ensureVisible(find.text('등록'));
+    await tester.tap(find.text('등록'));
     await tester.pumpAndSettle();
 
     expect(session.state.workshop.craftedPotionStacks, isEmpty);
@@ -171,12 +171,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('교체 예정'), findsOneWidget);
-    expect(find.text('현재 Old Brew B'), findsOneWidget);
-    expect(find.text('예상 활력 포션 A'), findsOneWidget);
-    expect(find.text('인챈트 교체 등록'), findsOneWidget);
+    expect(find.text('Old Brew B'), findsOneWidget);
+    expect(find.text('활력 포션 A'), findsOneWidget);
+    expect(find.text('교체 등록'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('인챈트 교체 등록'));
-    await tester.tap(find.text('인챈트 교체 등록'));
+    await tester.ensureVisible(find.text('교체 등록'));
+    await tester.tap(find.text('교체 등록'));
     await tester.pumpAndSettle();
 
     expect(find.text('기존 인챈트 교체'), findsOneWidget);
@@ -192,8 +192,8 @@ void main() {
       'Old Brew B',
     );
 
-    await tester.ensureVisible(find.text('인챈트 교체 등록'));
-    await tester.tap(find.text('인챈트 교체 등록'));
+    await tester.ensureVisible(find.text('교체 등록'));
+    await tester.tap(find.text('교체 등록'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('교체'));
     await tester.pumpAndSettle();
@@ -285,8 +285,8 @@ void main() {
       find.byKey(const ValueKey<String>('enchant_equipment_eq_instance_1')),
     );
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('인챈트 등록'));
-    await tester.tap(find.text('인챈트 등록'));
+    await tester.ensureVisible(find.text('등록'));
+    await tester.tap(find.text('등록'));
     await tester.pump();
 
     expect(find.text('작업실 큐가 가득 찼습니다'), findsOneWidget);

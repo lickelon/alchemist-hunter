@@ -131,9 +131,7 @@ class _WorkshopEnchantSheetState extends ConsumerState<WorkshopEnchantSheet> {
           Expanded(
             child: FilledButton(
               onPressed: preview == null ? null : () => _submitEnchant(preview),
-              child: Text(
-                preview?.replaceRequired == true ? '인챈트 교체 등록' : '인챈트 등록',
-              ),
+              child: Text(preview?.replaceRequired == true ? '교체 등록' : '등록'),
             ),
           ),
         ],

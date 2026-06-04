@@ -19,7 +19,7 @@ class WorkshopEnchantPreviewSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('예상 결과', style: subsectionTitleStyle),
+        Text('결과', style: subsectionTitleStyle),
         const SizedBox(height: AppSpacing.md),
         Container(
           width: double.infinity,
@@ -39,8 +39,8 @@ class WorkshopEnchantPreviewSection extends StatelessWidget {
                       spacing: AppSpacing.sm,
                       runSpacing: AppSpacing.sm,
                       children: <Widget>[
-                        AppBadge(label: '현재 ${preview!.currentEnchantLabel}'),
-                        AppBadge(label: '예상 ${preview!.nextEnchantLabel}'),
+                        AppBadge(label: preview!.currentEnchantLabel),
+                        AppBadge(label: preview!.nextEnchantLabel),
                         AppBadge(label: preview!.currentStatLabel),
                         AppBadge(label: preview!.nextStatLabel),
                         if (preview!.replaceRequired)
