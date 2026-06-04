@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_labels.dart';
-import 'package:alchemist_hunter/features/workshop/shared/presentation/viewmodels/workshop_resource_selectors.dart';
 
 class CraftQueueJobView {
   const CraftQueueJobView({
@@ -76,7 +75,6 @@ final Provider<WorkshopQueueCardSummaryView> workshopQueueCardSummaryProvider =
     Provider<WorkshopQueueCardSummaryView>((Ref ref) {
       final List<CraftQueueJob> jobs = ref.watch(craftQueueProvider);
       final int jobCount = jobs.length;
-      final int queueCapacity = ref.watch(workshopQueueCapacityProvider);
       final CraftQueueJob? activeJob = jobs.cast<CraftQueueJob?>().firstWhere(
         (CraftQueueJob? job) => job?.status == QueueJobStatus.processing,
         orElse: () => null,
@@ -84,10 +82,18 @@ final Provider<WorkshopQueueCardSummaryView> workshopQueueCardSummaryProvider =
       final int completedCount = jobs
           .where((CraftQueueJob job) => job.status == QueueJobStatus.completed)
           .length;
-      final String left = activeJob == null ? '진행 없음' : '진행 ${activeJob.title}';
+      final String description;
+      if (completedCount > 0) {
+        description = '수령 $completedCount건';
+      } else if (activeJob != null) {
+        description = '진행 ${activeJob.title}';
+      } else if (jobCount > 0) {
+        description = '대기 $jobCount건';
+      } else {
+        description = '대기열 비어 있음';
+      }
       return WorkshopQueueCardSummaryView(
         jobCount: jobCount,
-        description:
-            '$left / 슬롯 $jobCount/$queueCapacity / 수령 대기 $completedCount건',
+        description: description,
       );
     });

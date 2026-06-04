@@ -62,6 +62,6 @@ workshopInventorySummaryProvider = Provider<WorkshopInventorySummaryView>((
     traitTypeCount: traits.length,
     potionStackCount: potionStacks.length,
     description:
-        '재료 ${materials.length}종 / 원소 ${traits.length}종 / 포션 ${potionStacks.length}스택',
+        '재료 ${materials.length}종, 원소 ${traits.length}종, 포션 ${potionStacks.length}스택',
   );
 });

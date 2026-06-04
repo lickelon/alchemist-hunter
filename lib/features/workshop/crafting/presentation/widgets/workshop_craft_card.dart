@@ -25,7 +25,7 @@ class WorkshopCraftCard extends StatelessWidget {
       name: '연금술',
       summary: brewCraftableCount == 0 && materialCraftableCount == 0
           ? '즉시 등록 가능한 항목 없음'
-          : '양조 $brewCraftableCount종 / 제작 $materialCraftableCount종',
+          : '양조 $brewCraftableCount종, 제작 $materialCraftableCount종',
       icon: Icons.local_drink_outlined,
       onTap: () => _showCraftSheet(context),
     );

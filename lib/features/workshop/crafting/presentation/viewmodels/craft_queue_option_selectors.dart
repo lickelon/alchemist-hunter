@@ -39,7 +39,7 @@ final Provider<WorkshopCraftMenuSummaryView> workshopCraftMenuSummaryProvider =
           .length;
       final String description = unlockedCount == 0
           ? '양조 가능한 포션 없음'
-          : '양조 $craftableCount종 / 제작 $materialCraftableCount종';
+          : '양조 $craftableCount종, 제작 $materialCraftableCount종';
       return WorkshopCraftMenuSummaryView(
         craftableCount: craftableCount,
         unlockedCount: unlockedCount,
