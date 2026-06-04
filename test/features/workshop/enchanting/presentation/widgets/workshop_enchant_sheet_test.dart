@@ -62,7 +62,7 @@ void main() {
     await tester.tap(find.text('인챈트'));
     await tester.pumpAndSettle();
 
-    expect(find.text('포션과 장비를 선택하면 인챈트 결과를 미리 볼 수 있습니다'), findsOneWidget);
+    expect(find.text('선택 대기'), findsOneWidget);
 
     await tester.tap(
       find.byKey(const ValueKey<String>('enchant_potion_p_1|a')),
@@ -170,7 +170,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('기존 인챈트가 교체됩니다'), findsOneWidget);
+    expect(find.text('교체 예정'), findsOneWidget);
     expect(find.text('현재 Old Brew B'), findsOneWidget);
     expect(find.text('예상 활력 포션 A'), findsOneWidget);
     expect(find.text('인챈트 교체 등록'), findsOneWidget);
