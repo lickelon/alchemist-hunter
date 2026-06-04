@@ -85,7 +85,6 @@ class _HatchRecipeSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.sm),
       child: Column(
@@ -97,23 +96,11 @@ class _HatchRecipeSummary extends StatelessWidget {
             children: <Widget>[
               AppBadge(label: recipe.roleLabel),
               AppBadge(label: recipe.availabilityLabel),
+              AppBadge(label: recipe.supportEffectLabel),
+              ...recipe.costLabels.map(
+                (String label) => AppBadge(label: label),
+              ),
             ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            recipe.supportEffectLabel,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            recipe.costLabel,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
           ),
         ],
       ),

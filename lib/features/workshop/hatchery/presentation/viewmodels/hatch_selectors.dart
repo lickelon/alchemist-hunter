@@ -13,7 +13,7 @@ class HomunculusHatchRecipeView {
     required this.resultName,
     required this.roleLabel,
     required this.supportEffectLabel,
-    required this.costLabel,
+    required this.costLabels,
     required this.availabilityLabel,
     required this.canHatch,
   });
@@ -24,7 +24,7 @@ class HomunculusHatchRecipeView {
   final String resultName;
   final String roleLabel;
   final String supportEffectLabel;
-  final String costLabel;
+  final List<String> costLabels;
   final String availabilityLabel;
   final bool canHatch;
 }
@@ -85,18 +85,18 @@ homunculusHatchRecipeViewsProvider = Provider<List<HomunculusHatchRecipeView>>((
           availabilityLabel = '등록 가능';
         }
 
-        final String materialCostLabel = recipe.materialCosts.entries
+        final List<String> materialCostLabels = recipe.materialCosts.entries
             .map(
               (MapEntry<String, int> entry) =>
                   '${materialMap[entry.key]?.name ?? entry.key} x${entry.value}',
             )
-            .join(', ');
-        final String traitCostLabel = recipe.traitCosts.entries
+            .toList(growable: false);
+        final List<String> traitCostLabels = recipe.traitCosts.entries
             .map(
               (MapEntry<String, double> entry) =>
                   '${traitMap[entry.key]?.name ?? entry.key} 원소 ${entry.value.toStringAsFixed(1)}',
             )
-            .join(', ');
+            .toList(growable: false);
 
         return HomunculusHatchRecipeView(
           id: recipe.id,
@@ -105,8 +105,12 @@ homunculusHatchRecipeViewsProvider = Provider<List<HomunculusHatchRecipeView>>((
           resultName: recipe.resultName,
           roleLabel: recipe.roleLabel,
           supportEffectLabel: recipe.supportEffectLabel,
-          costLabel:
-              '정수 ${recipe.essenceCost}, 신비 $arcaneDustCost${materialCostLabel.isEmpty ? "" : ", $materialCostLabel"}${traitCostLabel.isEmpty ? "" : ", $traitCostLabel"}',
+          costLabels: <String>[
+            '정수 ${recipe.essenceCost}',
+            '신비 $arcaneDustCost',
+            ...materialCostLabels,
+            ...traitCostLabels,
+          ],
           availabilityLabel: availabilityLabel,
           canHatch:
               enoughEssence && enoughDust && enoughMaterials && enoughTraits,

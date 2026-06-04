@@ -2,7 +2,6 @@ import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
-import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/section_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +18,9 @@ class WorkshopSupportSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final int assignedCount = ref.watch(workshopSupportAssignedCountProvider);
     final int slotLimit = ref.watch(workshopSupportSlotLimitProvider);
-    final String summary = ref.watch(workshopSupportSummaryProvider);
+    final List<String> summaryLabels = ref.watch(
+      workshopSupportSummaryProvider,
+    );
     final List<WorkshopSupportSlotView> slots = ref.watch(
       workshopSupportSlotViewsProvider,
     );
@@ -29,16 +30,16 @@ class WorkshopSupportSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: '작업실 보조 슬롯',
-      header: Text('배치 $assignedCount/$slotLimit명'),
+      header: Wrap(
+        spacing: AppSpacing.md,
+        runSpacing: AppSpacing.sm,
+        children: <Widget>[
+          AppBadge(label: '배치 $assignedCount/$slotLimit'),
+          ...summaryLabels.map((String label) => AppBadge(label: label)),
+        ],
+      ),
       body: ListView(
         children: <Widget>[
-          Text(
-            summary,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.lg),
           ...slots.map((WorkshopSupportSlotView slot) {
             final List<WorkshopSupportCandidateView> candidates = ref.watch(
               workshopSupportCandidateViewsProvider(slot.slotId),
@@ -51,10 +52,12 @@ class WorkshopSupportSheet extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    DetailLines(
-                      lines: <String>[
-                        '현재 ${slot.assignedCharacterName}',
-                        '효과 ${slot.effectLabel}',
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: <Widget>[
+                        AppBadge(label: slot.assignedCharacterName),
+                        AppBadge(label: slot.effectLabel),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -96,7 +99,6 @@ class _SupportCandidateSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.sm),
       child: Column(
@@ -107,18 +109,10 @@ class _SupportCandidateSummary extends StatelessWidget {
             runSpacing: AppSpacing.sm,
             children: <Widget>[
               AppBadge(label: item.roleLabel),
+              AppBadge(label: item.supportEffectLabel),
               if (item.assignedToSlotLabel != null)
                 AppBadge(label: item.assignedToSlotLabel!),
             ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            item.supportEffectLabel,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
           ),
         ],
       ),

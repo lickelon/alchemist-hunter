@@ -29,15 +29,14 @@ final Provider<int> workshopSupportAssignedCountProvider = Provider<int>((
   );
 });
 
-final Provider<String> workshopSupportSummaryProvider = Provider<String>((
-  Ref ref,
-) {
-  final SessionState state = ref.watch(sessionControllerProvider);
-  return workshopSupportSummaryLabel(
-    ref.watch(workshopSupportServiceProvider),
-    state,
-  );
-});
+final Provider<List<String>> workshopSupportSummaryProvider =
+    Provider<List<String>>((Ref ref) {
+      final SessionState state = ref.watch(sessionControllerProvider);
+      return workshopSupportSummaryLabels(
+        ref.watch(workshopSupportServiceProvider),
+        state,
+      );
+    });
 
 final Provider<List<WorkshopSupportSlotView>> workshopSupportSlotViewsProvider =
     Provider<List<WorkshopSupportSlotView>>((Ref ref) {

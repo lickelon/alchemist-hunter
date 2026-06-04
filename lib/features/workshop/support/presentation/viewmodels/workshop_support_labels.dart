@@ -29,7 +29,7 @@ String workshopSupportSlotEffectLabel(String slotId) {
   return '효과 없음';
 }
 
-String workshopSupportSummaryLabel(
+List<String> workshopSupportSummaryLabels(
   WorkshopSupportService supportService,
   SessionState state,
 ) {
@@ -43,9 +43,9 @@ String workshopSupportSummaryLabel(
     }
   }
   if (labels.isEmpty) {
-    return '보조 효과 없음';
+    return <String>['보조 없음'];
   }
-  return labels.join(' / ');
+  return labels;
 }
 
 String? assignedWorkshopSupportSlotLabelForCharacter(

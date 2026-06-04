@@ -42,8 +42,8 @@ void main() {
 
     expect(find.text('작업실 보조 슬롯'), findsOneWidget);
     expect(find.text('추출 슬롯'), findsOneWidget);
-    expect(find.text('현재 비어 있음'), findsWidgets);
-    expect(find.text('효과 추출 수율 +5%'), findsOneWidget);
+    expect(find.text('비어 있음'), findsWidgets);
+    expect(find.text('추출 수율 +5%'), findsWidgets);
 
     await tester.tap(find.text('Nigredo Seed').first);
     await tester.pumpAndSettle();
