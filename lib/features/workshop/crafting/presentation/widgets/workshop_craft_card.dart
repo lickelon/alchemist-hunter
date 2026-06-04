@@ -1,4 +1,4 @@
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
@@ -53,7 +53,6 @@ class WorkshopCraftSheet extends ConsumerWidget {
     );
     final int queueCapacity = ref.watch(workshopQueueCapacityProvider);
     final bool queueFull = queueLength >= queueCapacity;
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return DefaultTabController(
       length: 2,
@@ -65,16 +64,7 @@ class WorkshopCraftSheet extends ConsumerWidget {
             if (queueFull) ...<Widget>[
               Row(
                 children: <Widget>[
-                  Icon(
-                    Icons.warning_amber_outlined,
-                    color: colorScheme.error,
-                    size: 18,
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    '작업실 큐 가득 참 ($queueLength/$queueCapacity)',
-                    style: TextStyle(color: colorScheme.error),
-                  ),
+                  AppBadge(label: '큐 가득 참 $queueLength/$queueCapacity'),
                 ],
               ),
               const SizedBox(height: 12),

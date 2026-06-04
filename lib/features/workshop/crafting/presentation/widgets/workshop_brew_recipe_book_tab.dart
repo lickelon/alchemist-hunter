@@ -110,6 +110,7 @@ class _WorkshopDiscoveredBrewDetailDialogState
                         children: <Widget>[
                           AppBadge(label: recipe.qualityLabel),
                           AppBadge(label: '최대 ${recipe.maxCraftableCount}회'),
+                          AppBadge(label: '결과 x$selectedQuantity'),
                         ],
                       ),
                     ],

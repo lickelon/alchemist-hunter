@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
@@ -85,11 +86,9 @@ class _WorkshopMaterialCraftDetailDialogState
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        'x${recipe.resultQuantity * selectedQuantity}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      AppBadge(
+                        label:
+                            '결과 x${recipe.resultQuantity * selectedQuantity}',
                       ),
                     ],
                   ),

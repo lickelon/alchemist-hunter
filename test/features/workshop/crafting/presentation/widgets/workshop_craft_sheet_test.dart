@@ -125,8 +125,8 @@ void main() {
     await tester.tap(find.text('연금술'));
     await tester.pumpAndSettle();
 
-    expect(find.text('작업실 큐 가득 참 (4/4)'), findsOneWidget);
-    expect(find.text('큐 가득 참 (4/4)'), findsNothing);
+    expect(find.text('큐 가득 참 4/4'), findsOneWidget);
+    expect(find.text('작업실 큐 가득 참 (4/4)'), findsNothing);
     await tester.tap(find.byKey(const ValueKey<String>('brew_recipe_p_1')));
     await tester.pumpAndSettle();
 
