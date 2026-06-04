@@ -20,13 +20,15 @@ class ExtractionProfileOptionView {
   const ExtractionProfileOptionView({
     required this.id,
     required this.title,
-    required this.subtitle,
+    required this.yieldLabel,
+    required this.purityLabel,
     required this.requiresSelection,
   });
 
   final String id;
   final String title;
-  final String subtitle;
+  final String yieldLabel;
+  final String purityLabel;
   final bool requiresSelection;
 }
 
@@ -85,8 +87,9 @@ final materialExtractionDetailViewProvider =
               (ExtractionProfile profile) => ExtractionProfileOptionView(
                 id: profile.id,
                 title: profile.mode == ExtractionMode.full ? '전체 추출' : '선택 추출',
-                subtitle:
-                    '수율 ${(profile.yieldRate * (1 + yieldBonus)).toStringAsFixed(2)} / 순도 ${profile.purityRate.toStringAsFixed(2)}',
+                yieldLabel:
+                    '수율 ${(profile.yieldRate * (1 + yieldBonus)).toStringAsFixed(2)}',
+                purityLabel: '순도 ${profile.purityRate.toStringAsFixed(2)}',
                 requiresSelection: profile.mode == ExtractionMode.selective,
               ),
             )
