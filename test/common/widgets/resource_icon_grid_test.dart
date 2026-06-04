@@ -38,4 +38,43 @@ void main() {
 
     expect(itemRect.left, moreOrLessEquals(gridRect.left, epsilon: 0.1));
   });
+
+  testWidgets('tiles expand to absorb remaining row width', (
+    WidgetTester tester,
+  ) async {
+    const Key firstKey = ValueKey<String>('first');
+    const Key secondKey = ValueKey<String>('second');
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 240,
+            child: ResourceIconGrid(
+              items: <ResourceIconGridItem>[
+                ResourceIconGridItem(
+                  key: firstKey,
+                  assetPath: CatalogIconAssetPaths.material('m_1'),
+                  badgeLabel: 'x1',
+                  semanticLabel: 'Emberroot x1',
+                ),
+                ResourceIconGridItem(
+                  key: secondKey,
+                  assetPath: CatalogIconAssetPaths.material('m_2'),
+                  badgeLabel: 'x1',
+                  semanticLabel: 'Ironbloom Bark x1',
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Rect firstRect = tester.getRect(find.byKey(firstKey));
+    final Rect secondRect = tester.getRect(find.byKey(secondKey));
+
+    expect(firstRect.width, moreOrLessEquals(57, epsilon: 0.1));
+    expect(secondRect.width, moreOrLessEquals(57, epsilon: 0.1));
+  });
 }

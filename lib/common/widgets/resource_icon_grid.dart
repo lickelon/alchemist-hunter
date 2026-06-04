@@ -47,21 +47,33 @@ class ResourceIconGrid extends StatelessWidget {
     }
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final int columnCount = _columnCountForWidth(
-          constraints.maxWidth,
-          items.length,
+        final double maxWidth = constraints.maxWidth;
+        final int columnCount = _columnCountForWidth(maxWidth);
+        final double expandedTileSize = _tileSizeForColumns(
+          maxWidth,
+          columnCount,
         );
+        final double gridWidth = _gridWidthForColumns(
+          columnCount,
+          expandedTileSize,
+        );
+
         return SizedBox(
           width: double.infinity,
           child: SingleChildScrollView(
             child: Center(
               child: SizedBox(
-                width: _gridWidthForColumns(columnCount),
+                width: gridWidth,
                 child: Wrap(
                   alignment: WrapAlignment.start,
                   spacing: spacing,
                   runSpacing: spacing,
-                  children: items.map(_buildTile).toList(growable: false),
+                  children: items
+                      .map(
+                        (ResourceIconGridItem item) =>
+                            _buildTile(item, expandedTileSize),
+                      )
+                      .toList(growable: false),
                 ),
               ),
             ),
@@ -71,18 +83,14 @@ class ResourceIconGrid extends StatelessWidget {
     );
   }
 
-  Widget _buildTile(ResourceIconGridItem item) {
-    return _ResourceIconTile(key: item.key, item: item, size: tileSize);
+  Widget _buildTile(ResourceIconGridItem item, double size) {
+    return _ResourceIconTile(key: item.key, item: item, size: size);
   }
 
-  int _columnCountForWidth(double width, int itemCount) {
-    if (itemCount <= 0) {
-      return 0;
-    }
+  int _columnCountForWidth(double width) {
     if (!width.isFinite || width <= 0) {
-      return itemCount;
+      return items.length;
     }
-
     final int fittingCount = ((width + spacing) / (tileSize + spacing)).floor();
     if (fittingCount < 1) {
       return 1;
@@ -90,11 +98,20 @@ class ResourceIconGrid extends StatelessWidget {
     return fittingCount;
   }
 
-  double _gridWidthForColumns(int columnCount) {
-    if (columnCount <= 1) {
+  double _tileSizeForColumns(double width, int columnCount) {
+    if (!width.isFinite || width <= 0 || columnCount <= 1) {
       return tileSize;
     }
-    return (columnCount * tileSize) + ((columnCount - 1) * spacing);
+    final double availableTileWidth = width - (spacing * (columnCount - 1));
+    final double expandedTileSize = availableTileWidth / columnCount;
+    return expandedTileSize < tileSize ? tileSize : expandedTileSize;
+  }
+
+  double _gridWidthForColumns(int columnCount, double effectiveTileSize) {
+    if (columnCount <= 1) {
+      return effectiveTileSize;
+    }
+    return (columnCount * effectiveTileSize) + ((columnCount - 1) * spacing);
   }
 }
 
