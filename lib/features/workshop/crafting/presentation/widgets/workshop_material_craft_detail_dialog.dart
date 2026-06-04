@@ -3,11 +3,12 @@ import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
+import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_submit_results.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/workshop_craft_queue_controller_provider.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/craft_queue_option_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/craft_quantity_slider.dart';
-import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/workshop_material_craft_cost_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -40,9 +41,25 @@ class _WorkshopMaterialCraftDetailDialogState
         .toInt();
     final bool canRegister =
         recipe.craftableNow && recipe.maxCraftableCount >= selectedQuantity;
+    final List<ResourceIconGridItem> materialItems = recipe.materialCosts
+        .map((WorkshopMaterialCraftCostView cost) {
+          final int requiredQuantity = cost.requiredQuantity * selectedQuantity;
+          return ResourceIconGridItem(
+            assetPath: CatalogIconAssetPaths.material(cost.materialId),
+            badgeLabel: '${cost.ownedQuantity}/$requiredQuantity',
+            semanticLabel:
+                '${cost.name} ${cost.ownedQuantity}/$requiredQuantity',
+            tooltipMessage: cost.name,
+          );
+        })
+        .toList(growable: false);
+    final List<String> detailLines = <String>[
+      '시간 ${recipe.totalDurationLabel(selectedQuantity)}',
+      if (recipe.extraCostHint.isNotEmpty) recipe.extraCostHint,
+    ];
 
     return AppDialogLayout(
-      title: recipe.title,
+      title: '제작 등록',
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -59,7 +76,24 @@ class _WorkshopMaterialCraftDetailDialogState
                   fallbackIcon: Icons.auto_fix_high_outlined,
                 ),
                 const SizedBox(width: AppSpacing.md),
-                Text('결과 x${recipe.resultQuantity * selectedQuantity}'),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        recipe.title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        'x${recipe.resultQuantity * selectedQuantity}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -78,28 +112,9 @@ class _WorkshopMaterialCraftDetailDialogState
             const SizedBox(height: AppSpacing.lg),
             Text('필요 재료'),
             const SizedBox(height: AppSpacing.md),
-            Wrap(
-              spacing: AppSpacing.md,
-              runSpacing: AppSpacing.md,
-              children: recipe.materialCosts
-                  .map((WorkshopMaterialCraftCostView cost) {
-                    final int requiredQuantity =
-                        cost.requiredQuantity * selectedQuantity;
-                    final bool enough = cost.ownedQuantity >= requiredQuantity;
-                    return WorkshopMaterialCraftCostChip(
-                      cost: cost,
-                      requiredQuantity: requiredQuantity,
-                      enough: enough,
-                    );
-                  })
-                  .toList(growable: false),
-            ),
+            ResourceIconGrid(items: materialItems),
             const SizedBox(height: AppSpacing.lg),
-            Text(
-              '소요 시간 1회 ${recipe.durationLabel} / 총 ${recipe.totalDurationLabel(selectedQuantity)}',
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(recipe.costHint),
+            DetailLines(lines: detailLines),
           ],
         ),
       ),

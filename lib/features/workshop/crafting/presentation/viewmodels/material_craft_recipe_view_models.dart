@@ -3,6 +3,7 @@ class WorkshopMaterialCraftRecipeView {
     required this.recipeId,
     required this.title,
     required this.costHint,
+    required this.extraCostHint,
     required this.resultMaterialId,
     required this.resultQuantity,
     required this.durationLabel,
@@ -16,6 +17,7 @@ class WorkshopMaterialCraftRecipeView {
   final String recipeId;
   final String title;
   final String costHint;
+  final String extraCostHint;
   final String resultMaterialId;
   final int resultQuantity;
   final String durationLabel;

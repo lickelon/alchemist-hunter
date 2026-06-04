@@ -41,6 +41,10 @@ workshopMaterialCraftRecipeViewsProvider =
                 materialNames: materialNames,
                 traitNames: traitNames,
               ),
+              extraCostHint: materialCraftRecipeExtraCostHint(
+                recipe,
+                traitNames: traitNames,
+              ),
               resultMaterialId: result.key,
               resultQuantity: result.value,
               durationLabel: materialCraftDurationLabel(recipe.duration),
@@ -99,6 +103,25 @@ int materialRecipeMaxCraftableCount(
     );
   }
   return maxCount == 999999 ? 0 : maxCount;
+}
+
+String materialCraftRecipeExtraCostHint(
+  WorkshopCraftRecipe recipe, {
+  required Map<String, String> traitNames,
+}) {
+  final List<String> parts = <String>[];
+  if (recipe.essenceCost > 0) {
+    parts.add('정수 ${recipe.essenceCost}');
+  }
+  if (recipe.arcaneDustCost > 0) {
+    parts.add('신비 ${recipe.arcaneDustCost}');
+  }
+  recipe.traitCosts.forEach((String traitId, double amount) {
+    parts.add(
+      '${traitNames[traitId] ?? traitId} 원소 ${amount.toStringAsFixed(1)}',
+    );
+  });
+  return parts.join(' / ');
 }
 
 String materialCraftRecipeCostHint(
