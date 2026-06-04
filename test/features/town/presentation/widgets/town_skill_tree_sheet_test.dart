@@ -43,8 +43,8 @@ void main() {
     await tester.tap(find.text('Trade Ledger'));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('현재 효과 효과 없음'), findsOneWidget);
-    expect(find.textContaining('다음 효과 포션 판매가 +5%'), findsOneWidget);
+    expect(find.text('현재 효과 없음'), findsOneWidget);
+    expect(find.text('다음 포션 판매가 +5%'), findsOneWidget);
     expect(find.textContaining('루트 노드'), findsOneWidget);
     await tester.tap(find.widgetWithText(FilledButton, '강화').first);
     await tester.pumpAndSettle();

@@ -1,8 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
-import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
-import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/skill_tree_graph_view.dart';
 import 'package:flutter/material.dart';
 
@@ -33,18 +31,31 @@ class SkillTreeNodeDetailDialog extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
-          DetailLines(
-            description: node.description,
-            lines: <String>[
-              '현재 효과 ${node.currentEffectLabel}',
-              node.prerequisiteLabel,
-              '비용 ${node.costLabel}',
-            ],
+          Text(
+            node.description,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: AppSpacing.md),
-          Text(
-            '다음 효과 ${node.nextEffectLabel}',
-            style: AppTextStyles.of(context).dataEmphasis,
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              ..._badgeLabels(
+                '현재',
+                node.currentEffectLabel,
+              ).map((String label) => AppBadge(label: label)),
+              AppBadge(label: node.prerequisiteLabel),
+              ..._badgeLabels(
+                '비용',
+                node.costLabel,
+              ).map((String label) => AppBadge(label: label)),
+              ..._badgeLabels(
+                '다음',
+                node.nextEffectLabel,
+              ).map((String label) => AppBadge(label: label)),
+            ],
           ),
         ],
       ),
@@ -68,4 +79,11 @@ class SkillTreeNodeDetailDialog extends StatelessWidget {
       ],
     );
   }
+}
+
+List<String> _badgeLabels(String prefix, String label) {
+  return label
+      .split(' / ')
+      .map((String part) => '$prefix $part')
+      .toList(growable: false);
 }

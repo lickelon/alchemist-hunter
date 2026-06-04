@@ -42,8 +42,8 @@ void main() {
     await tester.tap(find.text('Alembic Array'));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('현재 효과 효과 없음'), findsOneWidget);
-    expect(find.textContaining('다음 효과 추출 수율 +8%'), findsOneWidget);
+    expect(find.text('현재 효과 없음'), findsOneWidget);
+    expect(find.text('다음 추출 수율 +8%'), findsOneWidget);
     expect(find.textContaining('루트 노드'), findsOneWidget);
     await tester.tap(find.widgetWithText(FilledButton, '강화').first);
     await tester.pumpAndSettle();
