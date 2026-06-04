@@ -1,5 +1,6 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
-import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,14 @@ class WorkshopHatchSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: '호문쿨루스 부화',
-      header: Text('정수 $essence / 신비 $arcaneDust'),
+      header: Wrap(
+        spacing: AppSpacing.md,
+        runSpacing: AppSpacing.sm,
+        children: <Widget>[
+          AppBadge(label: '정수 $essence'),
+          AppBadge(label: '신비 $arcaneDust'),
+        ],
+      ),
       body: recipes.isEmpty
           ? const AppEmptyState('부화 가능한 레시피가 없습니다')
           : ListView(
@@ -30,17 +38,8 @@ class WorkshopHatchSheet extends ConsumerWidget {
                   .map((HomunculusHatchRecipeView recipe) {
                     return ListTile(
                       dense: true,
-                      title: Text(recipe.name),
-                      subtitle: DetailLines(
-                        description: recipe.description,
-                        lines: <String>[
-                          '결과 ${recipe.resultName}',
-                          '역할 ${recipe.roleLabel}',
-                          '보조효과 ${recipe.supportEffectLabel}',
-                          recipe.costLabel,
-                          recipe.availabilityLabel,
-                        ],
-                      ),
+                      title: Text(recipe.resultName),
+                      subtitle: _HatchRecipeSummary(recipe: recipe),
                       trailing: FilledButton.tonal(
                         onPressed: recipe.canHatch
                             ? () {
@@ -75,6 +74,49 @@ class WorkshopHatchSheet extends ConsumerWidget {
                   })
                   .toList(growable: false),
             ),
+    );
+  }
+}
+
+class _HatchRecipeSummary extends StatelessWidget {
+  const _HatchRecipeSummary({required this.recipe});
+
+  final HomunculusHatchRecipeView recipe;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              AppBadge(label: recipe.roleLabel),
+              AppBadge(label: recipe.availabilityLabel),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            recipe.supportEffectLabel,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            recipe.costLabel,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
