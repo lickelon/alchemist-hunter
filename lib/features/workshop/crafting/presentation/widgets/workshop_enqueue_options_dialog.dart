@@ -98,7 +98,7 @@ class _WorkshopEnqueueOptionsContent extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('최대 $maxCraftableCount회 제작 가능'),
+          AppBadge(label: '최대 $maxCraftableCount회'),
           const SizedBox(height: AppSpacing.md),
           quantityList,
         ],
