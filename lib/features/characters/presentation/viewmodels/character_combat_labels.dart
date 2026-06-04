@@ -6,7 +6,7 @@ String characterCombatPowerLabel({
   required String combatDisciplineLabel,
 }) {
   final String disciplineLabel = combatDisciplineLabel;
-  return '전투력 $power / 직군 $disciplineLabel';
+  return '전투력 $power, 직군 $disciplineLabel';
 }
 
 List<String> characterCombatEffectLines(HeroProfile hero) {

@@ -92,7 +92,7 @@ void main() {
     expect(find.text('총합 스탯'), findsNothing);
     expect(find.text('전투 스탯'), findsOneWidget);
     expect(
-      find.text('전투력 $expectedPower / 직군 ${_disciplineLabel(leveledTarget)}'),
+      find.text('전투력 $expectedPower, 직군 ${_disciplineLabel(leveledTarget)}'),
       findsOneWidget,
     );
     expect(find.text('체력'), findsOneWidget);
@@ -206,7 +206,7 @@ void main() {
       expect(find.text('총합 스탯'), findsNothing);
       expect(find.text('전투 스탯'), findsOneWidget);
       expect(
-        find.text('전투력 $expectedPower / 직군 ${_disciplineLabel(target)}'),
+        find.text('전투력 $expectedPower, 직군 ${_disciplineLabel(target)}'),
         findsOneWidget,
       );
       expect(find.text('출처 Vital Seed Flask'), findsNothing);
