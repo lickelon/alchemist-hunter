@@ -148,7 +148,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('보유 2개'), findsOneWidget);
-      expect(find.text('추출 수량'), findsOneWidget);
+      expect(find.text('수량'), findsOneWidget);
       expect(find.text('선택 1개'), findsOneWidget);
       expect(find.text('최대 2개'), findsOneWidget);
       expect(find.byType(Slider), findsOneWidget);

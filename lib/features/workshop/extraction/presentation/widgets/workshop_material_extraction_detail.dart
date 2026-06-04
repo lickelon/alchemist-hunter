@@ -70,7 +70,7 @@ class _WorkshopMaterialExtractionDetailContentState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('추출 수량', style: subsectionTitleStyle),
+            Text('수량', style: subsectionTitleStyle),
             const SizedBox(height: AppSpacing.md),
             WorkshopExtractionQuantitySlider(
               selectedQuantity: selectedQuantity,
@@ -83,7 +83,7 @@ class _WorkshopMaterialExtractionDetailContentState
               },
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('분석 결과', style: subsectionTitleStyle),
+            Text('원소', style: subsectionTitleStyle),
             const SizedBox(height: AppSpacing.md),
             WorkshopExtractionTraitSelector(
               traits: detail.traits,
@@ -99,7 +99,7 @@ class _WorkshopMaterialExtractionDetailContentState
               },
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('추출 프로필', style: subsectionTitleStyle),
+            Text('프로필', style: subsectionTitleStyle),
             const SizedBox(height: AppSpacing.md),
             WorkshopExtractionProfileList(
               profiles: detail.profiles,
