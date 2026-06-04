@@ -48,7 +48,7 @@ class BattleAssignmentPotionSection extends ConsumerWidget {
               ),
               title: Text(potion.label),
               subtitle: Text(
-                '보유 ${potion.ownedCount} / 선택 ${potion.selectedCount}',
+                '보유 ${potion.ownedCount}, 선택 ${potion.selectedCount}',
               ),
               trailing: _PotionCountControls(stageId: stageId, potion: potion),
             );

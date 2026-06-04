@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_assignment_view_models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_controller.dart';
 import 'package:flutter/material.dart';
@@ -61,9 +62,13 @@ class _AssignmentSubtitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          '${character.typeLabel} / 전투력 ${character.power}',
-          style: detailStyle,
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            AppBadge(label: character.typeLabel),
+            AppBadge(label: '전투력 ${character.power}'),
+          ],
         ),
         if (statusLine != null) ...<Widget>[
           const SizedBox(height: AppSpacing.xs),

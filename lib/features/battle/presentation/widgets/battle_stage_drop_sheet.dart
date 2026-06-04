@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/common/themes/app_dialog_heights.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_drop_selectors.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_drop_list.dart';
@@ -20,9 +21,7 @@ class BattleStageDropSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: '${overview.stageName} 적 정보',
-      header: Text(
-        '권장 전투력 ${overview.recommendedPower} / 적 ${overview.enemyCount}종',
-      ),
+      header: _BattleStageDropHeader(overview: overview),
       body: BattleStageDropList(overview: overview),
     );
   }
@@ -45,9 +44,7 @@ class BattleStageDropDialog extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            '권장 전투력 ${overview.recommendedPower} / 적 ${overview.enemyCount}종',
-          ),
+          _BattleStageDropHeader(overview: overview),
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             width: double.maxFinite,
@@ -56,6 +53,24 @@ class BattleStageDropDialog extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _BattleStageDropHeader extends StatelessWidget {
+  const _BattleStageDropHeader({required this.overview});
+
+  final BattleStageDropOverviewView overview;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: <Widget>[
+        AppBadge(label: '권장 ${overview.recommendedPower}'),
+        AppBadge(label: '적 ${overview.enemyCount}종'),
+      ],
     );
   }
 }

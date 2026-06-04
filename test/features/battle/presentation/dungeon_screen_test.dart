@@ -98,7 +98,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('폐허 입구 편성'), findsOneWidget);
-    expect(find.text('배치 2/3명 / 전투력 $expectedPower'), findsOneWidget);
+    expect(find.text('배치 2/3명'), findsOneWidget);
+    expect(find.text('전투력 $expectedPower'), findsWidgets);
   });
 
   testWidgets('dungeon screen opens recent battle result sheet', (

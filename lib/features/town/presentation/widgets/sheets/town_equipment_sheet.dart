@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
@@ -47,7 +48,8 @@ class TownEquipmentSheet extends ConsumerWidget {
                       title: Text(entry.name),
                       subtitle: DetailLines(
                         lines: <String>[
-                          '${entry.slotLabel} / ${entry.statLabel}',
+                          entry.slotLabel,
+                          entry.statLabel,
                           entry.materialCostLabel,
                           '제작 시간 ${entry.durationLabel}',
                         ],
@@ -78,9 +80,7 @@ class TownEquipmentSheet extends ConsumerWidget {
                           return ListTile(
                             dense: true,
                             title: Text(entry.name),
-                            subtitle: Text(
-                              '${entry.statusLabel} / ${entry.remainingLabel}',
-                            ),
+                            subtitle: _ForgeJobSummary(entry: entry),
                             trailing: FilledButton.tonal(
                               onPressed: entry.canClaim
                                   ? () {
@@ -129,6 +129,27 @@ class TownEquipmentSheet extends ConsumerWidget {
                         .toList(growable: false),
                   ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ForgeJobSummary extends StatelessWidget {
+  const _ForgeJobSummary({required this.entry});
+
+  final TownForgeJobView entry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: <Widget>[
+          AppBadge(label: entry.statusLabel),
+          AppBadge(label: entry.remainingLabel),
         ],
       ),
     );
