@@ -106,7 +106,7 @@ homunculusHatchRecipeViewsProvider = Provider<List<HomunculusHatchRecipeView>>((
           roleLabel: recipe.roleLabel,
           supportEffectLabel: recipe.supportEffectLabel,
           costLabel:
-              '정수 ${recipe.essenceCost} / 신비 $arcaneDustCost${materialCostLabel.isEmpty ? "" : " / $materialCostLabel"}${traitCostLabel.isEmpty ? "" : " / $traitCostLabel"}',
+              '정수 ${recipe.essenceCost}, 신비 $arcaneDustCost${materialCostLabel.isEmpty ? "" : ", $materialCostLabel"}${traitCostLabel.isEmpty ? "" : ", $traitCostLabel"}',
           availabilityLabel: availabilityLabel,
           canHatch:
               enoughEssence && enoughDust && enoughMaterials && enoughTraits,

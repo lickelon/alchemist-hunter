@@ -87,7 +87,7 @@ List<String> characterDetailLines(
     MercenaryTier.champion => '챔피언 전열',
     MercenaryTier.legend => '전설 전열',
   };
-  return <String>['직군 $combatDisciplineLabel / 전열 $role'];
+  return <String>['직군 $combatDisciplineLabel, 전열 $role'];
 }
 
 String _tierMaterialDisplayName(CharacterProgress character) {

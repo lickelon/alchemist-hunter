@@ -21,7 +21,7 @@ class BattleStageDropLine extends StatelessWidget {
         const SizedBox(width: AppSpacing.sm),
         Expanded(
           child: Text(
-            '${drop.materialName} ${drop.quantityLabel} / ${drop.chanceLabel}',
+            '${drop.materialName} ${drop.quantityLabel}, ${drop.chanceLabel}',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),

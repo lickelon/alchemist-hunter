@@ -140,7 +140,7 @@ String _traitRatioLabel(
   }
   final MapEntry<String, double> main = entries[0];
   final MapEntry<String, double> sub = entries[1];
-  return '메인 ${traitNames[main.key] ?? main.key} ${_ratioPercent(main.value)} / '
+  return '메인 ${traitNames[main.key] ?? main.key} ${_ratioPercent(main.value)}, '
       '서브 ${traitNames[sub.key] ?? sub.key} ${_ratioPercent(sub.value)}';
 }
 
@@ -149,7 +149,7 @@ String _discoveredRecipeSummary(
   PotionQualityGrade quality, {
   required Map<String, String> traitNames,
 }) {
-  return '${_traitRatioLabel(requiredTraits, traitNames: traitNames)} / 최고 ${quality.name.toUpperCase()}';
+  return '${_traitRatioLabel(requiredTraits, traitNames: traitNames)}, 최고 ${quality.name.toUpperCase()}';
 }
 
 String _ratioPercent(double value) {

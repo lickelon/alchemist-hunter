@@ -121,7 +121,7 @@ String materialCraftRecipeExtraCostHint(
       '${traitNames[traitId] ?? traitId} 원소 ${amount.toStringAsFixed(1)}',
     );
   });
-  return parts.join(' / ');
+  return parts.join(', ');
 }
 
 String materialCraftRecipeCostHint(
@@ -144,7 +144,7 @@ String materialCraftRecipeCostHint(
       '${traitNames[traitId] ?? traitId} 원소 ${amount.toStringAsFixed(1)}',
     );
   });
-  return parts.join(' / ');
+  return parts.join(', ');
 }
 
 int _minInt(int left, int right) {

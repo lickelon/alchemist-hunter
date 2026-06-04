@@ -34,7 +34,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('마을 스킬트리'), findsWidgets);
-    expect(find.text('명성 2 / 골드 1500'), findsOneWidget);
+    expect(find.text('명성 2'), findsOneWidget);
+    expect(find.text('골드 1500'), findsOneWidget);
     expect(find.text('Trade Ledger'), findsOneWidget);
     expect(find.text('레벨 0/2'), findsWidgets);
     expect(find.text('강화 가능'), findsOneWidget);
