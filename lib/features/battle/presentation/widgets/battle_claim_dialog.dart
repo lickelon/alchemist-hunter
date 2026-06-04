@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/common/widgets/section_card.dart';
@@ -135,7 +136,7 @@ class _MaterialRewardGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (materials.isEmpty) {
-      return const Text('재료 없음');
+      return const AppEmptyState('재료 없음');
     }
 
     return ResourceIconGrid(
