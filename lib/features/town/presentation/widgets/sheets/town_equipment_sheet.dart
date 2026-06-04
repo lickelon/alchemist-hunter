@@ -113,7 +113,7 @@ class TownEquipmentSheet extends ConsumerWidget {
                             ),
                             badgeLabel: entry.slotLabel,
                             semanticLabel: entry.name,
-                            tooltipMessage: '${entry.name}\n${entry.statLabel}',
+                            tooltipMessage: entry.name,
                             onTap: () {
                               showDialog<void>(
                                 context: context,
@@ -144,14 +144,8 @@ class _EquipmentInventoryDetailDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppDialogLayout(
       title: entry.name,
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text('슬롯 ${entry.slotLabel}'),
-          const SizedBox(height: AppSpacing.sm),
-          Text(entry.statLabel),
-        ],
+      body: DetailLines(
+        lines: <String>['슬롯 ${entry.slotLabel}', entry.statLabel],
       ),
     );
   }

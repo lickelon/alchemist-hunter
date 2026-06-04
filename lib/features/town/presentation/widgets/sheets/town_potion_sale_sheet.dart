@@ -1,8 +1,8 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_potion_sale_controller.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_potion_sale_selectors.dart';
@@ -30,8 +30,7 @@ class TownPotionSaleSheet extends ConsumerWidget {
                       assetPath: CatalogIconAssetPaths.potion(entry.potionId),
                       badgeLabel: 'x${entry.quantity}',
                       semanticLabel: '${entry.name} x${entry.quantity}',
-                      tooltipMessage:
-                          '${entry.name} x${entry.quantity}\n품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}\n판매가 ${entry.saleValue}',
+                      tooltipMessage: entry.name,
                       onTap: () {
                         showDialog<void>(
                           context: context,
@@ -66,17 +65,12 @@ class _PotionSaleDetailDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppDialogLayout(
       title: entry.name,
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text('보유 수량 x${entry.quantity}'),
-          const SizedBox(height: AppSpacing.sm),
-          Text('품질 ${entry.qualityLabel}'),
-          const SizedBox(height: AppSpacing.sm),
-          Text('점수 ${entry.scoreLabel}'),
-          const SizedBox(height: AppSpacing.sm),
-          Text('판매가 ${entry.saleValue}'),
+      body: DetailLines(
+        lines: <String>[
+          '보유 x${entry.quantity}',
+          '품질 ${entry.qualityLabel}',
+          '점수 ${entry.scoreLabel}',
+          '판매가 ${entry.saleValue}',
         ],
       ),
       actions: <Widget>[
