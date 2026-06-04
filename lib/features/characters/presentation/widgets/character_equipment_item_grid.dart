@@ -5,7 +5,6 @@ import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_view_models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_equipment_detail_dialog.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
-import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
 import 'package:flutter/material.dart';
 
 class CharacterEquipmentItemGrid extends StatelessWidget {
@@ -35,7 +34,7 @@ class CharacterEquipmentItemGrid extends StatelessWidget {
           assetPath: CatalogIconAssetPaths.equipment(item.blueprintId),
           badgeLabel: characterEquipmentSlotBadgeLabel(item.slot),
           semanticLabel: item.name,
-          tooltipMessage: '${item.name}\n${equipmentInstanceDetailLabel(item)}',
+          tooltipMessage: item.name,
           onTap: () {
             if (!showDetailDialog) {
               Navigator.of(context).pop();
