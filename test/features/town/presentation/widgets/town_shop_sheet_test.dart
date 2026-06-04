@@ -58,8 +58,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('상품별 주기 한도 20개 / 15분마다 재입고'), findsOneWidget);
-    expect(find.text('다음 재입고 10:15'), findsAtLeastNWidgets(1));
+    expect(find.text('한도 20개'), findsOneWidget);
+    expect(find.text('재입고 15분'), findsOneWidget);
+    expect(find.text('다음 10:15'), findsAtLeastNWidgets(1));
     expect(find.text('Emberroot'), findsOneWidget);
     expect(find.textContaining('품절'), findsWidgets);
 

@@ -1,6 +1,8 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/controllers/shop_controller.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_shop_selectors.dart';
@@ -28,28 +30,13 @@ class TownShopSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: title,
-      header: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      header: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
         children: <Widget>[
-          Text(
-            '상품별 주기 한도 ${shop.purchaseLimitPerItem}개 / '
-            '${_durationLabel(shop.refreshInterval)}마다 재입고',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          Text(
-            '다음 재입고 ${_clockLabel(shop.nextRefreshAt)}',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.tonal(
-              onPressed: () {
-                ref.read(shopControllerProvider).forceRefresh(shopType);
-              },
-              child: Text('강제 갱신 (골드 $refreshCost)'),
-            ),
-          ),
+          AppBadge(label: '한도 ${shop.purchaseLimitPerItem}개'),
+          AppBadge(label: '재입고 ${_durationLabel(shop.refreshInterval)}'),
+          AppBadge(label: '다음 ${_clockLabel(shop.nextRefreshAt)}'),
         ],
       ),
       body: shop.items.isEmpty
@@ -62,11 +49,11 @@ class TownShopSheet extends ConsumerWidget {
                 return ListTile(
                   dense: true,
                   title: Text(item.name),
-                  subtitle: Text(
-                    soldOut
-                        ? '가격 골드 ${item.price} / 품절\n'
-                              '다음 재입고 ${_clockLabel(shop.nextRefreshAt)}'
-                        : '가격 골드 ${item.price} / 재고 ${item.quantity}',
+                  subtitle: _ShopItemSummary(
+                    price: item.price,
+                    quantity: item.quantity,
+                    soldOut: soldOut,
+                    nextRefreshLabel: _clockLabel(shop.nextRefreshAt),
                   ),
                   trailing: FilledButton.tonal(
                     onPressed: soldOut
@@ -87,6 +74,15 @@ class TownShopSheet extends ConsumerWidget {
                 );
               },
             ),
+      footer: SizedBox(
+        width: double.infinity,
+        child: FilledButton.tonal(
+          onPressed: () {
+            ref.read(shopControllerProvider).forceRefresh(shopType);
+          },
+          child: Text('강제 갱신 (골드 $refreshCost)'),
+        ),
+      ),
     );
   }
 
@@ -104,5 +100,41 @@ class TownShopSheet extends ConsumerWidget {
       return '${value.inHours}시간';
     }
     return '${value.inHours}시간 ${value.inMinutes % 60}분';
+  }
+}
+
+class _ShopItemSummary extends StatelessWidget {
+  const _ShopItemSummary({
+    required this.price,
+    required this.quantity,
+    required this.soldOut,
+    required this.nextRefreshLabel,
+  });
+
+  final int price;
+  final int quantity;
+  final bool soldOut;
+  final String nextRefreshLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              AppBadge(label: soldOut ? '품절' : '재고 $quantity'),
+              if (soldOut) AppBadge(label: '다음 $nextRefreshLabel'),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          DetailLines(lines: <String>['골드 $price']),
+        ],
+      ),
+    );
   }
 }
