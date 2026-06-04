@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:flutter/material.dart';
 
 class CatalogAssetIcon extends StatelessWidget {
@@ -7,23 +8,25 @@ class CatalogAssetIcon extends StatelessWidget {
     this.size = 40,
     this.padding = 6,
     this.fallbackIcon = Icons.image_not_supported_outlined,
+    this.semanticLabel,
   });
 
   final String assetPath;
   final double size;
   final double padding;
   final IconData fallbackIcon;
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    return Container(
+    final Widget icon = Container(
       width: size,
       height: size,
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadius.card,
       ),
       child: Image.asset(
         assetPath,
@@ -39,5 +42,10 @@ class CatalogAssetIcon extends StatelessWidget {
         },
       ),
     );
+
+    if (semanticLabel == null) {
+      return icon;
+    }
+    return Semantics(label: semanticLabel, image: true, child: icon);
   }
 }

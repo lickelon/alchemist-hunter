@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,7 @@ class AppToast {
     final OverlayState overlay = Overlay.of(context, rootOverlay: true);
     final OverlayEntry entry = OverlayEntry(
       builder: (BuildContext context) {
+        final ColorScheme colorScheme = Theme.of(context).colorScheme;
         return Positioned(
           left: AppSpacing.xl,
           right: AppSpacing.xl,
@@ -26,8 +28,8 @@ class AppToast {
           child: IgnorePointer(
             child: Material(
               elevation: 4,
-              borderRadius: BorderRadius.circular(AppSpacing.md),
-              color: const Color(0xDD212121),
+              borderRadius: AppRadius.card,
+              color: colorScheme.inverseSurface,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.xl,
@@ -35,7 +37,7 @@ class AppToast {
                 ),
                 child: Text(
                   message,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: colorScheme.onInverseSurface),
                   textAlign: TextAlign.center,
                 ),
               ),
