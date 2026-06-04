@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class WorkshopQueueSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: '제작 큐',
-      header: Text('슬롯 ${jobs.length}/$queueCapacity'),
+      header: AppBadge(label: '슬롯 ${jobs.length}/$queueCapacity'),
       body: jobs.isEmpty
           ? const AppEmptyState('대기 중인 작업이 없습니다')
           : WorkshopQueueJobList(jobs: jobs, onClaimJob: controller.claimJob),

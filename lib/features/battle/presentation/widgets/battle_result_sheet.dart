@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/common/themes/app_dialog_heights.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
@@ -29,7 +30,7 @@ class BattleResultSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: '$stageName 전투 기록',
-      header: Text(logs.isEmpty ? '기록 없음' : '기록 ${logs.length}건'),
+      header: AppBadge(label: logs.isEmpty ? '기록 없음' : '기록 ${logs.length}건'),
       body: logs.isEmpty
           ? const AppEmptyState('전투 기록이 없습니다.')
           : BattleResultList(logs: logs, materialCatalog: materialCatalog),
@@ -58,7 +59,7 @@ class BattleResultDialog extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(logs.isEmpty ? '기록 없음' : '기록 ${logs.length}건'),
+          AppBadge(label: logs.isEmpty ? '기록 없음' : '기록 ${logs.length}건'),
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             width: double.maxFinite,

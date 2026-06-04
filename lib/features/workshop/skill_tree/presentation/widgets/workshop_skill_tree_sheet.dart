@@ -1,3 +1,4 @@
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/skill_tree_graph_view.dart';
 import 'package:alchemist_hunter/common/widgets/skill_tree_node_detail_dialog.dart';
@@ -20,7 +21,7 @@ class WorkshopSkillTreeSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: '작업실 스킬트리',
-      header: Text('보유 신비: $arcaneDust'),
+      header: AppBadge(label: '신비 $arcaneDust'),
       body: SkillTreeGraphView(
         nodes: nodes
             .map((WorkshopSkillNodeView node) => node.toGraphNode())
