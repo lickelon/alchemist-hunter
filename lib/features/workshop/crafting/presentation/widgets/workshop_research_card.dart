@@ -13,9 +13,7 @@ class WorkshopResearchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       name: '연구',
-      summary: traitTypeCount == 0
-          ? '실험 가능한 원소 없음'
-          : '양조 실험 원소 $traitTypeCount종',
+      summary: traitTypeCount == 0 ? '원소 없음' : '원소 $traitTypeCount종',
       icon: Icons.science_outlined,
       onTap: () {
         showAppBottomSheet<void>(

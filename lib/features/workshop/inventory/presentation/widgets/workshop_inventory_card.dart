@@ -20,12 +20,12 @@ class WorkshopInventoryCard extends StatelessWidget {
     return ListCard(
       name: '작업실 보관함',
       summary: potionStackCount > 0
-          ? '보유 포션 $potionStackCount스택'
+          ? '포션 $potionStackCount스택'
           : traitTypeCount > 0
-          ? '보유 원소 $traitTypeCount종'
+          ? '원소 $traitTypeCount종'
           : materialTypeCount > 0
-          ? '보유 재료 $materialTypeCount종'
-          : '보관 중인 자원 없음',
+          ? '재료 $materialTypeCount종'
+          : '자원 없음',
       icon: Icons.inventory_2_outlined,
       onTap: () => _showInventorySheet(context),
     );

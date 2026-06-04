@@ -13,9 +13,7 @@ class WorkshopExtractionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListCard(
       name: '재료 추출',
-      summary: materialTypeCount == 0
-          ? '추출 가능한 재료 없음'
-          : '즉시 추출 재료 $materialTypeCount종',
+      summary: materialTypeCount == 0 ? '재료 없음' : '재료 $materialTypeCount종',
       icon: Icons.biotech_outlined,
       onTap: () => _showExtractionSheet(context),
     );
