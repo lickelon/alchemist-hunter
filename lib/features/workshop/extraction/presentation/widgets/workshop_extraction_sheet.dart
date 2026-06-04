@@ -33,8 +33,7 @@ class WorkshopExtractionSheet extends ConsumerWidget {
                       assetPath: CatalogIconAssetPaths.material(material.id),
                       badgeLabel: 'x${material.quantity}',
                       semanticLabel: '${material.name} x${material.quantity}',
-                      tooltipMessage:
-                          '${material.name} x${material.quantity}\n${material.traitSummary}',
+                      tooltipMessage: material.name,
                       onTap: () {
                         showDialog<void>(
                           context: context,

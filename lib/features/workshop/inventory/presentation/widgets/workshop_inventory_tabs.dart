@@ -25,8 +25,7 @@ class InventoryMaterialTab extends StatelessWidget {
               assetPath: CatalogIconAssetPaths.material(entry.id),
               badgeLabel: 'x${entry.quantity}',
               semanticLabel: '${entry.name} x${entry.quantity}',
-              tooltipMessage:
-                  '${entry.name} x${entry.quantity}\n${workshopMaterialRarityLabel(entry.rarity)} / 원소 ${entry.traitSummary}',
+              tooltipMessage: entry.name,
               onTap: () {
                 showDialog<void>(
                   context: context,
@@ -63,7 +62,7 @@ class InventoryTraitTab extends StatelessWidget {
               assetPath: CatalogIconAssetPaths.element(entry.id),
               badgeLabel: amountLabel,
               semanticLabel: '${entry.name} 원소 $amountLabel',
-              tooltipMessage: '${entry.name} 원소 $amountLabel',
+              tooltipMessage: entry.name,
               onTap: () {
                 showDialog<void>(
                   context: context,
@@ -97,8 +96,7 @@ class InventoryPotionTab extends StatelessWidget {
               assetPath: CatalogIconAssetPaths.potion(entry.potionId),
               badgeLabel: 'x${entry.quantity}',
               semanticLabel: '${entry.name} x${entry.quantity}',
-              tooltipMessage:
-                  '${entry.name} x${entry.quantity}\n품질 ${entry.qualityLabel} / 점수 ${entry.scoreLabel}',
+              tooltipMessage: entry.name,
               onTap: () {
                 showDialog<void>(
                   context: context,
