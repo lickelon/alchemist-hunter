@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_view_models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_detail_section.dart';
@@ -47,9 +48,12 @@ class CharacterEquipmentSection extends StatelessWidget {
                             style: AppTextStyles.of(context).dataEmphasis,
                           ),
                           const SizedBox(height: AppSpacing.xs),
-                          Text(
-                            slot.statLabel,
-                            style: Theme.of(context).textTheme.bodySmall,
+                          Wrap(
+                            spacing: AppSpacing.sm,
+                            runSpacing: AppSpacing.sm,
+                            children: _splitEquipmentLabel(slot.statLabel)
+                                .map((String label) => AppBadge(label: label))
+                                .toList(growable: false),
                           ),
                         ],
                       ),
@@ -67,4 +71,12 @@ class CharacterEquipmentSection extends StatelessWidget {
       ),
     );
   }
+}
+
+Iterable<String> _splitEquipmentLabel(String label) {
+  return label
+      .split('\n')
+      .first
+      .split(' / ')
+      .where((String part) => part.isNotEmpty);
 }

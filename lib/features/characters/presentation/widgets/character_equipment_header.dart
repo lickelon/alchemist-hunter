@@ -1,5 +1,7 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_view_models.dart';
@@ -24,7 +26,7 @@ class CharacterEquipmentHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         if (slot.equippedItem == null)
-          Text('현재 미장착', style: Theme.of(context).textTheme.bodyMedium)
+          const AppBadge(label: '미장착')
         else
           ListTile(
             contentPadding: EdgeInsets.zero,
@@ -34,7 +36,7 @@ class CharacterEquipmentHeader extends StatelessWidget {
               ),
             ),
             title: Text(slot.equippedItem!.name),
-            subtitle: Text(slot.statLabel),
+            subtitle: _EquipmentStatBadges(label: slot.statLabel),
             trailing: TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -48,4 +50,32 @@ class CharacterEquipmentHeader extends StatelessWidget {
       ],
     );
   }
+}
+
+class _EquipmentStatBadges extends StatelessWidget {
+  const _EquipmentStatBadges({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: _splitEquipmentLabel(
+          label,
+        ).map((String part) => AppBadge(label: part)).toList(growable: false),
+      ),
+    );
+  }
+}
+
+Iterable<String> _splitEquipmentLabel(String label) {
+  return label
+      .split('\n')
+      .first
+      .split(' / ')
+      .where((String part) => part.isNotEmpty);
 }

@@ -154,9 +154,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('무기: Bronze Sword'), findsOneWidget);
-    expect(find.textContaining('체력 0 / 물공 12 / 물방 0'), findsOneWidget);
-    expect(find.textContaining('마공 0 / 마방 0 / 속도 0'), findsOneWidget);
-    expect(find.text('주는 피해 +5%'), findsOneWidget);
+    expect(find.text('체력 0'), findsOneWidget);
+    expect(find.text('물공 12'), findsOneWidget);
+    expect(find.text('물방 0'), findsOneWidget);
+    expect(find.text('마공 0'), findsNothing);
+    expect(find.text('마방 0'), findsNothing);
+    expect(find.text('속도 0'), findsNothing);
+    expect(find.text('주는 피해 +5%'), findsAtLeastNWidgets(1));
     expect(find.text('명중 +6%'), findsNothing);
   });
 
