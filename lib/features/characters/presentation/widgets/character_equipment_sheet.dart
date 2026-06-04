@@ -37,7 +37,7 @@ class CharacterEquipmentDialog extends StatelessWidget {
     );
 
     return AppDialogLayout(
-      title: '${character.name} / ${slot.slotLabel}',
+      title: '${character.name} ${slot.slotLabel}',
       body: SizedBox(
         width: double.maxFinite,
         height: MediaQuery.sizeOf(context).height * AppDialogHeights.medium,

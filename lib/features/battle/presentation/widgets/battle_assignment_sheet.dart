@@ -1,3 +1,5 @@
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_character_section.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_assignment_potion_section.dart';
@@ -31,7 +33,14 @@ class BattleAssignmentSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: '$stageName 편성',
-      header: Text('배치 ${assignedIds.length}/3명 / 전투력 $partyPower'),
+      header: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: <Widget>[
+          AppBadge(label: '배치 ${assignedIds.length}/3명'),
+          AppBadge(label: '전투력 $partyPower'),
+        ],
+      ),
       body: ListView(
         children: <Widget>[
           BattleAssignmentCharacterSection(

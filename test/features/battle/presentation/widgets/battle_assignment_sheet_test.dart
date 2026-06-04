@@ -37,7 +37,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('먼지 회랑 편성'), findsOneWidget);
-    expect(find.text('배치 0/3명 / 전투력 0'), findsOneWidget);
+    expect(find.text('배치 0/3명'), findsOneWidget);
+    expect(find.text('전투력 0'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(CheckboxListTile, 'Rookie Swordsman'));
     await tester.pumpAndSettle();
@@ -49,7 +50,8 @@ void main() {
       session.state.characters,
       assignedCharacterIds: const <String>['merc_1'],
     );
-    expect(find.text('배치 1/3명 / 전투력 $expectedPower'), findsOneWidget);
+    expect(find.text('배치 1/3명'), findsOneWidget);
+    expect(find.text('전투력 $expectedPower'), findsOneWidget);
   });
 
   testWidgets('battle assignment sheet stores stage potion loadout', (

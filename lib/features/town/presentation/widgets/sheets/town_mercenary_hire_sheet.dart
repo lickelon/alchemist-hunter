@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
@@ -52,12 +53,7 @@ class TownMercenaryHireSheet extends ConsumerWidget {
                 return ListTile(
                   dense: true,
                   title: Text(entry.name),
-                  subtitle: DetailLines(
-                    lines: <String>[
-                      '${entry.tierLabel} / ${entry.roleLabel}',
-                      '고용 비용 ${entry.hireCost}${entry.hireHint}',
-                    ],
-                  ),
+                  subtitle: _MercenaryCandidateSummary(entry: entry),
                   trailing: FilledButton.tonal(
                     onPressed: entry.canHire
                         ? () {
@@ -71,6 +67,36 @@ class TownMercenaryHireSheet extends ConsumerWidget {
                 );
               }).toList(),
             ),
+    );
+  }
+}
+
+class _MercenaryCandidateSummary extends StatelessWidget {
+  const _MercenaryCandidateSummary({required this.entry});
+
+  final TownMercenaryCandidateView entry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              AppBadge(label: entry.tierLabel),
+              AppBadge(label: entry.roleLabel),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          DetailLines(
+            lines: <String>['고용 비용 ${entry.hireCost}${entry.hireHint}'],
+          ),
+        ],
+      ),
     );
   }
 }

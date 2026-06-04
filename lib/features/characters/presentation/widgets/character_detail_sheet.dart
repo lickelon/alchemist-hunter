@@ -49,7 +49,7 @@ class CharacterDetailSheet extends ConsumerWidget {
 
     final CharacterProgress character = item.character;
     return AppSheetLayout(
-      title: '${character.name} / ${item.typeLabel}',
+      title: '${character.name} ${item.typeLabel}',
       body: ListView(
         children: <Widget>[
           CharacterGrowthSection(
