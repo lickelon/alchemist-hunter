@@ -46,8 +46,7 @@ class WorkshopEnchantEquipmentSelector extends StatelessWidget {
                           ),
                           badgeLabel: item.slotLabel,
                           semanticLabel: item.name,
-                          tooltipMessage:
-                              '${item.name}\n${item.locationLabel} / ${item.slotLabel}\n${item.statLabel}\n${item.enchantLabel}',
+                          tooltipMessage: item.name,
                           selected: item.equipmentId == selectedEquipmentId,
                           onTap: () => onChanged(item.equipmentId),
                         );

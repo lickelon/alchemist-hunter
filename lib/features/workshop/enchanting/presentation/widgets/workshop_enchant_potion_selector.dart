@@ -46,8 +46,7 @@ class WorkshopEnchantPotionSelector extends StatelessWidget {
                           ),
                           badgeLabel: 'x${potion.quantity}',
                           semanticLabel: '${potion.name} x${potion.quantity}',
-                          tooltipMessage:
-                              '${potion.name} x${potion.quantity}\n품질 ${potion.qualityLabel} / 원소 ${potion.traitsLabel}',
+                          tooltipMessage: potion.name,
                           selected: potion.stackKey == selectedPotionStackKey,
                           onTap: () => onChanged(potion.stackKey),
                         );
