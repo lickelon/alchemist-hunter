@@ -5,7 +5,6 @@ import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
-import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/common/widgets/section_card.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/controllers/equipment_craft_controller.dart';
@@ -46,8 +45,8 @@ class TownEquipmentSheet extends ConsumerWidget {
                         assetPath: CatalogIconAssetPaths.equipment(entry.id),
                       ),
                       title: Text(entry.name),
-                      subtitle: DetailLines(
-                        lines: <String>[
+                      subtitle: _EquipmentLabelBadges(
+                        labels: <String>[
                           entry.slotLabel,
                           entry.statLabel,
                           entry.materialCostLabel,
@@ -165,9 +164,37 @@ class _EquipmentInventoryDetailDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppDialogLayout(
       title: entry.name,
-      body: DetailLines(
-        lines: <String>['슬롯 ${entry.slotLabel}', entry.statLabel],
+      body: _EquipmentLabelBadges(
+        labels: <String>['슬롯 ${entry.slotLabel}', entry.statLabel],
       ),
     );
   }
+}
+
+class _EquipmentLabelBadges extends StatelessWidget {
+  const _EquipmentLabelBadges({required this.labels});
+
+  final List<String> labels;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: labels
+            .expand(_splitEquipmentLabel)
+            .map((String label) => AppBadge(label: label))
+            .toList(growable: false),
+      ),
+    );
+  }
+}
+
+Iterable<String> _splitEquipmentLabel(String label) {
+  return label
+      .split('\n')
+      .expand((String line) => line.split(' / '))
+      .where((String part) => part.isNotEmpty);
 }
