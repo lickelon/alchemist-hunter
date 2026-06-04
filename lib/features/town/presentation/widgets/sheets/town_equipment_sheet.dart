@@ -50,7 +50,7 @@ class TownEquipmentSheet extends ConsumerWidget {
                           entry.slotLabel,
                           entry.statLabel,
                           entry.materialCostLabel,
-                          '제작 시간 ${entry.durationLabel}',
+                          '시간 ${entry.durationLabel}',
                         ],
                       ),
                       trailing: FilledButton.tonal(
@@ -70,9 +70,9 @@ class TownEquipmentSheet extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           SectionCard(
-            title: '대장간 진행',
+            title: '진행',
             child: forgeJobs.isEmpty
-                ? const AppEmptyState('등록된 대장간 작업이 없습니다')
+                ? const AppEmptyState('진행 중인 작업이 없습니다')
                 : Column(
                     children: forgeJobs
                         .map((TownForgeJobView entry) {

@@ -39,7 +39,7 @@ void main() {
     expect(find.text('Bronze Sword'), findsOneWidget);
     expect(find.textContaining('Emberroot x2'), findsOneWidget);
     expect(find.text('Iron Buckler'), findsOneWidget);
-    expect(find.textContaining('제작 시간 30s'), findsAtLeastNWidgets(1));
+    expect(find.textContaining('시간 30s'), findsAtLeastNWidgets(1));
     await tester.scrollUntilVisible(
       find.text('보유 장비가 없습니다'),
       120,
