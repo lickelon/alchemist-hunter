@@ -51,12 +51,12 @@ void main() {
         .first;
 
     expect(view.typeLabel, '용병');
-    expect(view.growthLabel, '레벨 10 / 랭크 2 / 티어 1');
+    expect(view.growthLabel, '레벨 10, 랭크 2, 티어 1');
     expect(view.rankHint, '현재 티어 최대 랭크 도달');
     expect(view.tierHint, '티어업 가능');
     expect(view.tierMaterialLabel, '승급 재료: 용병 승급 재료 2 1/1');
     expect(view.assignmentLabel, '배치 상태: Stage 1');
-    expect(view.detailLines, <String>['직군 전사 / 전열 기본 전열']);
+    expect(view.detailLines, <String>['직군 전사, 전열 기본 전열']);
     expect(view.equipmentSlots.first.slotLabel, '무기');
     expect(view.equipmentSlots.first.availableItems, hasLength(1));
   });
