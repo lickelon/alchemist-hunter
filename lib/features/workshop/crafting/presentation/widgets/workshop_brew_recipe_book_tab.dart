@@ -119,7 +119,7 @@ class _WorkshopDiscoveredBrewDetailDialogState
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('양조 수량'),
+            Text('수량'),
             const SizedBox(height: AppSpacing.md),
             CraftQuantitySlider(
               selectedQuantity: selectedQuantity,

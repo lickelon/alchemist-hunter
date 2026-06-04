@@ -96,7 +96,7 @@ class _WorkshopMaterialCraftDetailDialogState
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('제작 수량'),
+            Text('수량'),
             const SizedBox(height: AppSpacing.md),
             CraftQuantitySlider(
               selectedQuantity: selectedQuantity,
@@ -109,7 +109,7 @@ class _WorkshopMaterialCraftDetailDialogState
               },
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('필요 재료'),
+            Text('재료'),
             const SizedBox(height: AppSpacing.md),
             ResourceIconGrid(items: materialItems),
             const SizedBox(height: AppSpacing.lg),
