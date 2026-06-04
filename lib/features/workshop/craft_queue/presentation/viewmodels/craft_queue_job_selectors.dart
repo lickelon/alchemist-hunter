@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
-import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_labels.dart';
 import 'package:alchemist_hunter/features/workshop/shared/presentation/viewmodels/workshop_resource_selectors.dart';
@@ -10,17 +9,15 @@ class CraftQueueJobView {
   const CraftQueueJobView({
     required this.id,
     required this.title,
-    required this.typeLabel,
-    required this.statusText,
-    this.resultText,
+    required this.statusLabel,
+    this.timeLabel,
     this.canClaim = false,
   });
 
   final String id;
   final String title;
-  final String typeLabel;
-  final String statusText;
-  final String? resultText;
+  final String statusLabel;
+  final String? timeLabel;
   final bool canClaim;
 }
 
@@ -46,11 +43,6 @@ final Provider<List<CraftQueueJob>> craftQueueProvider =
 final Provider<List<CraftQueueJobView>> craftQueueJobViewsProvider =
     Provider<List<CraftQueueJobView>>((Ref ref) {
       final List<CraftQueueJob> queue = ref.watch(craftQueueProvider);
-      final Map<String, String> potionNames = <String, String>{
-        for (final PotionBlueprint potion
-            in ref.watch(potionCatalogRepositoryProvider).potions())
-          potion.id: potion.name,
-      };
       final List<CraftQueueJob> sortedQueue = <CraftQueueJob>[...queue]
         ..sort((CraftQueueJob left, CraftQueueJob right) {
           final int leftRank = statusRank(left.status);
@@ -73,9 +65,8 @@ final Provider<List<CraftQueueJobView>> craftQueueJobViewsProvider =
         return CraftQueueJobView(
           id: job.id,
           title: title,
-          typeLabel: craftQueueJobTypeLabel(job),
-          statusText: queueStatusText(job),
-          resultText: completedResultText(job, potionNames: potionNames),
+          statusLabel: queueStatusBadgeLabel(job.status),
+          timeLabel: queueTimeLabel(job),
           canClaim: job.status == QueueJobStatus.completed,
         );
       }).toList();

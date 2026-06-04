@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_job_selectors.dart';
 
 class WorkshopQueueJobList extends StatelessWidget {
@@ -25,12 +27,7 @@ class WorkshopQueueJobList extends StatelessWidget {
         return ListTile(
           dense: true,
           title: Text(job.title),
-          subtitle: Text(
-            job.resultText == null
-                ? '${job.typeLabel} / ${job.statusText}'
-                : '${job.typeLabel} / ${job.statusText}\n${job.resultText}',
-          ),
-          isThreeLine: job.resultText != null,
+          subtitle: _QueueJobMetaRow(job: job),
           trailing: job.canClaim
               ? FilledButton.tonal(
                   onPressed: onClaimJob == null
@@ -41,6 +38,35 @@ class WorkshopQueueJobList extends StatelessWidget {
               : null,
         );
       }).toList(),
+    );
+  }
+}
+
+class _QueueJobMetaRow extends StatelessWidget {
+  const _QueueJobMetaRow({required this.job});
+
+  final CraftQueueJobView job;
+
+  @override
+  Widget build(BuildContext context) {
+    final String? timeLabel = job.timeLabel;
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: AppSpacing.md,
+        runSpacing: AppSpacing.sm,
+        children: <Widget>[
+          AppBadge(label: job.statusLabel),
+          if (timeLabel != null)
+            Text(
+              timeLabel,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

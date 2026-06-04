@@ -75,7 +75,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Emberroot x2'), findsOneWidget);
-      expect(find.text('추출 / 진행 중 / 남은 시간 12s'), findsOneWidget);
+      expect(find.text('진행'), findsOneWidget);
+      expect(find.text('12s'), findsOneWidget);
+      expect(find.text('추출 / 진행 중 / 남은 시간 12s'), findsNothing);
       await tester.scrollUntilVisible(
         find.text('활력 포션 x2'),
         80,
@@ -83,8 +85,9 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('활력 포션 x2'), findsOneWidget);
-      expect(find.textContaining('양조 / 수령 대기'), findsOneWidget);
-      expect(find.textContaining('양조 완료 / 활력 포션 A x2'), findsOneWidget);
+      expect(find.text('완료'), findsOneWidget);
+      expect(find.textContaining('양조 / 수령 대기'), findsNothing);
+      expect(find.textContaining('양조 완료 / 활력 포션 A x2'), findsNothing);
       expect(find.textContaining('p_1|a'), findsNothing);
       expect(find.text('수령'), findsOneWidget);
     },

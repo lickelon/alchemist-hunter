@@ -53,6 +53,23 @@ String queueStatusText(CraftQueueJob job) {
   };
 }
 
+String queueStatusBadgeLabel(QueueJobStatus status) {
+  return switch (status) {
+    QueueJobStatus.processing => '진행',
+    QueueJobStatus.queued => '대기',
+    QueueJobStatus.completed => '완료',
+    QueueJobStatus.blocked => '막힘',
+  };
+}
+
+String? queueTimeLabel(CraftQueueJob job) {
+  return switch (job.status) {
+    QueueJobStatus.processing => '${job.eta.inSeconds}s',
+    QueueJobStatus.queued => '${job.duration.inSeconds}s',
+    QueueJobStatus.completed || QueueJobStatus.blocked => null,
+  };
+}
+
 String? completedResultText(
   CraftQueueJob job, {
   Map<String, String> potionNames = const <String, String>{},
