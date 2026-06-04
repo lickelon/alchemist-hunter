@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,7 +57,16 @@ class _WorkshopEnqueueOptionsContent extends ConsumerWidget {
         return ListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(quantityView.label),
-          subtitle: Text(quantityView.requirementText),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.sm),
+            child: Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: quantityView.requirementLabels
+                  .map((String label) => AppBadge(label: label))
+                  .toList(),
+            ),
+          ),
           trailing: FilledButton.tonal(
             onPressed: () {
               final WorkshopCraftSubmitResult result = controller.enqueuePotion(

@@ -11,12 +11,12 @@ class EnqueueQuantityView {
   const EnqueueQuantityView({
     required this.quantity,
     required this.label,
-    required this.requirementText,
+    required this.requirementLabels,
   });
 
   final int quantity;
   final String label;
-  final String requirementText;
+  final List<String> requirementLabels;
 }
 
 final workshopEnqueueQuantityViewsProvider =
@@ -56,7 +56,10 @@ final workshopEnqueueQuantityViewsProvider =
           label: quantity == option.maxCraftableCount
               ? '최대 등록'
               : '$quantity회 등록',
-          requirementText: formatTraitRequirements(requirements, traitNames),
+          requirementLabels: formatTraitRequirementLabels(
+            requirements,
+            traitNames,
+          ),
         );
       }).toList();
     });

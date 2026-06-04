@@ -29,19 +29,19 @@ String craftQueueJobTypeLabel(CraftQueueJob job) {
   return '제작';
 }
 
-String formatTraitRequirements(
+List<String> formatTraitRequirementLabels(
   Map<String, double>? requirements,
   Map<String, String> traitNames,
 ) {
   if (requirements == null || requirements.isEmpty) {
-    return '필요 원소 없음';
+    return <String>['원소 없음'];
   }
   return requirements.entries
       .map(
         (MapEntry<String, double> entry) =>
             '${traitNames[entry.key] ?? entry.key} 원소 ${entry.value.toStringAsFixed(2)}',
       )
-      .join(', ');
+      .toList();
 }
 
 String queueStatusText(CraftQueueJob job) {
