@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_detail_section.dart';
 import 'package:flutter/material.dart';
 
@@ -14,12 +15,13 @@ class CharacterAssignmentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String statusLabel = assignmentLabel.replaceFirst('배치 상태: ', '');
     return CharacterDetailSection(
       title: '배치 상태',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(assignmentLabel),
+          AppBadge(label: statusLabel),
           const SizedBox(height: AppSpacing.sm),
           Text(
             assignmentGuideLabel,
