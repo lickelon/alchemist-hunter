@@ -82,8 +82,8 @@ void main() {
       expect(bars[0].color, Colors.redAccent);
       expect(bars[1].color, Colors.blueAccent);
       expect(find.text('보호막 18'), findsOneWidget);
-      expect(find.text('중독 6 / 2행동'), findsOneWidget);
-      expect(find.text('받는 피해 +12% / 1행동'), findsOneWidget);
+      expect(find.text('중독 6, 2행동'), findsOneWidget);
+      expect(find.text('받는 피해 +12%, 1행동'), findsOneWidget);
     },
   );
 }

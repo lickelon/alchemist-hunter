@@ -1,6 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
-import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_detail_section.dart';
 import 'package:flutter/material.dart';
 
@@ -39,9 +39,23 @@ class CharacterCombatEffectSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return CharacterDetailSection(
       title: '전투 효과',
-      child: DetailLines(lines: effectLines),
+      child: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: effectLines
+            .expand(_splitEffectLabel)
+            .map((String label) => AppBadge(label: label))
+            .toList(growable: false),
+      ),
     );
   }
+}
+
+Iterable<String> _splitEffectLabel(String label) {
+  return label
+      .split('\n')
+      .expand((String line) => line.split(' / '))
+      .where((String part) => part.isNotEmpty);
 }
 
 class _StatGrid extends StatelessWidget {

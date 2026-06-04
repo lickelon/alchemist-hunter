@@ -13,7 +13,7 @@ String _statusLabel(BattleStatusEffect status) {
     BattleStatusType.stun => '기절',
   };
   final String powerLabel = status.power > 0 ? ' ${status.power}' : '';
-  return '$typeLabel$powerLabel / ${status.remainingLifecycles}행동';
+  return '$typeLabel$powerLabel, ${status.remainingLifecycles}행동';
 }
 
 String _modifierLabel(BattleTimedModifier timedModifier) {
@@ -23,7 +23,7 @@ String _modifierLabel(BattleTimedModifier timedModifier) {
     BattleModifierType.damageTaken => '받는 피해',
   };
   final String valueLabel = _modifierValueLabel(modifier);
-  return '$typeLabel $valueLabel / ${timedModifier.remainingLifecycles}행동';
+  return '$typeLabel $valueLabel, ${timedModifier.remainingLifecycles}행동';
 }
 
 String _modifierValueLabel(BattleModifier modifier) {
