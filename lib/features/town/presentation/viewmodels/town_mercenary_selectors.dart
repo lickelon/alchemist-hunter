@@ -21,8 +21,6 @@ class TownMercenaryCandidateView {
   final String tierLabel;
   final int hireCost;
   final bool canHire;
-
-  String get hireHint => canHire ? '' : ' / 골드 부족';
 }
 
 final Provider<int> townMercenaryCandidateCountProvider = Provider<int>((

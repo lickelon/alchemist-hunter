@@ -2,7 +2,6 @@ import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
-import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/controllers/mercenary_controller.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_mercenary_selectors.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_resource_selectors.dart';
@@ -21,7 +20,7 @@ class TownMercenaryHireSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: '용병 고용',
-      header: Text('보유 골드 $gold'),
+      header: AppBadge(label: '골드 $gold'),
       footer: Row(
         children: <Widget>[
           Expanded(
@@ -89,11 +88,9 @@ class _MercenaryCandidateSummary extends StatelessWidget {
             children: <Widget>[
               AppBadge(label: entry.tierLabel),
               AppBadge(label: entry.roleLabel),
+              AppBadge(label: '고용 ${entry.hireCost}'),
+              if (!entry.canHire) AppBadge(label: '골드 부족'),
             ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          DetailLines(
-            lines: <String>['고용 비용 ${entry.hireCost}${entry.hireHint}'],
           ),
         ],
       ),
