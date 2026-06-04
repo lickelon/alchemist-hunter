@@ -180,8 +180,8 @@ void main() {
     expect(find.text('재료 1종'), findsOneWidget);
     expect(find.text('행동 4회'), findsOneWidget);
     expect(find.text('포션 부족'), findsWidgets);
-    expect(find.text('포션 부족으로 로드아웃이 적용되지 않았습니다.'), findsOneWidget);
-    expect(find.textContaining('획득 재료: Emberroot x2'), findsOneWidget);
+    expect(find.text('로드아웃 미적용'), findsOneWidget);
+    expect(find.text('Emberroot x2'), findsOneWidget);
     expect(
       find.textContaining('Rookie Swordsman -> Ruin Scavenger 물리 12'),
       findsOneWidget,

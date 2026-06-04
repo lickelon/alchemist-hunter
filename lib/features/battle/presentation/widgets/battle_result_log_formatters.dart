@@ -12,13 +12,23 @@ String formatBattleResultMaterials(
   Map<String, int> materials,
   MaterialCatalogRepository materialCatalog,
 ) {
+  return formatBattleResultMaterialLabels(
+    materials,
+    materialCatalog,
+  ).join(', ');
+}
+
+List<String> formatBattleResultMaterialLabels(
+  Map<String, int> materials,
+  MaterialCatalogRepository materialCatalog,
+) {
   return materials.entries
       .map((MapEntry<String, int> entry) {
         final String materialName =
             materialCatalog.materialName(entry.key) ?? entry.key;
         return '$materialName x${entry.value}';
       })
-      .join(', ');
+      .toList(growable: false);
 }
 
 String formatBattleResultAction(BattleActionLog action) {

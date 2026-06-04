@@ -71,18 +71,15 @@ class BattleResultList extends StatelessWidget {
             ),
             children: <Widget>[
               if (log.usedLoadoutFallback)
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('포션 부족으로 로드아웃이 적용되지 않았습니다.'),
-                ),
+                const _ResultDetailBadges(labels: <String>['로드아웃 미적용']),
               if (log.usedLoadoutFallback &&
                   (log.materials.isNotEmpty || log.actions.isNotEmpty))
                 const SizedBox(height: AppSpacing.md),
               if (log.materials.isNotEmpty)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '획득 재료: ${formatBattleResultMaterials(log.materials, materialCatalog)}',
+                _ResultDetailBadges(
+                  labels: formatBattleResultMaterialLabels(
+                    log.materials,
+                    materialCatalog,
                   ),
                 ),
               if (log.materials.isNotEmpty && log.actions.isNotEmpty)
@@ -112,6 +109,26 @@ class BattleResultList extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _ResultDetailBadges extends StatelessWidget {
+  const _ResultDetailBadges({required this.labels});
+
+  final List<String> labels;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: labels
+            .map((String label) => AppBadge(label: label))
+            .toList(growable: false),
+      ),
     );
   }
 }
