@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_display_labels.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_result_log_formatters.dart';
@@ -23,10 +24,14 @@ class BattleResultList extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (BuildContext context, int index) {
         final BattleLogEntry log = logs[index];
-        final String resultTitle =
-            '${log.success ? '성공' : '실패'} / 골드 ${battleSignedValueLabel(log.gold)} / 정수 ${battleSignedValueLabel(log.essence)}';
-        final String resultSubtitle =
-            '재료 ${log.materials.length}종 / 행동 ${log.turns}회${log.usedLoadoutFallback ? ' / 포션 부족' : ''}';
+        final List<String> resultLabels = <String>[
+          log.success ? '성공' : '실패',
+          '골드 ${battleSignedValueLabel(log.gold)}',
+          '정수 ${battleSignedValueLabel(log.essence)}',
+          '재료 ${log.materials.length}종',
+          '행동 ${log.turns}회',
+          if (log.usedLoadoutFallback) '포션 부족',
+        ];
         return Card(
           child: ExpansionTile(
             initiallyExpanded: index == 0,
@@ -40,7 +45,15 @@ class BattleResultList extends StatelessWidget {
                   color: log.success ? colorScheme.primary : colorScheme.error,
                 ),
                 const SizedBox(width: AppSpacing.sm),
-                Expanded(child: Text(resultTitle)),
+                Expanded(
+                  child: Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
+                    children: resultLabels
+                        .map((String label) => AppBadge(label: label))
+                        .toList(growable: false),
+                  ),
+                ),
                 if (log.wipedParty)
                   Text('전멸', style: TextStyle(color: colorScheme.error)),
                 const SizedBox(width: AppSpacing.sm),
@@ -50,7 +63,6 @@ class BattleResultList extends StatelessWidget {
                 ),
               ],
             ),
-            subtitle: Text(resultSubtitle),
             childrenPadding: const EdgeInsets.fromLTRB(
               AppSpacing.lg,
               0,

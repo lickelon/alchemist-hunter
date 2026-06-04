@@ -174,8 +174,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('폐허 입구 전투 기록'), findsOneWidget);
-    expect(find.text('성공 / 골드 +35 / 정수 +6'), findsOneWidget);
-    expect(find.text('재료 1종 / 행동 4회 / 포션 부족'), findsOneWidget);
+    expect(find.text('성공'), findsWidgets);
+    expect(find.text('골드 +35'), findsOneWidget);
+    expect(find.text('정수 +6'), findsOneWidget);
+    expect(find.text('재료 1종'), findsOneWidget);
+    expect(find.text('행동 4회'), findsOneWidget);
+    expect(find.text('포션 부족'), findsWidgets);
     expect(find.text('포션 부족으로 로드아웃이 적용되지 않았습니다.'), findsOneWidget);
     expect(find.textContaining('획득 재료: Emberroot x2'), findsOneWidget);
     expect(
@@ -233,7 +237,7 @@ void main() {
     await tester.tap(find.text('수령'));
     await tester.pumpAndSettle();
     expect(find.text('폐허 입구 보상 수령'), findsOneWidget);
-    expect(find.text('성공 2회 / 실패 1회'), findsOneWidget);
+    expect(find.text('성공 2회, 실패 1회'), findsOneWidget);
     expect(find.text('진행 시간 1분 5초'), findsOneWidget);
     expect(find.text('이미 반영된 경험치 +5'), findsOneWidget);
 

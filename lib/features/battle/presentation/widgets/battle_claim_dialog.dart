@@ -54,7 +54,7 @@ class BattleClaimDialog extends ConsumerWidget {
             _ClaimSection(
               title: '런 요약',
               lines: <String>[
-                '성공 ${claim.victoryCount}회 / 실패 ${claim.wipeCount}회',
+                '성공 ${claim.victoryCount}회, 실패 ${claim.wipeCount}회',
                 '진행 시간 ${_durationLabel(claim.elapsedRealTime)}',
                 '이미 반영된 경험치 ${battleSignedValueLabel(claim.xp)}',
               ],
