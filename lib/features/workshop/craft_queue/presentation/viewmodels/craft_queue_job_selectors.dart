@@ -75,9 +75,8 @@ final Provider<WorkshopQueueCardSummaryView> workshopQueueCardSummaryProvider =
     Provider<WorkshopQueueCardSummaryView>((Ref ref) {
       final List<CraftQueueJob> jobs = ref.watch(craftQueueProvider);
       final int jobCount = jobs.length;
-      final CraftQueueJob? activeJob = jobs.cast<CraftQueueJob?>().firstWhere(
-        (CraftQueueJob? job) => job?.status == QueueJobStatus.processing,
-        orElse: () => null,
+      final bool hasActiveJob = jobs.any(
+        (CraftQueueJob job) => job.status == QueueJobStatus.processing,
       );
       final int completedCount = jobs
           .where((CraftQueueJob job) => job.status == QueueJobStatus.completed)
@@ -85,12 +84,12 @@ final Provider<WorkshopQueueCardSummaryView> workshopQueueCardSummaryProvider =
       final String description;
       if (completedCount > 0) {
         description = '수령 $completedCount건';
-      } else if (activeJob != null) {
-        description = '진행 ${activeJob.title}';
+      } else if (hasActiveJob) {
+        description = '진행 중';
       } else if (jobCount > 0) {
         description = '대기 $jobCount건';
       } else {
-        description = '대기열 비어 있음';
+        description = '비어 있음';
       }
       return WorkshopQueueCardSummaryView(
         jobCount: jobCount,
