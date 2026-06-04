@@ -29,7 +29,7 @@ class BattleStageStatusActions extends StatelessWidget {
             );
           },
           icon: const Icon(Icons.inventory_2_outlined),
-          label: const Text('적 정보 / 드롭'),
+          label: const Text('적/드롭'),
         ),
         FilledButton.tonalIcon(
           onPressed: hasRecentLogs

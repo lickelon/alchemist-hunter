@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/common/themes/app_radius.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_drop_selectors.dart';
 import 'package:alchemist_hunter/features/battle/presentation/widgets/battle_stage_drop_line.dart';
 import 'package:flutter/material.dart';
@@ -42,10 +43,7 @@ class BattleStageDropList extends StatelessWidget {
               AppSpacing.lg,
             ),
             children: <Widget>[
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(enemy.identityLabel),
-              ),
+              _DropLabelWrap(labels: <String>[enemy.identityLabel]),
               const SizedBox(height: AppSpacing.md),
               _DropSection(title: '전투 스탯', lines: enemy.statLines),
               const SizedBox(height: AppSpacing.md),
@@ -77,15 +75,38 @@ class _DropSection extends StatelessWidget {
       children: <Widget>[
         Text(title, style: Theme.of(context).textTheme.bodyMedium),
         const SizedBox(height: AppSpacing.xs),
-        ...lines.map((String line) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-            child: Text(line, style: Theme.of(context).textTheme.bodySmall),
-          );
-        }),
+        _DropLabelWrap(labels: lines),
       ],
     );
   }
+}
+
+class _DropLabelWrap extends StatelessWidget {
+  const _DropLabelWrap({required this.labels});
+
+  final List<String> labels;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: labels
+            .expand(_splitDropLabel)
+            .map((String label) => AppBadge(label: label))
+            .toList(growable: false),
+      ),
+    );
+  }
+}
+
+Iterable<String> _splitDropLabel(String label) {
+  return label
+      .split('\n')
+      .expand((String line) => line.split(' / '))
+      .where((String part) => part.isNotEmpty);
 }
 
 class _DropChanceSection extends StatelessWidget {

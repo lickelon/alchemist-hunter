@@ -72,8 +72,8 @@ void main() {
     expect(find.text('대기'), findsWidgets);
     await tester.drag(find.byType(Scrollable).last, const Offset(0, -400));
     await tester.pumpAndSettle();
-    expect(find.text('적 정보 / 드롭'), findsOneWidget);
-    await tester.tap(find.text('적 정보 / 드롭'));
+    expect(find.text('적/드롭'), findsOneWidget);
+    await tester.tap(find.text('적/드롭'));
     await tester.pumpAndSettle();
 
     expect(find.text('폐허 입구 적 정보'), findsOneWidget);
