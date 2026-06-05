@@ -3,6 +3,7 @@
 ## 0. 목적
 - 이 문서는 전투 중 적용되는 `버프 / 디버프 / 피해 증감 효과`의 기준을 정리한다.
 - `docs/battle/combat/combat_stat_design.md`가 기본 전투 스탯의 source of truth라면, 이 문서는 그 위에 얹히는 `추가 효과 계층`의 source of truth다.
+- 여기서의 `BattleModifier`는 전투 피해 계산용 modifier다. 경험치, 골드, 드롭 같은 보상 계열은 별도 `RewardModifier` 계층으로 분리한다.
 
 ## 1. 역할 분리
 
@@ -38,6 +39,32 @@
   - `물리 피해 증가`
   - `중독 대상에게 주는 피해 증가`
   - `치명타 피해 저항`
+
+### 1.3 전투 modifier와 보상 modifier
+- `Modifier`는 넓게 보면 수치 보정 효과의 상위 개념으로 둘 수 있다.
+- 다만 적용 시점과 소비자가 다르면 같은 리스트로 섞지 않는다.
+- `BattleModifier`
+  - 전투 중 피해 계산 단계에서 사용한다.
+  - 예: `damageDealt`, `damageTaken`
+- `RewardModifier`
+  - 전투 또는 런 종료 후 보상 계산 단계에서 사용한다.
+  - 예: `expGained`, `goldGained`, `dropChance`, `dropQuantity`
+- 권장 구조:
+```dart
+class EffectBundle {
+  final List<BattleModifier> battleModifiers;
+  final List<RewardModifier> rewardModifiers;
+  final List<BattlePassiveEffect> passives;
+}
+```
+- 비추천 구조:
+```dart
+final List<Modifier> modifiers;
+```
+- 이유:
+  - 전투 계산과 보상 계산의 적용 시점이 다르다.
+  - 전투 계산기가 보상 modifier를 필터링하거나, 보상 계산기가 전투 modifier를 필터링하는 구조를 만들지 않는다.
+  - 잘못 섞인 데이터를 런타임 타입 체크로 걸러내는 구조는 피한다.
 
 ## 2. 모델 방향
 
@@ -148,12 +175,33 @@ class BattleModifier {
   - 마법
 
 ### 4.3 후속 확장 후보
-- `vsMercenaryDamage`
-- `vsHomunculusDamage`
 - `critResist`
-- `statusInflictRate`
 - `statusDamageTaken`
 - `shieldPower`
+
+### 4.4 현재 보류하는 후보
+- 아래 효과는 당장 `BattleModifierType`으로 추가하지 않는다.
+- `healingDone`
+  - 현재는 `BattleStatModifierType.healingPower`와 역할이 겹친다.
+- `resourceCost`
+  - MP는 현재 스킬 사용 빈도를 제한하는 별도 축이다.
+  - `maxMp / mpRegen`과 역할이 가까우므로 필요가 명확해질 때 별도 설계한다.
+- `cooldownRecovery`
+  - 쿨다운 모델은 존재하지만 현재는 MP가 더 실질적인 재사용 제한 역할을 한다.
+- `statusDurationDealt`, `statusDurationTaken`
+  - 상태이상 세부 공식이 확정된 뒤 검토한다.
+
+### 4.5 보상 modifier 후보
+- 보상 계열은 `BattleModifier`가 아니라 `RewardModifier` 후보로 둔다.
+- 후보:
+  - `expGained`
+  - `goldGained`
+  - `dropChance`
+  - `dropQuantity`
+- 적용 위치:
+  - 전투 승패 또는 런 결과 확정 이후
+  - 보상 집계 단계
+  - 장비, 패시브, 마을/작업실 효과가 보상 modifier를 제공할 수 있다.
 
 ## 5. 계산 순서
 
@@ -201,6 +249,7 @@ finalDamage =
 - `damageDealt`, `damageTaken`은 `BattleModifier.percent`만 허용한다.
 - `critRate`, `accuracy`, `evasion`은 `BattleStatModifier.flat`로 다룬다.
 - `lifesteal`, `healingPower`, `regen`도 `BattleStatModifier.flat`로 다룬다.
+- `mpRegen`은 modifier로 빼지 않는다. MP는 현재 스킬 사용 빈도 제어축이므로 `maxMp / mpRegen`을 전투 스탯에 유지한다.
 
 ## 7. 소유권과 적용 시점
 
@@ -221,9 +270,11 @@ finalDamage =
 - 장비 기본 옵션: `BattleCombatStats`
 - 장비 특수 수치: `BattleStatModifier`
 - 장비 전투 효과: `BattleModifier`
+- 장비 규칙 변경 효과: `BattlePassiveEffect`
 - 포션 효과: `BattleStatModifier` 또는 `BattleModifier`
 - 스킬 효과: `BattleModifier`
 - 상태이상 효과: `StatusEffect -> BattleModifier`
+- 적 고유 피해 보정: `BattleModifier`
 
 ## 8. 계열 태그와의 연결
 - `용병 / 호문`은 여전히 전투 피해 타입이 아니다.
@@ -242,10 +293,22 @@ finalDamage =
 - 도트 세부 공식
 - 면역, 해제, 저지 규칙
 - 상태이상 저항 계산 상세식
+- 보상 modifier 구현
 
 ## 10. 구현 시 주의점
 - `BattleCombatStats`, `BattleStatModifier`, `BattleModifier`를 한 모델에 우겨넣지 않는다.
 - 기본 스탯 테이블에는 `주는 피해 증가`, `받는 피해 증가`를 넣지 않는다.
+- 경험치, 골드, 드롭 보정은 `BattleModifier`에 넣지 않는다.
 - 수치 계산은 반드시 `전투 스냅샷 -> stat modifier 흡수 -> battle modifier 누적 -> 최종 계산` 순서를 유지한다.
 - UI 표시용 문자열과 내부 modifier key를 같은 값으로 재사용하지 않는다.
 - 로그/리포트에는 modifier 출처가 추적 가능해야 한다.
+
+## 11. Enemy modifier 해석
+- `enemies.json`의 `modifiers`는 패시브가 아니다.
+- 적에게 전투 시작 전부터 붙어 있는 상시 `BattleModifier`로 해석한다.
+- `passives` 또는 `passiveIds`는 전투 규칙 변경, 트리거형 효과, 특정 시점의 modifier/status/shield 부여를 담당한다.
+- 따라서:
+  - `피해 +10%`는 `BattleModifier`
+  - `공격 후 추가 공격`은 `BattlePassiveEffect`
+  - `전투 시작 시 보호막 부여`는 `BattlePassiveEffect`
+  - `보상 경험치 +10%`는 `RewardModifier`

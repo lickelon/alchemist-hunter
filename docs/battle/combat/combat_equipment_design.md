@@ -126,6 +126,9 @@
 - 최종 스탯에 흡수되는 수치 보정은 `BattleStatModifier`
 - 최종 스탯으로 환원되지 않는 전투 효과는 `BattleModifier`
 - 판정 절차 변경은 `passive`
+- 장비와 인챈트는 모두 `BattlePassiveEffect`를 추가할 수 있다.
+- 전투 진입 시 장비의 `totalPassives`는 캐릭터 직업/랭크 패시브와 합쳐져 전투 유닛에 반영된다.
+- 단순 피해 증감은 장비 패시브로 우회하지 않고 `BattleModifier`로 둔다.
 
 ## 7. 예시
 
@@ -182,3 +185,4 @@
 - 그 외 전투 성질은 모두 `modifier / passive`
 - 장비는 더 이상 직군별 환산의 입력값이 아니라, 실제 전투 스탯의 직접 원천이어야 한다.
 - 장비 특수 능력은 `BattleStatModifier / BattleModifier / BattlePassiveEffect`로 분리한다.
+- 경험치, 골드, 드롭 같은 보상 보정은 장비 특수 능력으로 제공할 수 있지만, `BattleModifier`가 아니라 별도 `RewardModifier` 계층에서 다룬다.

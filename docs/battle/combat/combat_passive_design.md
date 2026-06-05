@@ -43,6 +43,18 @@
 - `공격 후 1회 추가 타격`
   - passive
 
+### 2.4 장비와 passive
+- 장비도 `BattlePassiveEffect`의 출처가 될 수 있다.
+- 현재 구조상 아래 경로에서 장비 패시브가 전투에 반영된다.
+  - `EquipmentBlueprint.passives`
+  - `EquipmentInstance.passives`
+  - `EquipmentEnchant.passives`
+  - `EquipmentInstance.totalPassives`
+  - `BattleEquipmentStatService.effectsForLoadout`
+  - `BattleCombatStatService.buildHeroProfile`
+- 즉 직업/전투 카탈로그 패시브뿐 아니라, 장비 기본 효과와 인챈트 효과도 passive를 추가할 수 있다.
+- 단 장비가 주는 단순 피해 증감은 passive가 아니라 `BattleModifier`로 둔다.
+
 ## 3. 모델 방향
 
 ### 3.1 핵심 타입
@@ -154,6 +166,8 @@ class BattlePassiveEffect {
 ### 6.1 관계
 - passive는 직접 수치를 바꾸지 않아도 된다.
 - 대신 발동 시 `BattleModifier`를 생성해서 붙일 수 있다.
+- passive가 생성하는 modifier는 전투 중 임시 modifier다.
+- 장비가 전투 시작 전부터 제공하는 상시 피해 보정은 passive를 거치지 않고 `BattleModifier`로 보관할 수 있다.
 
 ### 6.2 예시
 - `전투 시작 시 2턴 동안 물공 +20%`
