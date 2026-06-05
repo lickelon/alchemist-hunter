@@ -111,6 +111,10 @@ header: Column(
 
 ## 4. 패턴 C — Action 영역(버튼)에 상태 텍스트가 노출
 
+적용 상태:
+- C2: 완료. 캐릭터 성장의 최대 티어 상태를 disabled button에서 badge로 바꿨다.
+- C1: 남음. 상점 품절 버튼 라벨은 별도 소규모 작업으로 처리한다.
+
 ### 4.1 상점 구매 버튼
 
 **`lib/features/town/presentation/widgets/sheets/town_shop_sheet.dart:215`**
@@ -216,6 +220,9 @@ title: '${character.name} ${slot.slotLabel}',
 ---
 
 ## 8. 패턴 G — 시각 위계 없는 카드 본문 텍스트
+
+적용 상태:
+- G1: 완료. 캐릭터 카드의 배치/성장 보조 텍스트를 `bodySmall + onSurfaceVariant` 톤으로 낮췄다.
 
 ### 8.1 캐릭터 카드 보조 정보
 
@@ -323,7 +330,7 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 | B1 | 경고 + 탭 혼재 | `workshop_craft_card.dart` | 61-79 | 완료 |
 | B2 | 액션 + 정보 혼재 | `town_shop_sheet.dart` | 37-54 | 완료 |
 | C1 | 상태를 버튼 라벨로 | `town_shop_sheet.dart` | 215 | 낮음 |
-| C2 | 상태를 disabled 버튼으로 | `character_growth_section.dart` | 95-96 | 낮음 |
+| C2 | 상태를 disabled 버튼으로 | `character_growth_section.dart` | 95-96 | 완료 |
 | D1 | 섹션 제목 스타일 없음 | `workshop_material_craft_detail_dialog.dart` | 98, 111 | 완료 |
 | D2 | 섹션 제목 스타일 없음 | `workshop_brew_recipe_book_tab.dart` | 120 | 완료 |
 | E1 | 쉼표 연결 두 정보 | `battle_claim_dialog.dart` | 57 | 낮음 |
@@ -332,7 +339,7 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 | E4 | 쉼표 연결 두 정보 | `workshop_screen.dart` | 60 | 낮음 |
 | F1 | 제목에 분류 정보 혼합 | `character_detail_sheet.dart` | 52 | 낮음 (검토) |
 | F2 | 제목에 분류 정보 혼합 | `character_equipment_sheet.dart` | 40 | 낮음 (검토) |
-| G1 | 카드 보조 텍스트 스타일 없음 | `character_card.dart` | 57, 59 | 보통 |
+| G1 | 카드 보조 텍스트 스타일 없음 | `character_card.dart` | 57, 59 | 완료 |
 | H1 | Before/After 구조 소실 | `workshop_enchant_preview_section.dart` | 42-45 | 보통 |
 
 ---
