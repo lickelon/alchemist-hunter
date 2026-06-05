@@ -123,7 +123,6 @@ class _WorkshopDiscoveredBrewDetailDialogState
               selectedQuantity: selectedQuantity,
               value: sliderValue,
               maxQuantity: maxQuantity,
-              divided: true,
               onChanged: (double value) {
                 setState(() {
                   _quantityValue = value;

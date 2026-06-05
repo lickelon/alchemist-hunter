@@ -101,7 +101,6 @@ class _WorkshopMaterialCraftDetailDialogState
               selectedQuantity: selectedQuantity,
               value: sliderValue,
               maxQuantity: maxQuantity,
-              divided: true,
               onChanged: (double value) {
                 setState(() {
                   _quantityValue = value;

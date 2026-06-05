@@ -12,12 +12,14 @@ class AppSliderField extends StatelessWidget {
     required this.onChanged,
     this.divisions,
     this.bottomLabel,
+    this.bottomTrailingLabel,
     this.leadingTextStyle,
   });
 
   final String leadingLabel;
   final String trailingLabel;
   final String? bottomLabel;
+  final String? bottomTrailingLabel;
   final double value;
   final double min;
   final double max;
@@ -51,7 +53,15 @@ class AppSliderField extends StatelessWidget {
           divisions: divisions,
           onChanged: onChanged,
         ),
-        if (bottomLabel != null) Text(bottomLabel!, style: helperStyle),
+        if (bottomLabel != null)
+          bottomTrailingLabel == null
+              ? Text(bottomLabel!, style: helperStyle)
+              : Row(
+                  children: <Widget>[
+                    Expanded(child: Text(bottomLabel!)),
+                    Text(bottomTrailingLabel!, style: helperStyle),
+                  ],
+                ),
       ],
     );
   }
@@ -64,7 +74,6 @@ class AppQuantitySlider extends StatelessWidget {
     required this.value,
     required this.maxQuantity,
     required this.onChanged,
-    this.divided = false,
     this.unit = '개',
   });
 
@@ -72,7 +81,6 @@ class AppQuantitySlider extends StatelessWidget {
   final double value;
   final int maxQuantity;
   final ValueChanged<double> onChanged;
-  final bool divided;
   final String unit;
 
   @override
@@ -84,7 +92,7 @@ class AppQuantitySlider extends StatelessWidget {
       value: value,
       min: 1,
       max: maxQuantity.toDouble(),
-      divisions: divided && enabled ? maxQuantity - 1 : null,
+      divisions: null,
       onChanged: enabled ? onChanged : null,
     );
   }
@@ -119,7 +127,8 @@ class AppRatioSlider extends StatelessWidget {
       child: AppSliderField(
         leadingLabel: primaryName,
         trailingLabel: '주 ${(clampedValue * 100).round()}%',
-        bottomLabel: '$secondaryName 부 ${(secondaryValue * 100).round()}%',
+        bottomLabel: secondaryName,
+        bottomTrailingLabel: '부 ${(secondaryValue * 100).round()}%',
         value: clampedValue,
         min: min,
         max: max,

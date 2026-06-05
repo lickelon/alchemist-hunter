@@ -190,7 +190,6 @@ class _ShopItemDetailDialogState extends State<_ShopItemDetailDialog> {
             selectedQuantity: selectedQuantity,
             value: sliderValue,
             maxQuantity: maxQuantity,
-            divided: true,
             onChanged: (double value) {
               setState(() {
                 _quantityValue = value;
