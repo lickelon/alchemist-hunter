@@ -1,5 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_assignment_view_models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_stage_progress_selectors.dart';
@@ -23,8 +25,11 @@ final battleStageAssignmentCharacterViewsProvider =
         ),
       );
       final int assignedCount = assignedIds.length;
+      final BattleCatalogRepository battleCatalogRepository = ref.watch(
+        battleCatalogRepositoryProvider,
+      );
       final BattlePartyPowerService powerService = BattlePartyPowerService(
-        battleCatalogRepository: ref.watch(battleCatalogRepositoryProvider),
+        battleCatalogRepository: battleCatalogRepository,
       );
       final List<CharacterProgress> characters = <CharacterProgress>[
         ...state.characters.mercenaries,
@@ -56,7 +61,10 @@ final battleStageAssignmentCharacterViewsProvider =
                     assignedCount < 3);
             return BattleAssignmentCharacterView(
               id: character.id,
-              name: character.name,
+              name: _battleAssignmentCharacterName(
+                character,
+                battleCatalogRepository,
+              ),
               typeLabel: character.type == CharacterType.mercenary
                   ? '용병'
                   : '호문쿨루스',
@@ -72,3 +80,42 @@ final battleStageAssignmentCharacterViewsProvider =
           })
           .toList(growable: false);
     });
+
+String _battleAssignmentCharacterName(
+  CharacterProgress character,
+  BattleCatalogRepository battleCatalogRepository,
+) {
+  return '${_tierName(character)} ${_jobName(character, battleCatalogRepository)}';
+}
+
+String _tierName(CharacterProgress character) {
+  if (character.type == CharacterType.mercenary) {
+    return switch (character.mercenaryTier ?? MercenaryTier.rookie) {
+      MercenaryTier.rookie => 'Rookie',
+      MercenaryTier.veteran => 'Veteran',
+      MercenaryTier.elite => 'Elite',
+      MercenaryTier.champion => 'Champion',
+      MercenaryTier.legend => 'Legend',
+    };
+  }
+  return switch (character.homunculusTier ?? HomunculusTier.nigredo) {
+    HomunculusTier.nigredo => 'Nigredo',
+    HomunculusTier.albedo => 'Albedo',
+    HomunculusTier.citrinitas => 'Citrinitas',
+    HomunculusTier.rubedo => 'Rubedo',
+  };
+}
+
+String _jobName(
+  CharacterProgress character,
+  BattleCatalogRepository battleCatalogRepository,
+) {
+  final BattleCombatJobDefinition job = battleCatalogRepository
+      .combatJobDefinition(character.resolvedCombatJobId);
+  return switch (job.discipline) {
+    CombatDiscipline.warrior => '전사',
+    CombatDiscipline.mage => '마법사',
+    CombatDiscipline.rogue => '도적',
+    CombatDiscipline.archer => '궁수',
+  };
+}

@@ -43,7 +43,7 @@ void main() {
     expect(find.text('배치 0/3명'), findsOneWidget);
     expect(find.text('전투력 0'), findsOneWidget);
 
-    await tester.tap(find.widgetWithText(CheckboxListTile, 'Rookie Swordsman'));
+    await tester.tap(find.widgetWithText(CheckboxListTile, 'Rookie 전사'));
     await tester.pumpAndSettle();
 
     expect(session.state.battle.stageAssignments['stage_2'], <String>[
