@@ -8,52 +8,52 @@
     "encounters": [
       {
         "id": "stage_1_patrol",
-        "enemySetId": "enemy_set_stage_1_patrol",
+        "enemySetId": "enemy_set_01_001",
         "chance": 0.16
       },
       {
         "id": "stage_1_haunt",
-        "enemySetId": "enemy_set_stage_1_haunt",
+        "enemySetId": "enemy_set_01_002",
         "chance": 0.13
       },
       {
         "id": "stage_1_swarm",
-        "enemySetId": "enemy_set_stage_1_swarm",
+        "enemySetId": "enemy_set_01_003",
         "chance": 0.11
       },
       {
         "id": "stage_1_resin",
-        "enemySetId": "enemy_set_stage_1_resin",
+        "enemySetId": "enemy_set_01_004",
         "chance": 0.11
       },
       {
         "id": "stage_1_mix_5",
-        "enemySetId": "enemy_set_stage_1_mix_5",
+        "enemySetId": "enemy_set_01_005",
         "chance": 0.1
       },
       {
         "id": "stage_1_mix_6",
-        "enemySetId": "enemy_set_stage_1_mix_6",
+        "enemySetId": "enemy_set_01_006",
         "chance": 0.09
       },
       {
         "id": "stage_1_mix_7",
-        "enemySetId": "enemy_set_stage_1_mix_7",
+        "enemySetId": "enemy_set_01_007",
         "chance": 0.09
       },
       {
         "id": "stage_1_mix_8",
-        "enemySetId": "enemy_set_stage_1_mix_8",
+        "enemySetId": "enemy_set_01_008",
         "chance": 0.08
       },
       {
         "id": "stage_1_mix_9",
-        "enemySetId": "enemy_set_stage_1_mix_9",
+        "enemySetId": "enemy_set_01_009",
         "chance": 0.07
       },
       {
         "id": "stage_1_mix_10",
-        "enemySetId": "enemy_set_stage_1_mix_10",
+        "enemySetId": "enemy_set_01_010",
         "chance": 0.06
       }
     ],
@@ -76,52 +76,52 @@
     "encounters": [
       {
         "id": "stage_2_crossfire",
-        "enemySetId": "enemy_set_stage_2_crossfire",
+        "enemySetId": "enemy_set_02_001",
         "chance": 0.16
       },
       {
         "id": "stage_2_ambush",
-        "enemySetId": "enemy_set_stage_2_ambush",
+        "enemySetId": "enemy_set_02_002",
         "chance": 0.14
       },
       {
         "id": "stage_2_assault",
-        "enemySetId": "enemy_set_stage_2_assault",
+        "enemySetId": "enemy_set_02_003",
         "chance": 0.13
       },
       {
         "id": "stage_2_salvage",
-        "enemySetId": "enemy_set_stage_2_salvage",
+        "enemySetId": "enemy_set_02_004",
         "chance": 0.12
       },
       {
         "id": "stage_2_mix_5",
-        "enemySetId": "enemy_set_stage_2_mix_5",
+        "enemySetId": "enemy_set_02_005",
         "chance": 0.1
       },
       {
         "id": "stage_2_mix_6",
-        "enemySetId": "enemy_set_stage_2_mix_6",
+        "enemySetId": "enemy_set_02_006",
         "chance": 0.09
       },
       {
         "id": "stage_2_mix_7",
-        "enemySetId": "enemy_set_stage_2_mix_7",
+        "enemySetId": "enemy_set_02_007",
         "chance": 0.09
       },
       {
         "id": "stage_2_mix_8",
-        "enemySetId": "enemy_set_stage_2_mix_8",
+        "enemySetId": "enemy_set_02_008",
         "chance": 0.07
       },
       {
         "id": "stage_2_mix_9",
-        "enemySetId": "enemy_set_stage_2_mix_9",
+        "enemySetId": "enemy_set_02_009",
         "chance": 0.06
       },
       {
         "id": "stage_2_mix_10",
-        "enemySetId": "enemy_set_stage_2_mix_10",
+        "enemySetId": "enemy_set_02_010",
         "chance": 0.04
       }
     ],
@@ -149,52 +149,52 @@
     "encounters": [
       {
         "id": "stage_3_furnace",
-        "enemySetId": "enemy_set_stage_3_furnace",
+        "enemySetId": "enemy_set_03_001",
         "chance": 0.15
       },
       {
         "id": "stage_3_relay",
-        "enemySetId": "enemy_set_stage_3_relay",
+        "enemySetId": "enemy_set_03_002",
         "chance": 0.14
       },
       {
         "id": "stage_3_overheat",
-        "enemySetId": "enemy_set_stage_3_overheat",
+        "enemySetId": "enemy_set_03_003",
         "chance": 0.13
       },
       {
         "id": "stage_3_engraving",
-        "enemySetId": "enemy_set_stage_3_engraving",
+        "enemySetId": "enemy_set_03_004",
         "chance": 0.12
       },
       {
         "id": "stage_3_mix_5",
-        "enemySetId": "enemy_set_stage_3_mix_5",
+        "enemySetId": "enemy_set_03_005",
         "chance": 0.1
       },
       {
         "id": "stage_3_mix_6",
-        "enemySetId": "enemy_set_stage_3_mix_6",
+        "enemySetId": "enemy_set_03_006",
         "chance": 0.09
       },
       {
         "id": "stage_3_mix_7",
-        "enemySetId": "enemy_set_stage_3_mix_7",
+        "enemySetId": "enemy_set_03_007",
         "chance": 0.09
       },
       {
         "id": "stage_3_mix_8",
-        "enemySetId": "enemy_set_stage_3_mix_8",
+        "enemySetId": "enemy_set_03_008",
         "chance": 0.07
       },
       {
         "id": "stage_3_mix_9",
-        "enemySetId": "enemy_set_stage_3_mix_9",
+        "enemySetId": "enemy_set_03_009",
         "chance": 0.06
       },
       {
         "id": "stage_3_mix_10",
-        "enemySetId": "enemy_set_stage_3_mix_10",
+        "enemySetId": "enemy_set_03_010",
         "chance": 0.05
       }
     ],
@@ -223,52 +223,52 @@
     "encounters": [
       {
         "id": "stage_4_lattice",
-        "enemySetId": "enemy_set_stage_4_lattice",
+        "enemySetId": "enemy_set_04_001",
         "chance": 0.15
       },
       {
         "id": "stage_4_volley",
-        "enemySetId": "enemy_set_stage_4_volley",
+        "enemySetId": "enemy_set_04_002",
         "chance": 0.14
       },
       {
         "id": "stage_4_hunt",
-        "enemySetId": "enemy_set_stage_4_hunt",
+        "enemySetId": "enemy_set_04_003",
         "chance": 0.13
       },
       {
         "id": "stage_4_conduit",
-        "enemySetId": "enemy_set_stage_4_conduit",
+        "enemySetId": "enemy_set_04_004",
         "chance": 0.12
       },
       {
         "id": "stage_4_mix_5",
-        "enemySetId": "enemy_set_stage_4_mix_5",
+        "enemySetId": "enemy_set_04_005",
         "chance": 0.1
       },
       {
         "id": "stage_4_mix_6",
-        "enemySetId": "enemy_set_stage_4_mix_6",
+        "enemySetId": "enemy_set_04_006",
         "chance": 0.09
       },
       {
         "id": "stage_4_mix_7",
-        "enemySetId": "enemy_set_stage_4_mix_7",
+        "enemySetId": "enemy_set_04_007",
         "chance": 0.09
       },
       {
         "id": "stage_4_mix_8",
-        "enemySetId": "enemy_set_stage_4_mix_8",
+        "enemySetId": "enemy_set_04_008",
         "chance": 0.07
       },
       {
         "id": "stage_4_mix_9",
-        "enemySetId": "enemy_set_stage_4_mix_9",
+        "enemySetId": "enemy_set_04_009",
         "chance": 0.06
       },
       {
         "id": "stage_4_mix_10",
-        "enemySetId": "enemy_set_stage_4_mix_10",
+        "enemySetId": "enemy_set_04_010",
         "chance": 0.05
       }
     ],
@@ -296,52 +296,52 @@
     "encounters": [
       {
         "id": "stage_5_guarded",
-        "enemySetId": "enemy_set_stage_5_guarded",
+        "enemySetId": "enemy_set_05_001",
         "chance": 0.22
       },
       {
         "id": "stage_5_signal",
-        "enemySetId": "enemy_set_stage_5_signal",
+        "enemySetId": "enemy_set_05_002",
         "chance": 0.17
       },
       {
         "id": "stage_5_awakened",
-        "enemySetId": "enemy_set_stage_5_awakened",
+        "enemySetId": "enemy_set_05_003",
         "chance": 0.12
       },
       {
         "id": "stage_5_core_line",
-        "enemySetId": "enemy_set_stage_5_core_line",
+        "enemySetId": "enemy_set_05_004",
         "chance": 0.1
       },
       {
         "id": "stage_5_mix_5",
-        "enemySetId": "enemy_set_stage_5_mix_5",
+        "enemySetId": "enemy_set_05_005",
         "chance": 0.09
       },
       {
         "id": "stage_5_mix_6",
-        "enemySetId": "enemy_set_stage_5_mix_6",
+        "enemySetId": "enemy_set_05_006",
         "chance": 0.08
       },
       {
         "id": "stage_5_mix_7",
-        "enemySetId": "enemy_set_stage_5_mix_7",
+        "enemySetId": "enemy_set_05_007",
         "chance": 0.07
       },
       {
         "id": "stage_5_mix_8",
-        "enemySetId": "enemy_set_stage_5_mix_8",
+        "enemySetId": "enemy_set_05_008",
         "chance": 0.06
       },
       {
         "id": "stage_5_mix_9",
-        "enemySetId": "enemy_set_stage_5_mix_9",
+        "enemySetId": "enemy_set_05_009",
         "chance": 0.05
       },
       {
         "id": "stage_5_mix_10",
-        "enemySetId": "enemy_set_stage_5_mix_10",
+        "enemySetId": "enemy_set_05_010",
         "chance": 0.04
       }
     ],

@@ -1,31 +1,27 @@
 [
   {
-    "id": "enemy_set_stage_1_patrol",
-    "name": "Ruins Patrol",
+    "id": "enemy_set_01_001",
     "enemyIds": [
       "enemy_scavenger",
       "enemy_mite"
     ]
   },
   {
-    "id": "enemy_set_stage_1_haunt",
-    "name": "Crystal Haunt",
+    "id": "enemy_set_01_002",
     "enemyIds": [
       "enemy_scavenger",
       "enemy_wisp"
     ]
   },
   {
-    "id": "enemy_set_stage_1_swarm",
-    "name": "Mite Swarm",
+    "id": "enemy_set_01_003",
     "enemyIds": [
       "enemy_mite",
       "enemy_wisp"
     ]
   },
   {
-    "id": "enemy_set_stage_1_resin",
-    "name": "Resin Patch",
+    "id": "enemy_set_01_004",
     "enemyIds": [
       "enemy_rust_slug",
       "enemy_glowcap",
@@ -33,8 +29,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_1_mix_5",
-    "name": "Stage 1 Set 5",
+    "id": "enemy_set_01_005",
     "enemyIds": [
       "enemy_scavenger",
       "enemy_rust_slug",
@@ -42,8 +37,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_1_mix_6",
-    "name": "Stage 1 Set 6",
+    "id": "enemy_set_01_006",
     "enemyIds": [
       "enemy_mite",
       "enemy_glowcap",
@@ -51,8 +45,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_1_mix_7",
-    "name": "Stage 1 Set 7",
+    "id": "enemy_set_01_007",
     "enemyIds": [
       "enemy_rust_slug",
       "enemy_mite",
@@ -60,24 +53,21 @@
     ]
   },
   {
-    "id": "enemy_set_stage_1_mix_8",
-    "name": "Stage 1 Set 8",
+    "id": "enemy_set_01_008",
     "enemyIds": [
       "enemy_scavenger",
       "enemy_glowcap"
     ]
   },
   {
-    "id": "enemy_set_stage_1_mix_9",
-    "name": "Stage 1 Set 9",
+    "id": "enemy_set_01_009",
     "enemyIds": [
       "enemy_rust_slug",
       "enemy_wisp"
     ]
   },
   {
-    "id": "enemy_set_stage_1_mix_10",
-    "name": "Stage 1 Set 10",
+    "id": "enemy_set_01_010",
     "enemyIds": [
       "enemy_scavenger",
       "enemy_mite",
@@ -85,8 +75,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_2_crossfire",
-    "name": "Crossfire Line",
+    "id": "enemy_set_02_001",
     "enemyIds": [
       "enemy_scout",
       "enemy_stalker",
@@ -94,8 +83,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_2_ambush",
-    "name": "Ambush Knot",
+    "id": "enemy_set_02_002",
     "enemyIds": [
       "enemy_scout",
       "enemy_stalker",
@@ -103,8 +91,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_2_assault",
-    "name": "Assault Wedge",
+    "id": "enemy_set_02_003",
     "enemyIds": [
       "enemy_scout",
       "enemy_bruiser",
@@ -112,8 +99,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_2_salvage",
-    "name": "Salvage Guard",
+    "id": "enemy_set_02_004",
     "enemyIds": [
       "enemy_glassback",
       "enemy_dust_mender",
@@ -121,8 +107,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_2_mix_5",
-    "name": "Stage 2 Set 5",
+    "id": "enemy_set_02_005",
     "enemyIds": [
       "enemy_stalker",
       "enemy_glassback",
@@ -130,8 +115,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_2_mix_6",
-    "name": "Stage 2 Set 6",
+    "id": "enemy_set_02_006",
     "enemyIds": [
       "enemy_bruiser",
       "enemy_dust_mender",
@@ -139,8 +123,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_2_mix_7",
-    "name": "Stage 2 Set 7",
+    "id": "enemy_set_02_007",
     "enemyIds": [
       "enemy_glassback",
       "enemy_stalker",
@@ -148,8 +131,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_2_mix_8",
-    "name": "Stage 2 Set 8",
+    "id": "enemy_set_02_008",
     "enemyIds": [
       "enemy_raider",
       "enemy_stalker",
@@ -157,8 +139,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_2_mix_9",
-    "name": "Stage 2 Set 9",
+    "id": "enemy_set_02_009",
     "enemyIds": [
       "enemy_bruiser",
       "enemy_glassback",
@@ -166,8 +147,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_2_mix_10",
-    "name": "Stage 2 Set 10",
+    "id": "enemy_set_02_010",
     "enemyIds": [
       "enemy_scout",
       "enemy_glassback",
@@ -175,8 +155,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_3_furnace",
-    "name": "Furnace Front",
+    "id": "enemy_set_03_001",
     "enemyIds": [
       "enemy_sentinel",
       "enemy_crucible",
@@ -184,8 +163,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_3_relay",
-    "name": "Arcane Relay",
+    "id": "enemy_set_03_002",
     "enemyIds": [
       "enemy_sentinel",
       "enemy_apprentice",
@@ -193,8 +171,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_3_overheat",
-    "name": "Overheat Wing",
+    "id": "enemy_set_03_003",
     "enemyIds": [
       "enemy_crucible",
       "enemy_apprentice",
@@ -202,8 +179,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_3_engraving",
-    "name": "Cinder Engraving",
+    "id": "enemy_set_03_004",
     "enemyIds": [
       "enemy_furnace_leech",
       "enemy_cinder_scribe",
@@ -211,8 +187,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_3_mix_5",
-    "name": "Stage 3 Set 5",
+    "id": "enemy_set_03_005",
     "enemyIds": [
       "enemy_sentinel",
       "enemy_furnace_leech",
@@ -220,8 +195,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_3_mix_6",
-    "name": "Stage 3 Set 6",
+    "id": "enemy_set_03_006",
     "enemyIds": [
       "enemy_distiller",
       "enemy_furnace_leech",
@@ -229,8 +203,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_3_mix_7",
-    "name": "Stage 3 Set 7",
+    "id": "enemy_set_03_007",
     "enemyIds": [
       "enemy_sentinel",
       "enemy_cinder_scribe",
@@ -238,8 +211,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_3_mix_8",
-    "name": "Stage 3 Set 8",
+    "id": "enemy_set_03_008",
     "enemyIds": [
       "enemy_crucible",
       "enemy_furnace_leech",
@@ -247,8 +219,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_3_mix_9",
-    "name": "Stage 3 Set 9",
+    "id": "enemy_set_03_009",
     "enemyIds": [
       "enemy_sentinel",
       "enemy_cinder_scribe",
@@ -256,8 +227,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_3_mix_10",
-    "name": "Stage 3 Set 10",
+    "id": "enemy_set_03_010",
     "enemyIds": [
       "enemy_furnace_leech",
       "enemy_cinder_scribe",
@@ -265,8 +235,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_4_lattice",
-    "name": "Storm Lattice",
+    "id": "enemy_set_04_001",
     "enemyIds": [
       "enemy_sniper",
       "enemy_weaver",
@@ -274,8 +243,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_4_volley",
-    "name": "Phantom Volley",
+    "id": "enemy_set_04_002",
     "enemyIds": [
       "enemy_sniper",
       "enemy_weaver",
@@ -283,8 +251,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_4_hunt",
-    "name": "Chain Hunt",
+    "id": "enemy_set_04_003",
     "enemyIds": [
       "enemy_sniper",
       "enemy_tempest",
@@ -292,8 +259,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_4_conduit",
-    "name": "Storm Conduit",
+    "id": "enemy_set_04_004",
     "enemyIds": [
       "enemy_thunder_moth",
       "enemy_gale_channeler",
@@ -301,8 +267,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_4_mix_5",
-    "name": "Stage 4 Set 5",
+    "id": "enemy_set_04_005",
     "enemyIds": [
       "enemy_sniper",
       "enemy_thunder_moth",
@@ -310,8 +275,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_4_mix_6",
-    "name": "Stage 4 Set 6",
+    "id": "enemy_set_04_006",
     "enemyIds": [
       "enemy_weaver",
       "enemy_thunder_moth",
@@ -319,8 +283,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_4_mix_7",
-    "name": "Stage 4 Set 7",
+    "id": "enemy_set_04_007",
     "enemyIds": [
       "enemy_gale_channeler",
       "enemy_sniper",
@@ -328,8 +291,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_4_mix_8",
-    "name": "Stage 4 Set 8",
+    "id": "enemy_set_04_008",
     "enemyIds": [
       "enemy_tempest",
       "enemy_thunder_moth",
@@ -337,8 +299,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_4_mix_9",
-    "name": "Stage 4 Set 9",
+    "id": "enemy_set_04_009",
     "enemyIds": [
       "enemy_weaver",
       "enemy_gale_channeler",
@@ -346,8 +307,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_4_mix_10",
-    "name": "Stage 4 Set 10",
+    "id": "enemy_set_04_010",
     "enemyIds": [
       "enemy_thunder_moth",
       "enemy_gale_channeler",
@@ -355,24 +315,21 @@
     ]
   },
   {
-    "id": "enemy_set_stage_5_guarded",
-    "name": "Core Keeper",
+    "id": "enemy_set_05_001",
     "enemyIds": [
       "enemy_chimera",
       "enemy_warden"
     ]
   },
   {
-    "id": "enemy_set_stage_5_signal",
-    "name": "Signal Choir",
+    "id": "enemy_set_05_002",
     "enemyIds": [
       "enemy_chimera",
       "enemy_herald"
     ]
   },
   {
-    "id": "enemy_set_stage_5_awakened",
-    "name": "Full Awakening",
+    "id": "enemy_set_05_003",
     "enemyIds": [
       "enemy_chimera",
       "enemy_herald",
@@ -380,8 +337,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_5_core_line",
-    "name": "Core Line",
+    "id": "enemy_set_05_004",
     "enemyIds": [
       "enemy_core_siphon",
       "enemy_moonvault_aegis",
@@ -389,16 +345,14 @@
     ]
   },
   {
-    "id": "enemy_set_stage_5_mix_5",
-    "name": "Stage 5 Set 5",
+    "id": "enemy_set_05_005",
     "enemyIds": [
       "enemy_chimera",
       "enemy_core_siphon"
     ]
   },
   {
-    "id": "enemy_set_stage_5_mix_6",
-    "name": "Stage 5 Set 6",
+    "id": "enemy_set_05_006",
     "enemyIds": [
       "enemy_moonvault_aegis",
       "enemy_warden",
@@ -406,8 +360,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_5_mix_7",
-    "name": "Stage 5 Set 7",
+    "id": "enemy_set_05_007",
     "enemyIds": [
       "enemy_chimera",
       "enemy_core_siphon",
@@ -415,16 +368,14 @@
     ]
   },
   {
-    "id": "enemy_set_stage_5_mix_8",
-    "name": "Stage 5 Set 8",
+    "id": "enemy_set_05_008",
     "enemyIds": [
       "enemy_core_siphon",
       "enemy_herald"
     ]
   },
   {
-    "id": "enemy_set_stage_5_mix_9",
-    "name": "Stage 5 Set 9",
+    "id": "enemy_set_05_009",
     "enemyIds": [
       "enemy_moonvault_aegis",
       "enemy_chimera",
@@ -432,8 +383,7 @@
     ]
   },
   {
-    "id": "enemy_set_stage_5_mix_10",
-    "name": "Stage 5 Set 10",
+    "id": "enemy_set_05_010",
     "enemyIds": [
       "enemy_core_siphon",
       "enemy_herald",
