@@ -51,30 +51,26 @@ class CharacterProgress {
     return type == CharacterType.mercenary ? 5 : 4;
   }
 
-  int get rankStepPerTier {
-    return type == CharacterType.mercenary ? 2 : 3;
-  }
-
-  int get rankBaseForCurrentTier {
-    return (tierIndex - 1) * rankStepPerTier;
-  }
-
   int get rankInCurrentTier {
-    final int localRank = rank - rankBaseForCurrentTier;
-    if (localRank < 1) {
+    if (rank < 1) {
       return 1;
     }
-    if (localRank > rankStepPerTier) {
-      return rankStepPerTier;
+    if (rank > maxRankForCurrentTier) {
+      return maxRankForCurrentTier;
     }
-    return localRank;
+    return rank;
   }
 
   int get maxRankForCurrentTier {
     if (type == CharacterType.mercenary) {
       return tierIndex * 2;
     }
-    return tierIndex * 3;
+    return switch (tierIndex) {
+      1 => 3,
+      2 => 5,
+      3 => 8,
+      _ => 10,
+    };
   }
 
   bool get canRankUp =>
