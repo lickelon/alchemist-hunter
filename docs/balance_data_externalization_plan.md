@@ -27,8 +27,9 @@
 | 영역 | 현재 파일 | 주요 데이터 |
 | --- | --- | --- |
 | Battle stage | `assets/data/battle/stages.json` | 권장 전투력, 탐색 시간, 복구 시간, 보상, 해금 조건. 스테이지 순서는 `stages.json` 배열 순서를 기준으로 한다 |
-| Battle enemy | `assets/data/battle/enemies.json` | 적 스탯, 액티브 스킬, 패시브, 적별 드롭 |
-| Battle encounter | `assets/data/battle/enemy_sets.json`, `stages.json` | stage별 적 조합, 조합 확률 |
+| Battle enemy | `assets/data/battle/enemy_index.json`, `enemies/stage_*.json` | 적 스탯, 패시브, 적별 드롭, 액티브 스킬 참조 |
+| Battle skill | `assets/data/battle/combat_skill_index.json`, `combat_skills/*.json` | 용병 / 호문쿨루스 / 적 액티브 스킬 |
+| Battle encounter | `assets/data/battle/enemy_set_index.json`, `enemy_sets/stage_*.json`, `stages.json` | stage별 적 조합, 조합 확률 |
 | Town shop | `assets/data/town/shops.json` | 상점 재료, 가격, 수량, 갱신 시간, 강제 갱신 비용 |
 | Equipment blueprint | `assets/data/town/equipment.json` | 장비 제작 재료, 기본 스탯, 특수 효과 |
 | Mercenary template | `assets/data/town/mercenaries.json` | 용병 후보 기본값, 고용 비용 |
@@ -157,3 +158,13 @@ Workshop 카탈로그는 `assets/data/workshop/` 로컬 asset에서 읽는다. �
 2. `stages.json` 배열 순서에서 `stageCatalog`를 생성한다.
 3. 테스트 fixture도 동일하게 `stages.json` 배열 순서를 사용한다.
 4. stage catalog 검증은 `stages.json` 배열에서 만든 순서에 대해 유지한다.
+
+### 9.2 Battle catalog 확장성 정리 완료
+- `enemy_sets`는 user-facing 이름을 제거하고 조합 데이터로만 유지한다.
+- enemy set ID는 `enemy_set_{stageNumber2Digits}_{setNumber3Digits}` 형식으로 정규화했다.
+- enemy set 파일은 `enemy_set_index.json`과 `enemy_sets/stage_*.json`으로 분리했다.
+- enemy 파일은 `enemy_index.json`과 `enemies/stage_*.json`으로 분리했다.
+- 적 액티브 스킬은 enemy 안의 inline 정의에서 `skillIds` 참조로 전환했다.
+- 액티브 스킬 카탈로그는 `combat_skill_index.json`과 `combat_skills/*.json`으로 분리했다.
+- battle catalog 로딩은 중복 ID를 거부한다.
+- battle catalog 검증은 stage 순서 누락, enemy set ID 형식, encounter chance 합계, drop material 참조를 확인한다.
