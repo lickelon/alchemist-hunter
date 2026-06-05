@@ -162,9 +162,10 @@ Workshop 카탈로그는 `assets/data/workshop/` 로컬 asset에서 읽는다. �
 ### 9.2 Battle catalog 확장성 정리 완료
 - `enemy_sets`는 user-facing 이름을 제거하고 조합 데이터로만 유지한다.
 - enemy set ID는 `enemy_set_{stageNumber2Digits}_{setNumber3Digits}` 형식으로 정규화했다.
+- encounter ID는 `encounter_{stageNumber2Digits}_{encounterNumber3Digits}` 형식으로 정규화했다.
 - enemy set 파일은 `enemy_set_index.json`과 `enemy_sets/stage_*.json`으로 분리했다.
 - enemy 파일은 `enemy_index.json`과 `enemies/stage_*.json`으로 분리했다.
 - 적 액티브 스킬은 enemy 안의 inline 정의에서 `skillIds` 참조로 전환했다.
 - 액티브 스킬 카탈로그는 `combat_skill_index.json`과 `combat_skills/*.json`으로 분리했다.
 - battle catalog 로딩은 중복 ID를 거부한다.
-- battle catalog 검증은 stage 순서 누락, enemy set ID 형식, encounter chance 합계, drop material 참조, 미사용 combat skill/passive를 확인한다.
+- battle catalog 검증은 stage 순서 누락, encounter ID 형식, enemy set ID 형식, encounter chance 합계, drop material 참조, 미사용 combat skill/passive를 확인한다.
