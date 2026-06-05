@@ -188,7 +188,7 @@ BattleCatalogTables _loadBattleCatalogTablesFromAssets() {
   );
   return BattleCatalogTables.fromDtos(
     enemyDtos: _readBattleDtoMap(
-      _readBattleObjectList('enemies.json'),
+      _readBattleIndexedObjectLists('enemy_index.json'),
       BattleEnemyDefinitionDto.fromJson,
     ),
     enemySetDtos: _readBattleDtoMap(

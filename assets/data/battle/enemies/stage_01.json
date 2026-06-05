@@ -1,0 +1,235 @@
+[
+  {
+    "id": "enemy_scavenger",
+    "name": "Ruin Scavenger",
+    "faction": "homunculus",
+    "summary": "잔해를 주워 버티는 전열형",
+    "stats": {
+      "maxHp": 46,
+      "maxMp": 6,
+      "physicalAttack": 10,
+      "physicalDefense": 9,
+      "magicalAttack": 4,
+      "magicalDefense": 7,
+      "speed": 8,
+      "critChance": 0.04,
+      "critDamage": 0.45,
+      "accuracy": 0.84,
+      "evasion": 0.03,
+      "statusAccuracy": 0.03,
+      "statusResistance": 0.04,
+      "physicalPenetration": 0.02,
+      "magicalPenetration": 0.01,
+      "lifesteal": 0.0,
+      "healingPower": 0.0,
+      "regen": 0.01,
+      "mpRegen": 2
+    },
+    "modifiers": [
+      {
+        "type": "damageTaken",
+        "mode": "percent",
+        "value": -0.05,
+        "school": "any",
+        "sourceId": "enemy_scavenger_hide"
+      }
+    ],
+    "passives": [],
+    "normalDrops": [
+      {
+        "materialId": "m_1",
+        "min": 1,
+        "max": 3,
+        "chance": 0.86
+      }
+    ],
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_scavenger_scrap_guard"
+    ]
+  },
+  {
+    "id": "enemy_wisp",
+    "name": "Moontear Wisp",
+    "faction": "homunculus",
+    "summary": "희귀 촉매를 품은 부유체",
+    "stats": {
+      "maxHp": 38,
+      "maxMp": 6,
+      "physicalAttack": 4,
+      "physicalDefense": 5,
+      "magicalAttack": 12,
+      "magicalDefense": 8,
+      "speed": 10,
+      "critChance": 0.05,
+      "critDamage": 0.45,
+      "accuracy": 0.88,
+      "evasion": 0.05,
+      "statusAccuracy": 0.06,
+      "statusResistance": 0.05,
+      "physicalPenetration": 0.01,
+      "magicalPenetration": 0.03,
+      "lifesteal": 0.0,
+      "healingPower": 0.02,
+      "regen": 0.01,
+      "mpRegen": 3
+    },
+    "modifiers": [],
+    "passives": [],
+    "normalDrops": [
+      {
+        "materialId": "m_2",
+        "min": 1,
+        "max": 2,
+        "chance": 0.74
+      }
+    ],
+    "specialDrops": [
+      {
+        "materialId": "m_25",
+        "min": 1,
+        "max": 1,
+        "chance": 0.24
+      }
+    ],
+    "skillIds": [
+      "enemy_wisp_lunar_mend"
+    ]
+  },
+  {
+    "id": "enemy_mite",
+    "name": "Ash Mite",
+    "faction": "homunculus",
+    "summary": "빠르게 파고드는 군체형",
+    "stats": {
+      "maxHp": 34,
+      "maxMp": 4,
+      "physicalAttack": 8,
+      "physicalDefense": 4,
+      "magicalAttack": 3,
+      "magicalDefense": 4,
+      "speed": 12,
+      "critChance": 0.05,
+      "critDamage": 0.42,
+      "accuracy": 0.86,
+      "evasion": 0.06,
+      "statusAccuracy": 0.02,
+      "statusResistance": 0.03,
+      "physicalPenetration": 0.02,
+      "magicalPenetration": 0.01,
+      "lifesteal": 0.0,
+      "healingPower": 0.0,
+      "regen": 0.0,
+      "mpRegen": 2
+    },
+    "modifiers": [],
+    "passives": [],
+    "normalDrops": [
+      {
+        "materialId": "m_1",
+        "min": 1,
+        "max": 2,
+        "chance": 0.7
+      },
+      {
+        "materialId": "m_2",
+        "min": 1,
+        "max": 1,
+        "chance": 0.32
+      }
+    ],
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_mite_ash_venom"
+    ]
+  },
+  {
+    "id": "enemy_rust_slug",
+    "name": "Rust Slug",
+    "faction": "homunculus",
+    "summary": "산성 점액으로 방어를 녹이는 둔중형",
+    "stats": {
+      "maxHp": 42,
+      "maxMp": 4,
+      "physicalAttack": 7,
+      "physicalDefense": 10,
+      "magicalAttack": 3,
+      "magicalDefense": 7,
+      "speed": 6,
+      "critChance": 0.03,
+      "critDamage": 0.4,
+      "accuracy": 0.84,
+      "evasion": 0.02,
+      "statusAccuracy": 0.05,
+      "statusResistance": 0.05,
+      "physicalPenetration": 0.01,
+      "magicalPenetration": 0.01,
+      "lifesteal": 0.0,
+      "healingPower": 0.0,
+      "regen": 0.01,
+      "mpRegen": 2
+    },
+    "modifiers": [],
+    "passives": [],
+    "normalDrops": [
+      {
+        "materialId": "m_1",
+        "min": 1,
+        "max": 2,
+        "chance": 0.68
+      }
+    ],
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_rust_slug_corrosion"
+    ]
+  },
+  {
+    "id": "enemy_glowcap",
+    "name": "Glowcap Sprout",
+    "faction": "homunculus",
+    "summary": "희미한 포자로 초입 전장을 흐리는 발아체",
+    "stats": {
+      "maxHp": 36,
+      "maxMp": 6,
+      "physicalAttack": 4,
+      "physicalDefense": 5,
+      "magicalAttack": 10,
+      "magicalDefense": 7,
+      "speed": 9,
+      "critChance": 0.04,
+      "critDamage": 0.42,
+      "accuracy": 0.87,
+      "evasion": 0.05,
+      "statusAccuracy": 0.07,
+      "statusResistance": 0.04,
+      "physicalPenetration": 0.01,
+      "magicalPenetration": 0.03,
+      "lifesteal": 0.0,
+      "healingPower": 0.03,
+      "regen": 0.01,
+      "mpRegen": 3
+    },
+    "modifiers": [],
+    "passives": [],
+    "normalDrops": [
+      {
+        "materialId": "m_2",
+        "min": 1,
+        "max": 2,
+        "chance": 0.64
+      }
+    ],
+    "specialDrops": [
+      {
+        "materialId": "m_25",
+        "min": 1,
+        "max": 1,
+        "chance": 0.16
+      }
+    ],
+    "skillIds": [
+      "enemy_glowcap_drowsy_spores"
+    ]
+  }
+]

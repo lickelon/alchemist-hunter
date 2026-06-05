@@ -1,0 +1,337 @@
+[
+  {
+    "id": "enemy_sniper",
+    "name": "Gale Sniper",
+    "faction": "mercenary",
+    "summary": "필중 사격 중심의 저격수",
+    "stats": {
+      "maxHp": 54,
+      "maxMp": 8,
+      "physicalAttack": 16,
+      "physicalDefense": 8,
+      "magicalAttack": 5,
+      "magicalDefense": 8,
+      "speed": 13,
+      "critChance": 0.08,
+      "critDamage": 0.52,
+      "accuracy": 0.94,
+      "evasion": 0.07,
+      "statusAccuracy": 0.04,
+      "statusResistance": 0.06,
+      "physicalPenetration": 0.05,
+      "magicalPenetration": 0.01,
+      "lifesteal": 0.0,
+      "healingPower": 0.0,
+      "regen": 0.01,
+      "mpRegen": 4
+    },
+    "modifiers": [],
+    "passives": [
+      {
+        "trigger": "beforeHitCheck",
+        "type": "alwaysHit",
+        "sourceId": "enemy_sniper_true_shot",
+        "durationLifecycles": 1,
+        "condition": {
+          "type": "always",
+          "threshold": 0.0
+        }
+      },
+      {
+        "trigger": "beforeDamage",
+        "type": "grantModifier",
+        "sourceId": "enemy_sniper_precise_aim",
+        "durationLifecycles": 1,
+        "modifier": {
+          "type": "damageDealt",
+          "mode": "percent",
+          "value": 0.08,
+          "school": "physical",
+          "sourceId": "enemy_sniper_precise_aim"
+        },
+        "condition": {
+          "type": "always",
+          "threshold": 0.0
+        }
+      }
+    ],
+    "normalDrops": [
+      {
+        "materialId": "m_7",
+        "min": 1,
+        "max": 2,
+        "chance": 0.74
+      }
+    ],
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_sniper_pin_shot"
+    ]
+  },
+  {
+    "id": "enemy_weaver",
+    "name": "Bloom Weaver",
+    "faction": "homunculus",
+    "summary": "포자를 흩뿌리는 후열형",
+    "stats": {
+      "maxHp": 58,
+      "maxMp": 8,
+      "physicalAttack": 7,
+      "physicalDefense": 8,
+      "magicalAttack": 17,
+      "magicalDefense": 11,
+      "speed": 12,
+      "critChance": 0.06,
+      "critDamage": 0.5,
+      "accuracy": 0.92,
+      "evasion": 0.06,
+      "statusAccuracy": 0.08,
+      "statusResistance": 0.07,
+      "physicalPenetration": 0.02,
+      "magicalPenetration": 0.05,
+      "lifesteal": 0.0,
+      "healingPower": 0.04,
+      "regen": 0.01,
+      "mpRegen": 4
+    },
+    "modifiers": [
+      {
+        "type": "damageDealt",
+        "mode": "percent",
+        "value": 0.1,
+        "school": "magical",
+        "sourceId": "enemy_weaver_spore_burst"
+      }
+    ],
+    "passives": [],
+    "normalDrops": [
+      {
+        "materialId": "m_8",
+        "min": 1,
+        "max": 2,
+        "chance": 0.72
+      }
+    ],
+    "specialDrops": [
+      {
+        "materialId": "m_28",
+        "min": 1,
+        "max": 1,
+        "chance": 0.32
+      }
+    ],
+    "skillIds": [
+      "enemy_weaver_spore_cloud"
+    ]
+  },
+  {
+    "id": "enemy_tempest",
+    "name": "Tempest Disciple",
+    "faction": "mercenary",
+    "summary": "질주 후 연속 주문을 엮는 기동형",
+    "stats": {
+      "maxHp": 62,
+      "maxMp": 6,
+      "physicalAttack": 9,
+      "physicalDefense": 8,
+      "magicalAttack": 18,
+      "magicalDefense": 12,
+      "speed": 14,
+      "critChance": 0.07,
+      "critDamage": 0.52,
+      "accuracy": 0.93,
+      "evasion": 0.08,
+      "statusAccuracy": 0.08,
+      "statusResistance": 0.07,
+      "physicalPenetration": 0.02,
+      "magicalPenetration": 0.05,
+      "lifesteal": 0.0,
+      "healingPower": 0.03,
+      "regen": 0.01,
+      "mpRegen": 3
+    },
+    "modifiers": [],
+    "passives": [
+      {
+        "trigger": "afterAction",
+        "type": "extraAttack",
+        "sourceId": "enemy_tempest_chain_cast",
+        "value": 1,
+        "durationLifecycles": 1,
+        "condition": {
+          "type": "always",
+          "threshold": 0.0
+        }
+      }
+    ],
+    "normalDrops": [
+      {
+        "materialId": "m_8",
+        "min": 1,
+        "max": 2,
+        "chance": 0.78
+      }
+    ],
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_tempest_chain_arc"
+    ]
+  },
+  {
+    "id": "enemy_mirage",
+    "name": "Mirage Harrier",
+    "faction": "homunculus",
+    "summary": "회피와 견제를 반복하는 교란형",
+    "stats": {
+      "maxHp": 56,
+      "maxMp": 6,
+      "physicalAttack": 10,
+      "physicalDefense": 7,
+      "magicalAttack": 14,
+      "magicalDefense": 10,
+      "speed": 15,
+      "critChance": 0.06,
+      "critDamage": 0.5,
+      "accuracy": 0.91,
+      "evasion": 0.1,
+      "statusAccuracy": 0.07,
+      "statusResistance": 0.07,
+      "physicalPenetration": 0.03,
+      "magicalPenetration": 0.04,
+      "lifesteal": 0.0,
+      "healingPower": 0.02,
+      "regen": 0.01,
+      "mpRegen": 3
+    },
+    "modifiers": [
+      {
+        "type": "damageTaken",
+        "mode": "percent",
+        "value": -0.07,
+        "school": "any",
+        "sourceId": "enemy_mirage_distortion"
+      }
+    ],
+    "passives": [
+      {
+        "trigger": "battleStart",
+        "type": "firstStrike",
+        "sourceId": "enemy_mirage_blink_in",
+        "value": 1,
+        "durationLifecycles": 1,
+        "condition": {
+          "type": "always",
+          "threshold": 0.0
+        }
+      }
+    ],
+    "normalDrops": [
+      {
+        "materialId": "m_7",
+        "min": 1,
+        "max": 1,
+        "chance": 0.34
+      },
+      {
+        "materialId": "m_8",
+        "min": 1,
+        "max": 2,
+        "chance": 0.62
+      }
+    ],
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_mirage_false_opening"
+    ]
+  },
+  {
+    "id": "enemy_thunder_moth",
+    "name": "Thunder Moth",
+    "faction": "homunculus",
+    "summary": "전하 비늘을 흩뿌리는 광역 마법형",
+    "stats": {
+      "maxHp": 58,
+      "maxMp": 8,
+      "physicalAttack": 5,
+      "physicalDefense": 7,
+      "magicalAttack": 19,
+      "magicalDefense": 12,
+      "speed": 14,
+      "critChance": 0.06,
+      "critDamage": 0.5,
+      "accuracy": 0.92,
+      "evasion": 0.08,
+      "statusAccuracy": 0.08,
+      "statusResistance": 0.07,
+      "physicalPenetration": 0.01,
+      "magicalPenetration": 0.06,
+      "lifesteal": 0.0,
+      "healingPower": 0.03,
+      "regen": 0.01,
+      "mpRegen": 4
+    },
+    "modifiers": [],
+    "passives": [],
+    "normalDrops": [
+      {
+        "materialId": "m_8",
+        "min": 1,
+        "max": 2,
+        "chance": 0.72
+      }
+    ],
+    "specialDrops": [
+      {
+        "materialId": "m_28",
+        "min": 1,
+        "max": 1,
+        "chance": 0.24
+      }
+    ],
+    "skillIds": [
+      "enemy_thunder_moth_static_wing"
+    ]
+  },
+  {
+    "id": "enemy_gale_channeler",
+    "name": "Gale Channeler",
+    "faction": "mercenary",
+    "summary": "폭풍 술식을 증폭하는 후열 보조형",
+    "stats": {
+      "maxHp": 60,
+      "maxMp": 8,
+      "physicalAttack": 6,
+      "physicalDefense": 8,
+      "magicalAttack": 16,
+      "magicalDefense": 13,
+      "speed": 13,
+      "critChance": 0.06,
+      "critDamage": 0.5,
+      "accuracy": 0.92,
+      "evasion": 0.06,
+      "statusAccuracy": 0.08,
+      "statusResistance": 0.08,
+      "physicalPenetration": 0.01,
+      "magicalPenetration": 0.05,
+      "lifesteal": 0.0,
+      "healingPower": 0.05,
+      "regen": 0.01,
+      "mpRegen": 4
+    },
+    "modifiers": [],
+    "passives": [],
+    "normalDrops": [
+      {
+        "materialId": "m_7",
+        "min": 1,
+        "max": 2,
+        "chance": 0.66
+      }
+    ],
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_gale_channeler_storm_rite",
+      "enemy_gale_channeler_gale_ward"
+    ]
+  }
+]

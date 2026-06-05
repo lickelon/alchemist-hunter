@@ -1,0 +1,284 @@
+[
+  {
+    "id": "enemy_chimera",
+    "name": "Moontear Chimera",
+    "faction": "homunculus",
+    "summary": "흡혈과 압박을 겸한 보스형",
+    "stats": {
+      "maxHp": 72,
+      "maxMp": 10,
+      "physicalAttack": 15,
+      "physicalDefense": 12,
+      "magicalAttack": 8,
+      "magicalDefense": 10,
+      "speed": 10,
+      "critChance": 0.06,
+      "critDamage": 0.55,
+      "accuracy": 0.91,
+      "evasion": 0.05,
+      "statusAccuracy": 0.05,
+      "statusResistance": 0.08,
+      "physicalPenetration": 0.04,
+      "magicalPenetration": 0.03,
+      "lifesteal": 0.01,
+      "healingPower": 0.0,
+      "regen": 0.01,
+      "mpRegen": 4
+    },
+    "modifiers": [
+      {
+        "type": "damageDealt",
+        "mode": "percent",
+        "value": 0.08,
+        "school": "any",
+        "sourceId": "enemy_chimera_fury"
+      }
+    ],
+    "passives": [],
+    "normalDrops": [
+      {
+        "materialId": "m_29",
+        "min": 1,
+        "max": 2,
+        "chance": 0.88
+      }
+    ],
+    "specialDrops": [
+      {
+        "materialId": "m_30",
+        "min": 1,
+        "max": 2,
+        "chance": 0.46
+      }
+    ],
+    "skillIds": [
+      "enemy_chimera_rending_howl"
+    ]
+  },
+  {
+    "id": "enemy_herald",
+    "name": "Core Herald",
+    "faction": "mercenary",
+    "summary": "보스의 틈을 벌리는 고속 보조형",
+    "stats": {
+      "maxHp": 68,
+      "maxMp": 8,
+      "physicalAttack": 12,
+      "physicalDefense": 10,
+      "magicalAttack": 17,
+      "magicalDefense": 12,
+      "speed": 14,
+      "critChance": 0.07,
+      "critDamage": 0.52,
+      "accuracy": 0.93,
+      "evasion": 0.07,
+      "statusAccuracy": 0.08,
+      "statusResistance": 0.08,
+      "physicalPenetration": 0.03,
+      "magicalPenetration": 0.05,
+      "lifesteal": 0.0,
+      "healingPower": 0.04,
+      "regen": 0.01,
+      "mpRegen": 4
+    },
+    "modifiers": [
+      {
+        "type": "damageDealt",
+        "mode": "percent",
+        "value": 0.1,
+        "school": "magical",
+        "sourceId": "enemy_herald_core_signal"
+      }
+    ],
+    "passives": [],
+    "normalDrops": [
+      {
+        "materialId": "m_29",
+        "min": 1,
+        "max": 2,
+        "chance": 0.8
+      }
+    ],
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_herald_core_signal",
+      "enemy_herald_core_fracture"
+    ]
+  },
+  {
+    "id": "enemy_warden",
+    "name": "Moonvault Warden",
+    "faction": "homunculus",
+    "summary": "핵심을 지키는 중장갑 호위체",
+    "stats": {
+      "maxHp": 82,
+      "maxMp": 10,
+      "physicalAttack": 13,
+      "physicalDefense": 14,
+      "magicalAttack": 6,
+      "magicalDefense": 12,
+      "speed": 9,
+      "critChance": 0.04,
+      "critDamage": 0.48,
+      "accuracy": 0.88,
+      "evasion": 0.02,
+      "statusAccuracy": 0.04,
+      "statusResistance": 0.1,
+      "physicalPenetration": 0.03,
+      "magicalPenetration": 0.02,
+      "lifesteal": 0.0,
+      "healingPower": 0.0,
+      "regen": 0.02,
+      "mpRegen": 4
+    },
+    "modifiers": [
+      {
+        "type": "damageTaken",
+        "mode": "percent",
+        "value": -0.12,
+        "school": "any",
+        "sourceId": "enemy_warden_core_shell"
+      }
+    ],
+    "passives": [
+      {
+        "trigger": "onDamaged",
+        "type": "counterAttack",
+        "sourceId": "enemy_warden_guard_retaliation",
+        "value": 1,
+        "durationLifecycles": 1,
+        "condition": {
+          "type": "always",
+          "threshold": 0.0
+        }
+      }
+    ],
+    "normalDrops": [
+      {
+        "materialId": "m_29",
+        "min": 1,
+        "max": 2,
+        "chance": 0.84
+      }
+    ],
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_warden_moonvault_barrier"
+    ]
+  },
+  {
+    "id": "enemy_core_siphon",
+    "name": "Core Siphon",
+    "faction": "homunculus",
+    "summary": "문물 핵의 마력을 빨아들이는 흡수형",
+    "stats": {
+      "maxHp": 72,
+      "maxMp": 10,
+      "physicalAttack": 8,
+      "physicalDefense": 10,
+      "magicalAttack": 20,
+      "magicalDefense": 13,
+      "speed": 12,
+      "critChance": 0.06,
+      "critDamage": 0.52,
+      "accuracy": 0.92,
+      "evasion": 0.05,
+      "statusAccuracy": 0.08,
+      "statusResistance": 0.09,
+      "physicalPenetration": 0.02,
+      "magicalPenetration": 0.06,
+      "lifesteal": 0.03,
+      "healingPower": 0.04,
+      "regen": 0.015,
+      "mpRegen": 5
+    },
+    "modifiers": [],
+    "passives": [
+      {
+        "trigger": "afterHit",
+        "type": "grantModifier",
+        "sourceId": "enemy_core_siphon_mana_wound",
+        "durationLifecycles": 2,
+        "modifier": {
+          "type": "damageTaken",
+          "mode": "percent",
+          "value": 0.1,
+          "school": "magical",
+          "sourceId": "enemy_core_siphon_mana_wound"
+        },
+        "condition": {
+          "type": "always",
+          "threshold": 0.0
+        }
+      }
+    ],
+    "normalDrops": [
+      {
+        "materialId": "m_29",
+        "min": 1,
+        "max": 2,
+        "chance": 0.82
+      }
+    ],
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_core_siphon_mana_rend"
+    ]
+  },
+  {
+    "id": "enemy_moonvault_aegis",
+    "name": "Moonvault Aegis",
+    "faction": "homunculus",
+    "summary": "문물의 외벽을 펼치는 중장갑 방어형",
+    "stats": {
+      "maxHp": 88,
+      "maxMp": 10,
+      "physicalAttack": 12,
+      "physicalDefense": 16,
+      "magicalAttack": 7,
+      "magicalDefense": 14,
+      "speed": 8,
+      "critChance": 0.04,
+      "critDamage": 0.48,
+      "accuracy": 0.88,
+      "evasion": 0.02,
+      "statusAccuracy": 0.04,
+      "statusResistance": 0.11,
+      "physicalPenetration": 0.03,
+      "magicalPenetration": 0.02,
+      "lifesteal": 0.0,
+      "healingPower": 0.0,
+      "regen": 0.02,
+      "mpRegen": 5
+    },
+    "modifiers": [
+      {
+        "type": "damageTaken",
+        "mode": "percent",
+        "value": -0.1,
+        "school": "any",
+        "sourceId": "enemy_moonvault_aegis_shell"
+      }
+    ],
+    "passives": [],
+    "normalDrops": [
+      {
+        "materialId": "m_30",
+        "min": 1,
+        "max": 1,
+        "chance": 0.42
+      }
+    ],
+    "specialDrops": [
+      {
+        "materialId": "m_29",
+        "min": 1,
+        "max": 2,
+        "chance": 0.44
+      }
+    ],
+    "skillIds": [
+      "enemy_moonvault_aegis_guard_field"
+    ]
+  }
+]

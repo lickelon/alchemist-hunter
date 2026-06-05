@@ -20,8 +20,8 @@ class BattleCatalogAssetLoader {
     );
     return BattleCatalogTables.fromDtos(
       enemyDtos: _readDtoMap(
-        await _readObjectList(bundle, 'enemies.json'),
-        'enemies.json',
+        await _readIndexedObjectLists(bundle, 'enemy_index.json'),
+        'enemy_index.json',
         BattleEnemyDefinitionDto.fromJson,
       ),
       enemySetDtos: _readDtoMap(
