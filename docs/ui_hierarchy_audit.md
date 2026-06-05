@@ -7,10 +7,18 @@
 
 ---
 
-## 2. 패턴 A — 레이블 함수가 `\n`/` / ` 연결 문자열을 반환 (근본 원인)
+## 2. 패턴 A — 레이블 함수가 `\n`/` / ` 연결 문자열을 반환
 
 UI 레이어에서 `_splitEquipmentLabel`, `_splitEffectLabel` 같은 파싱 함수가 여러 곳에 반복 등장한다.
 이는 레이블 함수가 레이아웃 결정을 문자열 포맷으로 끌고 들어갔기 때문이다.
+
+단, 이 패턴은 모두 같은 원인으로 묶으면 안 된다.
+장비 라벨 파싱(A1~A4, A6)은 `equipment_*_labels.dart`의 반환 형태가 직접 원인이지만,
+전투 효과 라벨(A5), 드롭 라벨(A7), 스킬트리 라벨(A8)은 별도 표시 모델을 구조화해야 하는 독립 이슈다.
+
+적용 상태:
+- A1~A4, A6: 완료. 장비 스탯/효과/detail label list API를 추가하고 장비 UI의 `_splitEquipmentLabel` 파싱을 제거했다.
+- A5, A7, A8: 남음. 전투 효과, 드롭, 스킬트리 라벨은 별도 구조화 단계에서 처리한다.
 
 ### 2.1 근본 원인 파일
 
@@ -39,7 +47,9 @@ return lines.join('\n');  // :26
 | `battle/widgets/battle_stage_drop_list.dart` | 105-110 | `_splitDropLabel` | 동일 (5번째 복사) |
 | `common/widgets/skill_tree_node_detail_dialog.dart` | 84-89 | `_badgeLabels` | ` / ` 분리 후 prefix 붙여 badge 생성 |
 
-`_badgeLabels`의 경우 스킬트리 효과·비용 라벨들이 ` / `로 연결된 문자열로 내려오는 것이 근본 원인이며, A1/A2와 같은 레이어의 문제다.
+`_splitEquipmentLabel`은 장비 라벨 포맷 문제의 직접 증상이다.
+`_splitEffectLabel`, `_splitDropLabel`, `_badgeLabels`는 유사한 문자열 파싱 증상이지만,
+장비 라벨 수정으로 해결되지 않으므로 별도 작업으로 분리한다.
 
 ### 2.3 증상 — UI에서 뷰모델 문자열 조작
 
@@ -50,11 +60,11 @@ final String statusLabel = assignmentLabel.replaceFirst('배치 상태: ', '');
 뷰모델이 `'배치 상태: 대기'` 형태로 반환하고, UI가 prefix를 직접 제거.
 
 ### 2.4 수정 방향
-- `formatEquipmentStatLabel`은 `\n` 없는 단일 문자열만 반환하도록 변경.
-  호출부(CharacterEquipmentSection 등)가 레이아웃을 결정한다.
-- `equipmentBlueprintDetailLabel` / `equipmentInstanceDetailLabel`은
-  `List<String>` 반환으로 교체하거나, 호출부에서 개별 레이블을 직접 조합한다.
-- UI의 `_splitEquipmentLabel` / `_splitEffectLabel` 파싱 함수를 제거한다.
+- 장비 스탯/효과 라벨은 가능하면 `List<String>` 또는 `List<StatLine>` 같은 구조화 데이터로 전달한다.
+- `formatEquipmentStatLabel`을 단일 문자열로만 바꾸는 것은 임시 완화일 뿐 최종 방향이 아니다.
+- 호출부(CharacterEquipmentSection 등)가 줄바꿈과 badge 배치를 직접 결정한다.
+- UI의 `_splitEquipmentLabel` 파싱 함수를 제거한다.
+- 전투 효과, 드롭 라벨, 스킬트리 효과/비용 라벨은 장비 라벨 작업과 분리해 별도 구조화 여부를 판단한다.
 - `assignmentLabel`에서 `'배치 상태: '` prefix를 뷰모델에서 제거한다.
 
 ---
@@ -170,6 +180,7 @@ final String? qualityLabel = result.qualityScore == null
 ```
 등급(`gradeLabel`)과 점수(`N점`)를 중간점으로 연결.
 등급은 시각적으로 강조될 정보이고, 점수는 보조 정보이므로 위계가 다르다.
+현재 포션명 아래 별도 줄로는 분리되어 있으므로, 구조 문제보다는 한 줄 안에서 등급과 점수가 같은 무게로 묶인 소이슈다.
 
 **수정 방향**: 등급을 `titleMedium` 또는 배지로 표시하고, 점수는 `bodySmall`의 보조 텍스트로 분리.
 
@@ -292,14 +303,14 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 
 | # | 패턴 | 파일 | 라인 | 우선순위 |
 |---|------|------|------|----------|
-| A1 | 레이블 함수 `\n` 반환 | `equipment_stat_labels.dart` | 39 | 높음 (근본 원인) |
-| A2 | 레이블 함수 `\n` 반환 | `equipment_detail_labels.dart` | 12, 26 | 높음 (근본 원인) |
-| A3 | UI 파싱 우회 | `town_equipment_sheet.dart` | 195-200 | A1 해결 시 제거 |
-| A4 | UI 파싱 우회 | `character_equipment_section.dart` | 76-82 | A1 해결 시 제거 |
-| A5 | UI 파싱 우회 | `character_combat_sections.dart` | 54-59 | A2 해결 시 제거 |
-| A6 | UI 파싱 우회 | `character_equipment_header.dart` | 75-81 | A1 해결 시 제거 |
-| A7 | UI 파싱 우회 | `battle_stage_drop_list.dart` | 105-110 | 근본 원인 해결 시 제거 |
-| A8 | UI 파싱 우회 | `skill_tree_node_detail_dialog.dart` | 84-89 | 근본 원인 해결 시 제거 |
+| A1 | 레이블 함수 `\n` 반환 | `equipment_stat_labels.dart` | 39 | 완료 |
+| A2 | 레이블 함수 `\n` 반환 | `equipment_detail_labels.dart` | 12, 26 | 완료 |
+| A3 | UI 파싱 우회 | `town_equipment_sheet.dart` | 195-200 | 완료 |
+| A4 | UI 파싱 우회 | `character_equipment_section.dart` | 76-82 | 완료 |
+| A5 | 전투 효과 라벨 UI 파싱 우회 | `character_combat_sections.dart` | 54-59 | 보통 (별도 구조화) |
+| A6 | UI 파싱 우회 | `character_equipment_header.dart` | 75-81 | 완료 |
+| A7 | 드롭 라벨 UI 파싱 우회 | `battle_stage_drop_list.dart` | 105-110 | 보통 (별도 구조화) |
+| A8 | 스킬트리 라벨 UI 파싱 우회 | `skill_tree_node_detail_dialog.dart` | 84-89 | 보통 (별도 구조화) |
 | A9 | UI 문자열 조작 | `character_assignment_section.dart` | 18 | 보통 |
 | B1 | 경고 + 탭 혼재 | `workshop_craft_card.dart` | 61-79 | 보통 |
 | B2 | 액션 + 정보 혼재 | `town_shop_sheet.dart` | 37-54 | 보통 |
@@ -311,8 +322,8 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 | E2 | 중간점 연결 두 정보 | `workshop_brew_experiment_result_body.dart` | 37 | 낮음 |
 | E3 | 쉼표 연결 두 정보 | `town_screen.dart` | 39 | 낮음 |
 | E4 | 쉼표 연결 두 정보 | `workshop_screen.dart` | 60 | 낮음 |
-| F1 | 제목에 분류 정보 혼합 | `character_detail_sheet.dart` | 52 | 낮음 |
-| F2 | 제목에 분류 정보 혼합 | `character_equipment_sheet.dart` | 40 | 낮음 |
+| F1 | 제목에 분류 정보 혼합 | `character_detail_sheet.dart` | 52 | 낮음 (검토) |
+| F2 | 제목에 분류 정보 혼합 | `character_equipment_sheet.dart` | 40 | 낮음 (검토) |
 | G1 | 카드 보조 텍스트 스타일 없음 | `character_card.dart` | 57, 59 | 보통 |
 | H1 | Before/After 구조 소실 | `workshop_enchant_preview_section.dart` | 42-45 | 보통 |
 
@@ -320,9 +331,10 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 
 ## 14. 권장 작업 순서
 
-1. **A (레이블 함수 개선)**: 근본 원인이므로 먼저 해결한다. `equipment_stat_labels.dart`와 `equipment_detail_labels.dart`를 수정하면 A3~A6의 파싱 우회 코드가 자연스럽게 제거된다.
+1. **A1~A4, A6 (장비 라벨 구조화)**: 장비 스탯/효과 라벨을 구조화하고, 장비 관련 UI 파싱 함수를 제거한다.
 2. **B (레이아웃 영역 혼재)**: Workshop 큐 경고와 상점 갱신 버튼은 각각 body 배너와 footer로 이동.
 3. **D (섹션 제목 스타일 통일)**: D1과 D2를 함께 처리. `subsectionTitle` 스타일 적용.
-4. **G (카드 보조 텍스트)**: `character_card.dart`의 `assignmentLabel`, `growthLabel` 스타일 보강.
+4. **G + C2 (캐릭터 성장 위계)**: `character_card.dart`의 보조 텍스트 스타일과 `character_growth_section.dart`의 최대 상태 표현을 함께 정리한다.
 5. **H (Before/After 구조)**: 인챈트 미리보기 current/next 쌍 시각 분리.
-6. **C, E, F**: 독립적인 소규모 수정으로 위 작업 이후 처리.
+6. **A5, A7~A8 (전투 효과/드롭/스킬트리 라벨 구조화)**: 장비 라벨 작업과 별도 단계로 처리한다.
+7. **C1, E, F**: 독립적인 소규모 수정 또는 검토 항목으로 후순위 처리한다.
