@@ -35,22 +35,6 @@
       }
     ],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_scavenger_scrap_guard",
-        "name": "Scrap Guard",
-        "summary": "잔해를 끌어모아 자신에게 보호막을 부여한다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "self",
-        "effectType": "grantShield",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 12
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_1",
@@ -59,7 +43,10 @@
         "chance": 0.86
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_scavenger_scrap_guard"
+    ]
   },
   {
     "id": "enemy_wisp",
@@ -89,22 +76,6 @@
     },
     "modifiers": [],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_wisp_lunar_mend",
-        "name": "Lunar Mend",
-        "summary": "달빛 촉매로 모든 아군을 회복한다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allAllies",
-        "effectType": "heal",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 10,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_2",
@@ -120,6 +91,9 @@
         "max": 1,
         "chance": 0.24
       }
+    ],
+    "skillIds": [
+      "enemy_wisp_lunar_mend"
     ]
   },
   {
@@ -150,23 +124,6 @@
     },
     "modifiers": [],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_mite_ash_venom",
-        "name": "Ash Venom",
-        "summary": "잿빛 독을 묻혀 적 하나에게 중독을 부여한다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "randomEnemy",
-        "effectType": "grantStatus",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 4,
-        "durationLifecycles": 2,
-        "statusType": "poison",
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_1",
@@ -181,7 +138,10 @@
         "chance": 0.32
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_mite_ash_venom"
+    ]
   },
   {
     "id": "enemy_rust_slug",
@@ -211,29 +171,6 @@
     },
     "modifiers": [],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_rust_slug_corrosion",
-        "name": "Corrosion",
-        "summary": "산성 점액으로 적 하나의 받는 피해를 증가시킨다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "randomEnemy",
-        "effectType": "grantModifier",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 2,
-        "modifier": {
-          "type": "damageTaken",
-          "mode": "percent",
-          "value": 0.08,
-          "school": "any",
-          "sourceId": "enemy_rust_slug_corrosion"
-        },
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_1",
@@ -242,7 +179,10 @@
         "chance": 0.68
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_rust_slug_corrosion"
+    ]
   },
   {
     "id": "enemy_glowcap",
@@ -272,23 +212,6 @@
     },
     "modifiers": [],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_glowcap_drowsy_spores",
-        "name": "Drowsy Spores",
-        "summary": "포자를 흩뿌려 모든 적에게 약한 중독을 부여한다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allEnemies",
-        "effectType": "grantStatus",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 3,
-        "durationLifecycles": 2,
-        "statusType": "poison",
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_2",
@@ -304,6 +227,9 @@
         "max": 1,
         "chance": 0.16
       }
+    ],
+    "skillIds": [
+      "enemy_glowcap_drowsy_spores"
     ]
   },
   {
@@ -346,22 +272,6 @@
         }
       }
     ],
-    "skills": [
-      {
-        "id": "enemy_scout_crossfire",
-        "name": "Crossfire",
-        "summary": "넓게 견제 사격을 가해 모든 적에게 물리 피해를 준다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allEnemies",
-        "effectType": "damage",
-        "school": "physical",
-        "powerMultiplier": 0.85,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_3",
@@ -377,6 +287,9 @@
         "max": 1,
         "chance": 0.12
       }
+    ],
+    "skillIds": [
+      "enemy_scout_crossfire"
     ]
   },
   {
@@ -419,7 +332,6 @@
         }
       }
     ],
-    "skills": [],
     "normalDrops": [
       {
         "materialId": "m_4",
@@ -441,7 +353,8 @@
         "max": 1,
         "chance": 0.12
       }
-    ]
+    ],
+    "skillIds": []
   },
   {
     "id": "enemy_bruiser",
@@ -491,23 +404,6 @@
         }
       }
     ],
-    "skills": [
-      {
-        "id": "enemy_bruiser_staggering_blow",
-        "name": "Staggering Blow",
-        "summary": "묵직한 타격으로 적 하나에게 기절을 부여한다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "randomEnemy",
-        "effectType": "grantStatus",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "statusType": "stun",
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_4",
@@ -523,6 +419,9 @@
         "max": 1,
         "chance": 0.14
       }
+    ],
+    "skillIds": [
+      "enemy_bruiser_staggering_blow"
     ]
   },
   {
@@ -561,29 +460,6 @@
       }
     ],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_raider_expose",
-        "name": "Expose",
-        "summary": "적 하나의 방어 자세를 무너뜨려 받는 피해를 증가시킨다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "randomEnemy",
-        "effectType": "grantModifier",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 2,
-        "modifier": {
-          "type": "damageTaken",
-          "mode": "percent",
-          "value": 0.12,
-          "school": "any",
-          "sourceId": "enemy_raider_expose"
-        },
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_3",
@@ -598,7 +474,10 @@
         "chance": 0.36
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_raider_expose"
+    ]
   },
   {
     "id": "enemy_glassback",
@@ -636,22 +515,6 @@
       }
     ],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_glassback_reflective_shell",
-        "name": "Reflective Shell",
-        "summary": "반짝이는 갑각을 세워 자신에게 보호막을 부여한다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "self",
-        "effectType": "grantShield",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 14
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_4",
@@ -673,6 +536,9 @@
         "max": 1,
         "chance": 0.12
       }
+    ],
+    "skillIds": [
+      "enemy_glassback_reflective_shell"
     ]
   },
   {
@@ -703,36 +569,6 @@
     },
     "modifiers": [],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_dust_mender_quick_patch",
-        "name": "Quick Patch",
-        "summary": "모든 아군의 HP를 즉시 회복한다.",
-        "cooldownLifecycles": 3,
-        "priority": 2,
-        "targetType": "allAllies",
-        "effectType": "heal",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 12,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      },
-      {
-        "id": "enemy_dust_mender_dust_ward",
-        "name": "Dust Ward",
-        "summary": "먼지 장막으로 모든 아군에게 얕은 보호막을 부여한다.",
-        "cooldownLifecycles": 2,
-        "priority": 1,
-        "targetType": "allAllies",
-        "effectType": "grantShield",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 10
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_3",
@@ -741,7 +577,11 @@
         "chance": 0.7
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_dust_mender_quick_patch",
+      "enemy_dust_mender_dust_ward"
+    ]
   },
   {
     "id": "enemy_apprentice",
@@ -779,22 +619,6 @@
       }
     ],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_apprentice_ash_burst",
-        "name": "Ash Burst",
-        "summary": "잿빛 마력을 터뜨려 모든 적에게 마법 피해를 준다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allEnemies",
-        "effectType": "damage",
-        "school": "magical",
-        "powerMultiplier": 0.95,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_6",
@@ -810,6 +634,9 @@
         "max": 1,
         "chance": 0.28
       }
+    ],
+    "skillIds": [
+      "enemy_apprentice_ash_burst"
     ]
   },
   {
@@ -861,22 +688,6 @@
         }
       }
     ],
-    "skills": [
-      {
-        "id": "enemy_crucible_molten_charge",
-        "name": "Molten Charge",
-        "summary": "가열된 돌진으로 적 하나에게 강한 물리 피해를 준다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "randomEnemy",
-        "effectType": "damage",
-        "school": "physical",
-        "powerMultiplier": 1.45,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_5",
@@ -885,7 +696,10 @@
         "chance": 0.8
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_crucible_molten_charge"
+    ]
   },
   {
     "id": "enemy_sentinel",
@@ -935,22 +749,6 @@
         }
       }
     ],
-    "skills": [
-      {
-        "id": "enemy_sentinel_guard_field",
-        "name": "Guard Field",
-        "summary": "모든 아군에게 보호막을 펼친다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allAllies",
-        "effectType": "grantShield",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 14
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_5",
@@ -959,7 +757,10 @@
         "chance": 0.82
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_sentinel_guard_field"
+    ]
   },
   {
     "id": "enemy_distiller",
@@ -997,43 +798,6 @@
       }
     ],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_distiller_catalyze",
-        "name": "Catalyze",
-        "summary": "모든 아군의 주는 마법 피해를 잠시 증가시킨다.",
-        "cooldownLifecycles": 3,
-        "priority": 2,
-        "targetType": "allAllies",
-        "effectType": "grantModifier",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 2,
-        "modifier": {
-          "type": "damageDealt",
-          "mode": "percent",
-          "value": 0.1,
-          "school": "magical",
-          "sourceId": "enemy_distiller_catalyze"
-        },
-        "shieldValue": 0
-      },
-      {
-        "id": "enemy_distiller_soot_mend",
-        "name": "Soot Mend",
-        "summary": "그을음 촉매로 무작위 아군 하나를 회복한다.",
-        "cooldownLifecycles": 2,
-        "priority": 1,
-        "targetType": "randomAlly",
-        "effectType": "heal",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 14,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_6",
@@ -1042,7 +806,11 @@
         "chance": 0.72
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_distiller_catalyze",
+      "enemy_distiller_soot_mend"
+    ]
   },
   {
     "id": "enemy_furnace_leech",
@@ -1072,22 +840,6 @@
     },
     "modifiers": [],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_furnace_leech_heat_siphon",
-        "name": "Heat Siphon",
-        "summary": "응축된 열을 빨아들여 적 하나에게 마법 피해를 준다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "randomEnemy",
-        "effectType": "damage",
-        "school": "magical",
-        "powerMultiplier": 1.15,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_5",
@@ -1096,7 +848,10 @@
         "chance": 0.74
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_furnace_leech_heat_siphon"
+    ]
   },
   {
     "id": "enemy_cinder_scribe",
@@ -1126,29 +881,6 @@
     },
     "modifiers": [],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_cinder_scribe_mark",
-        "name": "Cinder Mark",
-        "summary": "모든 적에게 재 문양을 새겨 받는 피해를 증가시킨다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allEnemies",
-        "effectType": "grantModifier",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 2,
-        "modifier": {
-          "type": "damageTaken",
-          "mode": "percent",
-          "value": 0.1,
-          "school": "any",
-          "sourceId": "enemy_cinder_scribe_mark"
-        },
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_6",
@@ -1164,6 +896,9 @@
         "max": 1,
         "chance": 0.22
       }
+    ],
+    "skillIds": [
+      "enemy_cinder_scribe_mark"
     ]
   },
   {
@@ -1222,22 +957,6 @@
         }
       }
     ],
-    "skills": [
-      {
-        "id": "enemy_sniper_pin_shot",
-        "name": "Pin Shot",
-        "summary": "정밀 사격으로 적 하나에게 큰 물리 피해를 준다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "randomEnemy",
-        "effectType": "damage",
-        "school": "physical",
-        "powerMultiplier": 1.55,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_7",
@@ -1246,7 +965,10 @@
         "chance": 0.74
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_sniper_pin_shot"
+    ]
   },
   {
     "id": "enemy_weaver",
@@ -1284,23 +1006,6 @@
       }
     ],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_weaver_spore_cloud",
-        "name": "Spore Cloud",
-        "summary": "포자 구름으로 모든 적에게 중독을 부여한다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allEnemies",
-        "effectType": "grantStatus",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 6,
-        "durationLifecycles": 2,
-        "statusType": "poison",
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_8",
@@ -1316,6 +1021,9 @@
         "max": 1,
         "chance": 0.32
       }
+    ],
+    "skillIds": [
+      "enemy_weaver_spore_cloud"
     ]
   },
   {
@@ -1358,22 +1066,6 @@
         }
       }
     ],
-    "skills": [
-      {
-        "id": "enemy_tempest_chain_arc",
-        "name": "Chain Arc",
-        "summary": "연쇄 번개로 모든 적에게 마법 피해를 준다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allEnemies",
-        "effectType": "damage",
-        "school": "magical",
-        "powerMultiplier": 0.9,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_8",
@@ -1382,7 +1074,10 @@
         "chance": 0.78
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_tempest_chain_arc"
+    ]
   },
   {
     "id": "enemy_mirage",
@@ -1432,22 +1127,6 @@
         }
       }
     ],
-    "skills": [
-      {
-        "id": "enemy_mirage_false_opening",
-        "name": "False Opening",
-        "summary": "허상을 남겨 자신에게 보호막을 만든다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "self",
-        "effectType": "grantShield",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 18
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_7",
@@ -1462,7 +1141,10 @@
         "chance": 0.62
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_mirage_false_opening"
+    ]
   },
   {
     "id": "enemy_thunder_moth",
@@ -1492,22 +1174,6 @@
     },
     "modifiers": [],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_thunder_moth_static_wing",
-        "name": "Static Wing",
-        "summary": "전하 비늘을 흩뿌려 모든 적에게 마법 피해를 준다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allEnemies",
-        "effectType": "damage",
-        "school": "magical",
-        "powerMultiplier": 0.86,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_8",
@@ -1523,6 +1189,9 @@
         "max": 1,
         "chance": 0.24
       }
+    ],
+    "skillIds": [
+      "enemy_thunder_moth_static_wing"
     ]
   },
   {
@@ -1553,43 +1222,6 @@
     },
     "modifiers": [],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_gale_channeler_storm_rite",
-        "name": "Storm Rite",
-        "summary": "폭풍 술식으로 모든 아군의 마법 피해를 증가시킨다.",
-        "cooldownLifecycles": 3,
-        "priority": 2,
-        "targetType": "allAllies",
-        "effectType": "grantModifier",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 2,
-        "modifier": {
-          "type": "damageDealt",
-          "mode": "percent",
-          "value": 0.1,
-          "school": "magical",
-          "sourceId": "enemy_gale_channeler_storm_rite"
-        },
-        "shieldValue": 0
-      },
-      {
-        "id": "enemy_gale_channeler_gale_ward",
-        "name": "Gale Ward",
-        "summary": "휘감기는 바람으로 모든 아군에게 보호막을 부여한다.",
-        "cooldownLifecycles": 2,
-        "priority": 1,
-        "targetType": "allAllies",
-        "effectType": "grantShield",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 14
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_7",
@@ -1598,7 +1230,11 @@
         "chance": 0.66
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_gale_channeler_storm_rite",
+      "enemy_gale_channeler_gale_ward"
+    ]
   },
   {
     "id": "enemy_chimera",
@@ -1636,22 +1272,6 @@
       }
     ],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_chimera_rending_howl",
-        "name": "Rending Howl",
-        "summary": "찢는 포효로 모든 적에게 물리 피해를 준다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allEnemies",
-        "effectType": "damage",
-        "school": "physical",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_29",
@@ -1667,6 +1287,9 @@
         "max": 2,
         "chance": 0.46
       }
+    ],
+    "skillIds": [
+      "enemy_chimera_rending_howl"
     ]
   },
   {
@@ -1705,50 +1328,6 @@
       }
     ],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_herald_core_signal",
-        "name": "Core Signal",
-        "summary": "모든 아군의 주는 피해를 잠시 증가시킨다.",
-        "cooldownLifecycles": 3,
-        "priority": 2,
-        "targetType": "allAllies",
-        "effectType": "grantModifier",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 2,
-        "modifier": {
-          "type": "damageDealt",
-          "mode": "percent",
-          "value": 0.12,
-          "school": "any",
-          "sourceId": "enemy_herald_core_signal"
-        },
-        "shieldValue": 0
-      },
-      {
-        "id": "enemy_herald_core_fracture",
-        "name": "Core Fracture",
-        "summary": "핵 신호를 흔들어 모든 적의 받는 피해를 증가시킨다.",
-        "cooldownLifecycles": 2,
-        "priority": 1,
-        "targetType": "allEnemies",
-        "effectType": "grantModifier",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 2,
-        "modifier": {
-          "type": "damageTaken",
-          "mode": "percent",
-          "value": 0.08,
-          "school": "any",
-          "sourceId": "enemy_herald_core_fracture"
-        },
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_29",
@@ -1757,7 +1336,11 @@
         "chance": 0.8
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_herald_core_signal",
+      "enemy_herald_core_fracture"
+    ]
   },
   {
     "id": "enemy_warden",
@@ -1807,22 +1390,6 @@
         }
       }
     ],
-    "skills": [
-      {
-        "id": "enemy_warden_moonvault_barrier",
-        "name": "Moonvault Barrier",
-        "summary": "모든 아군에게 두꺼운 보호막을 부여한다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allAllies",
-        "effectType": "grantShield",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 20
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_29",
@@ -1831,7 +1398,10 @@
         "chance": 0.84
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_warden_moonvault_barrier"
+    ]
   },
   {
     "id": "enemy_core_siphon",
@@ -1879,22 +1449,6 @@
         }
       }
     ],
-    "skills": [
-      {
-        "id": "enemy_core_siphon_mana_rend",
-        "name": "Mana Rend",
-        "summary": "핵 마력을 찢어 적 하나에게 큰 마법 피해를 준다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "randomEnemy",
-        "effectType": "damage",
-        "school": "magical",
-        "powerMultiplier": 1.35,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 0
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_29",
@@ -1903,7 +1457,10 @@
         "chance": 0.82
       }
     ],
-    "specialDrops": []
+    "specialDrops": [],
+    "skillIds": [
+      "enemy_core_siphon_mana_rend"
+    ]
   },
   {
     "id": "enemy_moonvault_aegis",
@@ -1941,22 +1498,6 @@
       }
     ],
     "passives": [],
-    "skills": [
-      {
-        "id": "enemy_moonvault_aegis_guard_field",
-        "name": "Guard Field",
-        "summary": "문물 외벽을 펼쳐 모든 아군에게 보호막을 부여한다.",
-        "cooldownLifecycles": 0,
-        "priority": 0,
-        "targetType": "allAllies",
-        "effectType": "grantShield",
-        "school": "any",
-        "powerMultiplier": 1.0,
-        "flatPower": 0,
-        "durationLifecycles": 1,
-        "shieldValue": 24
-      }
-    ],
     "normalDrops": [
       {
         "materialId": "m_30",
@@ -1972,6 +1513,9 @@
         "max": 2,
         "chance": 0.44
       }
+    ],
+    "skillIds": [
+      "enemy_moonvault_aegis_guard_field"
     ]
   }
 ]
