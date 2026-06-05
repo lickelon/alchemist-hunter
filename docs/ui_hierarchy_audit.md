@@ -71,6 +71,10 @@ final String statusLabel = assignmentLabel.replaceFirst('배치 상태: ', '');
 
 ## 3. 패턴 B — 경고·상태 정보와 네비게이션·액션이 같은 레이아웃 영역에 혼재
 
+적용 상태:
+- B1: 완료. 연금술 시트의 큐 경고를 TabBar header에서 body 상단 상태 표시로 분리했다.
+- B2: 완료. 상점 갱신 버튼을 header에서 footer 액션 영역으로 이동하고, header에는 갱신 비용만 남겼다.
+
 ### 3.1 연금술 시트 header
 
 **`lib/features/workshop/crafting/presentation/widgets/workshop_craft_card.dart:61-79`**
@@ -312,8 +316,8 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 | A7 | 드롭 라벨 UI 파싱 우회 | `battle_stage_drop_list.dart` | 105-110 | 보통 (별도 구조화) |
 | A8 | 스킬트리 라벨 UI 파싱 우회 | `skill_tree_node_detail_dialog.dart` | 84-89 | 보통 (별도 구조화) |
 | A9 | UI 문자열 조작 | `character_assignment_section.dart` | 18 | 보통 |
-| B1 | 경고 + 탭 혼재 | `workshop_craft_card.dart` | 61-79 | 보통 |
-| B2 | 액션 + 정보 혼재 | `town_shop_sheet.dart` | 37-54 | 보통 |
+| B1 | 경고 + 탭 혼재 | `workshop_craft_card.dart` | 61-79 | 완료 |
+| B2 | 액션 + 정보 혼재 | `town_shop_sheet.dart` | 37-54 | 완료 |
 | C1 | 상태를 버튼 라벨로 | `town_shop_sheet.dart` | 215 | 낮음 |
 | C2 | 상태를 disabled 버튼으로 | `character_growth_section.dart` | 95-96 | 낮음 |
 | D1 | 섹션 제목 스타일 없음 | `workshop_material_craft_detail_dialog.dart` | 98, 111 | 보통 |
