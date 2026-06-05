@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_submit_results.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/use_cases/workshop_brew_experiment_use_case.dart';
@@ -32,9 +33,12 @@ class WorkshopBrewExperimentResultBody extends StatelessWidget {
         : result.discoveryChanged
         ? '레시피 갱신 ${result.previousGrade?.name.toUpperCase()} → $gradeLabel'
         : '기존 기록 유지';
-    final String? qualityLabel = result.qualityScore == null
+    final String? qualityGradeLabel = result.qualityScore == null
         ? null
-        : '$gradeLabel · ${(result.qualityScore! * 100).round()}점';
+        : gradeLabel;
+    final String? qualityScoreLabel = result.qualityScore == null
+        ? null
+        : '${(result.qualityScore! * 100).round()}점';
     final String recipeActionLabel = onPinRecipe != null
         ? '이 비율로 레시피 고정'
         : discoveryLabel;
@@ -79,7 +83,8 @@ class WorkshopBrewExperimentResultBody extends StatelessWidget {
               child: _WorkshopBrewExperimentResultSummary(
                 result: result,
                 potionName: potionName,
-                qualityLabel: qualityLabel,
+                qualityGradeLabel: qualityGradeLabel,
+                qualityScoreLabel: qualityScoreLabel,
               ),
             ),
           ],
@@ -100,12 +105,14 @@ class _WorkshopBrewExperimentResultSummary extends StatelessWidget {
   const _WorkshopBrewExperimentResultSummary({
     required this.result,
     required this.potionName,
-    required this.qualityLabel,
+    required this.qualityGradeLabel,
+    required this.qualityScoreLabel,
   });
 
   final WorkshopBrewExperimentSubmitResult result;
   final String? potionName;
-  final String? qualityLabel;
+  final String? qualityGradeLabel;
+  final String? qualityScoreLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -130,15 +137,21 @@ class _WorkshopBrewExperimentResultSummary extends StatelessWidget {
               ? Theme.of(context).textTheme.titleMedium
               : Theme.of(context).textTheme.bodyMedium,
         ),
-        if (success && qualityLabel != null) ...<Widget>[
+        if (success && qualityGradeLabel != null) ...<Widget>[
           const SizedBox(height: AppSpacing.xs),
           Text(
-            qualityLabel!,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
-            ),
+            qualityGradeLabel!,
+            style: AppTextStyles.of(context).dataEmphasis,
           ),
+          if (qualityScoreLabel != null) ...<Widget>[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              qualityScoreLabel!,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
         ],
       ],
     );

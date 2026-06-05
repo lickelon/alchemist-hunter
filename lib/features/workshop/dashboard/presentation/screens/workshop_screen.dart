@@ -57,7 +57,8 @@ class WorkshopScreen extends ConsumerWidget {
       children: <Widget>[
         InfoCard(
           title: '작업실 자원',
-          subtitle: '${dashboard.essenceLabel}, ${dashboard.arcaneDustLabel}',
+          subtitle: '${dashboard.essenceLabel}\n${dashboard.arcaneDustLabel}',
+          subtitleMaxLines: 2,
           icon: Icons.science_outlined,
         ),
         WorkshopQueueCard(
