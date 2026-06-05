@@ -48,7 +48,7 @@ List<(String, String)> characterCombatStatPairs(BattleCombatStats stats) {
 
 String characterCombatDisciplineLabel(
   String jobId, {
-  BattleCombatStatService statService = const BattleCombatStatService(),
+  required BattleCombatStatService statService,
 }) {
   return switch (statService.disciplineFor(jobId)) {
     CombatDiscipline.warrior => '전사',

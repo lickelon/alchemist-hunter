@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:alchemist_hunter/features/battle/data/catalogs/battle_enemy_dtos.dart';
 import 'package:alchemist_hunter/features/battle/data/catalogs/battle_stage_dtos.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/battle_combat_job_dtos.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/combat_passive_effect_dtos.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/combat_skill_dtos.dart';
 import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalog_tables.dart';
 import 'package:flutter/services.dart';
 
@@ -28,6 +31,21 @@ class BattleCatalogAssetLoader {
         BattleStageDefinitionDto.fromJson,
       ),
       stageCatalog: await _readStringList(bundle, 'stage_catalog.json'),
+      combatJobDtos: _readDtoMap(
+        await _readObjectList(bundle, 'combat_jobs.json'),
+        'combat_jobs.json',
+        BattleCombatJobDefinitionDto.fromJson,
+      ),
+      combatSkillDtos: _readDtoMap(
+        await _readObjectList(bundle, 'combat_skills.json'),
+        'combat_skills.json',
+        BattleSkillDefinitionDto.fromJson,
+      ),
+      combatPassiveDtos: _readDtoMap(
+        await _readObjectList(bundle, 'combat_passives.json'),
+        'combat_passives.json',
+        BattlePassiveEffectDto.fromJson,
+      ),
     );
   }
 

@@ -11,6 +11,6 @@ void validateCatalogAssets({
   required WorkshopCatalogAssets workshop,
 }) {
   validateBattleCatalog(battle);
-  validateWorkshopCatalog(workshop);
-  validateTownCatalog(town, workshop);
+  validateWorkshopCatalog(workshop, battle);
+  validateTownCatalog(town, workshop, battle);
 }

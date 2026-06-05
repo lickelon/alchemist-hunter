@@ -5,6 +5,9 @@ BattleCatalogTables _battleCatalogTablesFromDtos({
   required Map<String, BattleEnemySetDefinitionDto> enemySetDtos,
   required Map<String, BattleStageDefinitionDto> stageDtos,
   required List<String> stageCatalog,
+  required Map<String, BattleCombatJobDefinitionDto> combatJobDtos,
+  required Map<String, BattleSkillDefinitionDto> combatSkillDtos,
+  required Map<String, BattlePassiveEffectDto> combatPassiveDtos,
 }) {
   return BattleCatalogTables(
     enemyDefinitions: enemyDtos.map(
@@ -20,5 +23,20 @@ BattleCatalogTables _battleCatalogTablesFromDtos({
           MapEntry<String, BattleStageDefinition>(id, definition.toDomain()),
     ),
     stageCatalog: List<String>.unmodifiable(stageCatalog),
+    combatJobDefinitions: combatJobDtos.map(
+      (String id, BattleCombatJobDefinitionDto definition) =>
+          MapEntry<String, BattleCombatJobDefinition>(
+            id,
+            definition.toDomain(),
+          ),
+    ),
+    combatSkillDefinitions: combatSkillDtos.map(
+      (String id, BattleSkillDefinitionDto definition) =>
+          MapEntry<String, BattleSkillDefinition>(id, definition.toDomain()),
+    ),
+    combatPassiveEffects: combatPassiveDtos.map(
+      (String id, BattlePassiveEffectDto definition) =>
+          MapEntry<String, BattlePassiveEffect>(id, definition.toDomain()),
+    ),
   );
 }

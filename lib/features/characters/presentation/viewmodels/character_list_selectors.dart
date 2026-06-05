@@ -1,4 +1,6 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
+import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_combat_stat_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_equipment_selectors.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_list_item_builder.dart';
@@ -28,6 +30,9 @@ final Provider<List<CharacterListItemView>> mercenaryListItemViewsProvider =
     Provider<List<CharacterListItemView>>((Ref ref) {
       return _buildCharacterViews(
         characters: ref.watch(mercenaryListProvider),
+        statService: BattleCombatStatService(
+          battleCatalogRepository: ref.watch(battleCatalogRepositoryProvider),
+        ),
         inventory: ref.watch(
           sessionControllerProvider.select(
             (SessionState state) => state.player.materialInventory,
@@ -55,6 +60,9 @@ final Provider<List<CharacterListItemView>> homunculusListItemViewsProvider =
     Provider<List<CharacterListItemView>>((Ref ref) {
       return _buildCharacterViews(
         characters: ref.watch(homunculusListProvider),
+        statService: BattleCombatStatService(
+          battleCatalogRepository: ref.watch(battleCatalogRepositoryProvider),
+        ),
         inventory: ref.watch(
           sessionControllerProvider.select(
             (SessionState state) => state.player.materialInventory,
@@ -115,6 +123,7 @@ homunculusItemViewProvider = Provider.family<CharacterListItemView?, String>((
 
 List<CharacterListItemView> _buildCharacterViews({
   required List<CharacterProgress> characters,
+  required BattleCombatStatService statService,
   required Map<String, int> inventory,
   required List<EquipmentInstance> equipmentInventory,
   required Map<String, List<String>> stageAssignments,
@@ -123,6 +132,7 @@ List<CharacterListItemView> _buildCharacterViews({
   return characters.map((CharacterProgress character) {
     return buildCharacterListItemView(
       character: character,
+      statService: statService,
       inventory: inventory,
       equipmentSlots: buildCharacterEquipmentSlots(
         character: character,

@@ -19,4 +19,10 @@ abstract interface class BattleCatalogRepository {
     required String stageId,
     required String enemySetId,
   });
+
+  BattleCombatJobDefinition combatJobDefinition(String combatJobId);
+
+  BattleSkillDefinition combatSkillDefinition(String skillId);
+
+  BattlePassiveEffect combatPassiveEffect(String passiveId);
 }

@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_party_power_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,7 +66,9 @@ final battleStagePartyPowerProvider = Provider.family<int, String>((
   final List<String> assignedIds = ref.watch(
     battleStageAssignmentProvider(stageId),
   );
-  return const BattlePartyPowerService().totalPower(
+  return BattlePartyPowerService(
+    battleCatalogRepository: ref.watch(battleCatalogRepositoryProvider),
+  ).totalPower(
     ref.watch(
       sessionControllerProvider.select(
         (SessionState state) => state.characters,

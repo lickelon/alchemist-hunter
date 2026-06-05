@@ -47,20 +47,16 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
     BattleService? battleService,
     BattleEncounterService battleEncounterService =
         const BattleEncounterService(),
-    BattlePartyPowerService battlePartyPowerService =
-        const BattlePartyPowerService(),
     BattlePotionLoadoutService battlePotionLoadoutService =
         const BattlePotionLoadoutService(),
     Random? random,
   }) : _battleService = battleService ?? BattleService(),
        _battleEncounterService = battleEncounterService,
-       _battlePartyPowerService = battlePartyPowerService,
        _battlePotionLoadoutService = battlePotionLoadoutService,
        _random = random ?? Random();
 
   final BattleService _battleService;
   final BattleEncounterService _battleEncounterService;
-  final BattlePartyPowerService _battlePartyPowerService;
   final BattlePotionLoadoutService _battlePotionLoadoutService;
   final Random _random;
 
@@ -99,10 +95,9 @@ class DefaultBattleExpeditionResolver implements BattleExpeditionResolver {
           battleCatalogRepository: battleCatalogRepository,
           random: _random,
         );
-    final List<HeroProfile> party = _battlePartyPowerService.buildParty(
-      state.characters,
-      assignedCharacterIds: assignedCharacterIds,
-    );
+    final List<HeroProfile> party = BattlePartyPowerService(
+      battleCatalogRepository: battleCatalogRepository,
+    ).buildParty(state.characters, assignedCharacterIds: assignedCharacterIds);
     final BattleRunState previousRunState =
         currentRunState ?? currentExpedition.runState ?? const BattleRunState();
     final List<BattleRunUnitState> allies = previousRunState.allies.isEmpty

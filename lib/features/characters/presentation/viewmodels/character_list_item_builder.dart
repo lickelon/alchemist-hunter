@@ -11,7 +11,7 @@ CharacterListItemView buildCharacterListItemView({
   required List<CharacterEquipmentSlotView> equipmentSlots,
   required Map<String, List<String>> stageAssignments,
   required Map<String, String> workshopSupportAssignments,
-  BattleCombatStatService statService = const BattleCombatStatService(),
+  required BattleCombatStatService statService,
 }) {
   final heroProfile = statService.buildHeroProfile(character);
   final String combatDisciplineLabel = characterCombatDisciplineLabel(

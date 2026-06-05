@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_party_power_service.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_assignment_view_models.dart';
 import 'package:alchemist_hunter/features/battle/presentation/viewmodels/battle_stage_progress_selectors.dart';
@@ -22,8 +23,9 @@ final battleStageAssignmentCharacterViewsProvider =
         ),
       );
       final int assignedCount = assignedIds.length;
-      final BattlePartyPowerService powerService =
-          const BattlePartyPowerService();
+      final BattlePartyPowerService powerService = BattlePartyPowerService(
+        battleCatalogRepository: ref.watch(battleCatalogRepositoryProvider),
+      );
       final List<CharacterProgress> characters = <CharacterProgress>[
         ...state.characters.mercenaries,
         ...state.characters.homunculi,

@@ -3,6 +3,7 @@ part of 'battle_catalog_tables.dart';
 extension _BattleCatalogTableValidation on BattleCatalogTables {
   void _validate() {
     _validateStageCatalogOrder();
+    _validateCombatCatalogs();
     _validateEnemySets();
     _validateStages();
   }
@@ -21,6 +22,56 @@ extension _BattleCatalogTableValidation on BattleCatalogTables {
       for (final String enemyId in enemySet.enemyIds) {
         if (!enemyDefinitions.containsKey(enemyId)) {
           throw StateError('Unknown enemy in ${enemySet.id}: $enemyId');
+        }
+      }
+    }
+  }
+
+  void _validateCombatCatalogs() {
+    if (combatJobDefinitions.isEmpty) {
+      throw StateError('Combat job catalog must not be empty');
+    }
+    for (final BattleCombatJobDefinition job in combatJobDefinitions.values) {
+      if (job.tiers.isEmpty) {
+        throw StateError('Combat job must define tiers: ${job.id}');
+      }
+      final Set<int> tierIndexes = <int>{};
+      for (final BattleCombatJobTierDefinition tier in job.tiers) {
+        if (tier.tierIndex <= 0) {
+          throw StateError('Combat tier must be positive: ${job.id}');
+        }
+        if (!tierIndexes.add(tier.tierIndex)) {
+          throw StateError(
+            'Duplicate combat tier in ${job.id}: ${tier.tierIndex}',
+          );
+        }
+        if (tier.ranks.isEmpty) {
+          throw StateError(
+            'Combat tier must define ranks: ${job.id} T${tier.tierIndex}',
+          );
+        }
+        final Set<int> ranks = <int>{};
+        for (final BattleCombatJobRankDefinition rank in tier.ranks) {
+          if (rank.rank <= 0) {
+            throw StateError('Combat rank must be positive: ${job.id}');
+          }
+          if (!ranks.add(rank.rank)) {
+            throw StateError(
+              'Duplicate combat rank in ${job.id} T${tier.tierIndex}: ${rank.rank}',
+            );
+          }
+          for (final String skillId in rank.skillIds) {
+            if (!combatSkillDefinitions.containsKey(skillId)) {
+              throw StateError('Unknown combat skill in ${job.id}: $skillId');
+            }
+          }
+          for (final String passiveId in rank.passiveIds) {
+            if (!combatPassiveEffects.containsKey(passiveId)) {
+              throw StateError(
+                'Unknown combat passive in ${job.id}: $passiveId',
+              );
+            }
+          }
         }
       }
     }

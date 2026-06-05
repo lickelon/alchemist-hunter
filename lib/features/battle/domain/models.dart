@@ -6,6 +6,7 @@ export 'models/battle_progress_models.dart';
 export 'models/battle_result_models.dart';
 export 'models/battle_run_models.dart';
 export 'models/battle_state.dart';
+export 'models/combat/battle_combat_job_models.dart';
 export 'models/combat/battle_combat_stats.dart';
 export 'models/combat/battle_effect_models.dart';
 export 'models/combat/battle_skill_models.dart';

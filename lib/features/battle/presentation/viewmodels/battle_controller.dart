@@ -123,6 +123,21 @@ class _MissingBattleCatalogRepository implements BattleCatalogRepository {
   BattleStageDefinition stageDefinition(String stageId) {
     throw StateError('BattleCatalogRepository is required');
   }
+
+  @override
+  BattleCombatJobDefinition combatJobDefinition(String combatJobId) {
+    throw StateError('BattleCatalogRepository is required');
+  }
+
+  @override
+  BattlePassiveEffect combatPassiveEffect(String passiveId) {
+    throw StateError('BattleCatalogRepository is required');
+  }
+
+  @override
+  BattleSkillDefinition combatSkillDefinition(String skillId) {
+    throw StateError('BattleCatalogRepository is required');
+  }
 }
 
 final Provider<BattleController> battleControllerProvider =

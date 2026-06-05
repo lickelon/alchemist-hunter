@@ -36,4 +36,16 @@ class StaticBattleCatalogRepository implements BattleCatalogRepository {
 
   @override
   List<String> stageCatalog() => _catalog.stageCatalog;
+
+  @override
+  BattleCombatJobDefinition combatJobDefinition(String combatJobId) =>
+      _catalog.combatJobDefinition(combatJobId);
+
+  @override
+  BattleSkillDefinition combatSkillDefinition(String skillId) =>
+      _catalog.combatSkillDefinition(skillId);
+
+  @override
+  BattlePassiveEffect combatPassiveEffect(String passiveId) =>
+      _catalog.combatPassiveEffect(passiveId);
 }

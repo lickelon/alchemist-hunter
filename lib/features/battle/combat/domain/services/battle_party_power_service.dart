@@ -1,11 +1,14 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_combat_stat_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 
 class BattlePartyPowerService {
-  const BattlePartyPowerService({
-    BattleCombatStatService combatStatService = const BattleCombatStatService(),
-  }) : _combatStatService = combatStatService;
+  BattlePartyPowerService({
+    required BattleCatalogRepository battleCatalogRepository,
+  }) : _combatStatService = BattleCombatStatService(
+         battleCatalogRepository: battleCatalogRepository,
+       );
 
   final BattleCombatStatService _combatStatService;
 

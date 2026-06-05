@@ -1,39 +1,52 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_equipment_stat_service.dart';
+import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 
-part 'battle_base_stat_tables.dart';
-part 'battle_rank_growth_tables.dart';
-part 'battle_combat_skill_tables.dart';
-part 'battle_level_growth_tables.dart';
-part 'battle_tier_growth_tables.dart';
 part 'battle_summary_power_calculator.dart';
 
 class BattleCombatStatService {
-  const BattleCombatStatService({
+  BattleCombatStatService({
+    required BattleCatalogRepository battleCatalogRepository,
     BattleEquipmentStatService equipmentStatService =
         const BattleEquipmentStatService(),
-  }) : _equipmentStatService = equipmentStatService;
+  }) : _battleCatalogRepository = battleCatalogRepository,
+       _equipmentStatService = equipmentStatService;
 
+  final BattleCatalogRepository _battleCatalogRepository;
   final BattleEquipmentStatService _equipmentStatService;
 
   HeroProfile buildHeroProfile(CharacterProgress character) {
     final BattleCombatStats stats = buildStats(character);
     final String jobId = character.resolvedCombatJobId;
+    final BattleCombatJobDefinition combatJob = _battleCatalogRepository
+        .combatJobDefinition(jobId);
+    final BattleCombatJobRankDefinition rankDefinition = combatJob
+        .rankDefinition(
+          tierIndex: character.tierIndex,
+          rank: character.rankInCurrentTier,
+        );
     final (List<BattleModifier>, List<BattlePassiveEffect>) equipmentEffects =
         _equipmentStatService.effectsForLoadout(character.equipment);
     final List<BattleModifier> modifiers = equipmentEffects.$1;
-    final List<BattlePassiveEffect> passives = equipmentEffects.$2;
+    final List<BattlePassiveEffect> passives = <BattlePassiveEffect>[
+      ...rankDefinition.passiveIds.map(
+        _battleCatalogRepository.combatPassiveEffect,
+      ),
+      ...equipmentEffects.$2,
+    ];
     return HeroProfile(
       id: character.id,
       name: character.name,
-      faction: factionFor(character),
-      discipline: disciplineFor(jobId),
+      faction: combatJob.faction,
+      discipline: combatJob.discipline,
       jobId: jobId,
       stats: stats,
       modifiers: modifiers,
       passives: passives,
-      skills: _skillsByJob[jobId] ?? const <BattleSkillDefinition>[],
+      skills: rankDefinition.skillIds
+          .map(_battleCatalogRepository.combatSkillDefinition)
+          .toList(growable: false),
       power:
           _summaryPowerForStats(stats) +
           _summaryPowerForEffects(modifiers, passives),
@@ -41,48 +54,28 @@ class BattleCombatStatService {
   }
 
   CombatFaction factionFor(CharacterProgress character) {
-    return switch (character.type) {
-      CharacterType.mercenary => CombatFaction.mercenary,
-      CharacterType.homunculus => CombatFaction.homunculus,
-    };
+    return _battleCatalogRepository
+        .combatJobDefinition(character.resolvedCombatJobId)
+        .faction;
   }
 
   CombatDiscipline disciplineFor(String jobId) {
-    switch (jobId) {
-      case CombatJobIds.mercenaryMage:
-      case CombatJobIds.homunculusMage:
-        return CombatDiscipline.mage;
-      case CombatJobIds.mercenaryRogue:
-      case CombatJobIds.homunculusRogue:
-        return CombatDiscipline.rogue;
-      case CombatJobIds.mercenaryArcher:
-      case CombatJobIds.homunculusArcher:
-        return CombatDiscipline.archer;
-      default:
-        return CombatDiscipline.warrior;
-    }
+    return _battleCatalogRepository.combatJobDefinition(jobId).discipline;
   }
 
   BattleCombatStats buildStats(CharacterProgress character) {
     final String jobId = character.resolvedCombatJobId;
-    final BattleCombatStats baseStats =
-        _baseStatsByJob[jobId] ??
-        _baseStatsByJob[CombatJobIds.mercenaryWarrior]!;
-    final BattleCombatStats tierGrowth =
-        _tierGrowthByJob[jobId] ??
-        _tierGrowthByJob[CombatJobIds.mercenaryWarrior]!;
-    final BattleCombatStats rankGrowth =
-        _rankGrowthByJob[jobId] ??
-        _rankGrowthByJob[CombatJobIds.mercenaryWarrior]!;
-    final int hpGrowth =
-        _levelHpGrowthByJob[jobId] ??
-        _levelHpGrowthByJob[CombatJobIds.mercenaryWarrior]!;
+    final BattleCombatJobDefinition combatJob = _battleCatalogRepository
+        .combatJobDefinition(jobId);
+    final BattleCombatJobRankDefinition rankDefinition = combatJob
+        .rankDefinition(
+          tierIndex: character.tierIndex,
+          rank: character.rankInCurrentTier,
+        );
 
-    return baseStats +
-        tierGrowth.scale(character.tierIndex - 1) +
-        rankGrowth.scale(character.rankInCurrentTier - 1) +
+    return rankDefinition.stats +
         BattleCombatStats(
-          maxHp: hpGrowth * (character.level - 1),
+          maxHp: combatJob.levelHpGrowth * (character.level - 1),
           maxMp: 0,
           physicalAttack: 0,
           physicalDefense: 0,

@@ -1,5 +1,8 @@
 import 'package:alchemist_hunter/features/battle/data/catalogs/battle_enemy_dtos.dart';
 import 'package:alchemist_hunter/features/battle/data/catalogs/battle_stage_dtos.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/battle_combat_job_dtos.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/combat_passive_effect_dtos.dart';
+import 'package:alchemist_hunter/features/battle/data/catalogs/combat_skill_dtos.dart';
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 
 part 'battle_catalog_table_drops.dart';
@@ -12,6 +15,9 @@ class BattleCatalogTables {
     required this.enemySetDefinitions,
     required this.stageDefinitions,
     required this.stageCatalog,
+    required this.combatJobDefinitions,
+    required this.combatSkillDefinitions,
+    required this.combatPassiveEffects,
   }) {
     _validate();
   }
@@ -21,12 +27,18 @@ class BattleCatalogTables {
     required Map<String, BattleEnemySetDefinitionDto> enemySetDtos,
     required Map<String, BattleStageDefinitionDto> stageDtos,
     required List<String> stageCatalog,
+    required Map<String, BattleCombatJobDefinitionDto> combatJobDtos,
+    required Map<String, BattleSkillDefinitionDto> combatSkillDtos,
+    required Map<String, BattlePassiveEffectDto> combatPassiveDtos,
   }) {
     return _battleCatalogTablesFromDtos(
       enemyDtos: enemyDtos,
       enemySetDtos: enemySetDtos,
       stageDtos: stageDtos,
       stageCatalog: stageCatalog,
+      combatJobDtos: combatJobDtos,
+      combatSkillDtos: combatSkillDtos,
+      combatPassiveDtos: combatPassiveDtos,
     );
   }
 
@@ -34,6 +46,34 @@ class BattleCatalogTables {
   final Map<String, BattleEnemySetDefinition> enemySetDefinitions;
   final Map<String, BattleStageDefinition> stageDefinitions;
   final List<String> stageCatalog;
+  final Map<String, BattleCombatJobDefinition> combatJobDefinitions;
+  final Map<String, BattleSkillDefinition> combatSkillDefinitions;
+  final Map<String, BattlePassiveEffect> combatPassiveEffects;
+
+  BattleCombatJobDefinition combatJobDefinition(String combatJobId) {
+    final BattleCombatJobDefinition? definition =
+        combatJobDefinitions[combatJobId];
+    if (definition == null) {
+      throw StateError('Unknown combat job: $combatJobId');
+    }
+    return definition;
+  }
+
+  BattleSkillDefinition combatSkillDefinition(String skillId) {
+    final BattleSkillDefinition? definition = combatSkillDefinitions[skillId];
+    if (definition == null) {
+      throw StateError('Unknown combat skill: $skillId');
+    }
+    return definition;
+  }
+
+  BattlePassiveEffect combatPassiveEffect(String passiveId) {
+    final BattlePassiveEffect? definition = combatPassiveEffects[passiveId];
+    if (definition == null) {
+      throw StateError('Unknown combat passive: $passiveId');
+    }
+    return definition;
+  }
 
   BattleStageDefinition stageDefinition(String stageId) {
     final BattleStageDefinition? definition = stageDefinitions[stageId];
