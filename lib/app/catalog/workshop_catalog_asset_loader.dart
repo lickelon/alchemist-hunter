@@ -26,7 +26,7 @@ class WorkshopCatalogAssetLoader {
       extractionProfiles: (await _readObjectList(
         bundle,
         'extraction_profiles.json',
-      )).map(_readExtractionProfile).toList(growable: false),
+      )).map(readExtractionProfile).toList(growable: false),
       potions: (await _readObjectList(
         bundle,
         'potions.json',
@@ -122,7 +122,7 @@ class WorkshopCatalogAssetLoader {
     );
   }
 
-  ExtractionProfile _readExtractionProfile(Map<String, Object?> json) {
+  ExtractionProfile readExtractionProfile(Map<String, Object?> json) {
     return ExtractionProfile(
       id: j.readString(json, 'id'),
       mode: j.readEnum(json, 'mode', ExtractionMode.values),

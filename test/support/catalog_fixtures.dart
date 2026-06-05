@@ -35,7 +35,6 @@ import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/st
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/extraction/data/catalogs/extraction_profiles.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/catalogs/material_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_material_catalog_repository.dart';
@@ -58,7 +57,7 @@ final TownCatalogAssets testTownCatalogAssets = TownCatalogAssets(
 final WorkshopCatalogAssets testWorkshopCatalogAssets = WorkshopCatalogAssets(
   traits: traitCatalog,
   materials: materialCatalog,
-  extractionProfiles: extractionProfileCatalog,
+  extractionProfiles: _readWorkshopExtractionProfiles(),
   potions: potionCatalog,
   potionRecipeRules: potionRecipeCatalog,
   potionQualityRule: potionQualityCatalog,
@@ -335,6 +334,13 @@ List<HomunculusHatchRecipe> _readWorkshopHatchRecipes() {
         );
       })
       .toList(growable: false);
+}
+
+List<ExtractionProfile> _readWorkshopExtractionProfiles() {
+  final WorkshopCatalogAssetLoader loader = WorkshopCatalogAssetLoader();
+  return _readWorkshopObjectList(
+    'extraction_profiles.json',
+  ).map(loader.readExtractionProfile).toList(growable: false);
 }
 
 List<WorkshopSkillNode> _readWorkshopSkillNodes() {
