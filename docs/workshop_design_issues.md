@@ -7,7 +7,7 @@
 
 ## 2. 현재 화면 구조
 
-`WorkshopScreen`은 정보 카드 1개와 기능 카드 8개로 구성된다.
+`WorkshopScreen`은 정보 카드 1개와 기능 카드 7개로 구성된다.
 
 - `InfoCard`: 작업실 자원
 - `WorkshopQueueCard`: 작업 큐
@@ -16,10 +16,11 @@
 - `WorkshopEnchantCard`: 장비 인챈트
 - `WorkshopHatchCard`: 호문쿨루스 부화
 - `WorkshopInventoryCard`: 작업실 인벤토리
-- `WorkshopSupportCard`: 작업실 보조 슬롯
 - `WorkshopSkillTreeCard`: 작업실 스킬트리
 
 이전 미사용 자원 카드였던 `WorkshopMaterialCard`와 `WorkshopCraftedPotionCard`는 제거했다. 재료 / 원소 / 포션 조회 진입점은 `WorkshopInventoryCard`로 본다.
+
+`WorkshopSupportCard`는 제품 기능 제외 결정에 따라 대시보드 진입점에서 제거했다. support feature 로직과 상태는 아직 남아 있으며, 추후 별도 제거 대상으로 둔다.
 
 ## 3. 공통 UI 사용 현황
 
@@ -88,7 +89,6 @@
 
 - 포션 제조 선택
 - 호문쿨루스 부화 레시피
-- 작업실 보조 슬롯
 - 작업실 스킬트리
 
 현황 판단:
@@ -99,11 +99,12 @@
 
 영향:
 
-- 포션 제조, 부화, 지원, 스킬트리는 작업 선택 / 설정 화면이므로 리스트 유지가 자연스럽다.
+- 포션 제조, 부화, 스킬트리는 작업 선택 / 설정 화면이므로 리스트 유지가 자연스럽다.
+- 작업실 보조 슬롯은 제품 기능에서 제외되어 신규 UI 기준에 포함하지 않는다.
 
 권장 조치:
 
-- 제조, 부화, 지원, 스킬트리는 현재 리스트를 유지한다.
+- 제조, 부화, 스킬트리는 현재 리스트를 유지한다.
 - 이후 다른 자원 선택 화면이 추가되면 `ResourceIconGrid`를 우선 검토한다.
 
 우선순위: 낮음

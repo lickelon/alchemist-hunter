@@ -16,8 +16,6 @@ import 'package:alchemist_hunter/features/workshop/hatchery/presentation/widgets
 import 'package:alchemist_hunter/features/workshop/hatchery/presentation/viewmodels/hatch_selectors.dart';
 import 'package:alchemist_hunter/features/workshop/inventory/presentation/widgets/workshop_inventory_card.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/presentation/widgets/workshop_skill_tree_card.dart';
-import 'package:alchemist_hunter/features/workshop/support/presentation/widgets/workshop_support_card.dart';
-import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_assignment_selectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -42,10 +40,6 @@ class WorkshopScreen extends ConsumerWidget {
       workshopUnlockedSkillNodeCountProvider,
     );
     final int totalSkillNodes = ref.watch(workshopSkillNodeCountProvider);
-    final int supportAssignedCount = ref.watch(
-      workshopSupportAssignedCountProvider,
-    );
-    final int supportSlotLimit = ref.watch(workshopSupportSlotLimitProvider);
     final List<HomunculusHatchRecipeView> hatchRecipes = ref.watch(
       homunculusHatchRecipeViewsProvider,
     );
@@ -86,10 +80,6 @@ class WorkshopScreen extends ConsumerWidget {
           materialTypeCount: inventorySummary.materialTypeCount,
           traitTypeCount: inventorySummary.traitTypeCount,
           potionStackCount: inventorySummary.potionStackCount,
-        ),
-        WorkshopSupportCard(
-          assignedCount: supportAssignedCount,
-          slotLimit: supportSlotLimit,
         ),
         WorkshopSkillTreeCard(
           unlockedCount: unlockedSkillNodes,
