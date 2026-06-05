@@ -209,6 +209,10 @@ final String? qualityLabel = result.qualityScore == null
 
 ## 7. 패턴 F — 타이틀에 성격이 다른 두 정보 혼합
 
+적용 상태:
+- F1: 완료. 캐릭터 상세 시트 title은 캐릭터 이름만 남기고 타입은 header badge로 분리했다.
+- F2: 완료. 장비 선택 다이얼로그 title은 캐릭터 이름만 남기고 슬롯은 body 상단 badge로 분리했다.
+
 ### 7.1 캐릭터 상세 시트 제목
 
 **`lib/features/characters/presentation/widgets/character_detail_sheet.dart:52`**
@@ -349,8 +353,8 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 | E2 | 중간점 연결 두 정보 | `workshop_brew_experiment_result_body.dart` | 37 | 완료 |
 | E3 | 쉼표 연결 두 정보 | `town_screen.dart` | 39 | 완료 |
 | E4 | 쉼표 연결 두 정보 | `workshop_screen.dart` | 60 | 완료 |
-| F1 | 제목에 분류 정보 혼합 | `character_detail_sheet.dart` | 52 | 낮음 (검토) |
-| F2 | 제목에 분류 정보 혼합 | `character_equipment_sheet.dart` | 40 | 낮음 (검토) |
+| F1 | 제목에 분류 정보 혼합 | `character_detail_sheet.dart` | 52 | 완료 |
+| F2 | 제목에 분류 정보 혼합 | `character_equipment_sheet.dart` | 40 | 완료 |
 | G1 | 카드 보조 텍스트 스타일 없음 | `character_card.dart` | 57, 59 | 완료 |
 | H1 | Before/After 구조 소실 | `workshop_enchant_preview_section.dart` | 42-45 | 완료 |
 
