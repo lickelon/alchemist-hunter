@@ -41,7 +41,7 @@ class WorkshopCatalogAssetLoader {
       craftRecipes: (await _readObjectList(
         bundle,
         'craft_recipes.json',
-      )).map(_readCraftRecipe).toList(growable: false),
+      )).map(readCraftRecipe).toList(growable: false),
       hatchRecipes: (await _readObjectList(
         bundle,
         'hatch_recipes.json',
@@ -168,7 +168,7 @@ class WorkshopCatalogAssetLoader {
     );
   }
 
-  WorkshopCraftRecipe _readCraftRecipe(Map<String, Object?> json) {
+  WorkshopCraftRecipe readCraftRecipe(Map<String, Object?> json) {
     return WorkshopCraftRecipe(
       id: j.readString(json, 'id'),
       name: j.readString(json, 'name'),
