@@ -19,6 +19,9 @@ extension _BattleCatalogTableValidation on BattleCatalogTables {
   void _validateEnemySets() {
     for (final BattleEnemySetDefinition enemySet
         in enemySetDefinitions.values) {
+      if (!RegExp(r'^enemy_set_\d{2}_\d{3}$').hasMatch(enemySet.id)) {
+        throw StateError('Invalid enemy set id format: ${enemySet.id}');
+      }
       for (final String enemyId in enemySet.enemyIds) {
         if (!enemyDefinitions.containsKey(enemyId)) {
           throw StateError('Unknown enemy in ${enemySet.id}: $enemyId');
@@ -108,7 +111,18 @@ extension _BattleCatalogTableValidation on BattleCatalogTables {
   }
 
   void _validateStageEncounters(BattleStageDefinition stage) {
-    for (final BattleStageEncounterDefinition encounter in stage.encounters) {
+    final int stageNumber = _stageNumber(stage.id);
+    for (int index = 0; index < stage.encounters.length; index += 1) {
+      final BattleStageEncounterDefinition encounter = stage.encounters[index];
+      final String expectedEnemySetId =
+          'enemy_set_${stageNumber.toString().padLeft(2, '0')}_'
+          '${(index + 1).toString().padLeft(3, '0')}';
+      if (encounter.enemySetId != expectedEnemySetId) {
+        throw StateError(
+          'Unexpected enemy set order in ${stage.id}: '
+          '${encounter.enemySetId}, expected $expectedEnemySetId',
+        );
+      }
       if (!enemySetDefinitions.containsKey(encounter.enemySetId)) {
         throw StateError(
           'Unknown enemy set in ${stage.id}: ${encounter.enemySetId}',
@@ -118,5 +132,13 @@ extension _BattleCatalogTableValidation on BattleCatalogTables {
         throw StateError('Encounter chance must be positive: ${encounter.id}');
       }
     }
+  }
+
+  int _stageNumber(String stageId) {
+    final RegExpMatch? match = RegExp(r'^stage_(\d+)$').firstMatch(stageId);
+    if (match == null) {
+      throw StateError('Invalid stage id format: $stageId');
+    }
+    return int.parse(match.group(1)!);
   }
 }
