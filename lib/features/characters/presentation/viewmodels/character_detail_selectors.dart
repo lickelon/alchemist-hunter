@@ -68,28 +68,6 @@ String characterTierMaterialLabel(
   return '승급 재료: $materialName $owned/1';
 }
 
-List<String> characterDetailLines(
-  CharacterProgress character, {
-  required String combatDisciplineLabel,
-}) {
-  if (character.type == CharacterType.homunculus) {
-    return <String>[
-      '출처 ${character.homunculusOrigin ?? "미확인 시드"}',
-      '역할 ${character.homunculusRole ?? "지원"}',
-      '보조효과 ${character.homunculusSupportEffect ?? "효과 분석 중"}',
-    ];
-  }
-
-  final String role = switch (character.mercenaryTier ?? MercenaryTier.rookie) {
-    MercenaryTier.rookie => '기본 전열',
-    MercenaryTier.veteran => '숙련 전열',
-    MercenaryTier.elite => '정예 전열',
-    MercenaryTier.champion => '챔피언 전열',
-    MercenaryTier.legend => '전설 전열',
-  };
-  return <String>['직군 $combatDisciplineLabel, 전열 $role'];
-}
-
 String _tierMaterialDisplayName(CharacterProgress character) {
   final int nextTier = character.tierIndex + 1;
   return switch (character.type) {

@@ -56,7 +56,6 @@ void main() {
     expect(view.tierHint, '티어업 가능');
     expect(view.tierMaterialLabel, '승급 재료: 용병 승급 재료 2 1/1');
     expect(view.assignmentLabel, '배치 상태: Stage 1');
-    expect(view.detailLines, <String>['직군 전사, 전열 기본 전열']);
     expect(view.equipmentSlots.first.slotLabel, '무기');
     expect(view.equipmentSlots.first.availableItems, hasLength(1));
   });
@@ -96,11 +95,6 @@ void main() {
         .first;
 
     expect(view.typeLabel, '호문쿨루스');
-    expect(view.detailLines, <String>[
-      '출처 Vital Seed Flask',
-      '역할 지원',
-      '보조효과 파티 생존력 보조',
-    ]);
     expect(view.assignmentLabel, '배치 상태: 작업실(추출)');
     expect(view.assignmentGuideLabel, '배치 변경은 전투/작업실 화면에서 진행');
   });

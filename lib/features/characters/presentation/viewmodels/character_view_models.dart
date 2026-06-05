@@ -48,7 +48,6 @@ class CharacterListItemView {
     required this.combatStatPairs,
     required this.combatEffectLines,
     required this.hasTierUpMaterial,
-    required this.detailLines,
     required this.assignmentLabel,
     required this.assignmentGuideLabel,
   });
@@ -64,7 +63,6 @@ class CharacterListItemView {
   final List<(String, String)> combatStatPairs;
   final List<String> combatEffectLines;
   final bool hasTierUpMaterial;
-  final List<String> detailLines;
   final String assignmentLabel;
   final String assignmentGuideLabel;
 }

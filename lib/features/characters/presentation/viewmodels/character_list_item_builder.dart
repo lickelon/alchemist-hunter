@@ -33,10 +33,6 @@ CharacterListItemView buildCharacterListItemView({
     combatStatPairs: characterCombatStatPairs(heroProfile.stats),
     combatEffectLines: characterCombatEffectLines(heroProfile),
     hasTierUpMaterial: characterHasTierUpMaterial(character, inventory),
-    detailLines: characterDetailLines(
-      character,
-      combatDisciplineLabel: combatDisciplineLabel,
-    ),
     assignmentLabel: characterAssignmentLabel(
       characterId: character.id,
       stageAssignments: stageAssignments,
