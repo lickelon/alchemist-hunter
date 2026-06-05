@@ -10,14 +10,12 @@ class CharacterGrowthSection extends StatelessWidget {
   const CharacterGrowthSection({
     super.key,
     required this.character,
-    required this.growthLabel,
     required this.hasTierUpMaterial,
     required this.onRankUp,
     required this.onTierUp,
   });
 
   final CharacterProgress character;
-  final String growthLabel;
   final bool hasTierUpMaterial;
   final ValueChanged<String> onRankUp;
   final ValueChanged<String> onTierUp;
@@ -93,7 +91,7 @@ class _ProgressActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (character.tierIndex >= character.maxTier) {
-      return FilledButton.tonal(onPressed: null, child: const Text('최대'));
+      return const AppBadge(label: '최대');
     }
     if (character.rank >= character.maxRankForCurrentTier) {
       return FilledButton.tonal(

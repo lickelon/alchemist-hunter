@@ -28,6 +28,9 @@ class CharacterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final CharacterProgress character = item.character;
     final ThemeData theme = Theme.of(context);
+    final TextStyle? supportTextStyle = theme.textTheme.bodySmall?.copyWith(
+      color: theme.colorScheme.onSurfaceVariant,
+    );
     return Card(
       child: InkWell(
         borderRadius: AppRadius.card,
@@ -54,9 +57,9 @@ class CharacterCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.sm),
-              Text(item.assignmentLabel),
+              Text(item.assignmentLabel, style: supportTextStyle),
               const SizedBox(height: AppSpacing.sm),
-              Text(item.growthLabel),
+              Text(item.growthLabel, style: supportTextStyle),
             ],
           ),
         ),

@@ -54,7 +54,6 @@ class CharacterDetailSheet extends ConsumerWidget {
         children: <Widget>[
           CharacterGrowthSection(
             character: character,
-            growthLabel: item.growthLabel,
             hasTierUpMaterial: item.hasTierUpMaterial,
             onRankUp: onRankUp,
             onTierUp: onTierUp,
