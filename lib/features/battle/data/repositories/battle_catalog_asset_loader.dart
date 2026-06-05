@@ -14,6 +14,10 @@ class BattleCatalogAssetLoader {
   final String assetRoot;
 
   Future<BattleCatalogTables> load(AssetBundle bundle) async {
+    final List<Map<String, Object?>> stageEntries = await _readObjectList(
+      bundle,
+      'stages.json',
+    );
     return BattleCatalogTables.fromDtos(
       enemyDtos: _readDtoMap(
         await _readObjectList(bundle, 'enemies.json'),
@@ -26,11 +30,11 @@ class BattleCatalogAssetLoader {
         BattleEnemySetDefinitionDto.fromJson,
       ),
       stageDtos: _readDtoMap(
-        await _readObjectList(bundle, 'stages.json'),
+        stageEntries,
         'stages.json',
         BattleStageDefinitionDto.fromJson,
       ),
-      stageCatalog: await _readStringList(bundle, 'stage_catalog.json'),
+      stageCatalog: _readIds(stageEntries),
       combatJobDtos: _readDtoMap(
         await _readIndexedObjectList(bundle, 'combat_job_index.json'),
         'combat_job_index.json',
@@ -58,6 +62,10 @@ class BattleCatalogAssetLoader {
       for (final Map<String, Object?> entry in entries)
         _readId(entry): convert(entry),
     };
+  }
+
+  List<String> _readIds(List<Map<String, Object?>> entries) {
+    return entries.map(_readId).toList(growable: false);
   }
 
   Future<List<Map<String, Object?>>> _readObjectList(

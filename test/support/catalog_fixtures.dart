@@ -183,6 +183,9 @@ WorkshopCatalogAssets _loadTestWorkshopCatalogAssets() {
 }
 
 BattleCatalogTables _loadBattleCatalogTablesFromAssets() {
+  final List<Map<String, Object?>> stageEntries = _readBattleObjectList(
+    'stages.json',
+  );
   return BattleCatalogTables.fromDtos(
     enemyDtos: _readBattleDtoMap(
       _readBattleObjectList('enemies.json'),
@@ -193,10 +196,10 @@ BattleCatalogTables _loadBattleCatalogTablesFromAssets() {
       BattleEnemySetDefinitionDto.fromJson,
     ),
     stageDtos: _readBattleDtoMap(
-      _readBattleObjectList('stages.json'),
+      stageEntries,
       BattleStageDefinitionDto.fromJson,
     ),
-    stageCatalog: _readBattleStringList('stage_catalog.json'),
+    stageCatalog: _readBattleIds(stageEntries),
     combatJobDtos: _readBattleDtoMap(
       _readBattleIndexedObjectList('combat_job_index.json'),
       BattleCombatJobDefinitionDto.fromJson,
@@ -220,6 +223,10 @@ Map<String, T> _readBattleDtoMap<T>(
     for (final Map<String, Object?> entry in entries)
       _readBattleId(entry): convert(entry),
   };
+}
+
+List<String> _readBattleIds(List<Map<String, Object?>> entries) {
+  return entries.map(_readBattleId).toList(growable: false);
 }
 
 List<Map<String, Object?>> _readBattleIndexedObjectList(String indexFileName) {
