@@ -1,0 +1,82 @@
+[
+  {
+    "id": "enemy_set_02_001",
+    "enemyIds": [
+      "enemy_scout",
+      "enemy_stalker",
+      "enemy_bruiser"
+    ]
+  },
+  {
+    "id": "enemy_set_02_002",
+    "enemyIds": [
+      "enemy_scout",
+      "enemy_stalker",
+      "enemy_raider"
+    ]
+  },
+  {
+    "id": "enemy_set_02_003",
+    "enemyIds": [
+      "enemy_scout",
+      "enemy_bruiser",
+      "enemy_raider"
+    ]
+  },
+  {
+    "id": "enemy_set_02_004",
+    "enemyIds": [
+      "enemy_glassback",
+      "enemy_dust_mender",
+      "enemy_raider"
+    ]
+  },
+  {
+    "id": "enemy_set_02_005",
+    "enemyIds": [
+      "enemy_stalker",
+      "enemy_glassback",
+      "enemy_scout"
+    ]
+  },
+  {
+    "id": "enemy_set_02_006",
+    "enemyIds": [
+      "enemy_bruiser",
+      "enemy_dust_mender",
+      "enemy_scout"
+    ]
+  },
+  {
+    "id": "enemy_set_02_007",
+    "enemyIds": [
+      "enemy_glassback",
+      "enemy_stalker",
+      "enemy_dust_mender"
+    ]
+  },
+  {
+    "id": "enemy_set_02_008",
+    "enemyIds": [
+      "enemy_raider",
+      "enemy_stalker",
+      "enemy_dust_mender"
+    ]
+  },
+  {
+    "id": "enemy_set_02_009",
+    "enemyIds": [
+      "enemy_bruiser",
+      "enemy_glassback",
+      "enemy_raider"
+    ]
+  },
+  {
+    "id": "enemy_set_02_010",
+    "enemyIds": [
+      "enemy_scout",
+      "enemy_glassback",
+      "enemy_dust_mender"
+    ]
+  }
+]

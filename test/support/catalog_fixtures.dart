@@ -192,7 +192,7 @@ BattleCatalogTables _loadBattleCatalogTablesFromAssets() {
       BattleEnemyDefinitionDto.fromJson,
     ),
     enemySetDtos: _readBattleDtoMap(
-      _readBattleObjectList('enemy_sets.json'),
+      _readBattleIndexedObjectLists('enemy_set_index.json'),
       BattleEnemySetDefinitionDto.fromJson,
     ),
     stageDtos: _readBattleDtoMap(

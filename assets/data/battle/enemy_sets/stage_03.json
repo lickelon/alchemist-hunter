@@ -1,0 +1,82 @@
+[
+  {
+    "id": "enemy_set_03_001",
+    "enemyIds": [
+      "enemy_sentinel",
+      "enemy_crucible",
+      "enemy_apprentice"
+    ]
+  },
+  {
+    "id": "enemy_set_03_002",
+    "enemyIds": [
+      "enemy_sentinel",
+      "enemy_apprentice",
+      "enemy_distiller"
+    ]
+  },
+  {
+    "id": "enemy_set_03_003",
+    "enemyIds": [
+      "enemy_crucible",
+      "enemy_apprentice",
+      "enemy_distiller"
+    ]
+  },
+  {
+    "id": "enemy_set_03_004",
+    "enemyIds": [
+      "enemy_furnace_leech",
+      "enemy_cinder_scribe",
+      "enemy_crucible"
+    ]
+  },
+  {
+    "id": "enemy_set_03_005",
+    "enemyIds": [
+      "enemy_sentinel",
+      "enemy_furnace_leech",
+      "enemy_cinder_scribe"
+    ]
+  },
+  {
+    "id": "enemy_set_03_006",
+    "enemyIds": [
+      "enemy_distiller",
+      "enemy_furnace_leech",
+      "enemy_apprentice"
+    ]
+  },
+  {
+    "id": "enemy_set_03_007",
+    "enemyIds": [
+      "enemy_sentinel",
+      "enemy_cinder_scribe",
+      "enemy_distiller"
+    ]
+  },
+  {
+    "id": "enemy_set_03_008",
+    "enemyIds": [
+      "enemy_crucible",
+      "enemy_furnace_leech",
+      "enemy_distiller"
+    ]
+  },
+  {
+    "id": "enemy_set_03_009",
+    "enemyIds": [
+      "enemy_sentinel",
+      "enemy_cinder_scribe",
+      "enemy_apprentice"
+    ]
+  },
+  {
+    "id": "enemy_set_03_010",
+    "enemyIds": [
+      "enemy_furnace_leech",
+      "enemy_cinder_scribe",
+      "enemy_distiller"
+    ]
+  }
+]

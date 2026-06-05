@@ -25,8 +25,8 @@ class BattleCatalogAssetLoader {
         BattleEnemyDefinitionDto.fromJson,
       ),
       enemySetDtos: _readDtoMap(
-        await _readObjectList(bundle, 'enemy_sets.json'),
-        'enemy_sets.json',
+        await _readIndexedObjectLists(bundle, 'enemy_set_index.json'),
+        'enemy_set_index.json',
         BattleEnemySetDefinitionDto.fromJson,
       ),
       stageDtos: _readDtoMap(

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "enemy_set_04_001",
+    "enemyIds": [
+      "enemy_sniper",
+      "enemy_weaver",
+      "enemy_tempest"
+    ]
+  },
+  {
+    "id": "enemy_set_04_002",
+    "enemyIds": [
+      "enemy_sniper",
+      "enemy_weaver",
+      "enemy_mirage"
+    ]
+  },
+  {
+    "id": "enemy_set_04_003",
+    "enemyIds": [
+      "enemy_sniper",
+      "enemy_tempest",
+      "enemy_mirage"
+    ]
+  },
+  {
+    "id": "enemy_set_04_004",
+    "enemyIds": [
+      "enemy_thunder_moth",
+      "enemy_gale_channeler",
+      "enemy_tempest"
+    ]
+  },
+  {
+    "id": "enemy_set_04_005",
+    "enemyIds": [
+      "enemy_sniper",
+      "enemy_thunder_moth",
+      "enemy_gale_channeler"
+    ]
+  },
+  {
+    "id": "enemy_set_04_006",
+    "enemyIds": [
+      "enemy_weaver",
+      "enemy_thunder_moth",
+      "enemy_mirage"
+    ]
+  },
+  {
+    "id": "enemy_set_04_007",
+    "enemyIds": [
+      "enemy_gale_channeler",
+      "enemy_sniper",
+      "enemy_mirage"
+    ]
+  },
+  {
+    "id": "enemy_set_04_008",
+    "enemyIds": [
+      "enemy_tempest",
+      "enemy_thunder_moth",
+      "enemy_mirage"
+    ]
+  },
+  {
+    "id": "enemy_set_04_009",
+    "enemyIds": [
+      "enemy_weaver",
+      "enemy_gale_channeler",
+      "enemy_sniper"
+    ]
+  },
+  {
+    "id": "enemy_set_04_010",
+    "enemyIds": [
+      "enemy_thunder_moth",
+      "enemy_gale_channeler",
+      "enemy_mirage"
+    ]
+  }
+]

@@ -1,0 +1,77 @@
+[
+  {
+    "id": "enemy_set_01_001",
+    "enemyIds": [
+      "enemy_scavenger",
+      "enemy_mite"
+    ]
+  },
+  {
+    "id": "enemy_set_01_002",
+    "enemyIds": [
+      "enemy_scavenger",
+      "enemy_wisp"
+    ]
+  },
+  {
+    "id": "enemy_set_01_003",
+    "enemyIds": [
+      "enemy_mite",
+      "enemy_wisp"
+    ]
+  },
+  {
+    "id": "enemy_set_01_004",
+    "enemyIds": [
+      "enemy_rust_slug",
+      "enemy_glowcap",
+      "enemy_scavenger"
+    ]
+  },
+  {
+    "id": "enemy_set_01_005",
+    "enemyIds": [
+      "enemy_scavenger",
+      "enemy_rust_slug",
+      "enemy_wisp"
+    ]
+  },
+  {
+    "id": "enemy_set_01_006",
+    "enemyIds": [
+      "enemy_mite",
+      "enemy_glowcap",
+      "enemy_wisp"
+    ]
+  },
+  {
+    "id": "enemy_set_01_007",
+    "enemyIds": [
+      "enemy_rust_slug",
+      "enemy_mite",
+      "enemy_glowcap"
+    ]
+  },
+  {
+    "id": "enemy_set_01_008",
+    "enemyIds": [
+      "enemy_scavenger",
+      "enemy_glowcap"
+    ]
+  },
+  {
+    "id": "enemy_set_01_009",
+    "enemyIds": [
+      "enemy_rust_slug",
+      "enemy_wisp"
+    ]
+  },
+  {
+    "id": "enemy_set_01_010",
+    "enemyIds": [
+      "enemy_scavenger",
+      "enemy_mite",
+      "enemy_glowcap"
+    ]
+  }
+]

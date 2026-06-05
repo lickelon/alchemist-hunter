@@ -1,0 +1,78 @@
+[
+  {
+    "id": "enemy_set_05_001",
+    "enemyIds": [
+      "enemy_chimera",
+      "enemy_warden"
+    ]
+  },
+  {
+    "id": "enemy_set_05_002",
+    "enemyIds": [
+      "enemy_chimera",
+      "enemy_herald"
+    ]
+  },
+  {
+    "id": "enemy_set_05_003",
+    "enemyIds": [
+      "enemy_chimera",
+      "enemy_herald",
+      "enemy_warden"
+    ]
+  },
+  {
+    "id": "enemy_set_05_004",
+    "enemyIds": [
+      "enemy_core_siphon",
+      "enemy_moonvault_aegis",
+      "enemy_herald"
+    ]
+  },
+  {
+    "id": "enemy_set_05_005",
+    "enemyIds": [
+      "enemy_chimera",
+      "enemy_core_siphon"
+    ]
+  },
+  {
+    "id": "enemy_set_05_006",
+    "enemyIds": [
+      "enemy_moonvault_aegis",
+      "enemy_warden",
+      "enemy_herald"
+    ]
+  },
+  {
+    "id": "enemy_set_05_007",
+    "enemyIds": [
+      "enemy_chimera",
+      "enemy_core_siphon",
+      "enemy_moonvault_aegis"
+    ]
+  },
+  {
+    "id": "enemy_set_05_008",
+    "enemyIds": [
+      "enemy_core_siphon",
+      "enemy_herald"
+    ]
+  },
+  {
+    "id": "enemy_set_05_009",
+    "enemyIds": [
+      "enemy_moonvault_aegis",
+      "enemy_chimera",
+      "enemy_warden"
+    ]
+  },
+  {
+    "id": "enemy_set_05_010",
+    "enemyIds": [
+      "enemy_core_siphon",
+      "enemy_herald",
+      "enemy_moonvault_aegis"
+    ]
+  }
+]
