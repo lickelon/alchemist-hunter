@@ -16,7 +16,6 @@ import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalo
 import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
-import 'package:alchemist_hunter/features/town/data/catalogs/shop_seed.dart';
 import 'package:alchemist_hunter/features/town/data/catalogs/town_skill_nodes.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/town_catalog_asset_loader.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_equipment_blueprint_repository.dart';
@@ -50,10 +49,7 @@ import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositorie
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final TownCatalogAssets testTownCatalogAssets = TownCatalogAssets(
-  shopCatalog: ShopCatalogData(
-    general: _shopDefinition(buildGeneralShopState(DateTime(2026))),
-    catalyst: _shopDefinition(buildCatalystShopState(DateTime(2026))),
-  ),
+  shopCatalog: _readTownShopCatalog(),
   equipmentBlueprints: _readTownEquipmentBlueprints(),
   equipmentMaterialNames: _readTownEquipmentMaterialNames(),
   mercenaryTemplates: _readTownMercenaryTemplates(),
@@ -299,6 +295,11 @@ List<MercenaryTemplate> _readTownMercenaryTemplates() {
       .toList(growable: false);
 }
 
+ShopCatalogData _readTownShopCatalog() {
+  final TownCatalogAssetLoader loader = TownCatalogAssetLoader();
+  return loader.readShopCatalog(_readTownObject('shops.json'));
+}
+
 List<EquipmentBlueprint> _readTownEquipmentBlueprints() {
   final TownCatalogAssetLoader loader = TownCatalogAssetLoader();
   final Map<String, Object?> equipment = _readTownObject('equipment.json');
@@ -438,15 +439,4 @@ Map<String, double> _readDoubleMap(Map<String, Object?> json, String key) {
     });
   }
   throw FormatException('Expected double map $key in $json');
-}
-
-ShopDefinitionData _shopDefinition(ShopState state) {
-  return ShopDefinitionData(
-    shopType: state.shopType,
-    seedItems: state.items,
-    refreshInterval: state.refreshInterval,
-    purchaseLimitPerItem: state.purchaseLimitPerItem,
-    baseRefreshCost: state.baseRefreshCost,
-    refreshCostStep: state.refreshCostStep,
-  );
 }
