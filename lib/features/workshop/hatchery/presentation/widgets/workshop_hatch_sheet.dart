@@ -1,8 +1,10 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_badge.dart';
+import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -40,6 +42,14 @@ class WorkshopHatchSheet extends ConsumerWidget {
                       dense: true,
                       title: Text(recipe.resultName),
                       subtitle: _HatchRecipeSummary(recipe: recipe),
+                      onTap: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return _HatchRecipeDetailDialog(recipe: recipe);
+                          },
+                        );
+                      },
                       trailing: FilledButton.tonal(
                         onPressed: recipe.canHatch
                             ? () {
@@ -96,12 +106,42 @@ class _HatchRecipeSummary extends StatelessWidget {
             children: <Widget>[
               AppBadge(label: recipe.roleLabel),
               AppBadge(label: recipe.availabilityLabel),
-              AppBadge(label: recipe.supportEffectLabel),
-              ...recipe.costLabels.map(
-                (String label) => AppBadge(label: label),
-              ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HatchRecipeDetailDialog extends StatelessWidget {
+  const _HatchRecipeDetailDialog({required this.recipe});
+
+  final HomunculusHatchRecipeView recipe;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppDialogLayout(
+      title: recipe.resultName,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              AppBadge(label: recipe.roleLabel),
+              AppBadge(label: recipe.availabilityLabel),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          DetailLines(
+            description: '효과',
+            lines: <String>[recipe.supportEffectLabel],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          DetailLines(description: '재료', lines: recipe.costLabels),
         ],
       ),
     );
