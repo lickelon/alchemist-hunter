@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
+import 'package:alchemist_hunter/features/characters/domain/services/character_id_factory.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/mercenary_template_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
@@ -26,6 +27,13 @@ SessionState createInitialSessionStateFromCatalogs(
   DateTime now,
   InitialSessionCatalogs catalogs,
 ) {
+  final String starterMercenaryId = createOpaqueCharacterId(now: now, seed: 0);
+  final String starterHomunculusId = createOpaqueCharacterId(
+    now: now,
+    seed: 1,
+    reservedIds: <String>{starterMercenaryId},
+  );
+
   return SessionState(
     lastSyncAt: now,
     player: const PlayerState(
@@ -83,17 +91,15 @@ SessionState createInitialSessionStateFromCatalogs(
         automationTier: 1,
         sessionPhase: SessionPhase.early,
       ),
-      stageAssignments: <String, List<String>>{
-        'stage_1': <String>['merc_1', 'homo_1'],
-      },
+      stageAssignments: <String, List<String>>{},
       stagePotionLoadouts: <String, Map<String, int>>{},
       stageExpeditions: <String, BattleExpeditionState>{},
     ),
-    characters: const CharactersState(
+    characters: CharactersState(
       mercenaries: <CharacterProgress>[
         CharacterProgress(
-          id: 'merc_1',
-          name: 'Rookie Swordsman',
+          id: starterMercenaryId,
+          name: '전사',
           type: CharacterType.mercenary,
           combatJobId: CombatJobIds.mercenaryWarrior,
           level: 1,
@@ -104,17 +110,14 @@ SessionState createInitialSessionStateFromCatalogs(
       ],
       homunculi: <CharacterProgress>[
         CharacterProgress(
-          id: 'homo_1',
-          name: 'Nigredo Seed',
+          id: starterHomunculusId,
+          name: '마법사',
           type: CharacterType.homunculus,
           combatJobId: CombatJobIds.homunculusMage,
           level: 1,
           rank: 1,
           xp: 0,
           homunculusTier: HomunculusTier.nigredo,
-          homunculusOrigin: 'Base Seed Vessel',
-          homunculusRole: '지원',
-          homunculusSupportEffect: '기초 연성 보조',
         ),
       ],
     ),
