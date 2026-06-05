@@ -35,14 +35,9 @@ class BattleEnemyDefinition {
 
 @immutable
 class BattleEnemySetDefinition {
-  const BattleEnemySetDefinition({
-    required this.id,
-    required this.name,
-    required this.enemyIds,
-  });
+  const BattleEnemySetDefinition({required this.id, required this.enemyIds});
 
   final String id;
-  final String name;
   final List<String> enemyIds;
 }
 

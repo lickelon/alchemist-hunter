@@ -75,25 +75,19 @@ class BattleEnemyDefinitionDto {
 
 @immutable
 class BattleEnemySetDefinitionDto {
-  const BattleEnemySetDefinitionDto({
-    required this.id,
-    required this.name,
-    required this.enemyIds,
-  });
+  const BattleEnemySetDefinitionDto({required this.id, required this.enemyIds});
 
   final String id;
-  final String name;
   final List<String> enemyIds;
 
   factory BattleEnemySetDefinitionDto.fromJson(Map<String, Object?> json) {
     return BattleEnemySetDefinitionDto(
       id: readString(json, 'id'),
-      name: readString(json, 'name'),
       enemyIds: readStringList(json, 'enemyIds'),
     );
   }
 
   BattleEnemySetDefinition toDomain() {
-    return BattleEnemySetDefinition(id: id, name: name, enemyIds: enemyIds);
+    return BattleEnemySetDefinition(id: id, enemyIds: enemyIds);
   }
 }
