@@ -18,7 +18,9 @@ UI 레이어에서 `_splitEquipmentLabel`, `_splitEffectLabel` 같은 파싱 함
 
 적용 상태:
 - A1~A4, A6: 완료. 장비 스탯/효과/detail label list API를 추가하고 장비 UI의 `_splitEquipmentLabel` 파싱을 제거했다.
-- A5, A7, A8: 남음. 전투 효과, 드롭, 스킬트리 라벨은 별도 구조화 단계에서 처리한다.
+- A5: 완료. 캐릭터 전투 효과 label을 atomic list로 내려 UI split을 제거했다.
+- A7: 완료. 전투 드롭 스탯/효과 label을 atomic list로 내려 UI split을 제거했다.
+- A8: 완료. 스킬트리 detail label을 list 모델로 바꾸고 `_badgeLabels` split을 제거했다.
 
 ### 2.1 근본 원인 파일
 
@@ -325,10 +327,10 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 | A2 | 레이블 함수 `\n` 반환 | `equipment_detail_labels.dart` | 12, 26 | 완료 |
 | A3 | UI 파싱 우회 | `town_equipment_sheet.dart` | 195-200 | 완료 |
 | A4 | UI 파싱 우회 | `character_equipment_section.dart` | 76-82 | 완료 |
-| A5 | 전투 효과 라벨 UI 파싱 우회 | `character_combat_sections.dart` | 54-59 | 보통 (별도 구조화) |
+| A5 | 전투 효과 라벨 UI 파싱 우회 | `character_combat_sections.dart` | 54-59 | 완료 |
 | A6 | UI 파싱 우회 | `character_equipment_header.dart` | 75-81 | 완료 |
-| A7 | 드롭 라벨 UI 파싱 우회 | `battle_stage_drop_list.dart` | 105-110 | 보통 (별도 구조화) |
-| A8 | 스킬트리 라벨 UI 파싱 우회 | `skill_tree_node_detail_dialog.dart` | 84-89 | 보통 (별도 구조화) |
+| A7 | 드롭 라벨 UI 파싱 우회 | `battle_stage_drop_list.dart` | 105-110 | 완료 |
+| A8 | 스킬트리 라벨 UI 파싱 우회 | `skill_tree_node_detail_dialog.dart` | 84-89 | 완료 |
 | A9 | UI 문자열 조작 | `character_assignment_section.dart` | 18 | 보통 |
 | B1 | 경고 + 탭 혼재 | `workshop_craft_card.dart` | 61-79 | 완료 |
 | B2 | 액션 + 정보 혼재 | `town_shop_sheet.dart` | 37-54 | 완료 |
