@@ -5,6 +5,7 @@ import 'package:alchemist_hunter/app/session/session_factory.dart';
 import 'package:alchemist_hunter/app/session/session_state.dart';
 import 'package:alchemist_hunter/app/catalog/battle_catalog_providers.dart';
 import 'package:alchemist_hunter/app/catalog/town_catalog_providers.dart';
+import 'package:alchemist_hunter/app/catalog/workshop_catalog_asset_loader.dart';
 import 'package:alchemist_hunter/app/catalog/workshop_catalog_data.dart';
 import 'package:alchemist_hunter/app/catalog/workshop_catalog_providers.dart';
 import 'package:alchemist_hunter/features/battle/data/catalogs/battle_enemy_dtos.dart';
@@ -33,16 +34,15 @@ import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/st
 import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/workshop_craft_recipe_repository.dart';
+import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/catalogs/extraction_profiles.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/catalogs/material_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/domain/repositories/extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/domain/repositories/material_catalog_repository.dart';
-import 'package:alchemist_hunter/features/workshop/hatchery/domain/models/hatch_models.dart';
 import 'package:alchemist_hunter/features/workshop/hatchery/data/repositories/static_homunculus_hatch_repository.dart';
 import 'package:alchemist_hunter/features/workshop/hatchery/domain/repositories/homunculus_hatch_repository.dart';
-import 'package:alchemist_hunter/features/workshop/skill_tree/data/catalogs/workshop_skill_nodes.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/data/repositories/static_workshop_skill_tree_repository.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositories/workshop_skill_tree_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,7 +64,7 @@ final WorkshopCatalogAssets testWorkshopCatalogAssets = WorkshopCatalogAssets(
   potionQualityRule: potionQualityCatalog,
   craftRecipes: workshopCraftRecipes,
   hatchRecipes: _readWorkshopHatchRecipes(),
-  skillNodes: workshopSkillNodes,
+  skillNodes: _readWorkshopSkillNodes(),
 );
 
 final BattleCatalogTables testBattleCatalogTables =
@@ -335,6 +335,13 @@ List<HomunculusHatchRecipe> _readWorkshopHatchRecipes() {
         );
       })
       .toList(growable: false);
+}
+
+List<WorkshopSkillNode> _readWorkshopSkillNodes() {
+  final WorkshopCatalogAssetLoader loader = WorkshopCatalogAssetLoader();
+  return _readWorkshopObjectList(
+    'skill_tree.json',
+  ).map(loader.readWorkshopSkillNode).toList(growable: false);
 }
 
 Map<String, Object?> _readTownObject(String fileName) {

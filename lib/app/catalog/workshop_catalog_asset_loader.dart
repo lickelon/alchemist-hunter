@@ -49,7 +49,7 @@ class WorkshopCatalogAssetLoader {
       skillNodes: (await _readObjectList(
         bundle,
         'skill_tree.json',
-      )).map(_readWorkshopSkillNode).toList(growable: false),
+      )).map(readWorkshopSkillNode).toList(growable: false),
     );
   }
 
@@ -198,7 +198,7 @@ class WorkshopCatalogAssetLoader {
     );
   }
 
-  WorkshopSkillNode _readWorkshopSkillNode(Map<String, Object?> json) {
+  WorkshopSkillNode readWorkshopSkillNode(Map<String, Object?> json) {
     return WorkshopSkillNode(
       id: j.readString(json, 'id'),
       name: j.readString(json, 'name'),
