@@ -34,12 +34,12 @@ String workshopSkillMissingCostLabel(
   return '비용 부족';
 }
 
-String workshopSkillCostLabel(
+List<String> workshopSkillCostLabels(
   List<WorkshopSkillCost> costs,
   Map<String, TraitUnit> traitMap,
 ) {
   if (costs.isEmpty) {
-    return '비용 없음';
+    return const <String>['비용 없음'];
   }
   return costs
       .map((WorkshopSkillCost cost) {
@@ -49,15 +49,15 @@ String workshopSkillCostLabel(
             '${traitMap[cost.elementId]?.name ?? cost.elementId ?? "원소"} 원소 ${cost.amount}',
         };
       })
-      .join(' / ');
+      .toList(growable: false);
 }
 
-String workshopSkillEffectPreview(
+List<String> workshopSkillEffectPreviewLabels(
   List<WorkshopSkillEffect> effects,
   int level,
 ) {
   if (level <= 0) {
-    return '효과 없음';
+    return const <String>['효과 없음'];
   }
   return effects
       .map((WorkshopSkillEffect effect) {
@@ -74,7 +74,7 @@ String workshopSkillEffectPreview(
         };
         return '$typeLabel +$valueLabel';
       })
-      .join(' / ');
+      .toList(growable: false);
 }
 
 int workshopSkillDepthForNode(

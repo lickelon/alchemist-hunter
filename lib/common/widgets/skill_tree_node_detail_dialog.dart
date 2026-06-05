@@ -44,16 +44,16 @@ class SkillTreeNodeDetailDialog extends StatelessWidget {
             children: <Widget>[
               ..._badgeLabels(
                 '현재',
-                node.currentEffectLabel,
+                node.currentEffectLabels,
               ).map((String label) => AppBadge(label: label)),
               AppBadge(label: node.prerequisiteLabel),
               ..._badgeLabels(
                 '비용',
-                node.costLabel,
+                node.costLabels,
               ).map((String label) => AppBadge(label: label)),
               ..._badgeLabels(
                 '다음',
-                node.nextEffectLabel,
+                node.nextEffectLabels,
               ).map((String label) => AppBadge(label: label)),
             ],
           ),
@@ -81,9 +81,6 @@ class SkillTreeNodeDetailDialog extends StatelessWidget {
   }
 }
 
-List<String> _badgeLabels(String prefix, String label) {
-  return label
-      .split(' / ')
-      .map((String part) => '$prefix $part')
-      .toList(growable: false);
+List<String> _badgeLabels(String prefix, List<String> labels) {
+  return labels.map((String label) => '$prefix $label').toList(growable: false);
 }

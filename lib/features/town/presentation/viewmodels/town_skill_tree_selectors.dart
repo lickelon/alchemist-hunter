@@ -15,9 +15,9 @@ class TownSkillNodeView {
     required this.parentIds,
     required this.depth,
     required this.levelLabel,
-    required this.costLabel,
-    required this.currentEffectLabel,
-    required this.nextEffectLabel,
+    required this.costLabels,
+    required this.currentEffectLabels,
+    required this.nextEffectLabels,
     required this.prerequisiteLabel,
     required this.statusLabel,
     required this.state,
@@ -30,9 +30,9 @@ class TownSkillNodeView {
   final List<String> parentIds;
   final int depth;
   final String levelLabel;
-  final String costLabel;
-  final String currentEffectLabel;
-  final String nextEffectLabel;
+  final List<String> costLabels;
+  final List<String> currentEffectLabels;
+  final List<String> nextEffectLabels;
   final String prerequisiteLabel;
   final String statusLabel;
   final SkillTreeNodeState state;
@@ -45,9 +45,9 @@ class TownSkillNodeView {
       title: name,
       description: description,
       levelLabel: levelLabel,
-      costLabel: costLabel,
-      currentEffectLabel: currentEffectLabel,
-      nextEffectLabel: nextEffectLabel,
+      costLabels: costLabels,
+      currentEffectLabels: currentEffectLabels,
+      nextEffectLabels: nextEffectLabels,
       prerequisiteLabel: prerequisiteLabel,
       statusLabel: statusLabel,
       state: state,
@@ -103,9 +103,12 @@ townSkillNodeViewsProvider = Provider<List<TownSkillNodeView>>((Ref ref) {
           parentIds: node.prerequisiteNodeIds,
           depth: townSkillDepthForNode(node, nodes),
           levelLabel: '레벨 $level/${node.maxLevel}',
-          costLabel: townSkillCostLabel(costs),
-          currentEffectLabel: townSkillEffectPreview(node.effects, level),
-          nextEffectLabel: townSkillEffectPreview(
+          costLabels: townSkillCostLabels(costs),
+          currentEffectLabels: townSkillEffectPreviewLabels(
+            node.effects,
+            level,
+          ),
+          nextEffectLabels: townSkillEffectPreviewLabels(
             node.effects,
             level < node.maxLevel ? level + 1 : level,
           ),

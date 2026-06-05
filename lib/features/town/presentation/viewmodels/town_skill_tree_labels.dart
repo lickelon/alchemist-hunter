@@ -27,9 +27,9 @@ String townSkillMissingCostLabel(
   return '비용 부족';
 }
 
-String townSkillCostLabel(List<TownSkillCost> costs) {
+List<String> townSkillCostLabels(List<TownSkillCost> costs) {
   if (costs.isEmpty) {
-    return '비용 없음';
+    return const <String>['비용 없음'];
   }
   return costs
       .map((TownSkillCost cost) {
@@ -39,12 +39,15 @@ String townSkillCostLabel(List<TownSkillCost> costs) {
         };
         return '$label ${cost.amount}';
       })
-      .join(' / ');
+      .toList(growable: false);
 }
 
-String townSkillEffectPreview(List<TownSkillEffect> effects, int level) {
+List<String> townSkillEffectPreviewLabels(
+  List<TownSkillEffect> effects,
+  int level,
+) {
   if (level <= 0) {
-    return '효과 없음';
+    return const <String>['효과 없음'];
   }
   return effects
       .map((TownSkillEffect effect) {
@@ -67,7 +70,7 @@ String townSkillEffectPreview(List<TownSkillEffect> effects, int level) {
             : '+';
         return '$typeLabel $sign$valueLabel';
       })
-      .join(' / ');
+      .toList(growable: false);
 }
 
 int townSkillDepthForNode(TownSkillNode node, List<TownSkillNode> nodes) {
