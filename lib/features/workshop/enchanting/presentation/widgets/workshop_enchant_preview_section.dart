@@ -35,21 +35,114 @@ class WorkshopEnchantPreviewSection extends StatelessWidget {
                   children: <Widget>[
                     Text(preview!.equipmentName, style: subsectionTitleStyle),
                     const SizedBox(height: AppSpacing.sm),
-                    Wrap(
-                      spacing: AppSpacing.sm,
-                      runSpacing: AppSpacing.sm,
-                      children: <Widget>[
-                        AppBadge(label: preview!.currentEnchantLabel),
-                        AppBadge(label: preview!.nextEnchantLabel),
-                        AppBadge(label: preview!.currentStatLabel),
-                        AppBadge(label: preview!.nextStatLabel),
-                        if (preview!.replaceRequired)
-                          const AppBadge(label: '교체 예정'),
-                      ],
+                    _PreviewComparisonRow(
+                      label: '인챈트',
+                      currentLabel: preview!.currentEnchantLabel,
+                      nextLabel: preview!.nextEnchantLabel,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _PreviewComparisonRow(
+                      label: '스탯',
+                      currentLabel: preview!.currentStatLabel,
+                      nextLabel: preview!.nextStatLabel,
                     ),
                     const SizedBox(height: AppSpacing.sm),
+                    if (preview!.replaceRequired) ...<Widget>[
+                      const AppBadge(label: '교체 예정'),
+                      const SizedBox(height: AppSpacing.sm),
+                    ],
                     Text(preview!.deltaStatLabel, style: dataEmphasisStyle),
                   ],
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PreviewComparisonRow extends StatelessWidget {
+  const _PreviewComparisonRow({
+    required this.label,
+    required this.currentLabel,
+    required this.nextLabel,
+  });
+
+  final String label;
+  final String currentLabel;
+  final String nextLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: _PreviewValue(label: '현재', value: currentLabel),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Icon(
+              Icons.arrow_forward,
+              size: 16,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: _PreviewValue(
+                label: '다음',
+                value: nextLabel,
+                emphasized: true,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _PreviewValue extends StatelessWidget {
+  const _PreviewValue({
+    required this.label,
+    required this.value,
+    this.emphasized = false,
+  });
+
+  final String label;
+  final String value;
+  final bool emphasized;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          value,
+          style: emphasized
+              ? AppTextStyles.of(context).dataEmphasis
+              : theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
                 ),
         ),
       ],
