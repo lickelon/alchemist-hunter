@@ -16,9 +16,9 @@ import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalo
 import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
-import 'package:alchemist_hunter/features/town/data/catalogs/equipment_blueprints.dart';
 import 'package:alchemist_hunter/features/town/data/catalogs/shop_seed.dart';
 import 'package:alchemist_hunter/features/town/data/catalogs/town_skill_nodes.dart';
+import 'package:alchemist_hunter/features/town/data/repositories/town_catalog_asset_loader.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_equipment_blueprint_repository.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_mercenary_template_repository.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_shop_catalog_repository.dart';
@@ -54,8 +54,8 @@ final TownCatalogAssets testTownCatalogAssets = TownCatalogAssets(
     general: _shopDefinition(buildGeneralShopState(DateTime(2026))),
     catalyst: _shopDefinition(buildCatalystShopState(DateTime(2026))),
   ),
-  equipmentBlueprints: townEquipmentBlueprints,
-  equipmentMaterialNames: townEquipmentMaterialNames,
+  equipmentBlueprints: _readTownEquipmentBlueprints(),
+  equipmentMaterialNames: _readTownEquipmentMaterialNames(),
   mercenaryTemplates: _readTownMercenaryTemplates(),
   skillNodes: townSkillNodes,
 );
@@ -299,6 +299,21 @@ List<MercenaryTemplate> _readTownMercenaryTemplates() {
       .toList(growable: false);
 }
 
+List<EquipmentBlueprint> _readTownEquipmentBlueprints() {
+  final TownCatalogAssetLoader loader = TownCatalogAssetLoader();
+  final Map<String, Object?> equipment = _readTownObject('equipment.json');
+  return _readObjectList(
+    equipment,
+    'equipmentBlueprints',
+  ).map(loader.readEquipmentBlueprint).toList(growable: false);
+}
+
+Map<String, String> _readTownEquipmentMaterialNames() {
+  final TownCatalogAssetLoader loader = TownCatalogAssetLoader();
+  final Map<String, Object?> equipment = _readTownObject('equipment.json');
+  return loader.readStringMap(equipment, 'equipmentMaterialNames');
+}
+
 List<HomunculusHatchRecipe> _readWorkshopHatchRecipes() {
   return _readWorkshopObjectList('hatch_recipes.json')
       .map((Map<String, Object?> json) {
@@ -315,9 +330,34 @@ List<HomunculusHatchRecipe> _readWorkshopHatchRecipes() {
       .toList(growable: false);
 }
 
+Map<String, Object?> _readTownObject(String fileName) {
+  final Object? decoded = _readTownJson(fileName);
+  if (decoded is Map<String, Object?>) {
+    return decoded;
+  }
+  throw FormatException('Town catalog $fileName must be an object');
+}
+
+List<Map<String, Object?>> _readObjectList(
+  Map<String, Object?> json,
+  String key,
+) {
+  final Object? value = json[key];
+  if (value is List<Object?>) {
+    return value
+        .map((Object? entry) {
+          if (entry is Map<String, Object?>) {
+            return entry;
+          }
+          throw FormatException('Catalog $key entry must be object');
+        })
+        .toList(growable: false);
+  }
+  throw FormatException('Catalog $key must be a list');
+}
+
 List<Map<String, Object?>> _readTownObjectList(String fileName) {
-  final String source = File('assets/data/town/$fileName').readAsStringSync();
-  final Object? decoded = jsonDecode(source);
+  final Object? decoded = _readTownJson(fileName);
   if (decoded is List<Object?>) {
     return decoded
         .map((Object? entry) {
@@ -329,6 +369,11 @@ List<Map<String, Object?>> _readTownObjectList(String fileName) {
         .toList(growable: false);
   }
   throw FormatException('Town catalog $fileName must be a list');
+}
+
+Object? _readTownJson(String fileName) {
+  final String source = File('assets/data/town/$fileName').readAsStringSync();
+  return jsonDecode(source);
 }
 
 List<Map<String, Object?>> _readWorkshopObjectList(String fileName) {
