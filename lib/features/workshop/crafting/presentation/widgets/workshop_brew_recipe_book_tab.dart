@@ -5,7 +5,6 @@ import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
-import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_submit_results.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/workshop_craft_queue_controller_provider.dart';
@@ -101,7 +100,7 @@ class _WorkshopDiscoveredBrewDetailDialogState
                     children: <Widget>[
                       Text(
                         recipe.title,
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       Wrap(
@@ -109,8 +108,7 @@ class _WorkshopDiscoveredBrewDetailDialogState
                         runSpacing: AppSpacing.sm,
                         children: <Widget>[
                           AppBadge(label: recipe.qualityLabel),
-                          AppBadge(label: '최대 ${recipe.maxCraftableCount}회'),
-                          AppBadge(label: '결과 x$selectedQuantity'),
+                          AppBadge(label: 'x$selectedQuantity'),
                         ],
                       ),
                     ],
@@ -132,9 +130,12 @@ class _WorkshopDiscoveredBrewDetailDialogState
               },
             ),
             const SizedBox(height: AppSpacing.lg),
-            DetailLines(
-              description: '발견 비율',
-              lines: <String>[recipe.ratioLabel],
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: recipe.ratioBadgeLabels
+                  .map((String label) => AppBadge(label: label))
+                  .toList(growable: false),
             ),
           ],
         ),

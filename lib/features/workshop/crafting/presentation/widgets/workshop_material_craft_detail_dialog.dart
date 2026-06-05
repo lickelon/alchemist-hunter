@@ -83,12 +83,11 @@ class _WorkshopMaterialCraftDetailDialogState
                     children: <Widget>[
                       Text(
                         recipe.title,
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       AppBadge(
-                        label:
-                            '결과 x${recipe.resultQuantity * selectedQuantity}',
+                        label: 'x${recipe.resultQuantity * selectedQuantity}',
                       ),
                     ],
                   ),

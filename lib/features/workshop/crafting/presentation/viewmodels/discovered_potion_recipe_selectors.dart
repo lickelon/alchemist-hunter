@@ -11,6 +11,7 @@ class DiscoveredPotionRecipeView {
     required this.qualityLabel,
     required this.traitHint,
     required this.ratioLabel,
+    required this.ratioBadgeLabels,
     required this.summaryLabel,
     required this.traits,
     required this.maxCraftableCount,
@@ -23,6 +24,7 @@ class DiscoveredPotionRecipeView {
   final String qualityLabel;
   final String traitHint;
   final String ratioLabel;
+  final List<String> ratioBadgeLabels;
   final String summaryLabel;
   final Map<String, double> traits;
   final int maxCraftableCount;
@@ -63,6 +65,10 @@ workshopDiscoveredPotionRecipeViewsProvider =
                 traitNames: traitNames,
               ),
               ratioLabel: _traitRatioLabel(
+                recipe.discoveredTraits,
+                traitNames: traitNames,
+              ),
+              ratioBadgeLabels: _traitRatioBadgeLabels(
                 recipe.discoveredTraits,
                 traitNames: traitNames,
               ),
@@ -142,6 +148,24 @@ String _traitRatioLabel(
   final MapEntry<String, double> sub = entries[1];
   return '메인 ${traitNames[main.key] ?? main.key} ${_ratioPercent(main.value)}, '
       '서브 ${traitNames[sub.key] ?? sub.key} ${_ratioPercent(sub.value)}';
+}
+
+List<String> _traitRatioBadgeLabels(
+  Map<String, double> requiredTraits, {
+  required Map<String, String> traitNames,
+}) {
+  final List<MapEntry<String, double>> entries = requiredTraits.entries
+      .where((MapEntry<String, double> entry) => entry.value > 0)
+      .toList(growable: false);
+  if (entries.isEmpty) {
+    return <String>[];
+  }
+  return entries
+      .map(
+        (MapEntry<String, double> entry) =>
+            '${traitNames[entry.key] ?? entry.key} ${_ratioPercent(entry.value)}',
+      )
+      .toList(growable: false);
 }
 
 String _discoveredRecipeSummary(
