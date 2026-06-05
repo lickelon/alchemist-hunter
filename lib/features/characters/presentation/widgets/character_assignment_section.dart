@@ -15,13 +15,12 @@ class CharacterAssignmentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String statusLabel = assignmentLabel.replaceFirst('배치 상태: ', '');
     return CharacterDetailSection(
       title: '배치 상태',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          AppBadge(label: statusLabel),
+          AppBadge(label: assignmentLabel),
           const SizedBox(height: AppSpacing.sm),
           Text(
             assignmentGuideLabel,

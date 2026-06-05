@@ -23,9 +23,9 @@ String characterAssignmentLabel({
   }
 
   if (assignments.isEmpty) {
-    return '배치 상태: 대기';
+    return '대기';
   }
-  return '배치 상태: ${assignments.join(", ")}';
+  return assignments.join(', ');
 }
 
 String? _workshopSlotLabel(

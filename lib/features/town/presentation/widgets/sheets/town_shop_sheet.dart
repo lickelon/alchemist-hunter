@@ -218,7 +218,7 @@ class _ShopItemDetailDialogState extends State<_ShopItemDetailDialog> {
               : () {
                   widget.onBuy(selectedQuantity);
                 },
-          child: Text(widget.soldOut ? '품절' : '구매'),
+          child: const Text('구매'),
         ),
       ],
     );

@@ -57,7 +57,7 @@ class CharacterCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.sm),
-              Text(item.assignmentLabel, style: supportTextStyle),
+              Text('배치 ${item.assignmentLabel}', style: supportTextStyle),
               const SizedBox(height: AppSpacing.sm),
               Text(item.growthLabel, style: supportTextStyle),
             ],
