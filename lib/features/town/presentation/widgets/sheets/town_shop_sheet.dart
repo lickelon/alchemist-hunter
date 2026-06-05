@@ -74,14 +74,20 @@ class TownShopSheet extends ConsumerWidget {
                 );
               },
             ),
-      footer: SizedBox(
-        width: double.infinity,
-        child: FilledButton.tonal(
-          onPressed: () {
-            ref.read(shopControllerProvider).forceRefresh(shopType);
-          },
-          child: Text('강제 갱신 (골드 $refreshCost)'),
-        ),
+      footer: Row(
+        children: <Widget>[
+          AppBadge(label: '골드 $refreshCost'),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: FilledButton.tonalIcon(
+              onPressed: () {
+                ref.read(shopControllerProvider).forceRefresh(shopType);
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('갱신'),
+            ),
+          ),
+        ],
       ),
     );
   }

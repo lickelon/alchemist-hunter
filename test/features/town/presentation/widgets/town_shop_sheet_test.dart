@@ -68,7 +68,8 @@ void main() {
     expect(soldOutButton, findsOneWidget);
     expect(tester.widget<FilledButton>(soldOutButton).onPressed, isNull);
 
-    await tester.tap(find.widgetWithText(FilledButton, '강제 갱신 (골드 25)'));
+    expect(find.text('골드 25'), findsOneWidget);
+    await tester.tap(find.text('갱신'));
     await tester.pumpAndSettle();
 
     expect(find.textContaining('재고 20'), findsWidgets);
