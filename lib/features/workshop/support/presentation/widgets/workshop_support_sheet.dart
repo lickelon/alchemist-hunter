@@ -1,7 +1,9 @@
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_badge.dart';
+import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/section_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -68,9 +70,27 @@ class WorkshopSupportSheet extends ConsumerWidget {
                           dense: true,
                           title: Text(item.name),
                           subtitle: _SupportCandidateSummary(item: item),
-                          trailing: item.selectedForSlot
-                              ? const Icon(Icons.check_circle_outline)
-                              : null,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              IconButton(
+                                tooltip: '상세',
+                                icon: const Icon(Icons.info_outline),
+                                onPressed: () {
+                                  showDialog<void>(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return _SupportCandidateDetailDialog(
+                                        item: item,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                              if (item.selectedForSlot)
+                                const Icon(Icons.check_circle_outline),
+                            ],
+                          ),
                           onTap: item.assignable
                               ? () {
                                   ref
@@ -109,11 +129,36 @@ class _SupportCandidateSummary extends StatelessWidget {
             runSpacing: AppSpacing.sm,
             children: <Widget>[
               AppBadge(label: item.roleLabel),
-              AppBadge(label: item.supportEffectLabel),
               if (item.assignedToSlotLabel != null)
                 AppBadge(label: item.assignedToSlotLabel!),
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SupportCandidateDetailDialog extends StatelessWidget {
+  const _SupportCandidateDetailDialog({required this.item});
+
+  final WorkshopSupportCandidateView item;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<String> lines = <String>[
+      item.supportEffectLabel,
+      if (item.assignedToSlotLabel != null) item.assignedToSlotLabel!,
+    ];
+    return AppDialogLayout(
+      title: item.name,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          AppBadge(label: item.roleLabel),
+          const SizedBox(height: AppSpacing.lg),
+          DetailLines(description: '보조', lines: lines),
         ],
       ),
     );

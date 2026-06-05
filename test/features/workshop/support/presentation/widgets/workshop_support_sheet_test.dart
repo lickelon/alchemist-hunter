@@ -44,6 +44,14 @@ void main() {
     expect(find.text('추출 슬롯'), findsOneWidget);
     expect(find.text('비어 있음'), findsWidgets);
     expect(find.text('추출 수율 +5%'), findsWidgets);
+    expect(find.text('기초 연성 보조'), findsNothing);
+
+    await tester.tap(find.byTooltip('상세').first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('기초 연성 보조'), findsOneWidget);
+    await tester.tap(find.text('닫기').last);
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Nigredo Seed').first);
     await tester.pumpAndSettle();
