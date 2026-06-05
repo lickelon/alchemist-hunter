@@ -17,6 +17,7 @@ class BattleEnemyDefinitionDto {
     this.modifiers = const <BattleModifierDto>[],
     this.passives = const <BattlePassiveEffectDto>[],
     this.skills = const <BattleSkillDefinitionDto>[],
+    this.skillIds = const <String>[],
     this.normalDrops = const <BattleDropEntryDto>[],
     this.specialDrops = const <BattleDropEntryDto>[],
   });
@@ -29,6 +30,7 @@ class BattleEnemyDefinitionDto {
   final List<BattleModifierDto> modifiers;
   final List<BattlePassiveEffectDto> passives;
   final List<BattleSkillDefinitionDto> skills;
+  final List<String> skillIds;
   final List<BattleDropEntryDto> normalDrops;
   final List<BattleDropEntryDto> specialDrops;
 
@@ -42,12 +44,16 @@ class BattleEnemyDefinitionDto {
       modifiers: readList(json, 'modifiers', BattleModifierDto.fromJson),
       passives: readList(json, 'passives', BattlePassiveEffectDto.fromJson),
       skills: readList(json, 'skills', BattleSkillDefinitionDto.fromJson),
+      skillIds: readStringList(json, 'skillIds'),
       normalDrops: readList(json, 'normalDrops', BattleDropEntryDto.fromJson),
       specialDrops: readList(json, 'specialDrops', BattleDropEntryDto.fromJson),
     );
   }
 
-  BattleEnemyDefinition toDomain() {
+  BattleEnemyDefinition toDomain({
+    List<BattleSkillDefinition> referencedSkills =
+        const <BattleSkillDefinition>[],
+  }) {
     return BattleEnemyDefinition(
       id: id,
       name: name,
@@ -60,9 +66,10 @@ class BattleEnemyDefinitionDto {
       passives: passives
           .map((BattlePassiveEffectDto passive) => passive.toDomain())
           .toList(growable: false),
-      skills: skills
-          .map((BattleSkillDefinitionDto skill) => skill.toDomain())
-          .toList(growable: false),
+      skills: <BattleSkillDefinition>[
+        ...skills.map((BattleSkillDefinitionDto skill) => skill.toDomain()),
+        ...referencedSkills,
+      ],
       normalDrops: normalDrops
           .map((BattleDropEntryDto drop) => drop.toDomain())
           .toList(growable: false),

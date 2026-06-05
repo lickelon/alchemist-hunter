@@ -9,11 +9,31 @@ BattleCatalogTables _battleCatalogTablesFromDtos({
   required Map<String, BattleSkillDefinitionDto> combatSkillDtos,
   required Map<String, BattlePassiveEffectDto> combatPassiveDtos,
 }) {
+  final Map<String, BattleSkillDefinition> combatSkillDefinitions =
+      combatSkillDtos.map(
+        (String id, BattleSkillDefinitionDto definition) =>
+            MapEntry<String, BattleSkillDefinition>(id, definition.toDomain()),
+      );
   return BattleCatalogTables(
-    enemyDefinitions: enemyDtos.map(
-      (String id, BattleEnemyDefinitionDto definition) =>
-          MapEntry<String, BattleEnemyDefinition>(id, definition.toDomain()),
-    ),
+    enemyDefinitions: enemyDtos.map((
+      String id,
+      BattleEnemyDefinitionDto definition,
+    ) {
+      final List<BattleSkillDefinition> referencedSkills = definition.skillIds
+          .map((String skillId) {
+            final BattleSkillDefinition? skill =
+                combatSkillDefinitions[skillId];
+            if (skill == null) {
+              throw StateError('Unknown enemy combat skill in $id: $skillId');
+            }
+            return skill;
+          })
+          .toList(growable: false);
+      return MapEntry<String, BattleEnemyDefinition>(
+        id,
+        definition.toDomain(referencedSkills: referencedSkills),
+      );
+    }),
     enemySetDefinitions: enemySetDtos.map(
       (String id, BattleEnemySetDefinitionDto definition) =>
           MapEntry<String, BattleEnemySetDefinition>(id, definition.toDomain()),
@@ -30,10 +50,7 @@ BattleCatalogTables _battleCatalogTablesFromDtos({
             definition.toDomain(),
           ),
     ),
-    combatSkillDefinitions: combatSkillDtos.map(
-      (String id, BattleSkillDefinitionDto definition) =>
-          MapEntry<String, BattleSkillDefinition>(id, definition.toDomain()),
-    ),
+    combatSkillDefinitions: combatSkillDefinitions,
     combatPassiveEffects: combatPassiveDtos.map(
       (String id, BattlePassiveEffectDto definition) =>
           MapEntry<String, BattlePassiveEffect>(id, definition.toDomain()),
