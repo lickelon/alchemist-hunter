@@ -22,7 +22,7 @@ CharacterListItemView buildCharacterListItemView({
     character: character,
     typeLabel: characterTypeLabel(character.type),
     growthLabel:
-        '레벨 ${character.level}, 랭크 ${character.rank}, 티어 ${character.tierIndex}',
+        '레벨 ${character.level}, 랭크 ${character.rank}, ${characterTierLabel(character)}',
     rankHint: characterRankHint(character),
     tierHint: characterTierHint(character, inventory),
     tierMaterialLabel: characterTierMaterialLabel(character, inventory),

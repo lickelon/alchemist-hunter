@@ -3,6 +3,7 @@ import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
+import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_detail_selectors.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_detail_section.dart';
 import 'package:flutter/material.dart';
 
@@ -43,7 +44,7 @@ class CharacterGrowthSection extends StatelessWidget {
             children: <Widget>[
               AppBadge(label: 'Lv. ${character.level}'),
               AppBadge(label: '랭크 ${character.rank}'),
-              AppBadge(label: '티어 ${character.tierIndex}'),
+              AppBadge(label: characterTierLabel(character)),
             ],
           ),
           const SizedBox(height: AppSpacing.md),

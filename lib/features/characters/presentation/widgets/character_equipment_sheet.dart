@@ -3,6 +3,7 @@ import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
+import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_detail_selectors.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_view_models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_equipment_header.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_equipment_item_grid.dart';
@@ -38,7 +39,7 @@ class CharacterEquipmentDialog extends StatelessWidget {
     );
 
     return AppDialogLayout(
-      title: character.name,
+      title: characterDisplayName(character),
       body: SizedBox(
         width: double.maxFinite,
         height: MediaQuery.sizeOf(context).height * AppDialogHeights.medium,

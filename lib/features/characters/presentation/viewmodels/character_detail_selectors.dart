@@ -7,6 +7,32 @@ String characterTypeLabel(CharacterType type) {
   };
 }
 
+String characterTierName(CharacterProgress character) {
+  if (character.type == CharacterType.mercenary) {
+    return switch (character.mercenaryTier ?? MercenaryTier.rookie) {
+      MercenaryTier.rookie => 'Rookie',
+      MercenaryTier.veteran => 'Veteran',
+      MercenaryTier.elite => 'Elite',
+      MercenaryTier.champion => 'Champion',
+      MercenaryTier.legend => 'Legend',
+    };
+  }
+  return switch (character.homunculusTier ?? HomunculusTier.nigredo) {
+    HomunculusTier.nigredo => 'Nigredo',
+    HomunculusTier.albedo => 'Albedo',
+    HomunculusTier.citrinitas => 'Citrinitas',
+    HomunculusTier.rubedo => 'Rubedo',
+  };
+}
+
+String characterTierLabel(CharacterProgress character) {
+  return '티어 ${character.tierIndex}';
+}
+
+String characterDisplayName(CharacterProgress character) {
+  return '${characterTierName(character)} ${character.name}';
+}
+
 String characterRankHint(CharacterProgress character) {
   if (character.canRankUp) {
     return '랭크업 가능';

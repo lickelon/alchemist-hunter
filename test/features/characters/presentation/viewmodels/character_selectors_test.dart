@@ -55,7 +55,7 @@ void main() {
     expect(view.rankHint, '현재 티어 최대 랭크 도달');
     expect(view.tierHint, '티어업 가능');
     expect(view.tierMaterialLabel, '승급 재료: 용병 승급 재료 2 1/1');
-    expect(view.assignmentLabel, '배치 상태: Stage 1');
+    expect(view.assignmentLabel, 'Stage 1');
     expect(view.equipmentSlots.first.slotLabel, '무기');
     expect(view.equipmentSlots.first.availableItems, hasLength(1));
   });
@@ -95,7 +95,11 @@ void main() {
         .first;
 
     expect(view.typeLabel, '호문쿨루스');
-    expect(view.assignmentLabel, '배치 상태: 작업실(추출)');
+    expect(
+      view.growthLabel,
+      '레벨 ${target.level}, 랭크 ${target.rank}, 티어 ${target.tierIndex}',
+    );
+    expect(view.assignmentLabel, '작업실(추출)');
     expect(view.assignmentGuideLabel, '배치 변경은 전투/작업실 화면에서 진행');
   });
 }

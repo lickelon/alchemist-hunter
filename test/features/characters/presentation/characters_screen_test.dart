@@ -3,6 +3,7 @@ import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_combat_stat_service.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/screens/characters_screen.dart';
+import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_detail_selectors.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -80,15 +81,22 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('배치 상태: Stage 1'), findsAtLeastNWidgets(1));
+    expect(find.text(characterDisplayName(leveledTarget)), findsOneWidget);
+    expect(find.text('배치 Stage 1'), findsAtLeastNWidgets(1));
+    expect(find.text('레벨 10, 랭크 2, 티어 1'), findsOneWidget);
     expect(find.text('랭크업'), findsNothing);
     expect(find.text('티어업'), findsNothing);
     expect(find.text('상세'), findsNothing);
 
-    await tester.tap(find.text(target.name));
+    await tester.tap(find.text(characterDisplayName(leveledTarget)));
     await tester.pumpAndSettle();
 
     expect(find.text('현재 성장'), findsOneWidget);
+    expect(
+      find.text(characterDisplayName(leveledTarget)),
+      findsAtLeastNWidgets(1),
+    );
+    expect(find.text('티어 1'), findsOneWidget);
     expect(find.text('총합 스탯'), findsNothing);
     expect(find.text('전투 스탯'), findsOneWidget);
     expect(
@@ -157,11 +165,8 @@ void main() {
     expect(find.text('체력 0'), findsOneWidget);
     expect(find.text('물공 12'), findsOneWidget);
     expect(find.text('물방 0'), findsOneWidget);
-    expect(find.text('마공 0'), findsNothing);
-    expect(find.text('마방 0'), findsNothing);
-    expect(find.text('속도 0'), findsNothing);
     expect(find.text('주는 피해 +5%'), findsAtLeastNWidgets(1));
-    expect(find.text('명중 +6%'), findsNothing);
+    expect(find.text('명중 +6%'), findsOneWidget);
   });
 
   testWidgets(
@@ -200,11 +205,17 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Vital Nigredo'), findsOneWidget);
-      expect(find.text('배치 상태: Stage 1'), findsAtLeastNWidgets(1));
+      final CharacterProgress visibleTarget = target.copyWith(
+        name: 'Vital Nigredo',
+        homunculusOrigin: 'Vital Seed Flask',
+        homunculusRole: '지원',
+        homunculusSupportEffect: '파티 생존력 보조',
+      );
+      expect(find.text(characterDisplayName(visibleTarget)), findsOneWidget);
+      expect(find.text('배치 Stage 1'), findsAtLeastNWidgets(1));
       expect(find.text('지원 / 파티 생존력 보조'), findsNothing);
 
-      await tester.tap(find.text('Vital Nigredo'));
+      await tester.tap(find.text(characterDisplayName(visibleTarget)));
       await tester.pumpAndSettle();
 
       expect(find.text('총합 스탯'), findsNothing);
