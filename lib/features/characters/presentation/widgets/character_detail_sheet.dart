@@ -1,4 +1,5 @@
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_list_selectors.dart';
 import 'package:alchemist_hunter/features/characters/presentation/viewmodels/character_view_models.dart';
@@ -49,7 +50,8 @@ class CharacterDetailSheet extends ConsumerWidget {
 
     final CharacterProgress character = item.character;
     return AppSheetLayout(
-      title: '${character.name} ${item.typeLabel}',
+      title: character.name,
+      header: AppBadge(label: item.typeLabel),
       body: ListView(
         children: <Widget>[
           CharacterGrowthSection(
