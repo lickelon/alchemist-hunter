@@ -1,31 +1,37 @@
 import 'dart:math';
 
-import 'package:alchemist_hunter/features/workshop/crafting/data/catalogs/potion_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/services/potion_crafting_service.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../../../../support/catalog_fixtures.dart';
 
 void main() {
   final PotionCraftingService service = PotionCraftingService(
     random: Random(1),
   );
+  final List<PotionBlueprint> potions = testWorkshopCatalogAssets.potions;
+  final List<PotionRecipeRule> recipeRules =
+      testWorkshopCatalogAssets.potionRecipeRules;
+  final PotionQualityRule qualityRule =
+      testWorkshopCatalogAssets.potionQualityRule;
 
   test('recipe rules resolve potion type by main and sub traits', () {
-    final PotionBlueprint blueprint = potionCatalog.firstWhere(
+    final PotionBlueprint blueprint = potions.firstWhere(
       (PotionBlueprint p) => p.id == 'p_1',
     );
 
     final CraftedPotion hpDominant = service.craftPotion(
       requestedBlueprint: blueprint,
       extractedTraits: const <String, double>{'t_hp': 0.7, 't_atk': 0.3},
-      recipeRules: potionRecipeCatalog,
-      qualityRule: potionQualityCatalog,
+      recipeRules: recipeRules,
+      qualityRule: qualityRule,
     );
     final CraftedPotion atkDominant = service.craftPotion(
       requestedBlueprint: blueprint,
       extractedTraits: const <String, double>{'t_hp': 0.3, 't_atk': 0.7},
-      recipeRules: potionRecipeCatalog,
-      qualityRule: potionQualityCatalog,
+      recipeRules: recipeRules,
+      qualityRule: qualityRule,
     );
 
     expect(hpDominant.typePotionId, 'p_1');
@@ -35,19 +41,19 @@ void main() {
   test('resolves potion type from input traits without selected blueprint', () {
     final String? hpDominant = service.resolvePotionTypeFromTraits(
       inputTraits: const <String, double>{'t_hp': 7, 't_atk': 3},
-      recipeRules: potionRecipeCatalog,
+      recipeRules: recipeRules,
     );
     final String? atkDominant = service.resolvePotionTypeFromTraits(
       inputTraits: const <String, double>{'t_hp': 3, 't_atk': 7},
-      recipeRules: potionRecipeCatalog,
+      recipeRules: recipeRules,
     );
     final String? p3Recipe = service.resolvePotionTypeFromTraits(
       inputTraits: const <String, double>{'t_crit': 0.55, 't_focus': 0.45},
-      recipeRules: potionRecipeCatalog,
+      recipeRules: recipeRules,
     );
     final String? unknown = service.resolvePotionTypeFromTraits(
       inputTraits: const <String, double>{'t_luck': 1},
-      recipeRules: potionRecipeCatalog,
+      recipeRules: recipeRules,
     );
 
     expect(hpDominant, 'p_1');
@@ -57,8 +63,8 @@ void main() {
   });
 
   test('recipe required traits use result potion target traits', () {
-    for (final PotionRecipeRule rule in potionRecipeCatalog) {
-      final PotionBlueprint resultPotion = potionCatalog.firstWhere(
+    for (final PotionRecipeRule rule in recipeRules) {
+      final PotionBlueprint resultPotion = potions.firstWhere(
         (PotionBlueprint potion) => potion.id == rule.resultPotionId,
       );
 
@@ -69,7 +75,7 @@ void main() {
 
   test('recipe rules keep unique ordered main and sub pairs', () {
     final Set<String> pairs = <String>{};
-    for (final PotionRecipeRule rule in potionRecipeCatalog) {
+    for (final PotionRecipeRule rule in recipeRules) {
       expect(rule.mainTraitId, isNot(rule.subTraitId));
       expect(rule.mainPercent, greaterThan(rule.subPercent));
       expect(rule.mainPercent + rule.subPercent, 100);
@@ -77,7 +83,7 @@ void main() {
       final String pair = '${rule.mainTraitId}/${rule.subTraitId}';
       expect(pairs.add(pair), true);
       expect(
-        potionCatalog.any(
+        potions.any(
           (PotionBlueprint potion) => potion.id == rule.resultPotionId,
         ),
         true,
@@ -86,21 +92,21 @@ void main() {
   });
 
   test('quality grade is calculated by target ratio score', () {
-    final PotionBlueprint blueprint = potionCatalog.firstWhere(
+    final PotionBlueprint blueprint = potions.firstWhere(
       (PotionBlueprint p) => p.id == 'p_1',
     );
 
     final CraftedPotion high = service.craftPotion(
       requestedBlueprint: blueprint,
       extractedTraits: const <String, double>{'t_hp': 0.6, 't_atk': 0.4},
-      recipeRules: potionRecipeCatalog,
-      qualityRule: potionQualityCatalog,
+      recipeRules: recipeRules,
+      qualityRule: qualityRule,
     );
     final CraftedPotion low = service.craftPotion(
       requestedBlueprint: blueprint,
       extractedTraits: const <String, double>{'t_hp': 0.0, 't_atk': 1.0},
-      recipeRules: potionRecipeCatalog,
-      qualityRule: potionQualityCatalog,
+      recipeRules: recipeRules,
+      qualityRule: qualityRule,
     );
 
     expect(high.qualityGrade.index <= PotionQualityGrade.a.index, true);
@@ -109,7 +115,7 @@ void main() {
   });
 
   test('calculates quality from input traits', () {
-    final PotionBlueprint blueprint = potionCatalog.firstWhere(
+    final PotionBlueprint blueprint = potions.firstWhere(
       (PotionBlueprint p) => p.id == 'p_1',
     );
 
@@ -117,13 +123,13 @@ void main() {
         .calculateQualityFromTraits(
           targetTraits: blueprint.targetTraits,
           inputTraits: const <String, double>{'t_hp': 6, 't_atk': 4},
-          qualityRule: potionQualityCatalog,
+          qualityRule: qualityRule,
         );
     final ({PotionQualityGrade grade, double score}) low = service
         .calculateQualityFromTraits(
           targetTraits: blueprint.targetTraits,
           inputTraits: const <String, double>{'t_hp': 0, 't_atk': 1},
-          qualityRule: potionQualityCatalog,
+          qualityRule: qualityRule,
         );
 
     expect(high.grade, PotionQualityGrade.s);
@@ -132,7 +138,7 @@ void main() {
   });
 
   test('quality grade follows main ratio difference bands', () {
-    final PotionBlueprint blueprint = potionCatalog.firstWhere(
+    final PotionBlueprint blueprint = potions.firstWhere(
       (PotionBlueprint p) => p.id == 'p_1',
     );
 
@@ -140,31 +146,31 @@ void main() {
         .calculateQualityFromTraits(
           targetTraits: blueprint.targetTraits,
           inputTraits: const <String, double>{'t_hp': 0.6, 't_atk': 0.4},
-          qualityRule: potionQualityCatalog,
+          qualityRule: qualityRule,
         );
     final ({PotionQualityGrade grade, double score}) near = service
         .calculateQualityFromTraits(
           targetTraits: blueprint.targetTraits,
           inputTraits: const <String, double>{'t_hp': 0.55, 't_atk': 0.45},
-          qualityRule: potionQualityCatalog,
+          qualityRule: qualityRule,
         );
     final ({PotionQualityGrade grade, double score}) medium = service
         .calculateQualityFromTraits(
           targetTraits: blueprint.targetTraits,
           inputTraits: const <String, double>{'t_hp': 0.5, 't_atk': 0.5},
-          qualityRule: potionQualityCatalog,
+          qualityRule: qualityRule,
         );
     final ({PotionQualityGrade grade, double score}) large = service
         .calculateQualityFromTraits(
           targetTraits: blueprint.targetTraits,
           inputTraits: const <String, double>{'t_hp': 0.35, 't_atk': 0.65},
-          qualityRule: potionQualityCatalog,
+          qualityRule: qualityRule,
         );
     final ({PotionQualityGrade grade, double score}) fail = service
         .calculateQualityFromTraits(
           targetTraits: blueprint.targetTraits,
           inputTraits: const <String, double>{'t_hp': 0.25, 't_atk': 0.75},
-          qualityRule: potionQualityCatalog,
+          qualityRule: qualityRule,
         );
 
     expect(exact.grade, PotionQualityGrade.s);
@@ -179,21 +185,21 @@ void main() {
   });
 
   test('guard swift recipe grades against guard swift target ratio', () {
-    final PotionBlueprint blueprint = potionCatalog.firstWhere(
+    final PotionBlueprint blueprint = potions.firstWhere(
       (PotionBlueprint p) => p.id == 'p_4',
     );
 
     final CraftedPotion optimal = service.craftPotion(
       requestedBlueprint: blueprint,
       extractedTraits: const <String, double>{'t_def': 0.65, 't_spd': 0.35},
-      recipeRules: potionRecipeCatalog,
-      qualityRule: potionQualityCatalog,
+      recipeRules: recipeRules,
+      qualityRule: qualityRule,
     );
     final CraftedPotion skewed = service.craftPotion(
       requestedBlueprint: blueprint,
       extractedTraits: const <String, double>{'t_def': 0.2, 't_spd': 0.8},
-      recipeRules: potionRecipeCatalog,
-      qualityRule: potionQualityCatalog,
+      recipeRules: recipeRules,
+      qualityRule: qualityRule,
     );
 
     expect(optimal.typePotionId, 'p_4');
@@ -211,7 +217,7 @@ void main() {
     })
     preview = service.previewBrew(
       inputTraits: const <String, double>{'t_hp': 7, 't_atk': 3},
-      recipeRules: potionRecipeCatalog,
+      recipeRules: recipeRules,
       discoveredPotionIds: const <String>{'p_1'},
     );
 
@@ -222,7 +228,7 @@ void main() {
   });
 
   test('prepareCraftFromExtractedInventory consumes matching traits', () {
-    final PotionBlueprint blueprint = potionCatalog.firstWhere(
+    final PotionBlueprint blueprint = potions.firstWhere(
       (PotionBlueprint p) => p.id == 'p_1',
     );
 
@@ -243,7 +249,7 @@ void main() {
   });
 
   test('requiredTraitsForRepeatCount returns aggregated trait amounts', () {
-    final PotionBlueprint blueprint = potionCatalog.firstWhere(
+    final PotionBlueprint blueprint = potions.firstWhere(
       (PotionBlueprint p) => p.id == 'p_1',
     );
 

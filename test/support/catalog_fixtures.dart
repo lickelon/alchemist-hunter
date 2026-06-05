@@ -28,7 +28,6 @@ import 'package:alchemist_hunter/features/town/domain/repositories/equipment_blu
 import 'package:alchemist_hunter/features/town/domain/repositories/mercenary_template_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/shop_catalog_repository.dart';
 import 'package:alchemist_hunter/features/town/domain/repositories/town_skill_tree_repository.dart';
-import 'package:alchemist_hunter/features/workshop/crafting/data/catalogs/potion_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/static_workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
@@ -57,9 +56,9 @@ final WorkshopCatalogAssets testWorkshopCatalogAssets = WorkshopCatalogAssets(
   traits: traitCatalog,
   materials: materialCatalog,
   extractionProfiles: _readWorkshopExtractionProfiles(),
-  potions: potionCatalog,
-  potionRecipeRules: potionRecipeCatalog,
-  potionQualityRule: potionQualityCatalog,
+  potions: _readWorkshopPotions(),
+  potionRecipeRules: _readWorkshopPotionRecipeRules(),
+  potionQualityRule: _readWorkshopPotionQualityRule(),
   craftRecipes: _readWorkshopCraftRecipes(),
   hatchRecipes: _readWorkshopHatchRecipes(),
   skillNodes: _readWorkshopSkillNodes(),
@@ -335,6 +334,27 @@ List<HomunculusHatchRecipe> _readWorkshopHatchRecipes() {
       .toList(growable: false);
 }
 
+List<PotionBlueprint> _readWorkshopPotions() {
+  final WorkshopCatalogAssetLoader loader = WorkshopCatalogAssetLoader();
+  return _readWorkshopObjectList(
+    'potions.json',
+  ).map(loader.readPotion).toList(growable: false);
+}
+
+List<PotionRecipeRule> _readWorkshopPotionRecipeRules() {
+  final WorkshopCatalogAssetLoader loader = WorkshopCatalogAssetLoader();
+  return _readWorkshopObjectList(
+    'potion_recipes.json',
+  ).map(loader.readPotionRecipeRule).toList(growable: false);
+}
+
+PotionQualityRule _readWorkshopPotionQualityRule() {
+  final WorkshopCatalogAssetLoader loader = WorkshopCatalogAssetLoader();
+  return loader.readPotionQualityRule(
+    _readWorkshopObject('potion_quality.json'),
+  );
+}
+
 List<WorkshopCraftRecipe> _readWorkshopCraftRecipes() {
   final WorkshopCatalogAssetLoader loader = WorkshopCatalogAssetLoader();
   return _readWorkshopObjectList(
@@ -403,10 +423,7 @@ Object? _readTownJson(String fileName) {
 }
 
 List<Map<String, Object?>> _readWorkshopObjectList(String fileName) {
-  final String source = File(
-    'assets/data/workshop/$fileName',
-  ).readAsStringSync();
-  final Object? decoded = jsonDecode(source);
+  final Object? decoded = _readWorkshopJson(fileName);
   if (decoded is List<Object?>) {
     return decoded
         .map((Object? entry) {
@@ -420,6 +437,21 @@ List<Map<String, Object?>> _readWorkshopObjectList(String fileName) {
         .toList(growable: false);
   }
   throw FormatException('Workshop catalog $fileName must be a list');
+}
+
+Map<String, Object?> _readWorkshopObject(String fileName) {
+  final Object? decoded = _readWorkshopJson(fileName);
+  if (decoded is Map<String, Object?>) {
+    return decoded;
+  }
+  throw FormatException('Workshop catalog $fileName must be an object');
+}
+
+Object? _readWorkshopJson(String fileName) {
+  final String source = File(
+    'assets/data/workshop/$fileName',
+  ).readAsStringSync();
+  return jsonDecode(source);
 }
 
 String _readString(Map<String, Object?> json, String key) {

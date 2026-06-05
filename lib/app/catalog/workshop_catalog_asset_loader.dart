@@ -30,12 +30,12 @@ class WorkshopCatalogAssetLoader {
       potions: (await _readObjectList(
         bundle,
         'potions.json',
-      )).map(_readPotion).toList(growable: false),
+      )).map(readPotion).toList(growable: false),
       potionRecipeRules: (await _readObjectList(
         bundle,
         'potion_recipes.json',
-      )).map(_readPotionRecipeRule).toList(growable: false),
-      potionQualityRule: _readPotionQualityRule(
+      )).map(readPotionRecipeRule).toList(growable: false),
+      potionQualityRule: readPotionQualityRule(
         await _readObject(bundle, 'potion_quality.json'),
       ),
       craftRecipes: (await _readObjectList(
@@ -132,7 +132,7 @@ class WorkshopCatalogAssetLoader {
     );
   }
 
-  PotionBlueprint _readPotion(Map<String, Object?> json) {
+  PotionBlueprint readPotion(Map<String, Object?> json) {
     return PotionBlueprint(
       id: j.readString(json, 'id'),
       name: j.readString(json, 'name'),
@@ -142,7 +142,7 @@ class WorkshopCatalogAssetLoader {
     );
   }
 
-  PotionRecipeRule _readPotionRecipeRule(Map<String, Object?> json) {
+  PotionRecipeRule readPotionRecipeRule(Map<String, Object?> json) {
     return PotionRecipeRule(
       id: j.readString(json, 'id'),
       mainTraitId: j.readString(json, 'mainTraitId'),
@@ -153,7 +153,7 @@ class WorkshopCatalogAssetLoader {
     );
   }
 
-  PotionQualityRule _readPotionQualityRule(Map<String, Object?> json) {
+  PotionQualityRule readPotionQualityRule(Map<String, Object?> json) {
     final Map<String, double> thresholds = j.readDoubleMap(
       json,
       'gradeThresholds',
