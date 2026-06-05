@@ -26,7 +26,7 @@
 
 | 영역 | 현재 파일 | 주요 데이터 |
 | --- | --- | --- |
-| Battle stage | `assets/data/battle/stages.json`, `stage_catalog.json` | 권장 전투력, 탐색 시간, 복구 시간, 보상, 해금 조건 |
+| Battle stage | `assets/data/battle/stages.json`, `stage_catalog.json` | 권장 전투력, 탐색 시간, 복구 시간, 보상, 해금 조건. `stage_catalog.json`은 중복 순서 인덱스이므로 제거 예정 |
 | Battle enemy | `assets/data/battle/enemies.json` | 적 스탯, 액티브 스킬, 패시브, 적별 드롭 |
 | Battle encounter | `assets/data/battle/enemy_sets.json`, `stages.json` | stage별 적 조합, 조합 확률 |
 | Town shop | `assets/data/town/shops.json` | 상점 재료, 가격, 수량, 갱신 시간, 강제 갱신 비용 |
@@ -144,3 +144,17 @@ Town 카탈로그는 `assets/data/town/` 로컬 asset에서 읽는다. 포함 �
 Workshop 카탈로그는 `assets/data/workshop/` 로컬 asset에서 읽는다. 포함 범위는 재료 / 원소, 추출 프로필, 포션 양조 레시피, 원소 + 재료 제작 레시피, 부화 레시피, Workshop 스킬트리다.
 
 기존 Dart catalog 상수는 테스트 fixture 또는 생성 보조 입력으로만 남긴다. 앱 런타임의 기준 데이터는 로컬 JSON asset이다.
+
+## 9. 후속 정리
+
+### 9.1 `stage_catalog.json` 제거
+- 현재 `assets/data/battle/stage_catalog.json`은 스테이지 표시 / 해금 검사 순서를 제공한다.
+- 하지만 `assets/data/battle/stages.json`이 이미 배열이며, 이 배열 순서가 동일한 역할을 할 수 있다.
+- 별도 순서 인덱스를 유지할 명확한 요구가 없으므로 `stage_catalog.json`은 제거한다.
+
+수정 방향:
+1. `BattleCatalogAssetLoader`가 `stage_catalog.json`을 읽지 않는다.
+2. `stages.json` 배열 순서에서 `stageCatalog`를 생성한다.
+3. 테스트 fixture도 동일하게 `stages.json` 배열 순서를 사용한다.
+4. `assets/data/battle/stage_catalog.json`을 삭제한다.
+5. stage catalog 검증은 `stages.json` 배열에서 만든 순서에 대해 유지한다.
