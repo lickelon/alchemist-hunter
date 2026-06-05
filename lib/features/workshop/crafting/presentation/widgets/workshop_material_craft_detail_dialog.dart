@@ -1,5 +1,6 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_slider_field.dart';
@@ -58,6 +59,9 @@ class _WorkshopMaterialCraftDetailDialogState
       '시간 ${recipe.totalDurationLabel(selectedQuantity)}',
       if (recipe.extraCostHint.isNotEmpty) recipe.extraCostHint,
     ];
+    final TextStyle subsectionTitleStyle = AppTextStyles.of(
+      context,
+    ).subsectionTitle;
 
     return AppDialogLayout(
       title: '제작 등록',
@@ -95,7 +99,7 @@ class _WorkshopMaterialCraftDetailDialogState
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('수량'),
+            Text('수량', style: subsectionTitleStyle),
             const SizedBox(height: AppSpacing.md),
             AppQuantitySlider(
               selectedQuantity: selectedQuantity,
@@ -108,7 +112,7 @@ class _WorkshopMaterialCraftDetailDialogState
               },
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('재료'),
+            Text('재료', style: subsectionTitleStyle),
             const SizedBox(height: AppSpacing.md),
             ResourceIconGrid(items: materialItems),
             const SizedBox(height: AppSpacing.lg),
