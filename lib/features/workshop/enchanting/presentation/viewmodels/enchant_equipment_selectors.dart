@@ -12,7 +12,6 @@ class EnchantEquipmentView {
     required this.name,
     required this.slotLabel,
     required this.locationLabel,
-    required this.statLabel,
     required this.enchantLabel,
   });
 
@@ -21,7 +20,6 @@ class EnchantEquipmentView {
   final String name;
   final String slotLabel;
   final String locationLabel;
-  final String statLabel;
   final String enchantLabel;
 }
 
@@ -39,7 +37,6 @@ final Provider<List<EnchantEquipmentView>> enchantEquipmentViewsProvider =
               name: item.name,
               slotLabel: equipmentSlotLabel(item.slot),
               locationLabel: record.locationLabel,
-              statLabel: equipmentInstanceDetailLabel(item),
               enchantLabel: item.enchant == null
                   ? '인챈트 없음'
                   : equipmentEnchantLabel(item.enchant!),

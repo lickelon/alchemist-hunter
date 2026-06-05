@@ -35,7 +35,7 @@ townEquipmentInventoryViewsProvider =
               blueprintId: entry.blueprintId,
               name: entry.name,
               slotLabel: equipmentSlotLabel(entry.slot),
-              statLabel: equipmentInstanceDetailLabel(entry),
+              detailLabels: equipmentInstanceDetailLabels(entry),
             );
           })
           .toList(growable: false);

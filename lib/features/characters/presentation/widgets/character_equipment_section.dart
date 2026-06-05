@@ -51,7 +51,7 @@ class CharacterEquipmentSection extends StatelessWidget {
                           Wrap(
                             spacing: AppSpacing.sm,
                             runSpacing: AppSpacing.sm,
-                            children: _splitEquipmentLabel(slot.statLabel)
+                            children: slot.detailLabels
                                 .map((String label) => AppBadge(label: label))
                                 .toList(growable: false),
                           ),
@@ -71,12 +71,4 @@ class CharacterEquipmentSection extends StatelessWidget {
       ),
     );
   }
-}
-
-Iterable<String> _splitEquipmentLabel(String label) {
-  return label
-      .split('\n')
-      .first
-      .split(' / ')
-      .where((String part) => part.isNotEmpty);
 }

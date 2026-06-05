@@ -36,7 +36,7 @@ townEquipmentBlueprintViewsProvider = Provider<List<TownEquipmentBlueprintView>>
           id: blueprint.id,
           name: blueprint.name,
           slotLabel: equipmentSlotLabel(blueprint.slot),
-          statLabel: equipmentBlueprintDetailLabel(blueprint),
+          detailLabels: equipmentBlueprintDetailLabels(blueprint),
           materialCostLabel: adjustedCosts.entries
               .map(
                 (MapEntry<String, int> entry) =>

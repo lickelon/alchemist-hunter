@@ -36,7 +36,7 @@ class CharacterEquipmentHeader extends StatelessWidget {
               ),
             ),
             title: Text(slot.equippedItem!.name),
-            subtitle: _EquipmentStatBadges(label: slot.statLabel),
+            subtitle: _EquipmentStatBadges(labels: slot.detailLabels),
             trailing: TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -53,9 +53,9 @@ class CharacterEquipmentHeader extends StatelessWidget {
 }
 
 class _EquipmentStatBadges extends StatelessWidget {
-  const _EquipmentStatBadges({required this.label});
+  const _EquipmentStatBadges({required this.labels});
 
-  final String label;
+  final List<String> labels;
 
   @override
   Widget build(BuildContext context) {
@@ -64,18 +64,10 @@ class _EquipmentStatBadges extends StatelessWidget {
       child: Wrap(
         spacing: AppSpacing.sm,
         runSpacing: AppSpacing.sm,
-        children: _splitEquipmentLabel(
-          label,
-        ).map((String part) => AppBadge(label: part)).toList(growable: false),
+        children: labels
+            .map((String label) => AppBadge(label: label))
+            .toList(growable: false),
       ),
     );
   }
-}
-
-Iterable<String> _splitEquipmentLabel(String label) {
-  return label
-      .split('\n')
-      .first
-      .split(' / ')
-      .where((String part) => part.isNotEmpty);
 }

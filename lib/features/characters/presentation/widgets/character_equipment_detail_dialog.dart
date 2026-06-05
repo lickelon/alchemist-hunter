@@ -3,8 +3,6 @@ import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/features/characters/presentation/widgets/character_equipment_item_grid.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
-import 'package:alchemist_hunter/features/town/equipment/equipment_effect_labels.dart';
-import 'package:alchemist_hunter/features/town/equipment/equipment_stat_labels.dart';
 import 'package:flutter/material.dart';
 
 class CharacterEquipmentDetailDialog extends StatelessWidget {
@@ -23,12 +21,7 @@ class CharacterEquipmentDetailDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<String> lines = <String>[
       _slotLabel(item.slot),
-      equipmentInstanceStatLabel(item),
-      if (item.enchant != null) '인챈트 ${equipmentEnchantLabel(item.enchant!)}',
-      if (item.totalStatModifiers.isNotEmpty ||
-          item.totalModifiers.isNotEmpty ||
-          item.totalPassives.isNotEmpty)
-        equipmentInstanceEffectLabel(item),
+      ...equipmentInstanceDetailLabels(item),
     ];
 
     return AppDialogLayout(

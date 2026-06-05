@@ -13,6 +13,30 @@ String formatEquipmentStatLabel({
   bool includeZero = true,
   String emptyLabel = '없음',
 }) {
+  return formatEquipmentStatLabels(
+    maxHp: maxHp,
+    physicalAttack: physicalAttack,
+    physicalDefense: physicalDefense,
+    magicalAttack: magicalAttack,
+    magicalDefense: magicalDefense,
+    speed: speed,
+    signed: signed,
+    includeZero: includeZero,
+    emptyLabel: emptyLabel,
+  ).join(' / ');
+}
+
+List<String> formatEquipmentStatLabels({
+  required int maxHp,
+  required int physicalAttack,
+  required int physicalDefense,
+  required int magicalAttack,
+  required int magicalDefense,
+  required int speed,
+  bool signed = false,
+  bool includeZero = true,
+  String emptyLabel = '없음',
+}) {
   final List<({String label, int value})> stats = <({String label, int value})>[
     (label: '체력', value: maxHp),
     (label: '물공', value: physicalAttack),
@@ -22,7 +46,7 @@ String formatEquipmentStatLabel({
     (label: '속도', value: speed),
   ];
 
-  final List<String> segments = stats
+  final List<String> labels = stats
       .where(
         (({String label, int value}) entry) => includeZero || entry.value != 0,
       )
@@ -32,13 +56,10 @@ String formatEquipmentStatLabel({
       )
       .toList(growable: false);
 
-  if (segments.isEmpty) {
-    return emptyLabel;
+  if (labels.isEmpty) {
+    return <String>[emptyLabel];
   }
-  if (includeZero) {
-    return '${segments.take(3).join(' / ')}\n${segments.skip(3).join(' / ')}';
-  }
-  return segments.join(' / ');
+  return labels;
 }
 
 String formatEquipmentStatModifierLabel(
@@ -49,11 +70,25 @@ String formatEquipmentStatModifierLabel(
   if (lines.isEmpty) {
     return emptyLabel;
   }
-  return lines.join('\n');
+  return lines.join(' / ');
 }
 
 String equipmentEnchantStatLabel(EquipmentEnchant enchant) {
   return formatEquipmentStatLabel(
+    maxHp: enchant.maxHpBonus,
+    physicalAttack: enchant.physicalAttackBonus,
+    physicalDefense: enchant.physicalDefenseBonus,
+    magicalAttack: enchant.magicalAttackBonus,
+    magicalDefense: enchant.magicalDefenseBonus,
+    speed: enchant.speedBonus,
+    signed: true,
+    includeZero: false,
+    emptyLabel: '보정 없음',
+  );
+}
+
+List<String> equipmentEnchantStatLabels(EquipmentEnchant enchant) {
+  return formatEquipmentStatLabels(
     maxHp: enchant.maxHpBonus,
     physicalAttack: enchant.physicalAttackBonus,
     physicalDefense: enchant.physicalDefenseBonus,
@@ -77,8 +112,30 @@ String equipmentBlueprintStatLabel(EquipmentBlueprint blueprint) {
   );
 }
 
+List<String> equipmentBlueprintStatLabels(EquipmentBlueprint blueprint) {
+  return formatEquipmentStatLabels(
+    maxHp: blueprint.maxHp,
+    physicalAttack: blueprint.physicalAttack,
+    physicalDefense: blueprint.physicalDefense,
+    magicalAttack: blueprint.magicalAttack,
+    magicalDefense: blueprint.magicalDefense,
+    speed: blueprint.speed,
+  );
+}
+
 String equipmentInstanceStatLabel(EquipmentInstance equipment) {
   return formatEquipmentStatLabel(
+    maxHp: equipment.totalMaxHp,
+    physicalAttack: equipment.totalPhysicalAttack,
+    physicalDefense: equipment.totalPhysicalDefense,
+    magicalAttack: equipment.totalMagicalAttack,
+    magicalDefense: equipment.totalMagicalDefense,
+    speed: equipment.totalSpeed,
+  );
+}
+
+List<String> equipmentInstanceStatLabels(EquipmentInstance equipment) {
+  return formatEquipmentStatLabels(
     maxHp: equipment.totalMaxHp,
     physicalAttack: equipment.totalPhysicalAttack,
     physicalDefense: equipment.totalPhysicalDefense,

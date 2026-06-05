@@ -26,12 +26,12 @@ class CharacterEquipmentSlotView {
 
   String get currentLabel => equippedItem?.name ?? '미장착';
 
-  String get statLabel {
+  List<String> get detailLabels {
     final EquipmentInstance? item = equippedItem;
     if (item == null) {
-      return '장착 가능한 장비 ${availableItems.length}개';
+      return <String>['장착 가능한 장비 ${availableItems.length}개'];
     }
-    return equipmentInstanceDetailLabel(item);
+    return equipmentInstanceDetailLabels(item);
   }
 }
 

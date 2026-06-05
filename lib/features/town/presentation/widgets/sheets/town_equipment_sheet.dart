@@ -48,7 +48,7 @@ class TownEquipmentSheet extends ConsumerWidget {
                       subtitle: _EquipmentLabelBadges(
                         labels: <String>[
                           entry.slotLabel,
-                          entry.statLabel,
+                          ...entry.detailLabels,
                           entry.materialCostLabel,
                           '시간 ${entry.durationLabel}',
                         ],
@@ -165,7 +165,7 @@ class _EquipmentInventoryDetailDialog extends StatelessWidget {
     return AppDialogLayout(
       title: entry.name,
       body: _EquipmentLabelBadges(
-        labels: <String>['슬롯 ${entry.slotLabel}', entry.statLabel],
+        labels: <String>['슬롯 ${entry.slotLabel}', ...entry.detailLabels],
       ),
     );
   }
@@ -184,17 +184,9 @@ class _EquipmentLabelBadges extends StatelessWidget {
         spacing: AppSpacing.sm,
         runSpacing: AppSpacing.sm,
         children: labels
-            .expand(_splitEquipmentLabel)
             .map((String label) => AppBadge(label: label))
             .toList(growable: false),
       ),
     );
   }
-}
-
-Iterable<String> _splitEquipmentLabel(String label) {
-  return label
-      .split('\n')
-      .expand((String line) => line.split(' / '))
-      .where((String part) => part.isNotEmpty);
 }

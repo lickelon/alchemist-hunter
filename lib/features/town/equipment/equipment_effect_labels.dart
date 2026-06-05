@@ -9,19 +9,41 @@ String formatEquipmentEffectLabel({
   required List<BattlePassiveEffect> passives,
   String emptyLabel = '특수 효과 없음',
 }) {
-  final List<String> lines = <String>[
+  return formatEquipmentEffectLabels(
+    statModifiers: statModifiers,
+    modifiers: modifiers,
+    passives: passives,
+    emptyLabel: emptyLabel,
+  ).join(' / ');
+}
+
+List<String> formatEquipmentEffectLabels({
+  required List<BattleStatModifier> statModifiers,
+  required List<BattleModifier> modifiers,
+  required List<BattlePassiveEffect> passives,
+  String emptyLabel = '특수 효과 없음',
+}) {
+  final List<String> labels = <String>[
     ...statModifiers.map(equipmentStatModifierLabel),
     ...modifiers.map(equipmentModifierLabel),
     ...passives.map(equipmentPassiveLabel),
   ];
-  if (lines.isEmpty) {
-    return emptyLabel;
+  if (labels.isEmpty) {
+    return <String>[emptyLabel];
   }
-  return lines.join('\n');
+  return labels;
 }
 
 String equipmentEnchantEffectLabel(EquipmentEnchant enchant) {
   return formatEquipmentEffectLabel(
+    statModifiers: enchant.statModifiers,
+    modifiers: enchant.modifiers,
+    passives: enchant.passives,
+  );
+}
+
+List<String> equipmentEnchantEffectLabels(EquipmentEnchant enchant) {
+  return formatEquipmentEffectLabels(
     statModifiers: enchant.statModifiers,
     modifiers: enchant.modifiers,
     passives: enchant.passives,
@@ -36,8 +58,24 @@ String equipmentBlueprintEffectLabel(EquipmentBlueprint blueprint) {
   );
 }
 
+List<String> equipmentBlueprintEffectLabels(EquipmentBlueprint blueprint) {
+  return formatEquipmentEffectLabels(
+    statModifiers: blueprint.statModifiers,
+    modifiers: blueprint.modifiers,
+    passives: blueprint.passives,
+  );
+}
+
 String equipmentInstanceEffectLabel(EquipmentInstance equipment) {
   return formatEquipmentEffectLabel(
+    statModifiers: equipment.totalStatModifiers,
+    modifiers: equipment.totalModifiers,
+    passives: equipment.totalPassives,
+  );
+}
+
+List<String> equipmentInstanceEffectLabels(EquipmentInstance equipment) {
+  return formatEquipmentEffectLabels(
     statModifiers: equipment.totalStatModifiers,
     modifiers: equipment.totalModifiers,
     passives: equipment.totalPassives,
@@ -48,12 +86,12 @@ String equipmentModifierLabel(BattleModifier modifier) {
   final String valueLabel = signedPercent(modifier.value);
   final String schoolLabel = switch (modifier.school) {
     DamageSchool.any => '',
-    DamageSchool.physical => ' / 물리',
-    DamageSchool.magical => ' / 마법',
+    DamageSchool.physical => ' 물리',
+    DamageSchool.magical => ' 마법',
   };
   final String targetLabel = modifier.targetFaction == null
       ? ''
-      : ' / 대 ${modifier.targetFaction == CombatFaction.mercenary ? "용병" : "호문쿨루스"}';
+      : ' 대 ${modifier.targetFaction == CombatFaction.mercenary ? "용병" : "호문쿨루스"}';
   final String base = switch (modifier.type) {
     BattleModifierType.damageDealt => '주는 피해 $valueLabel',
     BattleModifierType.damageTaken => '받는 피해 $valueLabel',
