@@ -131,6 +131,15 @@ extension _BattleCatalogTableValidation on BattleCatalogTables {
     final int stageNumber = _stageNumber(stage.id);
     for (int index = 0; index < stage.encounters.length; index += 1) {
       final BattleStageEncounterDefinition encounter = stage.encounters[index];
+      final String expectedEncounterId =
+          'encounter_${stageNumber.toString().padLeft(2, '0')}_'
+          '${(index + 1).toString().padLeft(3, '0')}';
+      if (encounter.id != expectedEncounterId) {
+        throw StateError(
+          'Unexpected encounter order in ${stage.id}: '
+          '${encounter.id}, expected $expectedEncounterId',
+        );
+      }
       final String expectedEnemySetId =
           'enemy_set_${stageNumber.toString().padLeft(2, '0')}_'
           '${(index + 1).toString().padLeft(3, '0')}';
