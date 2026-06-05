@@ -219,10 +219,15 @@ Map<String, T> _readBattleDtoMap<T>(
   List<Map<String, Object?>> entries,
   T Function(Map<String, Object?> json) convert,
 ) {
-  return <String, T>{
-    for (final Map<String, Object?> entry in entries)
-      _readBattleId(entry): convert(entry),
-  };
+  final Map<String, T> values = <String, T>{};
+  for (final Map<String, Object?> entry in entries) {
+    final String id = _readBattleId(entry);
+    if (values.containsKey(id)) {
+      throw FormatException('Duplicate battle catalog id: $id');
+    }
+    values[id] = convert(entry);
+  }
+  return values;
 }
 
 List<String> _readBattleIds(List<Map<String, Object?>> entries) {
