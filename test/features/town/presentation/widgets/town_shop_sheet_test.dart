@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../../../support/catalog_fixtures.dart';
 
 void main() {
-  testWidgets('town shop sheet shows stock policy and disables sold out item', (
+  testWidgets('town shop sheet shows item grid and sold out detail', (
     WidgetTester tester,
   ) async {
     final ProviderContainer container = ProviderContainer(
@@ -58,21 +58,31 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('한도 20개'), findsOneWidget);
-    expect(find.text('재입고 15분'), findsOneWidget);
-    expect(find.text('다음 10:15'), findsAtLeastNWidgets(1));
-    expect(find.text('Emberroot'), findsOneWidget);
+    expect(find.text('한도 20개'), findsNothing);
+    expect(find.text('재입고 15분'), findsNothing);
+    expect(find.byKey(const ValueKey<String>('shop_item_m_1')), findsOneWidget);
     expect(find.textContaining('품절'), findsWidgets);
 
+    await tester.tap(find.byKey(const ValueKey<String>('shop_item_m_1')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Emberroot'), findsOneWidget);
+    expect(find.text('다음 10:15'), findsOneWidget);
     final Finder soldOutButton = find.widgetWithText(FilledButton, '품절');
     expect(soldOutButton, findsOneWidget);
     expect(tester.widget<FilledButton>(soldOutButton).onPressed, isNull);
+    await tester.tap(find.text('닫기').last);
+    await tester.pumpAndSettle();
 
     expect(find.text('골드 25'), findsOneWidget);
     await tester.tap(find.text('갱신'));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('재고 20'), findsWidgets);
+    expect(find.text('x20'), findsWidgets);
+    await tester.tap(find.byKey(const ValueKey<String>('shop_item_m_1')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('재고 20'), findsOneWidget);
     final Finder buyButton = find.widgetWithText(FilledButton, '구매').first;
     expect(tester.widget<FilledButton>(buyButton).onPressed, isNotNull);
   });
