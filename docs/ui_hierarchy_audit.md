@@ -174,6 +174,12 @@ Text('프로필', style: subsectionTitleStyle),
 
 ## 6. 패턴 E — 두 정보를 구분자(쉼표·중간점)로 연결
 
+적용 상태:
+- E1: 완료. 전투 보상 런 요약의 성공/실패 횟수를 별도 줄로 분리했다.
+- E2: 완료. 양조 실험 결과의 등급과 점수를 별도 텍스트로 분리했다.
+- E3: 완료. 마을 경제 카드의 골드/명성을 2줄 subtitle로 분리했다.
+- E4: 완료. 작업실 자원 카드의 정수/신비를 2줄 subtitle로 분리했다.
+
 ### 6.1 전투 보상 런 요약
 
 **`lib/features/battle/presentation/widgets/battle_claim_dialog.dart:57`**
@@ -339,10 +345,10 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 | C2 | 상태를 disabled 버튼으로 | `character_growth_section.dart` | 95-96 | 완료 |
 | D1 | 섹션 제목 스타일 없음 | `workshop_material_craft_detail_dialog.dart` | 98, 111 | 완료 |
 | D2 | 섹션 제목 스타일 없음 | `workshop_brew_recipe_book_tab.dart` | 120 | 완료 |
-| E1 | 쉼표 연결 두 정보 | `battle_claim_dialog.dart` | 57 | 낮음 |
-| E2 | 중간점 연결 두 정보 | `workshop_brew_experiment_result_body.dart` | 37 | 낮음 |
-| E3 | 쉼표 연결 두 정보 | `town_screen.dart` | 39 | 낮음 |
-| E4 | 쉼표 연결 두 정보 | `workshop_screen.dart` | 60 | 낮음 |
+| E1 | 쉼표 연결 두 정보 | `battle_claim_dialog.dart` | 57 | 완료 |
+| E2 | 중간점 연결 두 정보 | `workshop_brew_experiment_result_body.dart` | 37 | 완료 |
+| E3 | 쉼표 연결 두 정보 | `town_screen.dart` | 39 | 완료 |
+| E4 | 쉼표 연결 두 정보 | `workshop_screen.dart` | 60 | 완료 |
 | F1 | 제목에 분류 정보 혼합 | `character_detail_sheet.dart` | 52 | 낮음 (검토) |
 | F2 | 제목에 분류 정보 혼합 | `character_equipment_sheet.dart` | 40 | 낮음 (검토) |
 | G1 | 카드 보조 텍스트 스타일 없음 | `character_card.dart` | 57, 59 | 완료 |
