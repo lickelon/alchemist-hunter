@@ -241,6 +241,9 @@ Text(item.growthLabel),        // bodyMedium, 스타일 없음
 
 ## 9. 패턴 H — Before/After 구조 소실
 
+적용 상태:
+- H1: 완료. 인챈트 미리보기의 인챈트/스탯 정보를 `현재 → 다음` 비교 행으로 분리했다.
+
 ### 9.1 인챈트 미리보기
 
 **`lib/features/workshop/enchanting/presentation/widgets/workshop_enchant_preview_section.dart:42-45`**
@@ -340,7 +343,7 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 | F1 | 제목에 분류 정보 혼합 | `character_detail_sheet.dart` | 52 | 낮음 (검토) |
 | F2 | 제목에 분류 정보 혼합 | `character_equipment_sheet.dart` | 40 | 낮음 (검토) |
 | G1 | 카드 보조 텍스트 스타일 없음 | `character_card.dart` | 57, 59 | 완료 |
-| H1 | Before/After 구조 소실 | `workshop_enchant_preview_section.dart` | 42-45 | 보통 |
+| H1 | Before/After 구조 소실 | `workshop_enchant_preview_section.dart` | 42-45 | 완료 |
 
 ---
 
