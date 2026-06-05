@@ -33,7 +33,6 @@ import 'package:alchemist_hunter/features/workshop/crafting/data/repositories/st
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/potion_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/domain/repositories/workshop_craft_recipe_repository.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
-import 'package:alchemist_hunter/features/workshop/extraction/data/catalogs/material_catalog.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_extraction_profile_repository.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/data/repositories/static_material_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/domain/repositories/extraction_profile_repository.dart';
@@ -52,17 +51,8 @@ final TownCatalogAssets testTownCatalogAssets = TownCatalogAssets(
   skillNodes: _readTownSkillNodes(),
 );
 
-final WorkshopCatalogAssets testWorkshopCatalogAssets = WorkshopCatalogAssets(
-  traits: traitCatalog,
-  materials: materialCatalog,
-  extractionProfiles: _readWorkshopExtractionProfiles(),
-  potions: _readWorkshopPotions(),
-  potionRecipeRules: _readWorkshopPotionRecipeRules(),
-  potionQualityRule: _readWorkshopPotionQualityRule(),
-  craftRecipes: _readWorkshopCraftRecipes(),
-  hatchRecipes: _readWorkshopHatchRecipes(),
-  skillNodes: _readWorkshopSkillNodes(),
-);
+final WorkshopCatalogAssets testWorkshopCatalogAssets =
+    _loadTestWorkshopCatalogAssets();
 
 final BattleCatalogTables testBattleCatalogTables =
     _loadBattleCatalogTablesFromAssets();
@@ -175,6 +165,21 @@ List<Override> testCatalogProviderOverrides() {
       testBattleCatalogRepository,
     ),
   ];
+}
+
+WorkshopCatalogAssets _loadTestWorkshopCatalogAssets() {
+  final List<TraitUnit> traits = _readWorkshopTraits();
+  return WorkshopCatalogAssets(
+    traits: traits,
+    materials: _readWorkshopMaterials(traits),
+    extractionProfiles: _readWorkshopExtractionProfiles(),
+    potions: _readWorkshopPotions(),
+    potionRecipeRules: _readWorkshopPotionRecipeRules(),
+    potionQualityRule: _readWorkshopPotionQualityRule(),
+    craftRecipes: _readWorkshopCraftRecipes(),
+    hatchRecipes: _readWorkshopHatchRecipes(),
+    skillNodes: _readWorkshopSkillNodes(),
+  );
 }
 
 BattleCatalogTables _loadBattleCatalogTablesFromAssets() {
@@ -330,6 +335,25 @@ List<HomunculusHatchRecipe> _readWorkshopHatchRecipes() {
           traitCosts: _readDoubleMap(json, 'traitCosts'),
           duration: Duration(seconds: _readInt(json, 'durationSeconds')),
         );
+      })
+      .toList(growable: false);
+}
+
+List<TraitUnit> _readWorkshopTraits() {
+  final WorkshopCatalogAssetLoader loader = WorkshopCatalogAssetLoader();
+  return _readWorkshopObjectList(
+    'traits.json',
+  ).map(loader.readTrait).toList(growable: false);
+}
+
+List<MaterialEntity> _readWorkshopMaterials(List<TraitUnit> traits) {
+  final WorkshopCatalogAssetLoader loader = WorkshopCatalogAssetLoader();
+  final Map<String, TraitUnit> traitsById = <String, TraitUnit>{
+    for (final TraitUnit trait in traits) trait.id: trait,
+  };
+  return _readWorkshopObjectList('materials.json')
+      .map((Map<String, Object?> json) {
+        return loader.readMaterial(json, traitsById);
       })
       .toList(growable: false);
 }

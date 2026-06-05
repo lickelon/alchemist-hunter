@@ -14,14 +14,14 @@ class WorkshopCatalogAssetLoader {
     final List<TraitUnit> traits = (await _readObjectList(
       bundle,
       'traits.json',
-    )).map(_readTrait).toList(growable: false);
+    )).map(readTrait).toList(growable: false);
     final Map<String, TraitUnit> traitsById = <String, TraitUnit>{
       for (final TraitUnit trait in traits) trait.id: trait,
     };
     return WorkshopCatalogAssets(
       traits: traits,
       materials: (await _readObjectList(bundle, 'materials.json'))
-          .map((Map<String, Object?> json) => _readMaterial(json, traitsById))
+          .map((Map<String, Object?> json) => readMaterial(json, traitsById))
           .toList(growable: false),
       extractionProfiles: (await _readObjectList(
         bundle,
@@ -89,7 +89,7 @@ class WorkshopCatalogAssetLoader {
     return jsonDecode(source);
   }
 
-  TraitUnit _readTrait(Map<String, Object?> json) {
+  TraitUnit readTrait(Map<String, Object?> json) {
     return TraitUnit(
       id: j.readString(json, 'id'),
       name: j.readString(json, 'name'),
@@ -99,7 +99,7 @@ class WorkshopCatalogAssetLoader {
     );
   }
 
-  MaterialEntity _readMaterial(
+  MaterialEntity readMaterial(
     Map<String, Object?> json,
     Map<String, TraitUnit> traitsById,
   ) {
