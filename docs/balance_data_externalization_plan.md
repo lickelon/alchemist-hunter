@@ -167,4 +167,4 @@ Workshop 카탈로그는 `assets/data/workshop/` 로컬 asset에서 읽는다. �
 - 적 액티브 스킬은 enemy 안의 inline 정의에서 `skillIds` 참조로 전환했다.
 - 액티브 스킬 카탈로그는 `combat_skill_index.json`과 `combat_skills/*.json`으로 분리했다.
 - battle catalog 로딩은 중복 ID를 거부한다.
-- battle catalog 검증은 stage 순서 누락, enemy set ID 형식, encounter chance 합계, drop material 참조를 확인한다.
+- battle catalog 검증은 stage 순서 누락, enemy set ID 형식, encounter chance 합계, drop material 참조, 미사용 combat skill/passive를 확인한다.
