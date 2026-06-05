@@ -94,19 +94,11 @@ class _DropLabelWrap extends StatelessWidget {
         spacing: AppSpacing.sm,
         runSpacing: AppSpacing.sm,
         children: labels
-            .expand(_splitDropLabel)
             .map((String label) => AppBadge(label: label))
             .toList(growable: false),
       ),
     );
   }
-}
-
-Iterable<String> _splitDropLabel(String label) {
-  return label
-      .split('\n')
-      .expand((String line) => line.split(' / '))
-      .where((String part) => part.isNotEmpty);
 }
 
 class _DropChanceSection extends StatelessWidget {

@@ -78,7 +78,7 @@ final battleStageDropOverviewProvider =
               return BattleEnemyDropView(
                 enemyName: enemy.name,
                 identityLabel:
-                    '${battleFactionLabel(enemy.faction)} / ${enemy.summary}',
+                    '${battleFactionLabel(enemy.faction)} ${enemy.summary}',
                 statLines: battleEnemyStatLines(enemy.stats),
                 effectLines: battleEnemyEffectLines(enemy),
                 normalDrops: enemy.normalDrops

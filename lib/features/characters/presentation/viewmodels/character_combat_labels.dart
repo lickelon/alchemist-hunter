@@ -13,9 +13,9 @@ List<String> characterCombatEffectLines(HeroProfile hero) {
   final List<String> lines = <String>[
     ...hero.modifiers.map(_combatModifierLabel),
     ...hero.passives.map(_combatPassiveLabel),
-    ...hero.skills.map(
+    ...hero.skills.expand(
       (BattleSkillDefinition skill) =>
-          _combatSkillLabel(skill, manaCost: hero.stats.maxMp),
+          _combatSkillLabels(skill, manaCost: hero.stats.maxMp),
     ),
   ];
   if (lines.isEmpty) {
@@ -65,12 +65,12 @@ String _percentLabel(double value) {
 String _combatModifierLabel(BattleModifier modifier) {
   final String schoolLabel = switch (modifier.school) {
     DamageSchool.any => '',
-    DamageSchool.physical => ' / 물리',
-    DamageSchool.magical => ' / 마법',
+    DamageSchool.physical => ' 물리',
+    DamageSchool.magical => ' 마법',
   };
   final String targetLabel = modifier.targetFaction == null
       ? ''
-      : ' / 대 ${modifier.targetFaction == CombatFaction.mercenary ? "용병" : "호문쿨루스"}';
+      : ' 대 ${modifier.targetFaction == CombatFaction.mercenary ? "용병" : "호문쿨루스"}';
   final String valueLabel = _signedPercentLabel(modifier.value);
   final String baseLabel = switch (modifier.type) {
     BattleModifierType.damageDealt => '주는 피해 $valueLabel',
@@ -91,10 +91,18 @@ String _combatPassiveLabel(BattlePassiveEffect passive) {
   };
 }
 
-String _combatSkillLabel(BattleSkillDefinition skill, {required int manaCost}) {
+List<String> _combatSkillLabels(
+  BattleSkillDefinition skill, {
+  required int manaCost,
+}) {
   final String targetLabel = _skillTargetLabel(skill.targetType);
   final String effectLabel = _skillEffectLabel(skill);
-  return '스킬: ${skill.name} / 마나 소모 $manaCost / $targetLabel / $effectLabel';
+  return <String>[
+    '스킬: ${skill.name}',
+    '마나 소모 $manaCost',
+    targetLabel,
+    effectLabel,
+  ];
 }
 
 String _skillTargetLabel(BattleSkillTargetType targetType) {
@@ -116,11 +124,11 @@ String _skillEffectLabel(BattleSkillDefinition skill) {
     BattleSkillEffectType.grantModifier =>
       skill.modifier == null
           ? '버프/디버프 부여'
-          : '${_combatModifierLabel(skill.modifier!)} / ${skill.durationLifecycles}행동',
+          : '${_combatModifierLabel(skill.modifier!)} ${skill.durationLifecycles}행동',
     BattleSkillEffectType.grantStatus =>
       '${_statusLabel(skill.statusType)}'
           '${skill.flatPower <= 0 ? '' : ' ${skill.flatPower}'}'
-          ' / ${skill.durationLifecycles}행동',
+          ' ${skill.durationLifecycles}행동',
     BattleSkillEffectType.grantShield =>
       '보호막 +${skill.shieldValue > 0 ? skill.shieldValue : skill.flatPower}',
   };

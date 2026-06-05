@@ -43,19 +43,11 @@ class CharacterCombatEffectSection extends StatelessWidget {
         spacing: AppSpacing.sm,
         runSpacing: AppSpacing.sm,
         children: effectLines
-            .expand(_splitEffectLabel)
             .map((String label) => AppBadge(label: label))
             .toList(growable: false),
       ),
     );
   }
-}
-
-Iterable<String> _splitEffectLabel(String label) {
-  return label
-      .split('\n')
-      .expand((String line) => line.split(' / '))
-      .where((String part) => part.isNotEmpty);
 }
 
 class _StatGrid extends StatelessWidget {
