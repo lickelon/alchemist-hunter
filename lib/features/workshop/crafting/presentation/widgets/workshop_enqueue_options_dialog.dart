@@ -15,20 +15,14 @@ class WorkshopEnqueueOptionsDialog extends StatelessWidget {
     super.key,
     required this.potionId,
     required this.title,
-    required this.maxCraftableCount,
   });
 
   final String potionId;
   final String title;
-  final int maxCraftableCount;
 
   @override
   Widget build(BuildContext context) {
-    return _WorkshopEnqueueOptionsContent(
-      potionId: potionId,
-      title: title,
-      maxCraftableCount: maxCraftableCount,
-    );
+    return _WorkshopEnqueueOptionsContent(potionId: potionId, title: title);
   }
 }
 
@@ -36,12 +30,10 @@ class _WorkshopEnqueueOptionsContent extends ConsumerWidget {
   const _WorkshopEnqueueOptionsContent({
     required this.potionId,
     required this.title,
-    required this.maxCraftableCount,
   });
 
   final String potionId;
   final String title;
-  final int maxCraftableCount;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -97,11 +89,7 @@ class _WorkshopEnqueueOptionsContent extends ConsumerWidget {
       body: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          AppBadge(label: '최대 $maxCraftableCount회'),
-          const SizedBox(height: AppSpacing.md),
-          quantityList,
-        ],
+        children: <Widget>[quantityList],
       ),
     );
   }

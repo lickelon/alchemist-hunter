@@ -291,11 +291,7 @@ void main() {
         container: container,
         child: const MaterialApp(
           home: Scaffold(
-            body: WorkshopEnqueueOptionsDialog(
-              potionId: 'p_1',
-              title: '활력 포션',
-              maxCraftableCount: 1,
-            ),
+            body: WorkshopEnqueueOptionsDialog(potionId: 'p_1', title: '활력 포션'),
           ),
         ),
       ),
