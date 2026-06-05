@@ -59,6 +59,7 @@ flutter:
     - assets/data/
     - assets/data/battle/
     - assets/data/battle/combat_jobs/
+    - assets/data/battle/combat_skills/
     - assets/data/town/
     - assets/data/workshop/
     - assets/icons/materials/

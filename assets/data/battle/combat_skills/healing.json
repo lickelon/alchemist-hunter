@@ -1,0 +1,52 @@
+[
+  {
+    "id": "homunculus_mage_reconstruct",
+    "name": "재구성",
+    "summary": "모든 아군의 체력을 회복한다.",
+    "targetType": "allAllies",
+    "effectType": "heal",
+    "flatPower": 12
+  },
+  {
+    "id": "enemy_wisp_lunar_mend",
+    "name": "Lunar Mend",
+    "summary": "달빛 촉매로 모든 아군을 회복한다.",
+    "cooldownLifecycles": 0,
+    "priority": 0,
+    "targetType": "allAllies",
+    "effectType": "heal",
+    "school": "any",
+    "powerMultiplier": 1.0,
+    "flatPower": 10,
+    "durationLifecycles": 1,
+    "shieldValue": 0
+  },
+  {
+    "id": "enemy_dust_mender_quick_patch",
+    "name": "Quick Patch",
+    "summary": "모든 아군의 HP를 즉시 회복한다.",
+    "cooldownLifecycles": 3,
+    "priority": 2,
+    "targetType": "allAllies",
+    "effectType": "heal",
+    "school": "any",
+    "powerMultiplier": 1.0,
+    "flatPower": 12,
+    "durationLifecycles": 1,
+    "shieldValue": 0
+  },
+  {
+    "id": "enemy_distiller_soot_mend",
+    "name": "Soot Mend",
+    "summary": "그을음 촉매로 무작위 아군 하나를 회복한다.",
+    "cooldownLifecycles": 2,
+    "priority": 1,
+    "targetType": "randomAlly",
+    "effectType": "heal",
+    "school": "any",
+    "powerMultiplier": 1.0,
+    "flatPower": 14,
+    "durationLifecycles": 1,
+    "shieldValue": 0
+  }
+]

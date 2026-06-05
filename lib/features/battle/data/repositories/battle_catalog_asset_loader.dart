@@ -41,8 +41,8 @@ class BattleCatalogAssetLoader {
         BattleCombatJobDefinitionDto.fromJson,
       ),
       combatSkillDtos: _readDtoMap(
-        await _readObjectList(bundle, 'combat_skills.json'),
-        'combat_skills.json',
+        await _readIndexedObjectLists(bundle, 'combat_skill_index.json'),
+        'combat_skill_index.json',
         BattleSkillDefinitionDto.fromJson,
       ),
       combatPassiveDtos: _readDtoMap(
@@ -96,6 +96,18 @@ class BattleCatalogAssetLoader {
     final List<Map<String, Object?>> entries = <Map<String, Object?>>[];
     for (final String fileName in fileNames) {
       entries.add(await _readObject(bundle, fileName));
+    }
+    return entries;
+  }
+
+  Future<List<Map<String, Object?>>> _readIndexedObjectLists(
+    AssetBundle bundle,
+    String indexFileName,
+  ) async {
+    final List<String> fileNames = await _readStringList(bundle, indexFileName);
+    final List<Map<String, Object?>> entries = <Map<String, Object?>>[];
+    for (final String fileName in fileNames) {
+      entries.addAll(await _readObjectList(bundle, fileName));
     }
     return entries;
   }

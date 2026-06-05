@@ -1,0 +1,7 @@
+[
+  "combat_skills/damage.json",
+  "combat_skills/healing.json",
+  "combat_skills/shields.json",
+  "combat_skills/modifiers.json",
+  "combat_skills/statuses.json"
+]

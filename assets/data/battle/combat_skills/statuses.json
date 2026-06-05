@@ -1,0 +1,72 @@
+[
+  {
+    "id": "homunculus_rogue_acid_infusion",
+    "name": "산성 주입",
+    "summary": "무작위 적에게 독을 부여한다.",
+    "targetType": "randomEnemy",
+    "effectType": "grantStatus",
+    "statusType": "poison",
+    "durationLifecycles": 3,
+    "flatPower": 5
+  },
+  {
+    "id": "enemy_mite_ash_venom",
+    "name": "Ash Venom",
+    "summary": "잿빛 독을 묻혀 적 하나에게 중독을 부여한다.",
+    "cooldownLifecycles": 0,
+    "priority": 0,
+    "targetType": "randomEnemy",
+    "effectType": "grantStatus",
+    "school": "any",
+    "powerMultiplier": 1.0,
+    "flatPower": 4,
+    "durationLifecycles": 2,
+    "statusType": "poison",
+    "shieldValue": 0
+  },
+  {
+    "id": "enemy_glowcap_drowsy_spores",
+    "name": "Drowsy Spores",
+    "summary": "포자를 흩뿌려 모든 적에게 약한 중독을 부여한다.",
+    "cooldownLifecycles": 0,
+    "priority": 0,
+    "targetType": "allEnemies",
+    "effectType": "grantStatus",
+    "school": "any",
+    "powerMultiplier": 1.0,
+    "flatPower": 3,
+    "durationLifecycles": 2,
+    "statusType": "poison",
+    "shieldValue": 0
+  },
+  {
+    "id": "enemy_bruiser_staggering_blow",
+    "name": "Staggering Blow",
+    "summary": "묵직한 타격으로 적 하나에게 기절을 부여한다.",
+    "cooldownLifecycles": 0,
+    "priority": 0,
+    "targetType": "randomEnemy",
+    "effectType": "grantStatus",
+    "school": "any",
+    "powerMultiplier": 1.0,
+    "flatPower": 0,
+    "durationLifecycles": 1,
+    "statusType": "stun",
+    "shieldValue": 0
+  },
+  {
+    "id": "enemy_weaver_spore_cloud",
+    "name": "Spore Cloud",
+    "summary": "포자 구름으로 모든 적에게 중독을 부여한다.",
+    "cooldownLifecycles": 0,
+    "priority": 0,
+    "targetType": "allEnemies",
+    "effectType": "grantStatus",
+    "school": "any",
+    "powerMultiplier": 1.0,
+    "flatPower": 6,
+    "durationLifecycles": 2,
+    "statusType": "poison",
+    "shieldValue": 0
+  }
+]

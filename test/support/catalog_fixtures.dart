@@ -205,7 +205,7 @@ BattleCatalogTables _loadBattleCatalogTablesFromAssets() {
       BattleCombatJobDefinitionDto.fromJson,
     ),
     combatSkillDtos: _readBattleDtoMap(
-      _readBattleObjectList('combat_skills.json'),
+      _readBattleIndexedObjectLists('combat_skill_index.json'),
       BattleSkillDefinitionDto.fromJson,
     ),
     combatPassiveDtos: _readBattleDtoMap(
@@ -233,6 +233,12 @@ List<Map<String, Object?>> _readBattleIndexedObjectList(String indexFileName) {
   return _readBattleStringList(
     indexFileName,
   ).map(_readBattleObject).toList(growable: false);
+}
+
+List<Map<String, Object?>> _readBattleIndexedObjectLists(String indexFileName) {
+  return _readBattleStringList(
+    indexFileName,
+  ).expand(_readBattleObjectList).toList(growable: false);
 }
 
 Map<String, Object?> _readBattleObject(String fileName) {
