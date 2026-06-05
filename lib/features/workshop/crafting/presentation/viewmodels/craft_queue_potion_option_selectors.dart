@@ -14,7 +14,6 @@ class PotionQueueOptionView {
     required this.lockReason,
     required this.craftableNow,
     required this.maxCraftableCount,
-    required this.materialHint,
     required this.queueFull,
   });
 
@@ -24,7 +23,6 @@ class PotionQueueOptionView {
   final String lockReason;
   final bool craftableNow;
   final int maxCraftableCount;
-  final String materialHint;
   final bool queueFull;
 }
 
@@ -101,9 +99,6 @@ workshopPotionQueueOptionViewsProvider = Provider<List<PotionQueueOptionView>>((
       lockReason: unlocked ? '' : lockReason(potion),
       craftableNow: unlocked && craftableNow,
       maxCraftableCount: unlocked ? maxCraftableCount : 0,
-      materialHint: !unlocked
-          ? lockReason(potion)
-          : (craftableNow ? '최대 $maxCraftableCount회 제작 가능' : '원소 부족'),
       queueFull: queueFull,
     );
   }).toList();
