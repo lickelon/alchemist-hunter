@@ -40,7 +40,7 @@ class WorkshopHatchSheet extends ConsumerWidget {
                   .map((HomunculusHatchRecipeView recipe) {
                     return ListTile(
                       dense: true,
-                      title: Text(recipe.resultName),
+                      title: Text(recipe.displayName),
                       subtitle: _HatchRecipeSummary(recipe: recipe),
                       onTap: () {
                         showDialog<void>(
@@ -103,10 +103,7 @@ class _HatchRecipeSummary extends StatelessWidget {
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
-            children: <Widget>[
-              AppBadge(label: recipe.roleLabel),
-              AppBadge(label: recipe.availabilityLabel),
-            ],
+            children: <Widget>[AppBadge(label: recipe.availabilityLabel)],
           ),
         ],
       ),
@@ -122,7 +119,7 @@ class _HatchRecipeDetailDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppDialogLayout(
-      title: recipe.resultName,
+      title: recipe.displayName,
       body: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,15 +127,7 @@ class _HatchRecipeDetailDialog extends StatelessWidget {
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
-            children: <Widget>[
-              AppBadge(label: recipe.roleLabel),
-              AppBadge(label: recipe.availabilityLabel),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          DetailLines(
-            description: '효과',
-            lines: <String>[recipe.supportEffectLabel],
+            children: <Widget>[AppBadge(label: recipe.availabilityLabel)],
           ),
           const SizedBox(height: AppSpacing.lg),
           DetailLines(description: '재료', lines: recipe.costLabels),

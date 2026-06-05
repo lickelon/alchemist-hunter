@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
+import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/workshop/hatchery/domain/models/hatch_models.dart';
 import 'package:alchemist_hunter/features/workshop/hatchery/domain/repositories/homunculus_hatch_repository.dart';
 import 'package:alchemist_hunter/features/workshop/skill_tree/domain/repositories/workshop_skill_tree_repository.dart';
@@ -29,11 +30,13 @@ class WorkshopHatchController {
     required WorkshopSkillTreeRepository workshopSkillTreeRepository,
     required WorkshopSkillTreeService workshopSkillTreeService,
     required WorkshopSupportService workshopSupportService,
+    required BattleCatalogRepository battleCatalogRepository,
   }) : _hatchUseCase = hatchUseCase,
        _hatchRepository = hatchRepository,
        _workshopSkillTreeRepository = workshopSkillTreeRepository,
        _workshopSkillTreeService = workshopSkillTreeService,
-       _workshopSupportService = workshopSupportService;
+       _workshopSupportService = workshopSupportService,
+       _battleCatalogRepository = battleCatalogRepository;
 
   final SessionController _session;
   final WorkshopHatchUseCase _hatchUseCase;
@@ -41,6 +44,7 @@ class WorkshopHatchController {
   final WorkshopSkillTreeRepository _workshopSkillTreeRepository;
   final WorkshopSkillTreeService _workshopSkillTreeService;
   final WorkshopSupportService _workshopSupportService;
+  final BattleCatalogRepository _battleCatalogRepository;
 
   WorkshopHatchSubmitResult hatch(String recipeId) {
     final SessionState current = _session.snapshot();
@@ -49,6 +53,10 @@ class WorkshopHatchController {
       _session.appendLog('부화 레시피 없음: $recipeId');
       return WorkshopHatchSubmitResult.failed;
     }
+    final String recipeDisplayName = homunculusHatchDisplayName(
+      recipe,
+      _battleCatalogRepository,
+    );
 
     final int queueCapacity =
         _workshopSkillTreeService.craftQueueCapacity(
@@ -57,7 +65,7 @@ class WorkshopHatchController {
         ) +
         _workshopSupportService.craftQueueCapacityBonus(current);
     if (current.workshop.queue.length >= queueCapacity) {
-      _session.appendLog('작업실 큐 가득 참 / 부화 ${recipe.resultName}');
+      _session.appendLog('작업실 큐 가득 참 / 부화 $recipeDisplayName');
       return WorkshopHatchSubmitResult.queueFull;
     }
     final SessionState nextState = _hatchUseCase.hatchHomunculus(
@@ -66,6 +74,7 @@ class WorkshopHatchController {
       now: _session.now(),
       queueCapacity: queueCapacity,
       workshopSupportService: _workshopSupportService,
+      battleCatalogRepository: _battleCatalogRepository,
     );
     if (identical(nextState, current)) {
       final WorkshopHatchSubmitResult failure = _hatchFailureReason(
@@ -74,12 +83,12 @@ class WorkshopHatchController {
         _workshopSupportService,
       );
       _session.appendLog(
-        '${_hatchFailureLogLabel(failure)} / ${recipe.resultName}',
+        '${_hatchFailureLogLabel(failure)} / $recipeDisplayName',
       );
       return failure;
     }
     _session.applyState(nextState);
-    _session.appendLog('부화 등록 / ${recipe.resultName}');
+    _session.appendLog('부화 등록 / $recipeDisplayName');
     return WorkshopHatchSubmitResult.success;
   }
 }
@@ -94,6 +103,7 @@ final Provider<WorkshopHatchController> workshopHatchControllerProvider =
         ),
         workshopSkillTreeService: ref.read(workshopSkillTreeServiceProvider),
         workshopSupportService: ref.read(workshopSupportServiceProvider),
+        battleCatalogRepository: ref.read(battleCatalogRepositoryProvider),
       );
     });
 

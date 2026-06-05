@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/use_cases/configure_workshop_support_assignment_use_case.dart';
+import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_character_labels.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_labels.dart';
 
 class WorkshopSupportController {
@@ -56,8 +57,8 @@ class WorkshopSupportController {
 
     _session.appendLog(
       wasAssignedToSlot
-          ? '${character.name} / 작업실 ${workshopSupportSlotLabel(slotId)} 해제'
-          : '${character.name} / 작업실 ${workshopSupportSlotLabel(slotId)} 배치',
+          ? '${workshopSupportHomunculusDisplayName(character)} / 작업실 ${workshopSupportSlotLabel(slotId)} 해제'
+          : '${workshopSupportHomunculusDisplayName(character)} / 작업실 ${workshopSupportSlotLabel(slotId)} 배치',
     );
   }
 

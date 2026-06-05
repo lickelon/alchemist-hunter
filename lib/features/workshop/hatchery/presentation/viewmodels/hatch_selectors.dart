@@ -2,28 +2,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
+import 'package:alchemist_hunter/features/workshop/hatchery/domain/use_cases/workshop_hatch_use_case.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_service_providers.dart';
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 
 class HomunculusHatchRecipeView {
   const HomunculusHatchRecipeView({
     required this.id,
-    required this.name,
-    required this.description,
-    required this.resultName,
-    required this.roleLabel,
-    required this.supportEffectLabel,
+    required this.displayName,
     required this.costLabels,
     required this.availabilityLabel,
     required this.canHatch,
   });
 
   final String id;
-  final String name;
-  final String description;
-  final String resultName;
-  final String roleLabel;
-  final String supportEffectLabel;
+  final String displayName;
   final List<String> costLabels;
   final String availabilityLabel;
   final bool canHatch;
@@ -49,6 +42,7 @@ homunculusHatchRecipeViewsProvider = Provider<List<HomunculusHatchRecipeView>>((
   final Map<String, TraitUnit> traitMap = <String, TraitUnit>{
     for (final TraitUnit trait in ref.watch(traitsProvider)) trait.id: trait,
   };
+  final battleCatalogRepository = ref.watch(battleCatalogRepositoryProvider);
 
   return ref
       .watch(homunculusHatchRecipesProvider)
@@ -100,11 +94,10 @@ homunculusHatchRecipeViewsProvider = Provider<List<HomunculusHatchRecipeView>>((
 
         return HomunculusHatchRecipeView(
           id: recipe.id,
-          name: recipe.name,
-          description: recipe.description,
-          resultName: recipe.resultName,
-          roleLabel: recipe.roleLabel,
-          supportEffectLabel: recipe.supportEffectLabel,
+          displayName: homunculusHatchDisplayName(
+            recipe,
+            battleCatalogRepository,
+          ),
           costLabels: <String>[
             '정수 ${recipe.essenceCost}',
             '신비 $arcaneDustCost',

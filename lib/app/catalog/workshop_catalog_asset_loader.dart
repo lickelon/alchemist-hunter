@@ -189,12 +189,7 @@ class WorkshopCatalogAssetLoader {
   HomunculusHatchRecipe _readHatchRecipe(Map<String, Object?> json) {
     return HomunculusHatchRecipe(
       id: j.readString(json, 'id'),
-      name: j.readString(json, 'name'),
-      description: j.readString(json, 'description'),
-      resultName: j.readString(json, 'resultName'),
-      roleLabel: j.readString(json, 'roleLabel'),
       combatJobId: j.readString(json, 'combatJobId'),
-      supportEffectLabel: j.readString(json, 'supportEffectLabel'),
       essenceCost: j.readInt(json, 'essenceCost'),
       arcaneDustCost: j.readInt(json, 'arcaneDustCost'),
       materialCosts: j.readIntMap(json, 'materialCosts'),

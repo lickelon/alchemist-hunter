@@ -4,12 +4,7 @@ import 'package:flutter/foundation.dart';
 class HomunculusHatchRecipe {
   const HomunculusHatchRecipe({
     required this.id,
-    required this.name,
-    required this.description,
-    required this.resultName,
-    required this.roleLabel,
     required this.combatJobId,
-    required this.supportEffectLabel,
     required this.essenceCost,
     required this.arcaneDustCost,
     required this.materialCosts,
@@ -18,12 +13,7 @@ class HomunculusHatchRecipe {
   });
 
   final String id;
-  final String name;
-  final String description;
-  final String resultName;
-  final String roleLabel;
   final String combatJobId;
-  final String supportEffectLabel;
   final int essenceCost;
   final int arcaneDustCost;
   final Map<String, int> materialCosts;

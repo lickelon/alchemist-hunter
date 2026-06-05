@@ -86,8 +86,6 @@ class _MercenaryCandidateSummary extends StatelessWidget {
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
             children: <Widget>[
-              AppBadge(label: entry.tierLabel),
-              AppBadge(label: entry.roleLabel),
               AppBadge(label: '고용 ${entry.hireCost}'),
               if (!entry.canHire) AppBadge(label: '골드 부족'),
             ],

@@ -1,5 +1,7 @@
 import 'package:alchemist_hunter/app/catalog/catalog_validation_helpers.dart';
 import 'package:alchemist_hunter/app/catalog/workshop_catalog_data.dart';
+import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalog_tables.dart';
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/town_catalog_data.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
@@ -7,6 +9,7 @@ import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 void validateTownCatalog(
   TownCatalogAssets catalog,
   WorkshopCatalogAssets workshop,
+  BattleCatalogTables battle,
 ) {
   final Set<String> materialIds = catalogIds(
     workshop.materials,
@@ -36,6 +39,7 @@ void validateTownCatalog(
     }),
   );
 
+  final Set<String> mercenaryTierJobPairs = <String>{};
   requireUnique(
     'mercenary template id',
     catalog.mercenaryTemplates.map((MercenaryTemplate template) {
@@ -44,6 +48,17 @@ void validateTownCatalog(
         'mercenary template ${template.id} combat job id',
         template.combatJobId,
       );
+      requireKnown(
+        'mercenary template ${template.id} combat job',
+        template.combatJobId,
+        battle.combatJobDefinitions.keys.toSet(),
+      );
+      if (battle.combatJobDefinition(template.combatJobId).faction !=
+          CombatFaction.mercenary) {
+        throw StateError(
+          'Mercenary template ${template.id} must use mercenary combat job',
+        );
+      }
       requireNonNegative(
         'mercenary template ${template.id} hire cost',
         template.hireCost,
@@ -52,6 +67,13 @@ void validateTownCatalog(
         'mercenary template ${template.id} tier index',
         template.tierIndex,
       );
+      final String tierJobPair =
+          '${template.tierIndex}:${template.combatJobId}';
+      if (!mercenaryTierJobPairs.add(tierJobPair)) {
+        throw StateError(
+          'Duplicate mercenary template tier/job pair: $tierJobPair',
+        );
+      }
       return template.id;
     }),
   );

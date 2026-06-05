@@ -1,8 +1,13 @@
 import 'package:alchemist_hunter/app/catalog/catalog_validation_helpers.dart';
 import 'package:alchemist_hunter/app/catalog/workshop_catalog_data.dart';
+import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalog_tables.dart';
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 
-void validateWorkshopCatalog(WorkshopCatalogAssets catalog) {
+void validateWorkshopCatalog(
+  WorkshopCatalogAssets catalog,
+  BattleCatalogTables battle,
+) {
   final Set<String> traitIds = catalogIds(catalog.traits, (TraitUnit trait) {
     requireNonEmpty('trait id', trait.id);
     requirePositive('trait ${trait.id} potency', trait.potency);
@@ -62,7 +67,7 @@ void validateWorkshopCatalog(WorkshopCatalogAssets catalog) {
   _validatePotionRecipes(catalog.potionRecipeRules, traitIds, potionIds);
   _validatePotionQuality(catalog.potionQualityRule);
   _validateWorkshopCraftRecipes(catalog.craftRecipes, materialIds, traitIds);
-  _validateHatchRecipes(catalog.hatchRecipes, materialIds, traitIds);
+  _validateHatchRecipes(catalog.hatchRecipes, materialIds, traitIds, battle);
 
   final Set<String> nodeIds = catalogIds(
     catalog.skillNodes,
@@ -183,6 +188,7 @@ void _validateHatchRecipes(
   List<HomunculusHatchRecipe> recipes,
   Set<String> materialIds,
   Set<String> traitIds,
+  BattleCatalogTables battle,
 ) {
   requireUnique(
     'homunculus hatch recipe id',
@@ -192,6 +198,17 @@ void _validateHatchRecipes(
         'homunculus hatch recipe ${recipe.id} combat job id',
         recipe.combatJobId,
       );
+      requireKnown(
+        'homunculus hatch recipe ${recipe.id} combat job',
+        recipe.combatJobId,
+        battle.combatJobDefinitions.keys.toSet(),
+      );
+      if (battle.combatJobDefinition(recipe.combatJobId).faction !=
+          CombatFaction.homunculus) {
+        throw StateError(
+          'Homunculus hatch recipe ${recipe.id} must use homunculus combat job',
+        );
+      }
       requirePositiveDuration(
         'homunculus hatch recipe ${recipe.id} duration',
         recipe.duration,
@@ -216,6 +233,10 @@ void _validateHatchRecipes(
       );
       return recipe.id;
     }),
+  );
+  requireUnique(
+    'homunculus hatch recipe combat job',
+    recipes.map((HomunculusHatchRecipe recipe) => recipe.combatJobId),
   );
 }
 

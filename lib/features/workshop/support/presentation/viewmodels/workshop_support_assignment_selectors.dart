@@ -1,6 +1,7 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
+import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_character_labels.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_labels.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_service_providers.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_view_models.dart';
@@ -64,8 +65,19 @@ final Provider<List<WorkshopSupportSlotView>> workshopSupportSlotViewsProvider =
               assignedCharacterId: characterId,
               assignedCharacterName: characterId == null
                   ? '비어 있음'
-                  : homunculusMap[characterId]?.name ?? characterId,
+                  : _assignedHomunculusName(homunculusMap, characterId),
             );
           })
           .toList(growable: false);
     });
+
+String _assignedHomunculusName(
+  Map<String, CharacterProgress> homunculusMap,
+  String characterId,
+) {
+  final CharacterProgress? character = homunculusMap[characterId];
+  if (character == null) {
+    return characterId;
+  }
+  return workshopSupportHomunculusDisplayName(character);
+}

@@ -1,5 +1,8 @@
 import 'package:alchemist_hunter/app/session/session_state.dart';
+import 'package:alchemist_hunter/features/battle/domain/models.dart';
+import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
+import 'package:alchemist_hunter/features/characters/domain/services/character_id_factory.dart';
 import 'package:alchemist_hunter/features/workshop/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
 
@@ -12,6 +15,7 @@ class WorkshopHatchUseCase {
     required DateTime now,
     int queueCapacity = 99,
     required WorkshopSupportService workshopSupportService,
+    required BattleCatalogRepository battleCatalogRepository,
   }) {
     if (state.workshop.queue.length >= queueCapacity) {
       return state;
@@ -63,18 +67,35 @@ class WorkshopHatchUseCase {
       }
     }
 
+    final String jobName = homunculusHatchJobName(
+      recipe.combatJobId,
+      battleCatalogRepository,
+    );
+    final String displayName = homunculusHatchDisplayName(
+      recipe,
+      battleCatalogRepository,
+    );
+    final int characterCount =
+        state.characters.mercenaries.length + state.characters.homunculi.length;
+    final String characterId = createOpaqueCharacterId(
+      now: now,
+      seed: characterCount + state.workshop.queue.length,
+      reservedIds: collectCharacterIds(
+        state.characters,
+        pendingCharacters: state.workshop.queue.map(
+          (job) => job.completedHomunculus,
+        ),
+      ),
+    );
     final CharacterProgress homunculus = CharacterProgress(
-      id: 'homo_${now.microsecondsSinceEpoch}_${recipe.id}',
-      name: recipe.resultName,
+      id: characterId,
+      name: jobName,
       type: CharacterType.homunculus,
       combatJobId: recipe.combatJobId,
       level: 1,
       rank: 1,
       xp: 0,
       homunculusTier: HomunculusTier.nigredo,
-      homunculusOrigin: recipe.name,
-      homunculusRole: recipe.roleLabel,
-      homunculusSupportEffect: recipe.supportEffectLabel,
     );
 
     final bool hasActiveJob = state.workshop.queue.any(
@@ -88,7 +109,7 @@ class WorkshopHatchUseCase {
       startedAt: hasActiveJob ? null : now,
       duration: recipe.duration,
       eta: recipe.duration,
-      title: recipe.resultName,
+      title: displayName,
       recipeId: recipe.id,
       reservedMaterials: recipe.materialCosts,
       reservedTraits: recipe.traitCosts,
@@ -107,4 +128,25 @@ class WorkshopHatchUseCase {
       ),
     );
   }
+}
+
+String homunculusHatchDisplayName(
+  HomunculusHatchRecipe recipe,
+  BattleCatalogRepository battleCatalogRepository,
+) {
+  return 'Nigredo ${homunculusHatchJobName(recipe.combatJobId, battleCatalogRepository)}';
+}
+
+String homunculusHatchJobName(
+  String combatJobId,
+  BattleCatalogRepository battleCatalogRepository,
+) {
+  final BattleCombatJobDefinition job = battleCatalogRepository
+      .combatJobDefinition(combatJobId);
+  return switch (job.discipline) {
+    CombatDiscipline.warrior => '전사',
+    CombatDiscipline.mage => '마법사',
+    CombatDiscipline.rogue => '도적',
+    CombatDiscipline.archer => '궁수',
+  };
 }

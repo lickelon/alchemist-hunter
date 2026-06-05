@@ -1,7 +1,9 @@
+import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/workshop/support/domain/services/workshop_support_service.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_assignment_selectors.dart';
+import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_character_labels.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_labels.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_service_providers.dart';
 import 'package:alchemist_hunter/features/workshop/support/presentation/viewmodels/workshop_support_view_models.dart';
@@ -23,6 +25,9 @@ final workshopSupportCandidateViewsProvider =
       );
       final WorkshopSupportService supportService = ref.watch(
         workshopSupportServiceProvider,
+      );
+      final battleCatalogRepository = ref.watch(
+        battleCatalogRepositoryProvider,
       );
       final int assignedCount = assignments.length;
       final bool slotOccupiedByOther = assignments.containsKey(slotId);
@@ -57,10 +62,12 @@ final workshopSupportCandidateViewsProvider =
                     assignedCount < WorkshopSupportService.maxAssignedCount;
             return WorkshopSupportCandidateView(
               id: character.id,
-              name: character.name,
-              roleLabel: character.homunculusRole ?? '지원',
-              supportEffectLabel:
-                  character.homunculusSupportEffect ?? '보조 효과 분석 중',
+              name: workshopSupportHomunculusDisplayName(character),
+              roleLabel: workshopSupportHomunculusRoleLabel(
+                character,
+                battleCatalogRepository,
+              ),
+              supportEffectLabel: '보조 효과는 배치 슬롯에 따라 적용',
               assignedToSlotLabel: assignedStage ?? assignedSlot,
               selectedForSlot: selectedForSlot,
               assignable: assignable,
