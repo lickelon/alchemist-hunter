@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/common/themes/app_dialog_heights.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_slider_field.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_controller.dart';
 import 'package:alchemist_hunter/features/workshop/extraction/presentation/viewmodels/extraction_detail_selector.dart';
@@ -10,7 +11,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'workshop_extraction_material_header.dart';
 import 'workshop_extraction_profile_list.dart';
-import 'workshop_extraction_quantity_slider.dart';
 import 'workshop_extraction_trait_selector.dart';
 
 class WorkshopMaterialExtractionDetailDialog extends StatelessWidget {
@@ -72,7 +72,7 @@ class _WorkshopMaterialExtractionDetailContentState
           children: <Widget>[
             Text('수량', style: subsectionTitleStyle),
             const SizedBox(height: AppSpacing.md),
-            WorkshopExtractionQuantitySlider(
+            AppQuantitySlider(
               selectedQuantity: selectedQuantity,
               value: sliderValue,
               maxQuantity: maxQuantity,

@@ -3,13 +3,13 @@ import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
+import 'package:alchemist_hunter/common/widgets/app_slider_field.dart';
 import 'package:alchemist_hunter/common/widgets/app_toast.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/craft_queue_submit_results.dart';
 import 'package:alchemist_hunter/features/workshop/craft_queue/presentation/viewmodels/workshop_craft_queue_controller_provider.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/viewmodels/craft_queue_option_selectors.dart';
-import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/craft_quantity_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -119,10 +119,11 @@ class _WorkshopDiscoveredBrewDetailDialogState
             const SizedBox(height: AppSpacing.lg),
             Text('수량'),
             const SizedBox(height: AppSpacing.md),
-            CraftQuantitySlider(
+            AppQuantitySlider(
               selectedQuantity: selectedQuantity,
               value: sliderValue,
               maxQuantity: maxQuantity,
+              divided: true,
               onChanged: (double value) {
                 setState(() {
                   _quantityValue = value;

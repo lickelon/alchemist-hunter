@@ -67,7 +67,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Emberroot'), findsOneWidget);
-    expect(find.text('다음 10:15'), findsOneWidget);
+    expect(find.text('다음 입고 10:15'), findsOneWidget);
     final Finder soldOutButton = find.widgetWithText(FilledButton, '품절');
     expect(soldOutButton, findsOneWidget);
     expect(tester.widget<FilledButton>(soldOutButton).onPressed, isNull);
@@ -82,7 +82,9 @@ void main() {
     await tester.tap(find.byKey(const ValueKey<String>('shop_item_m_1')));
     await tester.pumpAndSettle();
 
-    expect(find.text('재고 20'), findsOneWidget);
+    expect(find.text('재고 20개'), findsOneWidget);
+    expect(find.text('선택 1개'), findsOneWidget);
+    expect(find.text('최대 20개'), findsOneWidget);
     final Finder buyButton = find.widgetWithText(FilledButton, '구매').first;
     expect(tester.widget<FilledButton>(buyButton).onPressed, isNotNull);
   });

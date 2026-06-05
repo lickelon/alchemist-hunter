@@ -4,6 +4,7 @@ import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
+import 'package:alchemist_hunter/common/widgets/app_slider_field.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
@@ -76,15 +77,21 @@ class TownShopSheet extends ConsumerWidget {
                               item: item,
                               soldOut: soldOut,
                               nextRefreshLabel: _clockLabel(shop.nextRefreshAt),
-                              onBuy: () {
+                              onBuy: (int quantity) {
                                 if (shopType == ShopType.general) {
                                   ref
                                       .read(shopControllerProvider)
-                                      .buyGeneralMaterial(item.materialId, 1);
+                                      .buyGeneralMaterial(
+                                        item.materialId,
+                                        quantity,
+                                      );
                                 } else {
                                   ref
                                       .read(shopControllerProvider)
-                                      .buyCatalystMaterial(item.materialId, 1);
+                                      .buyCatalystMaterial(
+                                        item.materialId,
+                                        quantity,
+                                      );
                                 }
                                 Navigator.of(context).pop();
                               },
@@ -106,7 +113,7 @@ class TownShopSheet extends ConsumerWidget {
   }
 }
 
-class _ShopItemDetailDialog extends StatelessWidget {
+class _ShopItemDetailDialog extends StatefulWidget {
   const _ShopItemDetailDialog({
     required this.item,
     required this.soldOut,
@@ -117,42 +124,78 @@ class _ShopItemDetailDialog extends StatelessWidget {
   final ShopItem item;
   final bool soldOut;
   final String nextRefreshLabel;
-  final VoidCallback onBuy;
+  final ValueChanged<int> onBuy;
+
+  @override
+  State<_ShopItemDetailDialog> createState() => _ShopItemDetailDialogState();
+}
+
+class _ShopItemDetailDialogState extends State<_ShopItemDetailDialog> {
+  double _quantityValue = 1;
 
   @override
   Widget build(BuildContext context) {
+    final int maxQuantity = widget.item.quantity < 1 ? 1 : widget.item.quantity;
+    final double sliderValue = _quantityValue
+        .clamp(1.0, maxQuantity.toDouble())
+        .toDouble();
+    final int selectedQuantity = sliderValue
+        .round()
+        .clamp(1, maxQuantity)
+        .toInt();
+
     return AppDialogLayout(
-      title: item.name,
-      body: Row(
+      title: widget.item.name,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          CatalogAssetIcon(
-            assetPath: CatalogIconAssetPaths.material(item.materialId),
-            size: 64,
-            padding: 8,
-            semanticLabel: item.name,
-          ),
-          const SizedBox(width: AppSpacing.lg),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  '골드 ${item.price}',
-                  style: Theme.of(context).textTheme.titleMedium,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              CatalogAssetIcon(
+                assetPath: CatalogIconAssetPaths.material(
+                  widget.item.materialId,
                 ),
-                const SizedBox(height: AppSpacing.md),
-                Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
+                size: 64,
+                padding: 8,
+                semanticLabel: widget.item.name,
+              ),
+              const SizedBox(width: AppSpacing.lg),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    AppBadge(label: soldOut ? '품절' : '재고 ${item.quantity}'),
-                    if (soldOut) AppBadge(label: '다음 $nextRefreshLabel'),
+                    Text(
+                      '골드 ${widget.item.price * selectedQuantity}',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      widget.soldOut
+                          ? '다음 입고 ${widget.nextRefreshLabel}'
+                          : '재고 ${widget.item.quantity}개',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          AppQuantitySlider(
+            selectedQuantity: selectedQuantity,
+            value: sliderValue,
+            maxQuantity: maxQuantity,
+            divided: true,
+            onChanged: (double value) {
+              setState(() {
+                _quantityValue = value;
+              });
+            },
           ),
         ],
       ),
@@ -165,8 +208,12 @@ class _ShopItemDetailDialog extends StatelessWidget {
           label: const Text('닫기'),
         ),
         FilledButton(
-          onPressed: soldOut ? null : onBuy,
-          child: Text(soldOut ? '품절' : '구매'),
+          onPressed: widget.soldOut
+              ? null
+              : () {
+                  widget.onBuy(selectedQuantity);
+                },
+          child: Text(widget.soldOut ? '품절' : '구매'),
         ),
       ],
     );
