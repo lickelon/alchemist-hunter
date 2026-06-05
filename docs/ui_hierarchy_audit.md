@@ -139,6 +139,10 @@ if (character.tierIndex >= character.maxTier) {
 
 ## 5. 패턴 D — 섹션 제목 스타일 불일치
 
+적용 상태:
+- D1: 완료. 제작 상세 모달의 `수량`, `재료` 섹션 제목에 `subsectionTitle`을 적용했다.
+- D2: 완료. 양조 등록 다이얼로그의 `수량` 섹션 제목에 `subsectionTitle`을 적용했다.
+
 ### 5.1 제작 상세 vs 추출 상세
 
 **제작 상세** `lib/features/workshop/crafting/presentation/widgets/workshop_material_craft_detail_dialog.dart:98, 111`
@@ -320,8 +324,8 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 | B2 | 액션 + 정보 혼재 | `town_shop_sheet.dart` | 37-54 | 완료 |
 | C1 | 상태를 버튼 라벨로 | `town_shop_sheet.dart` | 215 | 낮음 |
 | C2 | 상태를 disabled 버튼으로 | `character_growth_section.dart` | 95-96 | 낮음 |
-| D1 | 섹션 제목 스타일 없음 | `workshop_material_craft_detail_dialog.dart` | 98, 111 | 보통 |
-| D2 | 섹션 제목 스타일 없음 | `workshop_brew_recipe_book_tab.dart` | 120 | 보통 |
+| D1 | 섹션 제목 스타일 없음 | `workshop_material_craft_detail_dialog.dart` | 98, 111 | 완료 |
+| D2 | 섹션 제목 스타일 없음 | `workshop_brew_recipe_book_tab.dart` | 120 | 완료 |
 | E1 | 쉼표 연결 두 정보 | `battle_claim_dialog.dart` | 57 | 낮음 |
 | E2 | 중간점 연결 두 정보 | `workshop_brew_experiment_result_body.dart` | 37 | 낮음 |
 | E3 | 쉼표 연결 두 정보 | `town_screen.dart` | 39 | 낮음 |
