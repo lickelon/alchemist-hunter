@@ -1,0 +1,756 @@
+{
+  "id": "homunculus_archer",
+  "faction": "homunculus",
+  "discipline": "archer",
+  "levelHpGrowth": 10,
+  "tiers": [
+    {
+      "tierIndex": 1,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 61,
+            "maxMp": 9,
+            "physicalAttack": 14,
+            "physicalDefense": 8,
+            "magicalAttack": 7,
+            "magicalDefense": 9,
+            "speed": 12,
+            "critChance": 0.09,
+            "critDamage": 0.55,
+            "accuracy": 0.96,
+            "evasion": 0.08,
+            "statusAccuracy": 0.06,
+            "statusResistance": 0.07,
+            "physicalPenetration": 0.05,
+            "magicalPenetration": 0.02,
+            "lifesteal": 0.01,
+            "healingPower": 0.02,
+            "regen": 0.02,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 74,
+            "maxMp": 10,
+            "physicalAttack": 16,
+            "physicalDefense": 9,
+            "magicalAttack": 9,
+            "magicalDefense": 10,
+            "speed": 13,
+            "critChance": 0.098,
+            "critDamage": 0.57,
+            "accuracy": 0.97,
+            "evasion": 0.086,
+            "statusAccuracy": 0.063,
+            "statusResistance": 0.074,
+            "physicalPenetration": 0.053,
+            "magicalPenetration": 0.021,
+            "lifesteal": 0.011,
+            "healingPower": 0.023,
+            "regen": 0.023,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 87,
+            "maxMp": 11,
+            "physicalAttack": 18,
+            "physicalDefense": 10,
+            "magicalAttack": 11,
+            "magicalDefense": 11,
+            "speed": 14,
+            "critChance": 0.106,
+            "critDamage": 0.59,
+            "accuracy": 0.98,
+            "evasion": 0.092,
+            "statusAccuracy": 0.066,
+            "statusResistance": 0.078,
+            "physicalPenetration": 0.056,
+            "magicalPenetration": 0.022,
+            "lifesteal": 0.012,
+            "healingPower": 0.026,
+            "regen": 0.026,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 2,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 79,
+            "maxMp": 10,
+            "physicalAttack": 17,
+            "physicalDefense": 9,
+            "magicalAttack": 9,
+            "magicalDefense": 11,
+            "speed": 14,
+            "critChance": 0.098,
+            "critDamage": 0.57,
+            "accuracy": 0.972,
+            "evasion": 0.088,
+            "statusAccuracy": 0.065,
+            "statusResistance": 0.076,
+            "physicalPenetration": 0.054,
+            "magicalPenetration": 0.022,
+            "lifesteal": 0.011,
+            "healingPower": 0.024,
+            "regen": 0.024,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 92,
+            "maxMp": 11,
+            "physicalAttack": 19,
+            "physicalDefense": 10,
+            "magicalAttack": 11,
+            "magicalDefense": 12,
+            "speed": 15,
+            "critChance": 0.106,
+            "critDamage": 0.59,
+            "accuracy": 0.982,
+            "evasion": 0.094,
+            "statusAccuracy": 0.068,
+            "statusResistance": 0.08,
+            "physicalPenetration": 0.057,
+            "magicalPenetration": 0.023,
+            "lifesteal": 0.012,
+            "healingPower": 0.027,
+            "regen": 0.027,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 105,
+            "maxMp": 12,
+            "physicalAttack": 21,
+            "physicalDefense": 11,
+            "magicalAttack": 13,
+            "magicalDefense": 13,
+            "speed": 16,
+            "critChance": 0.114,
+            "critDamage": 0.61,
+            "accuracy": 0.992,
+            "evasion": 0.1,
+            "statusAccuracy": 0.071,
+            "statusResistance": 0.084,
+            "physicalPenetration": 0.06,
+            "magicalPenetration": 0.024,
+            "lifesteal": 0.013,
+            "healingPower": 0.03,
+            "regen": 0.03,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 118,
+            "maxMp": 13,
+            "physicalAttack": 23,
+            "physicalDefense": 12,
+            "magicalAttack": 15,
+            "magicalDefense": 14,
+            "speed": 17,
+            "critChance": 0.122,
+            "critDamage": 0.63,
+            "accuracy": 1.002,
+            "evasion": 0.106,
+            "statusAccuracy": 0.074,
+            "statusResistance": 0.088,
+            "physicalPenetration": 0.063,
+            "magicalPenetration": 0.025,
+            "lifesteal": 0.014,
+            "healingPower": 0.033,
+            "regen": 0.033,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 131,
+            "maxMp": 14,
+            "physicalAttack": 25,
+            "physicalDefense": 13,
+            "magicalAttack": 17,
+            "magicalDefense": 15,
+            "speed": 18,
+            "critChance": 0.13,
+            "critDamage": 0.65,
+            "accuracy": 1.012,
+            "evasion": 0.112,
+            "statusAccuracy": 0.077,
+            "statusResistance": 0.092,
+            "physicalPenetration": 0.066,
+            "magicalPenetration": 0.026,
+            "lifesteal": 0.015,
+            "healingPower": 0.036,
+            "regen": 0.036,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 3,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 97,
+            "maxMp": 11,
+            "physicalAttack": 20,
+            "physicalDefense": 10,
+            "magicalAttack": 11,
+            "magicalDefense": 13,
+            "speed": 16,
+            "critChance": 0.106,
+            "critDamage": 0.59,
+            "accuracy": 0.984,
+            "evasion": 0.096,
+            "statusAccuracy": 0.07,
+            "statusResistance": 0.082,
+            "physicalPenetration": 0.058,
+            "magicalPenetration": 0.024,
+            "lifesteal": 0.012,
+            "healingPower": 0.028,
+            "regen": 0.028,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 110,
+            "maxMp": 12,
+            "physicalAttack": 22,
+            "physicalDefense": 11,
+            "magicalAttack": 13,
+            "magicalDefense": 14,
+            "speed": 17,
+            "critChance": 0.114,
+            "critDamage": 0.61,
+            "accuracy": 0.994,
+            "evasion": 0.102,
+            "statusAccuracy": 0.073,
+            "statusResistance": 0.086,
+            "physicalPenetration": 0.061,
+            "magicalPenetration": 0.025,
+            "lifesteal": 0.013,
+            "healingPower": 0.031,
+            "regen": 0.031,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 123,
+            "maxMp": 13,
+            "physicalAttack": 24,
+            "physicalDefense": 12,
+            "magicalAttack": 15,
+            "magicalDefense": 15,
+            "speed": 18,
+            "critChance": 0.122,
+            "critDamage": 0.63,
+            "accuracy": 1.004,
+            "evasion": 0.108,
+            "statusAccuracy": 0.076,
+            "statusResistance": 0.09,
+            "physicalPenetration": 0.064,
+            "magicalPenetration": 0.026,
+            "lifesteal": 0.014,
+            "healingPower": 0.034,
+            "regen": 0.034,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 136,
+            "maxMp": 14,
+            "physicalAttack": 26,
+            "physicalDefense": 13,
+            "magicalAttack": 17,
+            "magicalDefense": 16,
+            "speed": 19,
+            "critChance": 0.13,
+            "critDamage": 0.65,
+            "accuracy": 1.014,
+            "evasion": 0.114,
+            "statusAccuracy": 0.079,
+            "statusResistance": 0.094,
+            "physicalPenetration": 0.067,
+            "magicalPenetration": 0.027,
+            "lifesteal": 0.015,
+            "healingPower": 0.037,
+            "regen": 0.037,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 149,
+            "maxMp": 15,
+            "physicalAttack": 28,
+            "physicalDefense": 14,
+            "magicalAttack": 19,
+            "magicalDefense": 17,
+            "speed": 20,
+            "critChance": 0.138,
+            "critDamage": 0.67,
+            "accuracy": 1.024,
+            "evasion": 0.12,
+            "statusAccuracy": 0.082,
+            "statusResistance": 0.098,
+            "physicalPenetration": 0.07,
+            "magicalPenetration": 0.028,
+            "lifesteal": 0.016,
+            "healingPower": 0.04,
+            "regen": 0.04,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 6,
+          "stats": {
+            "maxHp": 162,
+            "maxMp": 16,
+            "physicalAttack": 30,
+            "physicalDefense": 15,
+            "magicalAttack": 21,
+            "magicalDefense": 18,
+            "speed": 21,
+            "critChance": 0.146,
+            "critDamage": 0.69,
+            "accuracy": 1.034,
+            "evasion": 0.126,
+            "statusAccuracy": 0.085,
+            "statusResistance": 0.102,
+            "physicalPenetration": 0.073,
+            "magicalPenetration": 0.029,
+            "lifesteal": 0.017,
+            "healingPower": 0.043,
+            "regen": 0.043,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 7,
+          "stats": {
+            "maxHp": 175,
+            "maxMp": 17,
+            "physicalAttack": 32,
+            "physicalDefense": 16,
+            "magicalAttack": 23,
+            "magicalDefense": 19,
+            "speed": 22,
+            "critChance": 0.154,
+            "critDamage": 0.71,
+            "accuracy": 1.044,
+            "evasion": 0.132,
+            "statusAccuracy": 0.088,
+            "statusResistance": 0.106,
+            "physicalPenetration": 0.076,
+            "magicalPenetration": 0.03,
+            "lifesteal": 0.018,
+            "healingPower": 0.046,
+            "regen": 0.046,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 8,
+          "stats": {
+            "maxHp": 188,
+            "maxMp": 18,
+            "physicalAttack": 34,
+            "physicalDefense": 17,
+            "magicalAttack": 25,
+            "magicalDefense": 20,
+            "speed": 23,
+            "critChance": 0.162,
+            "critDamage": 0.73,
+            "accuracy": 1.054,
+            "evasion": 0.138,
+            "statusAccuracy": 0.091,
+            "statusResistance": 0.11,
+            "physicalPenetration": 0.079,
+            "magicalPenetration": 0.031,
+            "lifesteal": 0.019,
+            "healingPower": 0.049,
+            "regen": 0.049,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 4,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 115,
+            "maxMp": 12,
+            "physicalAttack": 23,
+            "physicalDefense": 11,
+            "magicalAttack": 13,
+            "magicalDefense": 15,
+            "speed": 18,
+            "critChance": 0.114,
+            "critDamage": 0.61,
+            "accuracy": 0.996,
+            "evasion": 0.104,
+            "statusAccuracy": 0.075,
+            "statusResistance": 0.088,
+            "physicalPenetration": 0.062,
+            "magicalPenetration": 0.026,
+            "lifesteal": 0.013,
+            "healingPower": 0.032,
+            "regen": 0.032,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 128,
+            "maxMp": 13,
+            "physicalAttack": 25,
+            "physicalDefense": 12,
+            "magicalAttack": 15,
+            "magicalDefense": 16,
+            "speed": 19,
+            "critChance": 0.122,
+            "critDamage": 0.63,
+            "accuracy": 1.006,
+            "evasion": 0.11,
+            "statusAccuracy": 0.078,
+            "statusResistance": 0.092,
+            "physicalPenetration": 0.065,
+            "magicalPenetration": 0.027,
+            "lifesteal": 0.014,
+            "healingPower": 0.035,
+            "regen": 0.035,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 141,
+            "maxMp": 14,
+            "physicalAttack": 27,
+            "physicalDefense": 13,
+            "magicalAttack": 17,
+            "magicalDefense": 17,
+            "speed": 20,
+            "critChance": 0.13,
+            "critDamage": 0.65,
+            "accuracy": 1.016,
+            "evasion": 0.116,
+            "statusAccuracy": 0.081,
+            "statusResistance": 0.096,
+            "physicalPenetration": 0.068,
+            "magicalPenetration": 0.028,
+            "lifesteal": 0.015,
+            "healingPower": 0.038,
+            "regen": 0.038,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 154,
+            "maxMp": 15,
+            "physicalAttack": 29,
+            "physicalDefense": 14,
+            "magicalAttack": 19,
+            "magicalDefense": 18,
+            "speed": 21,
+            "critChance": 0.138,
+            "critDamage": 0.67,
+            "accuracy": 1.026,
+            "evasion": 0.122,
+            "statusAccuracy": 0.084,
+            "statusResistance": 0.1,
+            "physicalPenetration": 0.071,
+            "magicalPenetration": 0.029,
+            "lifesteal": 0.016,
+            "healingPower": 0.041,
+            "regen": 0.041,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 167,
+            "maxMp": 16,
+            "physicalAttack": 31,
+            "physicalDefense": 15,
+            "magicalAttack": 21,
+            "magicalDefense": 19,
+            "speed": 22,
+            "critChance": 0.146,
+            "critDamage": 0.69,
+            "accuracy": 1.036,
+            "evasion": 0.128,
+            "statusAccuracy": 0.087,
+            "statusResistance": 0.104,
+            "physicalPenetration": 0.074,
+            "magicalPenetration": 0.03,
+            "lifesteal": 0.017,
+            "healingPower": 0.044,
+            "regen": 0.044,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 6,
+          "stats": {
+            "maxHp": 180,
+            "maxMp": 17,
+            "physicalAttack": 33,
+            "physicalDefense": 16,
+            "magicalAttack": 23,
+            "magicalDefense": 20,
+            "speed": 23,
+            "critChance": 0.154,
+            "critDamage": 0.71,
+            "accuracy": 1.046,
+            "evasion": 0.134,
+            "statusAccuracy": 0.09,
+            "statusResistance": 0.108,
+            "physicalPenetration": 0.077,
+            "magicalPenetration": 0.031,
+            "lifesteal": 0.018,
+            "healingPower": 0.047,
+            "regen": 0.047,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 7,
+          "stats": {
+            "maxHp": 193,
+            "maxMp": 18,
+            "physicalAttack": 35,
+            "physicalDefense": 17,
+            "magicalAttack": 25,
+            "magicalDefense": 21,
+            "speed": 24,
+            "critChance": 0.162,
+            "critDamage": 0.73,
+            "accuracy": 1.056,
+            "evasion": 0.14,
+            "statusAccuracy": 0.093,
+            "statusResistance": 0.112,
+            "physicalPenetration": 0.08,
+            "magicalPenetration": 0.032,
+            "lifesteal": 0.019,
+            "healingPower": 0.05,
+            "regen": 0.05,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 8,
+          "stats": {
+            "maxHp": 206,
+            "maxMp": 19,
+            "physicalAttack": 37,
+            "physicalDefense": 18,
+            "magicalAttack": 27,
+            "magicalDefense": 22,
+            "speed": 25,
+            "critChance": 0.17,
+            "critDamage": 0.75,
+            "accuracy": 1.066,
+            "evasion": 0.146,
+            "statusAccuracy": 0.096,
+            "statusResistance": 0.116,
+            "physicalPenetration": 0.083,
+            "magicalPenetration": 0.033,
+            "lifesteal": 0.02,
+            "healingPower": 0.053,
+            "regen": 0.053,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 9,
+          "stats": {
+            "maxHp": 219,
+            "maxMp": 20,
+            "physicalAttack": 39,
+            "physicalDefense": 19,
+            "magicalAttack": 29,
+            "magicalDefense": 23,
+            "speed": 26,
+            "critChance": 0.178,
+            "critDamage": 0.77,
+            "accuracy": 1.076,
+            "evasion": 0.152,
+            "statusAccuracy": 0.099,
+            "statusResistance": 0.12,
+            "physicalPenetration": 0.086,
+            "magicalPenetration": 0.034,
+            "lifesteal": 0.021,
+            "healingPower": 0.056,
+            "regen": 0.056,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 10,
+          "stats": {
+            "maxHp": 232,
+            "maxMp": 21,
+            "physicalAttack": 41,
+            "physicalDefense": 20,
+            "magicalAttack": 31,
+            "magicalDefense": 24,
+            "speed": 27,
+            "critChance": 0.186,
+            "critDamage": 0.79,
+            "accuracy": 1.086,
+            "evasion": 0.158,
+            "statusAccuracy": 0.102,
+            "statusResistance": 0.124,
+            "physicalPenetration": 0.089,
+            "magicalPenetration": 0.035,
+            "lifesteal": 0.022,
+            "healingPower": 0.059,
+            "regen": 0.059,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "homunculus_archer_resonance_shot"
+          ],
+          "passiveIds": []
+        }
+      ]
+    }
+  ]
+}

@@ -201,7 +201,7 @@ BattleCatalogTables _loadBattleCatalogTablesFromAssets() {
     ),
     stageCatalog: _readBattleStringList('stage_catalog.json'),
     combatJobDtos: _readBattleDtoMap(
-      _readBattleObjectList('combat_jobs.json'),
+      _readBattleIndexedObjectList('combat_job_index.json'),
       BattleCombatJobDefinitionDto.fromJson,
     ),
     combatSkillDtos: _readBattleDtoMap(
@@ -223,6 +223,20 @@ Map<String, T> _readBattleDtoMap<T>(
     for (final Map<String, Object?> entry in entries)
       _readBattleId(entry): convert(entry),
   };
+}
+
+List<Map<String, Object?>> _readBattleIndexedObjectList(String indexFileName) {
+  return _readBattleStringList(
+    indexFileName,
+  ).map(_readBattleObject).toList(growable: false);
+}
+
+Map<String, Object?> _readBattleObject(String fileName) {
+  final Object? decoded = _readBattleJson(fileName);
+  if (decoded is Map<String, Object?>) {
+    return decoded;
+  }
+  throw FormatException('Battle catalog $fileName must be an object');
 }
 
 List<Map<String, Object?>> _readBattleObjectList(String fileName) {

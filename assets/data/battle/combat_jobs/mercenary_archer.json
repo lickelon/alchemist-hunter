@@ -1,0 +1,873 @@
+{
+  "id": "mercenary_archer",
+  "faction": "mercenary",
+  "discipline": "archer",
+  "levelHpGrowth": 11,
+  "tiers": [
+    {
+      "tierIndex": 1,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 64,
+            "maxMp": 9,
+            "physicalAttack": 15,
+            "physicalDefense": 9,
+            "magicalAttack": 5,
+            "magicalDefense": 9,
+            "speed": 11,
+            "critChance": 0.08,
+            "critDamage": 0.55,
+            "accuracy": 0.95,
+            "evasion": 0.07,
+            "statusAccuracy": 0.05,
+            "statusResistance": 0.06,
+            "physicalPenetration": 0.05,
+            "magicalPenetration": 0.01,
+            "lifesteal": 0.01,
+            "healingPower": 0.0,
+            "regen": 0.01,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 78,
+            "maxMp": 10,
+            "physicalAttack": 18,
+            "physicalDefense": 10,
+            "magicalAttack": 6,
+            "magicalDefense": 11,
+            "speed": 12,
+            "critChance": 0.088,
+            "critDamage": 0.57,
+            "accuracy": 0.96,
+            "evasion": 0.076,
+            "statusAccuracy": 0.053,
+            "statusResistance": 0.064,
+            "physicalPenetration": 0.054,
+            "magicalPenetration": 0.011,
+            "lifesteal": 0.011,
+            "healingPower": 0.0,
+            "regen": 0.011,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 2,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 82,
+            "maxMp": 10,
+            "physicalAttack": 19,
+            "physicalDefense": 10,
+            "magicalAttack": 6,
+            "magicalDefense": 11,
+            "speed": 13,
+            "critChance": 0.088,
+            "critDamage": 0.57,
+            "accuracy": 0.962,
+            "evasion": 0.077,
+            "statusAccuracy": 0.054,
+            "statusResistance": 0.065,
+            "physicalPenetration": 0.055,
+            "magicalPenetration": 0.011,
+            "lifesteal": 0.011,
+            "healingPower": 0.0,
+            "regen": 0.012,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 96,
+            "maxMp": 11,
+            "physicalAttack": 22,
+            "physicalDefense": 11,
+            "magicalAttack": 7,
+            "magicalDefense": 13,
+            "speed": 14,
+            "critChance": 0.096,
+            "critDamage": 0.59,
+            "accuracy": 0.972,
+            "evasion": 0.083,
+            "statusAccuracy": 0.057,
+            "statusResistance": 0.069,
+            "physicalPenetration": 0.059,
+            "magicalPenetration": 0.012,
+            "lifesteal": 0.012,
+            "healingPower": 0.0,
+            "regen": 0.013,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 110,
+            "maxMp": 12,
+            "physicalAttack": 25,
+            "physicalDefense": 12,
+            "magicalAttack": 8,
+            "magicalDefense": 15,
+            "speed": 15,
+            "critChance": 0.104,
+            "critDamage": 0.61,
+            "accuracy": 0.982,
+            "evasion": 0.089,
+            "statusAccuracy": 0.06,
+            "statusResistance": 0.073,
+            "physicalPenetration": 0.063,
+            "magicalPenetration": 0.013,
+            "lifesteal": 0.013,
+            "healingPower": 0.0,
+            "regen": 0.014,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 124,
+            "maxMp": 13,
+            "physicalAttack": 28,
+            "physicalDefense": 13,
+            "magicalAttack": 9,
+            "magicalDefense": 17,
+            "speed": 16,
+            "critChance": 0.112,
+            "critDamage": 0.63,
+            "accuracy": 0.992,
+            "evasion": 0.095,
+            "statusAccuracy": 0.063,
+            "statusResistance": 0.077,
+            "physicalPenetration": 0.067,
+            "magicalPenetration": 0.014,
+            "lifesteal": 0.014,
+            "healingPower": 0.0,
+            "regen": 0.015,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 3,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 100,
+            "maxMp": 11,
+            "physicalAttack": 23,
+            "physicalDefense": 11,
+            "magicalAttack": 7,
+            "magicalDefense": 13,
+            "speed": 15,
+            "critChance": 0.096,
+            "critDamage": 0.59,
+            "accuracy": 0.974,
+            "evasion": 0.084,
+            "statusAccuracy": 0.058,
+            "statusResistance": 0.07,
+            "physicalPenetration": 0.06,
+            "magicalPenetration": 0.012,
+            "lifesteal": 0.012,
+            "healingPower": 0.0,
+            "regen": 0.014,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 114,
+            "maxMp": 12,
+            "physicalAttack": 26,
+            "physicalDefense": 12,
+            "magicalAttack": 8,
+            "magicalDefense": 15,
+            "speed": 16,
+            "critChance": 0.104,
+            "critDamage": 0.61,
+            "accuracy": 0.984,
+            "evasion": 0.09,
+            "statusAccuracy": 0.061,
+            "statusResistance": 0.074,
+            "physicalPenetration": 0.064,
+            "magicalPenetration": 0.013,
+            "lifesteal": 0.013,
+            "healingPower": 0.0,
+            "regen": 0.015,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 128,
+            "maxMp": 13,
+            "physicalAttack": 29,
+            "physicalDefense": 13,
+            "magicalAttack": 9,
+            "magicalDefense": 17,
+            "speed": 17,
+            "critChance": 0.112,
+            "critDamage": 0.63,
+            "accuracy": 0.994,
+            "evasion": 0.096,
+            "statusAccuracy": 0.064,
+            "statusResistance": 0.078,
+            "physicalPenetration": 0.068,
+            "magicalPenetration": 0.014,
+            "lifesteal": 0.014,
+            "healingPower": 0.0,
+            "regen": 0.016,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 142,
+            "maxMp": 14,
+            "physicalAttack": 32,
+            "physicalDefense": 14,
+            "magicalAttack": 10,
+            "magicalDefense": 19,
+            "speed": 18,
+            "critChance": 0.12,
+            "critDamage": 0.65,
+            "accuracy": 1.004,
+            "evasion": 0.102,
+            "statusAccuracy": 0.067,
+            "statusResistance": 0.082,
+            "physicalPenetration": 0.072,
+            "magicalPenetration": 0.015,
+            "lifesteal": 0.015,
+            "healingPower": 0.0,
+            "regen": 0.017,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 156,
+            "maxMp": 15,
+            "physicalAttack": 35,
+            "physicalDefense": 15,
+            "magicalAttack": 11,
+            "magicalDefense": 21,
+            "speed": 19,
+            "critChance": 0.128,
+            "critDamage": 0.67,
+            "accuracy": 1.014,
+            "evasion": 0.108,
+            "statusAccuracy": 0.07,
+            "statusResistance": 0.086,
+            "physicalPenetration": 0.076,
+            "magicalPenetration": 0.016,
+            "lifesteal": 0.016,
+            "healingPower": 0.0,
+            "regen": 0.018,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 6,
+          "stats": {
+            "maxHp": 170,
+            "maxMp": 16,
+            "physicalAttack": 38,
+            "physicalDefense": 16,
+            "magicalAttack": 12,
+            "magicalDefense": 23,
+            "speed": 20,
+            "critChance": 0.136,
+            "critDamage": 0.69,
+            "accuracy": 1.024,
+            "evasion": 0.114,
+            "statusAccuracy": 0.073,
+            "statusResistance": 0.09,
+            "physicalPenetration": 0.08,
+            "magicalPenetration": 0.017,
+            "lifesteal": 0.017,
+            "healingPower": 0.0,
+            "regen": 0.019,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 4,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 118,
+            "maxMp": 12,
+            "physicalAttack": 27,
+            "physicalDefense": 12,
+            "magicalAttack": 8,
+            "magicalDefense": 15,
+            "speed": 17,
+            "critChance": 0.104,
+            "critDamage": 0.61,
+            "accuracy": 0.986,
+            "evasion": 0.091,
+            "statusAccuracy": 0.062,
+            "statusResistance": 0.075,
+            "physicalPenetration": 0.065,
+            "magicalPenetration": 0.013,
+            "lifesteal": 0.013,
+            "healingPower": 0.0,
+            "regen": 0.016,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 132,
+            "maxMp": 13,
+            "physicalAttack": 30,
+            "physicalDefense": 13,
+            "magicalAttack": 9,
+            "magicalDefense": 17,
+            "speed": 18,
+            "critChance": 0.112,
+            "critDamage": 0.63,
+            "accuracy": 0.996,
+            "evasion": 0.097,
+            "statusAccuracy": 0.065,
+            "statusResistance": 0.079,
+            "physicalPenetration": 0.069,
+            "magicalPenetration": 0.014,
+            "lifesteal": 0.014,
+            "healingPower": 0.0,
+            "regen": 0.017,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 146,
+            "maxMp": 14,
+            "physicalAttack": 33,
+            "physicalDefense": 14,
+            "magicalAttack": 10,
+            "magicalDefense": 19,
+            "speed": 19,
+            "critChance": 0.12,
+            "critDamage": 0.65,
+            "accuracy": 1.006,
+            "evasion": 0.103,
+            "statusAccuracy": 0.068,
+            "statusResistance": 0.083,
+            "physicalPenetration": 0.073,
+            "magicalPenetration": 0.015,
+            "lifesteal": 0.015,
+            "healingPower": 0.0,
+            "regen": 0.018,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 160,
+            "maxMp": 15,
+            "physicalAttack": 36,
+            "physicalDefense": 15,
+            "magicalAttack": 11,
+            "magicalDefense": 21,
+            "speed": 20,
+            "critChance": 0.128,
+            "critDamage": 0.67,
+            "accuracy": 1.016,
+            "evasion": 0.109,
+            "statusAccuracy": 0.071,
+            "statusResistance": 0.087,
+            "physicalPenetration": 0.077,
+            "magicalPenetration": 0.016,
+            "lifesteal": 0.016,
+            "healingPower": 0.0,
+            "regen": 0.019,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 174,
+            "maxMp": 16,
+            "physicalAttack": 39,
+            "physicalDefense": 16,
+            "magicalAttack": 12,
+            "magicalDefense": 23,
+            "speed": 21,
+            "critChance": 0.136,
+            "critDamage": 0.69,
+            "accuracy": 1.026,
+            "evasion": 0.115,
+            "statusAccuracy": 0.074,
+            "statusResistance": 0.091,
+            "physicalPenetration": 0.081,
+            "magicalPenetration": 0.017,
+            "lifesteal": 0.017,
+            "healingPower": 0.0,
+            "regen": 0.02,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 6,
+          "stats": {
+            "maxHp": 188,
+            "maxMp": 17,
+            "physicalAttack": 42,
+            "physicalDefense": 17,
+            "magicalAttack": 13,
+            "magicalDefense": 25,
+            "speed": 22,
+            "critChance": 0.144,
+            "critDamage": 0.71,
+            "accuracy": 1.036,
+            "evasion": 0.121,
+            "statusAccuracy": 0.077,
+            "statusResistance": 0.095,
+            "physicalPenetration": 0.085,
+            "magicalPenetration": 0.018,
+            "lifesteal": 0.018,
+            "healingPower": 0.0,
+            "regen": 0.021,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 7,
+          "stats": {
+            "maxHp": 202,
+            "maxMp": 18,
+            "physicalAttack": 45,
+            "physicalDefense": 18,
+            "magicalAttack": 14,
+            "magicalDefense": 27,
+            "speed": 23,
+            "critChance": 0.152,
+            "critDamage": 0.73,
+            "accuracy": 1.046,
+            "evasion": 0.127,
+            "statusAccuracy": 0.08,
+            "statusResistance": 0.099,
+            "physicalPenetration": 0.089,
+            "magicalPenetration": 0.019,
+            "lifesteal": 0.019,
+            "healingPower": 0.0,
+            "regen": 0.022,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 8,
+          "stats": {
+            "maxHp": 216,
+            "maxMp": 19,
+            "physicalAttack": 48,
+            "physicalDefense": 19,
+            "magicalAttack": 15,
+            "magicalDefense": 29,
+            "speed": 24,
+            "critChance": 0.16,
+            "critDamage": 0.75,
+            "accuracy": 1.056,
+            "evasion": 0.133,
+            "statusAccuracy": 0.083,
+            "statusResistance": 0.103,
+            "physicalPenetration": 0.093,
+            "magicalPenetration": 0.02,
+            "lifesteal": 0.02,
+            "healingPower": 0.0,
+            "regen": 0.023,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 5,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 136,
+            "maxMp": 13,
+            "physicalAttack": 31,
+            "physicalDefense": 13,
+            "magicalAttack": 9,
+            "magicalDefense": 17,
+            "speed": 19,
+            "critChance": 0.112,
+            "critDamage": 0.63,
+            "accuracy": 0.998,
+            "evasion": 0.098,
+            "statusAccuracy": 0.066,
+            "statusResistance": 0.08,
+            "physicalPenetration": 0.07,
+            "magicalPenetration": 0.014,
+            "lifesteal": 0.014,
+            "healingPower": 0.0,
+            "regen": 0.018,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 150,
+            "maxMp": 14,
+            "physicalAttack": 34,
+            "physicalDefense": 14,
+            "magicalAttack": 10,
+            "magicalDefense": 19,
+            "speed": 20,
+            "critChance": 0.12,
+            "critDamage": 0.65,
+            "accuracy": 1.008,
+            "evasion": 0.104,
+            "statusAccuracy": 0.069,
+            "statusResistance": 0.084,
+            "physicalPenetration": 0.074,
+            "magicalPenetration": 0.015,
+            "lifesteal": 0.015,
+            "healingPower": 0.0,
+            "regen": 0.019,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 164,
+            "maxMp": 15,
+            "physicalAttack": 37,
+            "physicalDefense": 15,
+            "magicalAttack": 11,
+            "magicalDefense": 21,
+            "speed": 21,
+            "critChance": 0.128,
+            "critDamage": 0.67,
+            "accuracy": 1.018,
+            "evasion": 0.11,
+            "statusAccuracy": 0.072,
+            "statusResistance": 0.088,
+            "physicalPenetration": 0.078,
+            "magicalPenetration": 0.016,
+            "lifesteal": 0.016,
+            "healingPower": 0.0,
+            "regen": 0.02,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 178,
+            "maxMp": 16,
+            "physicalAttack": 40,
+            "physicalDefense": 16,
+            "magicalAttack": 12,
+            "magicalDefense": 23,
+            "speed": 22,
+            "critChance": 0.136,
+            "critDamage": 0.69,
+            "accuracy": 1.028,
+            "evasion": 0.116,
+            "statusAccuracy": 0.075,
+            "statusResistance": 0.092,
+            "physicalPenetration": 0.082,
+            "magicalPenetration": 0.017,
+            "lifesteal": 0.017,
+            "healingPower": 0.0,
+            "regen": 0.021,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 192,
+            "maxMp": 17,
+            "physicalAttack": 43,
+            "physicalDefense": 17,
+            "magicalAttack": 13,
+            "magicalDefense": 25,
+            "speed": 23,
+            "critChance": 0.144,
+            "critDamage": 0.71,
+            "accuracy": 1.038,
+            "evasion": 0.122,
+            "statusAccuracy": 0.078,
+            "statusResistance": 0.096,
+            "physicalPenetration": 0.086,
+            "magicalPenetration": 0.018,
+            "lifesteal": 0.018,
+            "healingPower": 0.0,
+            "regen": 0.022,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 6,
+          "stats": {
+            "maxHp": 206,
+            "maxMp": 18,
+            "physicalAttack": 46,
+            "physicalDefense": 18,
+            "magicalAttack": 14,
+            "magicalDefense": 27,
+            "speed": 24,
+            "critChance": 0.152,
+            "critDamage": 0.73,
+            "accuracy": 1.048,
+            "evasion": 0.128,
+            "statusAccuracy": 0.081,
+            "statusResistance": 0.1,
+            "physicalPenetration": 0.09,
+            "magicalPenetration": 0.019,
+            "lifesteal": 0.019,
+            "healingPower": 0.0,
+            "regen": 0.023,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 7,
+          "stats": {
+            "maxHp": 220,
+            "maxMp": 19,
+            "physicalAttack": 49,
+            "physicalDefense": 19,
+            "magicalAttack": 15,
+            "magicalDefense": 29,
+            "speed": 25,
+            "critChance": 0.16,
+            "critDamage": 0.75,
+            "accuracy": 1.058,
+            "evasion": 0.134,
+            "statusAccuracy": 0.084,
+            "statusResistance": 0.104,
+            "physicalPenetration": 0.094,
+            "magicalPenetration": 0.02,
+            "lifesteal": 0.02,
+            "healingPower": 0.0,
+            "regen": 0.024,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 8,
+          "stats": {
+            "maxHp": 234,
+            "maxMp": 20,
+            "physicalAttack": 52,
+            "physicalDefense": 20,
+            "magicalAttack": 16,
+            "magicalDefense": 31,
+            "speed": 26,
+            "critChance": 0.168,
+            "critDamage": 0.77,
+            "accuracy": 1.068,
+            "evasion": 0.14,
+            "statusAccuracy": 0.087,
+            "statusResistance": 0.108,
+            "physicalPenetration": 0.098,
+            "magicalPenetration": 0.021,
+            "lifesteal": 0.021,
+            "healingPower": 0.0,
+            "regen": 0.025,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 9,
+          "stats": {
+            "maxHp": 248,
+            "maxMp": 21,
+            "physicalAttack": 55,
+            "physicalDefense": 21,
+            "magicalAttack": 17,
+            "magicalDefense": 33,
+            "speed": 27,
+            "critChance": 0.176,
+            "critDamage": 0.79,
+            "accuracy": 1.078,
+            "evasion": 0.146,
+            "statusAccuracy": 0.09,
+            "statusResistance": 0.112,
+            "physicalPenetration": 0.102,
+            "magicalPenetration": 0.022,
+            "lifesteal": 0.022,
+            "healingPower": 0.0,
+            "regen": 0.026,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 10,
+          "stats": {
+            "maxHp": 262,
+            "maxMp": 22,
+            "physicalAttack": 58,
+            "physicalDefense": 22,
+            "magicalAttack": 18,
+            "magicalDefense": 35,
+            "speed": 28,
+            "critChance": 0.184,
+            "critDamage": 0.81,
+            "accuracy": 1.088,
+            "evasion": 0.152,
+            "statusAccuracy": 0.093,
+            "statusResistance": 0.116,
+            "physicalPenetration": 0.106,
+            "magicalPenetration": 0.023,
+            "lifesteal": 0.023,
+            "healingPower": 0.0,
+            "regen": 0.027,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_archer_piercing_shot"
+          ],
+          "passiveIds": []
+        }
+      ]
+    }
+  ]
+}

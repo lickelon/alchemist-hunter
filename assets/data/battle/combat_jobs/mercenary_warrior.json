@@ -1,0 +1,873 @@
+{
+  "id": "mercenary_warrior",
+  "faction": "mercenary",
+  "discipline": "warrior",
+  "levelHpGrowth": 14,
+  "tiers": [
+    {
+      "tierIndex": 1,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 74,
+            "maxMp": 8,
+            "physicalAttack": 16,
+            "physicalDefense": 13,
+            "magicalAttack": 5,
+            "magicalDefense": 9,
+            "speed": 8,
+            "critChance": 0.05,
+            "critDamage": 0.5,
+            "accuracy": 0.88,
+            "evasion": 0.04,
+            "statusAccuracy": 0.04,
+            "statusResistance": 0.08,
+            "physicalPenetration": 0.03,
+            "magicalPenetration": 0.02,
+            "lifesteal": 0.02,
+            "healingPower": 0.0,
+            "regen": 0.01,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 92,
+            "maxMp": 9,
+            "physicalAttack": 19,
+            "physicalDefense": 16,
+            "magicalAttack": 6,
+            "magicalDefense": 11,
+            "speed": 9,
+            "critChance": 0.055,
+            "critDamage": 0.52,
+            "accuracy": 0.884,
+            "evasion": 0.042,
+            "statusAccuracy": 0.042,
+            "statusResistance": 0.086,
+            "physicalPenetration": 0.033,
+            "magicalPenetration": 0.021,
+            "lifesteal": 0.021,
+            "healingPower": 0.0,
+            "regen": 0.012,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 2,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 98,
+            "maxMp": 9,
+            "physicalAttack": 20,
+            "physicalDefense": 17,
+            "magicalAttack": 6,
+            "magicalDefense": 12,
+            "speed": 9,
+            "critChance": 0.055,
+            "critDamage": 0.52,
+            "accuracy": 0.885,
+            "evasion": 0.043,
+            "statusAccuracy": 0.043,
+            "statusResistance": 0.09,
+            "physicalPenetration": 0.034,
+            "magicalPenetration": 0.022,
+            "lifesteal": 0.022,
+            "healingPower": 0.0,
+            "regen": 0.013,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 116,
+            "maxMp": 10,
+            "physicalAttack": 23,
+            "physicalDefense": 20,
+            "magicalAttack": 7,
+            "magicalDefense": 14,
+            "speed": 10,
+            "critChance": 0.06,
+            "critDamage": 0.54,
+            "accuracy": 0.889,
+            "evasion": 0.045,
+            "statusAccuracy": 0.045,
+            "statusResistance": 0.096,
+            "physicalPenetration": 0.037,
+            "magicalPenetration": 0.023,
+            "lifesteal": 0.023,
+            "healingPower": 0.0,
+            "regen": 0.015,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 134,
+            "maxMp": 11,
+            "physicalAttack": 26,
+            "physicalDefense": 23,
+            "magicalAttack": 8,
+            "magicalDefense": 16,
+            "speed": 11,
+            "critChance": 0.065,
+            "critDamage": 0.56,
+            "accuracy": 0.893,
+            "evasion": 0.047,
+            "statusAccuracy": 0.047,
+            "statusResistance": 0.102,
+            "physicalPenetration": 0.04,
+            "magicalPenetration": 0.024,
+            "lifesteal": 0.024,
+            "healingPower": 0.0,
+            "regen": 0.017,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 152,
+            "maxMp": 12,
+            "physicalAttack": 29,
+            "physicalDefense": 26,
+            "magicalAttack": 9,
+            "magicalDefense": 18,
+            "speed": 12,
+            "critChance": 0.07,
+            "critDamage": 0.58,
+            "accuracy": 0.897,
+            "evasion": 0.049,
+            "statusAccuracy": 0.049,
+            "statusResistance": 0.108,
+            "physicalPenetration": 0.043,
+            "magicalPenetration": 0.025,
+            "lifesteal": 0.025,
+            "healingPower": 0.0,
+            "regen": 0.019,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 3,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 122,
+            "maxMp": 10,
+            "physicalAttack": 24,
+            "physicalDefense": 21,
+            "magicalAttack": 7,
+            "magicalDefense": 15,
+            "speed": 10,
+            "critChance": 0.06,
+            "critDamage": 0.54,
+            "accuracy": 0.89,
+            "evasion": 0.046,
+            "statusAccuracy": 0.046,
+            "statusResistance": 0.1,
+            "physicalPenetration": 0.038,
+            "magicalPenetration": 0.024,
+            "lifesteal": 0.024,
+            "healingPower": 0.0,
+            "regen": 0.016,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 140,
+            "maxMp": 11,
+            "physicalAttack": 27,
+            "physicalDefense": 24,
+            "magicalAttack": 8,
+            "magicalDefense": 17,
+            "speed": 11,
+            "critChance": 0.065,
+            "critDamage": 0.56,
+            "accuracy": 0.894,
+            "evasion": 0.048,
+            "statusAccuracy": 0.048,
+            "statusResistance": 0.106,
+            "physicalPenetration": 0.041,
+            "magicalPenetration": 0.025,
+            "lifesteal": 0.025,
+            "healingPower": 0.0,
+            "regen": 0.018,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 158,
+            "maxMp": 12,
+            "physicalAttack": 30,
+            "physicalDefense": 27,
+            "magicalAttack": 9,
+            "magicalDefense": 19,
+            "speed": 12,
+            "critChance": 0.07,
+            "critDamage": 0.58,
+            "accuracy": 0.898,
+            "evasion": 0.05,
+            "statusAccuracy": 0.05,
+            "statusResistance": 0.112,
+            "physicalPenetration": 0.044,
+            "magicalPenetration": 0.026,
+            "lifesteal": 0.026,
+            "healingPower": 0.0,
+            "regen": 0.02,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 176,
+            "maxMp": 13,
+            "physicalAttack": 33,
+            "physicalDefense": 30,
+            "magicalAttack": 10,
+            "magicalDefense": 21,
+            "speed": 13,
+            "critChance": 0.075,
+            "critDamage": 0.6,
+            "accuracy": 0.902,
+            "evasion": 0.052,
+            "statusAccuracy": 0.052,
+            "statusResistance": 0.118,
+            "physicalPenetration": 0.047,
+            "magicalPenetration": 0.027,
+            "lifesteal": 0.027,
+            "healingPower": 0.0,
+            "regen": 0.022,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 194,
+            "maxMp": 14,
+            "physicalAttack": 36,
+            "physicalDefense": 33,
+            "magicalAttack": 11,
+            "magicalDefense": 23,
+            "speed": 14,
+            "critChance": 0.08,
+            "critDamage": 0.62,
+            "accuracy": 0.906,
+            "evasion": 0.054,
+            "statusAccuracy": 0.054,
+            "statusResistance": 0.124,
+            "physicalPenetration": 0.05,
+            "magicalPenetration": 0.028,
+            "lifesteal": 0.028,
+            "healingPower": 0.0,
+            "regen": 0.024,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 6,
+          "stats": {
+            "maxHp": 212,
+            "maxMp": 15,
+            "physicalAttack": 39,
+            "physicalDefense": 36,
+            "magicalAttack": 12,
+            "magicalDefense": 25,
+            "speed": 15,
+            "critChance": 0.085,
+            "critDamage": 0.64,
+            "accuracy": 0.91,
+            "evasion": 0.056,
+            "statusAccuracy": 0.056,
+            "statusResistance": 0.13,
+            "physicalPenetration": 0.053,
+            "magicalPenetration": 0.029,
+            "lifesteal": 0.029,
+            "healingPower": 0.0,
+            "regen": 0.026,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 4,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 146,
+            "maxMp": 11,
+            "physicalAttack": 28,
+            "physicalDefense": 25,
+            "magicalAttack": 8,
+            "magicalDefense": 18,
+            "speed": 11,
+            "critChance": 0.065,
+            "critDamage": 0.56,
+            "accuracy": 0.895,
+            "evasion": 0.049,
+            "statusAccuracy": 0.049,
+            "statusResistance": 0.11,
+            "physicalPenetration": 0.042,
+            "magicalPenetration": 0.026,
+            "lifesteal": 0.026,
+            "healingPower": 0.0,
+            "regen": 0.019,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 164,
+            "maxMp": 12,
+            "physicalAttack": 31,
+            "physicalDefense": 28,
+            "magicalAttack": 9,
+            "magicalDefense": 20,
+            "speed": 12,
+            "critChance": 0.07,
+            "critDamage": 0.58,
+            "accuracy": 0.899,
+            "evasion": 0.051,
+            "statusAccuracy": 0.051,
+            "statusResistance": 0.116,
+            "physicalPenetration": 0.045,
+            "magicalPenetration": 0.027,
+            "lifesteal": 0.027,
+            "healingPower": 0.0,
+            "regen": 0.021,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 182,
+            "maxMp": 13,
+            "physicalAttack": 34,
+            "physicalDefense": 31,
+            "magicalAttack": 10,
+            "magicalDefense": 22,
+            "speed": 13,
+            "critChance": 0.075,
+            "critDamage": 0.6,
+            "accuracy": 0.903,
+            "evasion": 0.053,
+            "statusAccuracy": 0.053,
+            "statusResistance": 0.122,
+            "physicalPenetration": 0.048,
+            "magicalPenetration": 0.028,
+            "lifesteal": 0.028,
+            "healingPower": 0.0,
+            "regen": 0.023,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 200,
+            "maxMp": 14,
+            "physicalAttack": 37,
+            "physicalDefense": 34,
+            "magicalAttack": 11,
+            "magicalDefense": 24,
+            "speed": 14,
+            "critChance": 0.08,
+            "critDamage": 0.62,
+            "accuracy": 0.907,
+            "evasion": 0.055,
+            "statusAccuracy": 0.055,
+            "statusResistance": 0.128,
+            "physicalPenetration": 0.051,
+            "magicalPenetration": 0.029,
+            "lifesteal": 0.029,
+            "healingPower": 0.0,
+            "regen": 0.025,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 218,
+            "maxMp": 15,
+            "physicalAttack": 40,
+            "physicalDefense": 37,
+            "magicalAttack": 12,
+            "magicalDefense": 26,
+            "speed": 15,
+            "critChance": 0.085,
+            "critDamage": 0.64,
+            "accuracy": 0.911,
+            "evasion": 0.057,
+            "statusAccuracy": 0.057,
+            "statusResistance": 0.134,
+            "physicalPenetration": 0.054,
+            "magicalPenetration": 0.03,
+            "lifesteal": 0.03,
+            "healingPower": 0.0,
+            "regen": 0.027,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 6,
+          "stats": {
+            "maxHp": 236,
+            "maxMp": 16,
+            "physicalAttack": 43,
+            "physicalDefense": 40,
+            "magicalAttack": 13,
+            "magicalDefense": 28,
+            "speed": 16,
+            "critChance": 0.09,
+            "critDamage": 0.66,
+            "accuracy": 0.915,
+            "evasion": 0.059,
+            "statusAccuracy": 0.059,
+            "statusResistance": 0.14,
+            "physicalPenetration": 0.057,
+            "magicalPenetration": 0.031,
+            "lifesteal": 0.031,
+            "healingPower": 0.0,
+            "regen": 0.029,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 7,
+          "stats": {
+            "maxHp": 254,
+            "maxMp": 17,
+            "physicalAttack": 46,
+            "physicalDefense": 43,
+            "magicalAttack": 14,
+            "magicalDefense": 30,
+            "speed": 17,
+            "critChance": 0.095,
+            "critDamage": 0.68,
+            "accuracy": 0.919,
+            "evasion": 0.061,
+            "statusAccuracy": 0.061,
+            "statusResistance": 0.146,
+            "physicalPenetration": 0.06,
+            "magicalPenetration": 0.032,
+            "lifesteal": 0.032,
+            "healingPower": 0.0,
+            "regen": 0.031,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 8,
+          "stats": {
+            "maxHp": 272,
+            "maxMp": 18,
+            "physicalAttack": 49,
+            "physicalDefense": 46,
+            "magicalAttack": 15,
+            "magicalDefense": 32,
+            "speed": 18,
+            "critChance": 0.1,
+            "critDamage": 0.7,
+            "accuracy": 0.923,
+            "evasion": 0.063,
+            "statusAccuracy": 0.063,
+            "statusResistance": 0.152,
+            "physicalPenetration": 0.063,
+            "magicalPenetration": 0.033,
+            "lifesteal": 0.033,
+            "healingPower": 0.0,
+            "regen": 0.033,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 5,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 170,
+            "maxMp": 12,
+            "physicalAttack": 32,
+            "physicalDefense": 29,
+            "magicalAttack": 9,
+            "magicalDefense": 21,
+            "speed": 12,
+            "critChance": 0.07,
+            "critDamage": 0.58,
+            "accuracy": 0.9,
+            "evasion": 0.052,
+            "statusAccuracy": 0.052,
+            "statusResistance": 0.12,
+            "physicalPenetration": 0.046,
+            "magicalPenetration": 0.028,
+            "lifesteal": 0.028,
+            "healingPower": 0.0,
+            "regen": 0.022,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 188,
+            "maxMp": 13,
+            "physicalAttack": 35,
+            "physicalDefense": 32,
+            "magicalAttack": 10,
+            "magicalDefense": 23,
+            "speed": 13,
+            "critChance": 0.075,
+            "critDamage": 0.6,
+            "accuracy": 0.904,
+            "evasion": 0.054,
+            "statusAccuracy": 0.054,
+            "statusResistance": 0.126,
+            "physicalPenetration": 0.049,
+            "magicalPenetration": 0.029,
+            "lifesteal": 0.029,
+            "healingPower": 0.0,
+            "regen": 0.024,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 206,
+            "maxMp": 14,
+            "physicalAttack": 38,
+            "physicalDefense": 35,
+            "magicalAttack": 11,
+            "magicalDefense": 25,
+            "speed": 14,
+            "critChance": 0.08,
+            "critDamage": 0.62,
+            "accuracy": 0.908,
+            "evasion": 0.056,
+            "statusAccuracy": 0.056,
+            "statusResistance": 0.132,
+            "physicalPenetration": 0.052,
+            "magicalPenetration": 0.03,
+            "lifesteal": 0.03,
+            "healingPower": 0.0,
+            "regen": 0.026,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 224,
+            "maxMp": 15,
+            "physicalAttack": 41,
+            "physicalDefense": 38,
+            "magicalAttack": 12,
+            "magicalDefense": 27,
+            "speed": 15,
+            "critChance": 0.085,
+            "critDamage": 0.64,
+            "accuracy": 0.912,
+            "evasion": 0.058,
+            "statusAccuracy": 0.058,
+            "statusResistance": 0.138,
+            "physicalPenetration": 0.055,
+            "magicalPenetration": 0.031,
+            "lifesteal": 0.031,
+            "healingPower": 0.0,
+            "regen": 0.028,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 242,
+            "maxMp": 16,
+            "physicalAttack": 44,
+            "physicalDefense": 41,
+            "magicalAttack": 13,
+            "magicalDefense": 29,
+            "speed": 16,
+            "critChance": 0.09,
+            "critDamage": 0.66,
+            "accuracy": 0.916,
+            "evasion": 0.06,
+            "statusAccuracy": 0.06,
+            "statusResistance": 0.144,
+            "physicalPenetration": 0.058,
+            "magicalPenetration": 0.032,
+            "lifesteal": 0.032,
+            "healingPower": 0.0,
+            "regen": 0.03,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 6,
+          "stats": {
+            "maxHp": 260,
+            "maxMp": 17,
+            "physicalAttack": 47,
+            "physicalDefense": 44,
+            "magicalAttack": 14,
+            "magicalDefense": 31,
+            "speed": 17,
+            "critChance": 0.095,
+            "critDamage": 0.68,
+            "accuracy": 0.92,
+            "evasion": 0.062,
+            "statusAccuracy": 0.062,
+            "statusResistance": 0.15,
+            "physicalPenetration": 0.061,
+            "magicalPenetration": 0.033,
+            "lifesteal": 0.033,
+            "healingPower": 0.0,
+            "regen": 0.032,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 7,
+          "stats": {
+            "maxHp": 278,
+            "maxMp": 18,
+            "physicalAttack": 50,
+            "physicalDefense": 47,
+            "magicalAttack": 15,
+            "magicalDefense": 33,
+            "speed": 18,
+            "critChance": 0.1,
+            "critDamage": 0.7,
+            "accuracy": 0.924,
+            "evasion": 0.064,
+            "statusAccuracy": 0.064,
+            "statusResistance": 0.156,
+            "physicalPenetration": 0.064,
+            "magicalPenetration": 0.034,
+            "lifesteal": 0.034,
+            "healingPower": 0.0,
+            "regen": 0.034,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 8,
+          "stats": {
+            "maxHp": 296,
+            "maxMp": 19,
+            "physicalAttack": 53,
+            "physicalDefense": 50,
+            "magicalAttack": 16,
+            "magicalDefense": 35,
+            "speed": 19,
+            "critChance": 0.105,
+            "critDamage": 0.72,
+            "accuracy": 0.928,
+            "evasion": 0.066,
+            "statusAccuracy": 0.066,
+            "statusResistance": 0.162,
+            "physicalPenetration": 0.067,
+            "magicalPenetration": 0.035,
+            "lifesteal": 0.035,
+            "healingPower": 0.0,
+            "regen": 0.036,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 9,
+          "stats": {
+            "maxHp": 314,
+            "maxMp": 20,
+            "physicalAttack": 56,
+            "physicalDefense": 53,
+            "magicalAttack": 17,
+            "magicalDefense": 37,
+            "speed": 20,
+            "critChance": 0.11,
+            "critDamage": 0.74,
+            "accuracy": 0.932,
+            "evasion": 0.068,
+            "statusAccuracy": 0.068,
+            "statusResistance": 0.168,
+            "physicalPenetration": 0.07,
+            "magicalPenetration": 0.036,
+            "lifesteal": 0.036,
+            "healingPower": 0.0,
+            "regen": 0.038,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 10,
+          "stats": {
+            "maxHp": 332,
+            "maxMp": 21,
+            "physicalAttack": 59,
+            "physicalDefense": 56,
+            "magicalAttack": 18,
+            "magicalDefense": 39,
+            "speed": 21,
+            "critChance": 0.115,
+            "critDamage": 0.76,
+            "accuracy": 0.936,
+            "evasion": 0.07,
+            "statusAccuracy": 0.07,
+            "statusResistance": 0.174,
+            "physicalPenetration": 0.073,
+            "magicalPenetration": 0.037,
+            "lifesteal": 0.037,
+            "healingPower": 0.0,
+            "regen": 0.04,
+            "mpRegen": 2
+          },
+          "skillIds": [
+            "mercenary_warrior_shield_break"
+          ],
+          "passiveIds": []
+        }
+      ]
+    }
+  ]
+}

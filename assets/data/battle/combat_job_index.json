@@ -1,0 +1,10 @@
+[
+  "combat_jobs/mercenary_warrior.json",
+  "combat_jobs/mercenary_mage.json",
+  "combat_jobs/mercenary_rogue.json",
+  "combat_jobs/mercenary_archer.json",
+  "combat_jobs/homunculus_warrior.json",
+  "combat_jobs/homunculus_mage.json",
+  "combat_jobs/homunculus_rogue.json",
+  "combat_jobs/homunculus_archer.json"
+]

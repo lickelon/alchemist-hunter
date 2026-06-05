@@ -32,8 +32,8 @@ class BattleCatalogAssetLoader {
       ),
       stageCatalog: await _readStringList(bundle, 'stage_catalog.json'),
       combatJobDtos: _readDtoMap(
-        await _readObjectList(bundle, 'combat_jobs.json'),
-        'combat_jobs.json',
+        await _readIndexedObjectList(bundle, 'combat_job_index.json'),
+        'combat_job_index.json',
         BattleCombatJobDefinitionDto.fromJson,
       ),
       combatSkillDtos: _readDtoMap(
@@ -78,6 +78,29 @@ class BattleCatalogAssetLoader {
           .toList(growable: false);
     }
     throw FormatException('Battle catalog $fileName must be a list');
+  }
+
+  Future<List<Map<String, Object?>>> _readIndexedObjectList(
+    AssetBundle bundle,
+    String indexFileName,
+  ) async {
+    final List<String> fileNames = await _readStringList(bundle, indexFileName);
+    final List<Map<String, Object?>> entries = <Map<String, Object?>>[];
+    for (final String fileName in fileNames) {
+      entries.add(await _readObject(bundle, fileName));
+    }
+    return entries;
+  }
+
+  Future<Map<String, Object?>> _readObject(
+    AssetBundle bundle,
+    String fileName,
+  ) async {
+    final Object? decoded = await _readJson(bundle, fileName);
+    if (decoded is Map<String, Object?>) {
+      return decoded;
+    }
+    throw FormatException('Battle catalog $fileName must be an object');
   }
 
   Future<List<String>> _readStringList(

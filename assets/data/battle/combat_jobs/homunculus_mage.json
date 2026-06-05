@@ -1,0 +1,756 @@
+{
+  "id": "homunculus_mage",
+  "faction": "homunculus",
+  "discipline": "mage",
+  "levelHpGrowth": 11,
+  "tiers": [
+    {
+      "tierIndex": 1,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 62,
+            "maxMp": 10,
+            "physicalAttack": 5,
+            "physicalDefense": 8,
+            "magicalAttack": 17,
+            "magicalDefense": 13,
+            "speed": 9,
+            "critChance": 0.05,
+            "critDamage": 0.5,
+            "accuracy": 0.9,
+            "evasion": 0.05,
+            "statusAccuracy": 0.14,
+            "statusResistance": 0.1,
+            "physicalPenetration": 0.01,
+            "magicalPenetration": 0.05,
+            "lifesteal": 0.0,
+            "healingPower": 0.08,
+            "regen": 0.02,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 76,
+            "maxMp": 11,
+            "physicalAttack": 6,
+            "physicalDefense": 9,
+            "magicalAttack": 20,
+            "magicalDefense": 16,
+            "speed": 10,
+            "critChance": 0.054,
+            "critDamage": 0.52,
+            "accuracy": 0.904,
+            "evasion": 0.052,
+            "statusAccuracy": 0.148,
+            "statusResistance": 0.107,
+            "physicalPenetration": 0.011,
+            "magicalPenetration": 0.054,
+            "lifesteal": 0.0,
+            "healingPower": 0.088,
+            "regen": 0.023,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 90,
+            "maxMp": 12,
+            "physicalAttack": 7,
+            "physicalDefense": 10,
+            "magicalAttack": 23,
+            "magicalDefense": 19,
+            "speed": 11,
+            "critChance": 0.058,
+            "critDamage": 0.54,
+            "accuracy": 0.908,
+            "evasion": 0.054,
+            "statusAccuracy": 0.156,
+            "statusResistance": 0.114,
+            "physicalPenetration": 0.012,
+            "magicalPenetration": 0.058,
+            "lifesteal": 0.0,
+            "healingPower": 0.096,
+            "regen": 0.026,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 2,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 82,
+            "maxMp": 12,
+            "physicalAttack": 6,
+            "physicalDefense": 10,
+            "magicalAttack": 21,
+            "magicalDefense": 17,
+            "speed": 10,
+            "critChance": 0.054,
+            "critDamage": 0.52,
+            "accuracy": 0.906,
+            "evasion": 0.054,
+            "statusAccuracy": 0.152,
+            "statusResistance": 0.112,
+            "physicalPenetration": 0.011,
+            "magicalPenetration": 0.055,
+            "lifesteal": 0.0,
+            "healingPower": 0.092,
+            "regen": 0.024,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 96,
+            "maxMp": 13,
+            "physicalAttack": 7,
+            "physicalDefense": 11,
+            "magicalAttack": 24,
+            "magicalDefense": 20,
+            "speed": 11,
+            "critChance": 0.058,
+            "critDamage": 0.54,
+            "accuracy": 0.91,
+            "evasion": 0.056,
+            "statusAccuracy": 0.16,
+            "statusResistance": 0.119,
+            "physicalPenetration": 0.012,
+            "magicalPenetration": 0.059,
+            "lifesteal": 0.0,
+            "healingPower": 0.1,
+            "regen": 0.027,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 110,
+            "maxMp": 14,
+            "physicalAttack": 8,
+            "physicalDefense": 12,
+            "magicalAttack": 27,
+            "magicalDefense": 23,
+            "speed": 12,
+            "critChance": 0.062,
+            "critDamage": 0.56,
+            "accuracy": 0.914,
+            "evasion": 0.058,
+            "statusAccuracy": 0.168,
+            "statusResistance": 0.126,
+            "physicalPenetration": 0.013,
+            "magicalPenetration": 0.063,
+            "lifesteal": 0.0,
+            "healingPower": 0.108,
+            "regen": 0.03,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 124,
+            "maxMp": 15,
+            "physicalAttack": 9,
+            "physicalDefense": 13,
+            "magicalAttack": 30,
+            "magicalDefense": 26,
+            "speed": 13,
+            "critChance": 0.066,
+            "critDamage": 0.58,
+            "accuracy": 0.918,
+            "evasion": 0.06,
+            "statusAccuracy": 0.176,
+            "statusResistance": 0.133,
+            "physicalPenetration": 0.014,
+            "magicalPenetration": 0.067,
+            "lifesteal": 0.0,
+            "healingPower": 0.116,
+            "regen": 0.033,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 138,
+            "maxMp": 16,
+            "physicalAttack": 10,
+            "physicalDefense": 14,
+            "magicalAttack": 33,
+            "magicalDefense": 29,
+            "speed": 14,
+            "critChance": 0.07,
+            "critDamage": 0.6,
+            "accuracy": 0.922,
+            "evasion": 0.062,
+            "statusAccuracy": 0.184,
+            "statusResistance": 0.14,
+            "physicalPenetration": 0.015,
+            "magicalPenetration": 0.071,
+            "lifesteal": 0.0,
+            "healingPower": 0.124,
+            "regen": 0.036,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 3,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 102,
+            "maxMp": 14,
+            "physicalAttack": 7,
+            "physicalDefense": 12,
+            "magicalAttack": 25,
+            "magicalDefense": 21,
+            "speed": 11,
+            "critChance": 0.058,
+            "critDamage": 0.54,
+            "accuracy": 0.912,
+            "evasion": 0.058,
+            "statusAccuracy": 0.164,
+            "statusResistance": 0.124,
+            "physicalPenetration": 0.012,
+            "magicalPenetration": 0.06,
+            "lifesteal": 0.0,
+            "healingPower": 0.104,
+            "regen": 0.028,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 116,
+            "maxMp": 15,
+            "physicalAttack": 8,
+            "physicalDefense": 13,
+            "magicalAttack": 28,
+            "magicalDefense": 24,
+            "speed": 12,
+            "critChance": 0.062,
+            "critDamage": 0.56,
+            "accuracy": 0.916,
+            "evasion": 0.06,
+            "statusAccuracy": 0.172,
+            "statusResistance": 0.131,
+            "physicalPenetration": 0.013,
+            "magicalPenetration": 0.064,
+            "lifesteal": 0.0,
+            "healingPower": 0.112,
+            "regen": 0.031,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 130,
+            "maxMp": 16,
+            "physicalAttack": 9,
+            "physicalDefense": 14,
+            "magicalAttack": 31,
+            "magicalDefense": 27,
+            "speed": 13,
+            "critChance": 0.066,
+            "critDamage": 0.58,
+            "accuracy": 0.92,
+            "evasion": 0.062,
+            "statusAccuracy": 0.18,
+            "statusResistance": 0.138,
+            "physicalPenetration": 0.014,
+            "magicalPenetration": 0.068,
+            "lifesteal": 0.0,
+            "healingPower": 0.12,
+            "regen": 0.034,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 144,
+            "maxMp": 17,
+            "physicalAttack": 10,
+            "physicalDefense": 15,
+            "magicalAttack": 34,
+            "magicalDefense": 30,
+            "speed": 14,
+            "critChance": 0.07,
+            "critDamage": 0.6,
+            "accuracy": 0.924,
+            "evasion": 0.064,
+            "statusAccuracy": 0.188,
+            "statusResistance": 0.145,
+            "physicalPenetration": 0.015,
+            "magicalPenetration": 0.072,
+            "lifesteal": 0.0,
+            "healingPower": 0.128,
+            "regen": 0.037,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 158,
+            "maxMp": 18,
+            "physicalAttack": 11,
+            "physicalDefense": 16,
+            "magicalAttack": 37,
+            "magicalDefense": 33,
+            "speed": 15,
+            "critChance": 0.074,
+            "critDamage": 0.62,
+            "accuracy": 0.928,
+            "evasion": 0.066,
+            "statusAccuracy": 0.196,
+            "statusResistance": 0.152,
+            "physicalPenetration": 0.016,
+            "magicalPenetration": 0.076,
+            "lifesteal": 0.0,
+            "healingPower": 0.136,
+            "regen": 0.04,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 6,
+          "stats": {
+            "maxHp": 172,
+            "maxMp": 19,
+            "physicalAttack": 12,
+            "physicalDefense": 17,
+            "magicalAttack": 40,
+            "magicalDefense": 36,
+            "speed": 16,
+            "critChance": 0.078,
+            "critDamage": 0.64,
+            "accuracy": 0.932,
+            "evasion": 0.068,
+            "statusAccuracy": 0.204,
+            "statusResistance": 0.159,
+            "physicalPenetration": 0.017,
+            "magicalPenetration": 0.08,
+            "lifesteal": 0.0,
+            "healingPower": 0.144,
+            "regen": 0.043,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 7,
+          "stats": {
+            "maxHp": 186,
+            "maxMp": 20,
+            "physicalAttack": 13,
+            "physicalDefense": 18,
+            "magicalAttack": 43,
+            "magicalDefense": 39,
+            "speed": 17,
+            "critChance": 0.082,
+            "critDamage": 0.66,
+            "accuracy": 0.936,
+            "evasion": 0.07,
+            "statusAccuracy": 0.212,
+            "statusResistance": 0.166,
+            "physicalPenetration": 0.018,
+            "magicalPenetration": 0.084,
+            "lifesteal": 0.0,
+            "healingPower": 0.152,
+            "regen": 0.046,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 8,
+          "stats": {
+            "maxHp": 200,
+            "maxMp": 21,
+            "physicalAttack": 14,
+            "physicalDefense": 19,
+            "magicalAttack": 46,
+            "magicalDefense": 42,
+            "speed": 18,
+            "critChance": 0.086,
+            "critDamage": 0.68,
+            "accuracy": 0.94,
+            "evasion": 0.072,
+            "statusAccuracy": 0.22,
+            "statusResistance": 0.173,
+            "physicalPenetration": 0.019,
+            "magicalPenetration": 0.088,
+            "lifesteal": 0.0,
+            "healingPower": 0.16,
+            "regen": 0.049,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        }
+      ]
+    },
+    {
+      "tierIndex": 4,
+      "ranks": [
+        {
+          "rank": 1,
+          "stats": {
+            "maxHp": 122,
+            "maxMp": 16,
+            "physicalAttack": 8,
+            "physicalDefense": 14,
+            "magicalAttack": 29,
+            "magicalDefense": 25,
+            "speed": 12,
+            "critChance": 0.062,
+            "critDamage": 0.56,
+            "accuracy": 0.918,
+            "evasion": 0.062,
+            "statusAccuracy": 0.176,
+            "statusResistance": 0.136,
+            "physicalPenetration": 0.013,
+            "magicalPenetration": 0.065,
+            "lifesteal": 0.0,
+            "healingPower": 0.116,
+            "regen": 0.032,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 2,
+          "stats": {
+            "maxHp": 136,
+            "maxMp": 17,
+            "physicalAttack": 9,
+            "physicalDefense": 15,
+            "magicalAttack": 32,
+            "magicalDefense": 28,
+            "speed": 13,
+            "critChance": 0.066,
+            "critDamage": 0.58,
+            "accuracy": 0.922,
+            "evasion": 0.064,
+            "statusAccuracy": 0.184,
+            "statusResistance": 0.143,
+            "physicalPenetration": 0.014,
+            "magicalPenetration": 0.069,
+            "lifesteal": 0.0,
+            "healingPower": 0.124,
+            "regen": 0.035,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 3,
+          "stats": {
+            "maxHp": 150,
+            "maxMp": 18,
+            "physicalAttack": 10,
+            "physicalDefense": 16,
+            "magicalAttack": 35,
+            "magicalDefense": 31,
+            "speed": 14,
+            "critChance": 0.07,
+            "critDamage": 0.6,
+            "accuracy": 0.926,
+            "evasion": 0.066,
+            "statusAccuracy": 0.192,
+            "statusResistance": 0.15,
+            "physicalPenetration": 0.015,
+            "magicalPenetration": 0.073,
+            "lifesteal": 0.0,
+            "healingPower": 0.132,
+            "regen": 0.038,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 4,
+          "stats": {
+            "maxHp": 164,
+            "maxMp": 19,
+            "physicalAttack": 11,
+            "physicalDefense": 17,
+            "magicalAttack": 38,
+            "magicalDefense": 34,
+            "speed": 15,
+            "critChance": 0.074,
+            "critDamage": 0.62,
+            "accuracy": 0.93,
+            "evasion": 0.068,
+            "statusAccuracy": 0.2,
+            "statusResistance": 0.157,
+            "physicalPenetration": 0.016,
+            "magicalPenetration": 0.077,
+            "lifesteal": 0.0,
+            "healingPower": 0.14,
+            "regen": 0.041,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 5,
+          "stats": {
+            "maxHp": 178,
+            "maxMp": 20,
+            "physicalAttack": 12,
+            "physicalDefense": 18,
+            "magicalAttack": 41,
+            "magicalDefense": 37,
+            "speed": 16,
+            "critChance": 0.078,
+            "critDamage": 0.64,
+            "accuracy": 0.934,
+            "evasion": 0.07,
+            "statusAccuracy": 0.208,
+            "statusResistance": 0.164,
+            "physicalPenetration": 0.017,
+            "magicalPenetration": 0.081,
+            "lifesteal": 0.0,
+            "healingPower": 0.148,
+            "regen": 0.044,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 6,
+          "stats": {
+            "maxHp": 192,
+            "maxMp": 21,
+            "physicalAttack": 13,
+            "physicalDefense": 19,
+            "magicalAttack": 44,
+            "magicalDefense": 40,
+            "speed": 17,
+            "critChance": 0.082,
+            "critDamage": 0.66,
+            "accuracy": 0.938,
+            "evasion": 0.072,
+            "statusAccuracy": 0.216,
+            "statusResistance": 0.171,
+            "physicalPenetration": 0.018,
+            "magicalPenetration": 0.085,
+            "lifesteal": 0.0,
+            "healingPower": 0.156,
+            "regen": 0.047,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 7,
+          "stats": {
+            "maxHp": 206,
+            "maxMp": 22,
+            "physicalAttack": 14,
+            "physicalDefense": 20,
+            "magicalAttack": 47,
+            "magicalDefense": 43,
+            "speed": 18,
+            "critChance": 0.086,
+            "critDamage": 0.68,
+            "accuracy": 0.942,
+            "evasion": 0.074,
+            "statusAccuracy": 0.224,
+            "statusResistance": 0.178,
+            "physicalPenetration": 0.019,
+            "magicalPenetration": 0.089,
+            "lifesteal": 0.0,
+            "healingPower": 0.164,
+            "regen": 0.05,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 8,
+          "stats": {
+            "maxHp": 220,
+            "maxMp": 23,
+            "physicalAttack": 15,
+            "physicalDefense": 21,
+            "magicalAttack": 50,
+            "magicalDefense": 46,
+            "speed": 19,
+            "critChance": 0.09,
+            "critDamage": 0.7,
+            "accuracy": 0.946,
+            "evasion": 0.076,
+            "statusAccuracy": 0.232,
+            "statusResistance": 0.185,
+            "physicalPenetration": 0.02,
+            "magicalPenetration": 0.093,
+            "lifesteal": 0.0,
+            "healingPower": 0.172,
+            "regen": 0.053,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 9,
+          "stats": {
+            "maxHp": 234,
+            "maxMp": 24,
+            "physicalAttack": 16,
+            "physicalDefense": 22,
+            "magicalAttack": 53,
+            "magicalDefense": 49,
+            "speed": 20,
+            "critChance": 0.094,
+            "critDamage": 0.72,
+            "accuracy": 0.95,
+            "evasion": 0.078,
+            "statusAccuracy": 0.24,
+            "statusResistance": 0.192,
+            "physicalPenetration": 0.021,
+            "magicalPenetration": 0.097,
+            "lifesteal": 0.0,
+            "healingPower": 0.18,
+            "regen": 0.056,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        },
+        {
+          "rank": 10,
+          "stats": {
+            "maxHp": 248,
+            "maxMp": 25,
+            "physicalAttack": 17,
+            "physicalDefense": 23,
+            "magicalAttack": 56,
+            "magicalDefense": 52,
+            "speed": 21,
+            "critChance": 0.098,
+            "critDamage": 0.74,
+            "accuracy": 0.954,
+            "evasion": 0.08,
+            "statusAccuracy": 0.248,
+            "statusResistance": 0.199,
+            "physicalPenetration": 0.022,
+            "magicalPenetration": 0.101,
+            "lifesteal": 0.0,
+            "healingPower": 0.188,
+            "regen": 0.059,
+            "mpRegen": 3
+          },
+          "skillIds": [
+            "homunculus_mage_reconstruct"
+          ],
+          "passiveIds": []
+        }
+      ]
+    }
+  ]
+}
