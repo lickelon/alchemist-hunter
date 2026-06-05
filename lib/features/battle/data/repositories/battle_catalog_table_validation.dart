@@ -34,6 +34,11 @@ extension _BattleCatalogTableValidation on BattleCatalogTables {
     if (combatJobDefinitions.isEmpty) {
       throw StateError('Combat job catalog must not be empty');
     }
+    final Set<String> usedSkillIds = <String>{
+      for (final BattleEnemyDefinition enemy in enemyDefinitions.values)
+        for (final BattleSkillDefinition skill in enemy.skills) skill.id,
+    };
+    final Set<String> usedPassiveIds = <String>{};
     for (final BattleCombatJobDefinition job in combatJobDefinitions.values) {
       if (job.tiers.isEmpty) {
         throw StateError('Combat job must define tiers: ${job.id}');
@@ -67,6 +72,7 @@ extension _BattleCatalogTableValidation on BattleCatalogTables {
             if (!combatSkillDefinitions.containsKey(skillId)) {
               throw StateError('Unknown combat skill in ${job.id}: $skillId');
             }
+            usedSkillIds.add(skillId);
           }
           for (final String passiveId in rank.passiveIds) {
             if (!combatPassiveEffects.containsKey(passiveId)) {
@@ -74,8 +80,19 @@ extension _BattleCatalogTableValidation on BattleCatalogTables {
                 'Unknown combat passive in ${job.id}: $passiveId',
               );
             }
+            usedPassiveIds.add(passiveId);
           }
         }
+      }
+    }
+    for (final String skillId in combatSkillDefinitions.keys) {
+      if (!usedSkillIds.contains(skillId)) {
+        throw StateError('Unused combat skill: $skillId');
+      }
+    }
+    for (final String passiveId in combatPassiveEffects.keys) {
+      if (!usedPassiveIds.contains(passiveId)) {
+        throw StateError('Unused combat passive: $passiveId');
       }
     }
   }
