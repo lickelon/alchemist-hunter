@@ -18,8 +18,11 @@ void main() {
     final SessionController session = container.read(
       sessionControllerProvider.notifier,
     );
-    session.state = session.state.copyWith(
-      battle: session.state.battle.copyWith(
+    final SessionState seededState = createTestInitialSessionState(
+      DateTime(2026, 1, 1, 10),
+    );
+    session.state = seededState.copyWith(
+      battle: seededState.battle.copyWith(
         stageAssignments: const <String, List<String>>{
           'stage_1': <String>['merc_1'],
         },
@@ -44,16 +47,15 @@ void main() {
     expect(find.text('추출 슬롯'), findsOneWidget);
     expect(find.text('비어 있음'), findsWidgets);
     expect(find.text('추출 수율 +5%'), findsWidgets);
-    expect(find.text('기초 연성 보조'), findsNothing);
 
     await tester.tap(find.byTooltip('상세').first);
     await tester.pumpAndSettle();
 
-    expect(find.text('기초 연성 보조'), findsOneWidget);
+    expect(find.text('보조 효과는 배치 슬롯에 따라 적용'), findsOneWidget);
     await tester.tap(find.text('닫기').last);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Nigredo Seed').first);
+    await tester.tap(find.text('Nigredo 마법사').first);
     await tester.pumpAndSettle();
 
     expect(
@@ -63,6 +65,6 @@ void main() {
     expect(session.state.battle.stageAssignments['stage_1'], <String>[
       'merc_1',
     ]);
-    expect(session.state.workshop.logs.first, 'Nigredo Seed / 작업실 추출 배치');
+    expect(session.state.workshop.logs.first, 'Nigredo 마법사 / 작업실 추출 배치');
   });
 }

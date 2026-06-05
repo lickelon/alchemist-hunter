@@ -17,6 +17,7 @@ void main() {
     final SessionController session = container.read(
       sessionControllerProvider.notifier,
     );
+    session.state = createTestInitialSessionState(DateTime(2026, 1, 1, 10));
     final CharacterProgress target = session.state.characters.mercenaries.first;
     final CharacterProgress tierReadyTarget = target.copyWith(
       rank: target.maxRankForCurrentTier,
@@ -60,7 +61,7 @@ void main() {
     expect(view.equipmentSlots.first.availableItems, hasLength(1));
   });
 
-  test('homunculus selector exposes origin role and support labels', () {
+  test('homunculus selector exposes assignment and growth labels', () {
     final ProviderContainer container = ProviderContainer(
       overrides: testCatalogProviderOverrides(),
     );
@@ -69,6 +70,7 @@ void main() {
     final SessionController session = container.read(
       sessionControllerProvider.notifier,
     );
+    session.state = createTestInitialSessionState(DateTime(2026, 1, 1, 10));
     final CharacterProgress target = session.state.characters.homunculi.first;
     session.state = session.state.copyWith(
       battle: session.state.battle.copyWith(
@@ -80,13 +82,7 @@ void main() {
         },
       ),
       characters: session.state.characters.copyWith(
-        homunculi: <CharacterProgress>[
-          target.copyWith(
-            homunculusOrigin: 'Vital Seed Flask',
-            homunculusRole: '지원',
-            homunculusSupportEffect: '파티 생존력 보조',
-          ),
-        ],
+        homunculi: <CharacterProgress>[target],
       ),
     );
 

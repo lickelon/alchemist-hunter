@@ -1,35 +1,15 @@
-import 'package:alchemist_hunter/app/app.dart';
-import 'package:alchemist_hunter/app/catalog/battle_catalog_providers.dart';
-import 'package:alchemist_hunter/app/catalog/town_catalog_providers.dart';
-import 'package:alchemist_hunter/app/catalog/workshop_catalog_asset_loader.dart';
-import 'package:alchemist_hunter/app/catalog/workshop_catalog_providers.dart';
-import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalog_asset_loader.dart';
-import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
-import 'package:alchemist_hunter/features/town/data/repositories/town_catalog_asset_loader.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alchemist_hunter/app/main_tab_bar.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('main tabs are visible', (WidgetTester tester) async {
-    final battleCatalog = await const BattleCatalogAssetLoader().load(
-      rootBundle,
-    );
-    final townCatalog = await const TownCatalogAssetLoader().load(rootBundle);
-    final workshopCatalog = await const WorkshopCatalogAssetLoader().load(
-      rootBundle,
-    );
-
     await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          townCatalogAssetsProvider.overrideWithValue(townCatalog),
-          workshopCatalogAssetsProvider.overrideWithValue(workshopCatalog),
-          battleCatalogRepositoryProvider.overrideWithValue(
-            StaticBattleCatalogRepository(catalog: battleCatalog),
-          ),
-        ],
-        child: const App(),
+      const MaterialApp(
+        home: DefaultTabController(
+          length: 4,
+          child: Scaffold(bottomNavigationBar: MainTabBar()),
+        ),
       ),
     );
 

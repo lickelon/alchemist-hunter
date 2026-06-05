@@ -59,7 +59,8 @@ void main() {
       PotionQualityGrade.s,
     );
     expect(find.text('투지 포션'), findsOneWidget);
-    expect(find.text('S · 100점'), findsOneWidget);
+    expect(find.text('S'), findsOneWidget);
+    expect(find.text('100점'), findsOneWidget);
     expect(find.text('레시피 신규 발견'), findsOneWidget);
   });
 

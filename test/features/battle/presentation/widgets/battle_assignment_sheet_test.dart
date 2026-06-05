@@ -20,8 +20,11 @@ void main() {
     final SessionController session = container.read(
       sessionControllerProvider.notifier,
     );
-    session.state = session.state.copyWith(
-      battle: session.state.battle.copyWith(
+    final SessionState seededState = createTestInitialSessionState(
+      DateTime(2026, 1, 1, 10),
+    );
+    session.state = seededState.copyWith(
+      battle: seededState.battle.copyWith(
         stageAssignments: const <String, List<String>>{},
       ),
     );
@@ -46,10 +49,13 @@ void main() {
     expect(session.state.battle.stageAssignments['stage_2'], <String>[
       'merc_1',
     ]);
-    final int expectedPower = const BattlePartyPowerService().totalPower(
-      session.state.characters,
-      assignedCharacterIds: const <String>['merc_1'],
-    );
+    final int expectedPower =
+        BattlePartyPowerService(
+          battleCatalogRepository: testBattleCatalogRepository,
+        ).totalPower(
+          session.state.characters,
+          assignedCharacterIds: const <String>['merc_1'],
+        );
     expect(find.text('배치 1/3명'), findsOneWidget);
     expect(find.text('전투력 $expectedPower'), findsWidgets);
   });

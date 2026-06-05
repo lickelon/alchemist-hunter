@@ -44,6 +44,7 @@ void main() {
       mercenaryTemplateRepository: testMercenaryTemplateRepository,
       townSkillTreeRepository: testTownSkillTreeRepository,
       townSkillTreeService: const TownSkillTreeService(),
+      battleCatalogRepository: testBattleCatalogRepository,
     );
   }
 
@@ -186,9 +187,9 @@ void main() {
 
     expect(session.state.player.gold, 1500 - candidate.hireCost);
     expect(session.state.characters.mercenaries, hasLength(2));
-    expect(session.state.characters.mercenaries.last.name, candidate.name);
+    expect(session.state.characters.mercenaries.last.name, '전사');
     expect(session.state.town.mercenaryCandidates, hasLength(2));
-    expect(session.state.workshop.logs.first, '용병 고용 / ${candidate.name}');
+    expect(session.state.workshop.logs.first, '용병 고용 / Rookie 전사');
   });
 
   test('hireMercenary applies hiring board discount', () {
@@ -213,7 +214,7 @@ void main() {
 
     controller.hireMercenary(candidate.id);
 
-    expect(session.state.player.gold, 1500 - 166);
+    expect(session.state.player.gold, 1500 - 156);
   });
 
   test('refreshMercenaryCandidates rotates candidate list', () {

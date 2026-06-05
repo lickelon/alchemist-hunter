@@ -385,6 +385,21 @@ class _FakeBattleCatalogRepository implements BattleCatalogRepository {
     required String stageId,
     required String enemySetId,
   }) => dropTable(stageId);
+
+  @override
+  BattleCombatJobDefinition combatJobDefinition(String combatJobId) {
+    throw StateError('Unused in _FakeBattleCatalogRepository');
+  }
+
+  @override
+  BattlePassiveEffect combatPassiveEffect(String passiveId) {
+    throw StateError('Unused in _FakeBattleCatalogRepository');
+  }
+
+  @override
+  BattleSkillDefinition combatSkillDefinition(String skillId) {
+    throw StateError('Unused in _FakeBattleCatalogRepository');
+  }
 }
 
 class _ScriptedBattleExpeditionResolver implements BattleExpeditionResolver {

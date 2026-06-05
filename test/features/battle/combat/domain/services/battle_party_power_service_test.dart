@@ -3,10 +3,13 @@ import 'package:alchemist_hunter/features/battle/combat/domain/services/battle_p
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../../support/catalog_fixtures.dart';
 
 void main() {
   test('totalPower includes equipped item stats', () {
-    const BattlePartyPowerService service = BattlePartyPowerService();
+    final BattlePartyPowerService service = BattlePartyPowerService(
+      battleCatalogRepository: testBattleCatalogRepository,
+    );
     final EquipmentInstance sword = EquipmentInstance(
       id: 'eq_instance_1',
       blueprintId: 'eq_1',
@@ -34,7 +37,7 @@ void main() {
       homunculi: <CharacterProgress>[
         CharacterProgress(
           id: 'homo_1',
-          name: 'Nigredo Seed',
+          name: '마법사',
           type: CharacterType.homunculus,
           combatJobId: CombatJobIds.homunculusMage,
           level: 1,
@@ -66,7 +69,9 @@ void main() {
   });
 
   test('buildParty includes equipment special effects in hero profile', () {
-    const BattlePartyPowerService service = BattlePartyPowerService();
+    final BattlePartyPowerService service = BattlePartyPowerService(
+      battleCatalogRepository: testBattleCatalogRepository,
+    );
     final EquipmentInstance sword = EquipmentInstance(
       id: 'eq_instance_1',
       blueprintId: 'eq_1',
@@ -132,7 +137,9 @@ void main() {
   });
 
   test('level increases hp and keeps non-hp base stats stable', () {
-    const BattlePartyPowerService service = BattlePartyPowerService();
+    final BattlePartyPowerService service = BattlePartyPowerService(
+      battleCatalogRepository: testBattleCatalogRepository,
+    );
     const CharacterProgress mage = CharacterProgress(
       id: 'merc_mage_1',
       name: 'Ash Adept',
@@ -156,7 +163,9 @@ void main() {
   });
 
   test('job id changes stat profile', () {
-    const BattlePartyPowerService service = BattlePartyPowerService();
+    final BattlePartyPowerService service = BattlePartyPowerService(
+      battleCatalogRepository: testBattleCatalogRepository,
+    );
     const CharacterProgress warrior = CharacterProgress(
       id: 'merc_job_1',
       name: 'Warrior',
@@ -186,7 +195,9 @@ void main() {
   });
 
   test('all ally combat jobs provide mp and active skills', () {
-    const BattlePartyPowerService service = BattlePartyPowerService();
+    final BattlePartyPowerService service = BattlePartyPowerService(
+      battleCatalogRepository: testBattleCatalogRepository,
+    );
     const List<String> jobIds = <String>[
       CombatJobIds.mercenaryWarrior,
       CombatJobIds.mercenaryMage,

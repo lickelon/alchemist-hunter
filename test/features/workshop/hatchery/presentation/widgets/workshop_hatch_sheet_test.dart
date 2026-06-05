@@ -43,15 +43,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('호문쿨루스 부화'), findsOneWidget);
-    expect(find.text('Vital Nigredo'), findsOneWidget);
-    expect(find.text('지원'), findsOneWidget);
-    expect(find.text('파티 생존력 보조'), findsNothing);
-    expect(find.textContaining('역할 지원'), findsNothing);
+    expect(find.text('Nigredo 마법사'), findsOneWidget);
+    expect(find.text('지원'), findsNothing);
 
-    await tester.tap(find.text('Vital Nigredo'));
+    await tester.tap(find.text('Nigredo 마법사'));
     await tester.pumpAndSettle();
 
-    expect(find.text('파티 생존력 보조'), findsOneWidget);
     expect(find.text('재료'), findsOneWidget);
     await tester.tap(find.text('닫기').last);
     await tester.pumpAndSettle();
@@ -62,12 +59,9 @@ void main() {
     expect(session.state.characters.homunculi, hasLength(1));
     expect(session.state.workshop.queue, hasLength(1));
     expect(session.state.workshop.queue.first.type, WorkshopJobType.hatch);
-    expect(
-      session.state.workshop.queue.first.completedHomunculus?.name,
-      'Vital Nigredo',
-    );
+    expect(session.state.workshop.queue.first.completedHomunculus?.name, '마법사');
     expect(session.state.player.essence, 80);
-    expect(session.state.workshop.logs.first, '부화 등록 / Vital Nigredo');
+    expect(session.state.workshop.logs.first, '부화 등록 / Nigredo 마법사');
   });
 
   testWidgets('workshop hatch sheet shows toast when queue is full', (

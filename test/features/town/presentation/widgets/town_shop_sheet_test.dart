@@ -68,13 +68,13 @@ void main() {
 
     expect(find.text('Emberroot'), findsOneWidget);
     expect(find.text('다음 입고 10:15'), findsOneWidget);
-    final Finder soldOutButton = find.widgetWithText(FilledButton, '품절');
+    final Finder soldOutButton = find.widgetWithText(FilledButton, '구매');
     expect(soldOutButton, findsOneWidget);
     expect(tester.widget<FilledButton>(soldOutButton).onPressed, isNull);
     await tester.tap(find.text('닫기').last);
     await tester.pumpAndSettle();
 
-    expect(find.text('골드 25'), findsOneWidget);
+    expect(find.text('갱신 비용 골드 25'), findsOneWidget);
     await tester.tap(find.text('갱신'));
     await tester.pumpAndSettle();
 

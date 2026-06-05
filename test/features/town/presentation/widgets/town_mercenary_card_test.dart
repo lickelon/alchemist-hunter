@@ -27,8 +27,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('용병 고용'), findsWidgets);
-    expect(find.text('Apprentice Sellsword'), findsOneWidget);
-    expect(find.text('Hedge Guard'), findsOneWidget);
+    expect(find.text('Rookie 전사'), findsOneWidget);
+    expect(find.text('Rookie 마법사'), findsOneWidget);
+    expect(find.text('Rookie 도적'), findsOneWidget);
     expect(find.text('후보 갱신'), findsOneWidget);
   });
 
@@ -57,12 +58,9 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, '고용').first);
     await tester.pumpAndSettle();
 
-    expect(session.state.player.gold, 1320);
+    expect(session.state.player.gold, 1330);
     expect(session.state.characters.mercenaries, hasLength(2));
-    expect(
-      session.state.characters.mercenaries.last.name,
-      'Apprentice Sellsword',
-    );
+    expect(session.state.characters.mercenaries.last.name, '전사');
     expect(session.state.town.mercenaryCandidates, hasLength(2));
   });
 }

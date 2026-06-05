@@ -22,13 +22,16 @@ void main() {
                 extractedTraitInventory: const <String, double>{'t_hp': 0.8},
               ),
         );
-    final recipe = testHomunculusHatchRepository.findById('hatch_vital_seed')!;
+    final recipe = testHomunculusHatchRepository.findById(
+      'hatch_nigredo_mage',
+    )!;
 
     final nextState = const WorkshopHatchUseCase().hatchHomunculus(
       state: state,
       recipe: recipe,
       now: DateTime(2026, 1, 1, 11),
       workshopSupportService: const WorkshopSupportService(),
+      battleCatalogRepository: testBattleCatalogRepository,
     );
 
     expect(nextState.player.essence, 80);
@@ -38,17 +41,18 @@ void main() {
     expect(nextState.characters.homunculi, hasLength(1));
     expect(nextState.workshop.queue, hasLength(1));
     expect(nextState.workshop.queue.first.type, WorkshopJobType.hatch);
+    expect(nextState.workshop.queue.first.completedHomunculus?.name, '마법사');
     expect(
-      nextState.workshop.queue.first.completedHomunculus?.name,
-      'Vital Nigredo',
+      nextState.workshop.queue.first.completedHomunculus?.combatJobId,
+      'homunculus_mage',
     );
     expect(
       nextState.workshop.queue.first.completedHomunculus?.homunculusOrigin,
-      'Vital Seed Flask',
+      isNull,
     );
     expect(
       nextState.workshop.queue.first.completedHomunculus?.homunculusRole,
-      '지원',
+      isNull,
     );
     expect(
       nextState
@@ -57,8 +61,9 @@ void main() {
           .first
           .completedHomunculus
           ?.homunculusSupportEffect,
-      '파티 생존력 보조',
+      isNull,
     );
+    expect(nextState.workshop.queue.first.title, 'Nigredo 마법사');
   });
 
   test('hatchHomunculus applies hatch slot arcane discount', () {
@@ -79,13 +84,16 @@ void main() {
                 },
               ),
         );
-    final recipe = testHomunculusHatchRepository.findById('hatch_vital_seed')!;
+    final recipe = testHomunculusHatchRepository.findById(
+      'hatch_nigredo_mage',
+    )!;
 
     final nextState = const WorkshopHatchUseCase().hatchHomunculus(
       state: state,
       recipe: recipe,
       now: DateTime(2026, 1, 1, 11),
       workshopSupportService: const WorkshopSupportService(),
+      battleCatalogRepository: testBattleCatalogRepository,
     );
 
     expect(nextState.player.arcaneDust, 0);

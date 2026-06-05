@@ -22,14 +22,25 @@ void main() {
     final SessionController session = container.read(
       sessionControllerProvider.notifier,
     );
-    final CharacterProgress target = session.state.characters.mercenaries.first;
+    const CharacterProgress target = CharacterProgress(
+      id: 'merc_1',
+      name: 'Rookie Swordsman',
+      type: CharacterType.mercenary,
+      combatJobId: CombatJobIds.mercenaryWarrior,
+      level: 1,
+      rank: 1,
+      xp: 0,
+      mercenaryTier: MercenaryTier.rookie,
+    );
     final CharacterProgress tierReadyTarget = target.copyWith(
       rank: target.maxRankForCurrentTier,
     );
     final CharacterProgress leveledTarget = tierReadyTarget.copyWith(
       level: tierReadyTarget.maxLevelForRank,
     );
-    final BattleCombatStatService statService = const BattleCombatStatService();
+    final BattleCombatStatService statService = BattleCombatStatService(
+      battleCatalogRepository: testBattleCatalogRepository,
+    );
     final BattleCombatStats expectedStats = statService.buildStats(
       leveledTarget,
     );
@@ -70,6 +81,11 @@ void main() {
       ),
       characters: session.state.characters.copyWith(
         mercenaries: <CharacterProgress>[leveledTarget],
+      ),
+      battle: session.state.battle.copyWith(
+        stageAssignments: const <String, List<String>>{
+          'stage_1': <String>['merc_1'],
+        },
       ),
     );
 
@@ -170,7 +186,7 @@ void main() {
   });
 
   testWidgets(
-    'character screen shows homunculus origin role and support details',
+    'character screen shows homunculus combat details without legacy hatch labels',
     (WidgetTester tester) async {
       final ProviderContainer container = ProviderContainer(
         overrides: testCatalogProviderOverrides(),
@@ -180,20 +196,28 @@ void main() {
       final SessionController session = container.read(
         sessionControllerProvider.notifier,
       );
-      final CharacterProgress target = session.state.characters.homunculi.first;
-      final BattleCombatStatService statService =
-          const BattleCombatStatService();
+      const CharacterProgress target = CharacterProgress(
+        id: 'homo_1',
+        name: '마법사',
+        type: CharacterType.homunculus,
+        combatJobId: CombatJobIds.homunculusMage,
+        level: 1,
+        rank: 1,
+        xp: 0,
+        homunculusTier: HomunculusTier.nigredo,
+      );
+      final BattleCombatStatService statService = BattleCombatStatService(
+        battleCatalogRepository: testBattleCatalogRepository,
+      );
       final int expectedPower = statService.buildHeroProfile(target).power;
       session.state = session.state.copyWith(
         characters: session.state.characters.copyWith(
-          homunculi: <CharacterProgress>[
-            target.copyWith(
-              name: 'Vital Nigredo',
-              homunculusOrigin: 'Vital Seed Flask',
-              homunculusRole: '지원',
-              homunculusSupportEffect: '파티 생존력 보조',
-            ),
-          ],
+          homunculi: <CharacterProgress>[target],
+        ),
+        battle: session.state.battle.copyWith(
+          stageAssignments: const <String, List<String>>{
+            'stage_1': <String>['homo_1'],
+          },
         ),
       );
 
@@ -205,17 +229,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final CharacterProgress visibleTarget = target.copyWith(
-        name: 'Vital Nigredo',
-        homunculusOrigin: 'Vital Seed Flask',
-        homunculusRole: '지원',
-        homunculusSupportEffect: '파티 생존력 보조',
-      );
-      expect(find.text(characterDisplayName(visibleTarget)), findsOneWidget);
+      expect(find.text(characterDisplayName(target)), findsOneWidget);
       expect(find.text('배치 Stage 1'), findsAtLeastNWidgets(1));
-      expect(find.text('지원 / 파티 생존력 보조'), findsNothing);
 
-      await tester.tap(find.text(characterDisplayName(visibleTarget)));
+      await tester.tap(find.text(characterDisplayName(target)));
       await tester.pumpAndSettle();
 
       expect(find.text('총합 스탯'), findsNothing);
@@ -224,17 +241,14 @@ void main() {
         find.text('전투력 $expectedPower, 직군 ${_disciplineLabel(target)}'),
         findsOneWidget,
       );
-      expect(find.text('출처 Vital Seed Flask'), findsNothing);
-      expect(find.text('역할 지원'), findsNothing);
-      expect(find.text('보조효과 파티 생존력 보조'), findsNothing);
     },
   );
 }
 
 String _disciplineLabel(CharacterProgress character) {
-  return switch (const BattleCombatStatService().disciplineFor(
-    character.resolvedCombatJobId,
-  )) {
+  return switch (BattleCombatStatService(
+    battleCatalogRepository: testBattleCatalogRepository,
+  ).disciplineFor(character.resolvedCombatJobId)) {
     CombatDiscipline.warrior => '전사',
     CombatDiscipline.mage => '마법사',
     CombatDiscipline.rogue => '도적',

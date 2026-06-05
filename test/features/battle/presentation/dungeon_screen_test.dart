@@ -20,6 +20,7 @@ void main() {
     final SessionController session = container.read(
       sessionControllerProvider.notifier,
     );
+    session.state = createTestInitialSessionState(DateTime(2026, 1, 1, 10));
     final CharacterProgress merc = session.state.characters.mercenaries.first;
     session.state = session.state.copyWith(
       characters: session.state.characters.copyWith(
@@ -50,10 +51,14 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final int expectedPower = const BattlePartyPowerService().totalPower(
-      session.state.characters,
-      assignedCharacterIds: session.state.battle.stageAssignments['stage_1'],
-    );
+    final int expectedPower =
+        BattlePartyPowerService(
+          battleCatalogRepository: testBattleCatalogRepository,
+        ).totalPower(
+          session.state.characters,
+          assignedCharacterIds:
+              session.state.battle.stageAssignments['stage_1'],
+        );
 
     expect(find.text('먼지 회랑'), findsNothing);
     expect(find.textContaining('편성 2명'), findsWidgets);
@@ -237,7 +242,8 @@ void main() {
     await tester.tap(find.text('수령'));
     await tester.pumpAndSettle();
     expect(find.text('폐허 입구 보상 수령'), findsOneWidget);
-    expect(find.text('성공 2회, 실패 1회'), findsOneWidget);
+    expect(find.text('성공 2회'), findsOneWidget);
+    expect(find.text('실패 1회'), findsOneWidget);
     expect(find.text('진행 시간 1분 5초'), findsOneWidget);
     expect(find.text('이미 반영된 경험치 +5'), findsOneWidget);
 
