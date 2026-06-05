@@ -16,7 +16,6 @@ import 'package:alchemist_hunter/features/battle/data/repositories/battle_catalo
 import 'package:alchemist_hunter/features/battle/data/repositories/static_battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/battle/domain/repositories/battle_catalog_repository.dart';
 import 'package:alchemist_hunter/features/characters/domain/models.dart';
-import 'package:alchemist_hunter/features/town/data/catalogs/town_skill_nodes.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/town_catalog_asset_loader.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_equipment_blueprint_repository.dart';
 import 'package:alchemist_hunter/features/town/data/repositories/static_mercenary_template_repository.dart';
@@ -53,7 +52,7 @@ final TownCatalogAssets testTownCatalogAssets = TownCatalogAssets(
   equipmentBlueprints: _readTownEquipmentBlueprints(),
   equipmentMaterialNames: _readTownEquipmentMaterialNames(),
   mercenaryTemplates: _readTownMercenaryTemplates(),
-  skillNodes: townSkillNodes,
+  skillNodes: _readTownSkillNodes(),
 );
 
 final WorkshopCatalogAssets testWorkshopCatalogAssets = WorkshopCatalogAssets(
@@ -293,6 +292,13 @@ List<MercenaryTemplate> _readTownMercenaryTemplates() {
         );
       })
       .toList(growable: false);
+}
+
+List<TownSkillNode> _readTownSkillNodes() {
+  final TownCatalogAssetLoader loader = TownCatalogAssetLoader();
+  return _readTownObjectList(
+    'skill_tree.json',
+  ).map(loader.readTownSkillNode).toList(growable: false);
 }
 
 ShopCatalogData _readTownShopCatalog() {
