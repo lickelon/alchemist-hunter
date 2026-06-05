@@ -21,6 +21,7 @@ UI 레이어에서 `_splitEquipmentLabel`, `_splitEffectLabel` 같은 파싱 함
 - A5: 완료. 캐릭터 전투 효과 label을 atomic list로 내려 UI split을 제거했다.
 - A7: 완료. 전투 드롭 스탯/효과 label을 atomic list로 내려 UI split을 제거했다.
 - A8: 완료. 스킬트리 detail label을 list 모델로 바꾸고 `_badgeLabels` split을 제거했다.
+- A9: 완료. 배치 상태 prefix를 view model에서 제거하고 UI가 필요한 문맥을 직접 붙이도록 정리했다.
 
 ### 2.1 근본 원인 파일
 
@@ -114,8 +115,8 @@ header: Column(
 ## 4. 패턴 C — Action 영역(버튼)에 상태 텍스트가 노출
 
 적용 상태:
+- C1: 완료. 상점 구매 버튼 라벨을 항상 `구매`로 고정했다.
 - C2: 완료. 캐릭터 성장의 최대 티어 상태를 disabled button에서 badge로 바꿨다.
-- C1: 남음. 상점 품절 버튼 라벨은 별도 소규모 작업으로 처리한다.
 
 ### 4.1 상점 구매 버튼
 
@@ -331,10 +332,10 @@ E3와 동일한 패턴. 정수/신비 두 자원을 쉼표로 연결.
 | A6 | UI 파싱 우회 | `character_equipment_header.dart` | 75-81 | 완료 |
 | A7 | 드롭 라벨 UI 파싱 우회 | `battle_stage_drop_list.dart` | 105-110 | 완료 |
 | A8 | 스킬트리 라벨 UI 파싱 우회 | `skill_tree_node_detail_dialog.dart` | 84-89 | 완료 |
-| A9 | UI 문자열 조작 | `character_assignment_section.dart` | 18 | 보통 |
+| A9 | UI 문자열 조작 | `character_assignment_section.dart` | 18 | 완료 |
 | B1 | 경고 + 탭 혼재 | `workshop_craft_card.dart` | 61-79 | 완료 |
 | B2 | 액션 + 정보 혼재 | `town_shop_sheet.dart` | 37-54 | 완료 |
-| C1 | 상태를 버튼 라벨로 | `town_shop_sheet.dart` | 215 | 낮음 |
+| C1 | 상태를 버튼 라벨로 | `town_shop_sheet.dart` | 215 | 완료 |
 | C2 | 상태를 disabled 버튼으로 | `character_growth_section.dart` | 95-96 | 완료 |
 | D1 | 섹션 제목 스타일 없음 | `workshop_material_craft_detail_dialog.dart` | 98, 111 | 완료 |
 | D2 | 섹션 제목 스타일 없음 | `workshop_brew_recipe_book_tab.dart` | 120 | 완료 |
