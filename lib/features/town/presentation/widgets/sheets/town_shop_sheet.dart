@@ -34,24 +34,7 @@ class TownShopSheet extends ConsumerWidget {
 
     return AppSheetLayout(
       title: title,
-      header: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              AppBadge(label: '골드 $refreshCost'),
-              const SizedBox(width: AppSpacing.md),
-              FilledButton.tonalIcon(
-                onPressed: () {
-                  ref.read(shopControllerProvider).forceRefresh(shopType);
-                },
-                icon: const Icon(Icons.refresh),
-                label: const Text('갱신'),
-              ),
-            ],
-          ),
-        ],
-      ),
+      header: AppBadge(label: '갱신 비용 골드 $refreshCost'),
       body: shop.items.isEmpty
           ? const AppEmptyState('판매 재료가 없습니다')
           : ResourceIconGrid(
@@ -103,6 +86,29 @@ class TownShopSheet extends ConsumerWidget {
                   })
                   .toList(growable: false),
             ),
+      footer: Row(
+        children: <Widget>[
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.close),
+              label: const Text('닫기'),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: FilledButton.tonalIcon(
+              onPressed: () {
+                ref.read(shopControllerProvider).forceRefresh(shopType);
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('갱신'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

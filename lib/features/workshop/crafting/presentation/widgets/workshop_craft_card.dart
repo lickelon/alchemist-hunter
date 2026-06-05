@@ -2,6 +2,7 @@ import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/workshop_brew_recipe_book_tab.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/workshop_material_craft_tab.dart';
@@ -58,29 +59,27 @@ class WorkshopCraftSheet extends ConsumerWidget {
       length: 2,
       child: AppSheetLayout(
         title: '연금술',
-        header: Column(
+        header: const TabBar(
+          tabs: <Widget>[
+            Tab(text: '양조'),
+            Tab(text: '제작'),
+          ],
+        ),
+        body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             if (queueFull) ...<Widget>[
-              Row(
+              AppBadge(label: '큐 가득 참 $queueLength/$queueCapacity'),
+              const SizedBox(height: AppSpacing.md),
+            ],
+            const Expanded(
+              child: TabBarView(
                 children: <Widget>[
-                  AppBadge(label: '큐 가득 참 $queueLength/$queueCapacity'),
+                  WorkshopBrewRecipeBookTab(),
+                  WorkshopMaterialCraftTab(),
                 ],
               ),
-              const SizedBox(height: 12),
-            ],
-            const TabBar(
-              tabs: <Widget>[
-                Tab(text: '양조'),
-                Tab(text: '제작'),
-              ],
             ),
-          ],
-        ),
-        body: const TabBarView(
-          children: <Widget>[
-            WorkshopBrewRecipeBookTab(),
-            WorkshopMaterialCraftTab(),
           ],
         ),
       ),
