@@ -1,8 +1,8 @@
-import 'package:alchemist_hunter/common/widgets/app_badge.dart';
+import 'package:alchemist_hunter/common/themes/app_radius.dart';
+import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/common/widgets/app_bottom_sheet.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/list_card.dart';
-import 'package:alchemist_hunter/common/themes/app_spacing.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/workshop_brew_recipe_book_tab.dart';
 import 'package:alchemist_hunter/features/workshop/crafting/presentation/widgets/workshop_material_craft_tab.dart';
@@ -69,7 +69,10 @@ class WorkshopCraftSheet extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             if (queueFull) ...<Widget>[
-              AppBadge(label: '큐 가득 참 $queueLength/$queueCapacity'),
+              _WorkshopQueueFullNotice(
+                queueLength: queueLength,
+                queueCapacity: queueCapacity,
+              ),
               const SizedBox(height: AppSpacing.md),
             ],
             const Expanded(
@@ -82,6 +85,59 @@ class WorkshopCraftSheet extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _WorkshopQueueFullNotice extends StatelessWidget {
+  const _WorkshopQueueFullNotice({
+    required this.queueLength,
+    required this.queueCapacity,
+  });
+
+  final int queueLength;
+  final int queueCapacity;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: AppRadius.card,
+      ),
+      child: Row(
+        children: <Widget>[
+          Icon(
+            Icons.inventory_2_outlined,
+            size: 18,
+            color: colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              '큐 가득 참',
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Text(
+            '$queueLength/$queueCapacity',
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
       ),
     );
   }
