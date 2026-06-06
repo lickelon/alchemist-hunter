@@ -137,7 +137,7 @@ class _MaterialRewardGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (materials.isEmpty) {
-      return const AppEmptyState('재료 없음');
+      return const AppEmptyState('재료 없음', alignment: Alignment.centerLeft);
     }
 
     return ResourceIconGrid(
