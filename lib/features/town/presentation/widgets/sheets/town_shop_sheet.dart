@@ -143,11 +143,11 @@ class _ShopItemDetailDialogState extends State<_ShopItemDetailDialog> {
   Widget build(BuildContext context) {
     final int maxQuantity = widget.item.quantity < 1 ? 1 : widget.item.quantity;
     final double sliderValue = _quantityValue
-        .clamp(1.0, maxQuantity.toDouble())
+        .clamp(0.0, maxQuantity.toDouble())
         .toDouble();
     final int selectedQuantity = sliderValue
         .round()
-        .clamp(1, maxQuantity)
+        .clamp(0, maxQuantity)
         .toInt();
 
     return AppDialogLayout(
@@ -213,7 +213,7 @@ class _ShopItemDetailDialogState extends State<_ShopItemDetailDialog> {
           label: const Text('닫기'),
         ),
         FilledButton(
-          onPressed: widget.soldOut
+          onPressed: widget.soldOut || selectedQuantity <= 0
               ? null
               : () {
                   widget.onBuy(selectedQuantity);

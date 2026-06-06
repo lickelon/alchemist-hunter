@@ -35,14 +35,16 @@ class _WorkshopMaterialCraftDetailDialogState
         ? 1
         : recipe.maxCraftableCount;
     final double sliderValue = _quantityValue
-        .clamp(1.0, maxQuantity.toDouble())
+        .clamp(0.0, maxQuantity.toDouble())
         .toDouble();
     final int selectedQuantity = sliderValue
         .round()
-        .clamp(1, maxQuantity)
+        .clamp(0, maxQuantity)
         .toInt();
     final bool canRegister =
-        recipe.craftableNow && recipe.maxCraftableCount >= selectedQuantity;
+        selectedQuantity > 0 &&
+        recipe.craftableNow &&
+        recipe.maxCraftableCount >= selectedQuantity;
     final List<ResourceIconGridItem> materialItems = recipe.materialCosts
         .map((WorkshopMaterialCraftCostView cost) {
           final int requiredQuantity = cost.requiredQuantity * selectedQuantity;

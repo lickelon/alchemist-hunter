@@ -90,7 +90,7 @@ class AppQuantitySlider extends StatelessWidget {
       leadingLabel: '선택 $selectedQuantity$unit',
       trailingLabel: '최대 $maxQuantity$unit',
       value: value,
-      min: 1,
+      min: 0,
       max: maxQuantity.toDouble(),
       divisions: null,
       onChanged: enabled ? onChanged : null,

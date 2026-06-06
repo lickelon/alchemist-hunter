@@ -55,11 +55,11 @@ class _WorkshopMaterialExtractionDetailContentState
     }
     final int maxQuantity = detail.ownedQuantity < 1 ? 1 : detail.ownedQuantity;
     final double sliderValue = _quantityValue
-        .clamp(1.0, maxQuantity.toDouble())
+        .clamp(0.0, maxQuantity.toDouble())
         .toDouble();
     final int selectedQuantity = sliderValue
         .round()
-        .clamp(1, maxQuantity)
+        .clamp(0, maxQuantity)
         .toInt();
 
     Widget buildBody() {
@@ -103,7 +103,7 @@ class _WorkshopMaterialExtractionDetailContentState
             const SizedBox(height: AppSpacing.md),
             WorkshopExtractionProfileList(
               profiles: detail.profiles,
-              hasSelection: _selectedTraits.isNotEmpty,
+              hasSelection: selectedQuantity > 0 && _selectedTraits.isNotEmpty,
               onExtract: (String profileId) {
                 final WorkshopExtractionSubmitResult result = controller
                     .extractMaterial(
