@@ -1,10 +1,12 @@
 import 'package:alchemist_hunter/app/catalog/icon_asset_paths.dart';
 import 'package:alchemist_hunter/common/themes/app_spacing.dart';
+import 'package:alchemist_hunter/common/themes/app_text_styles.dart';
 import 'package:alchemist_hunter/common/widgets/app_dialog_layout.dart';
 import 'package:alchemist_hunter/common/widgets/app_badge.dart';
 import 'package:alchemist_hunter/common/widgets/app_empty_state.dart';
 import 'package:alchemist_hunter/common/widgets/app_sheet_layout.dart';
 import 'package:alchemist_hunter/common/widgets/catalog_asset_icon.dart';
+import 'package:alchemist_hunter/common/widgets/detail_lines.dart';
 import 'package:alchemist_hunter/common/widgets/resource_icon_grid.dart';
 import 'package:alchemist_hunter/common/widgets/section_card.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/controllers/equipment_craft_controller.dart';
@@ -30,43 +32,53 @@ class TownEquipmentSheet extends ConsumerWidget {
       townEquipmentInventoryViewsProvider,
     );
 
+    void showBlueprintDetail(TownEquipmentBlueprintView entry) {
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return _EquipmentBlueprintDetailDialog(
+            entry: entry,
+            onCraft: entry.canCraft
+                ? () {
+                    ref
+                        .read(equipmentCraftControllerProvider)
+                        .craftEquipment(entry.id);
+                    Navigator.of(context).pop();
+                  }
+                : null,
+          );
+        },
+      );
+    }
+
     return AppSheetLayout(
       title: '대장간',
       body: ListView(
         children: <Widget>[
           SectionCard(
             title: '장비 등록',
-            child: Column(
-              children: blueprints
-                  .map((TownEquipmentBlueprintView entry) {
-                    return ListTile(
-                      dense: true,
-                      leading: CatalogAssetIcon(
-                        assetPath: CatalogIconAssetPaths.equipment(entry.id),
-                      ),
-                      title: Text(entry.name),
-                      subtitle: _EquipmentLabelBadges(
-                        labels: <String>[
-                          entry.slotLabel,
-                          ...entry.detailLabels,
-                          entry.materialCostLabel,
-                          '시간 ${entry.durationLabel}',
-                        ],
-                      ),
-                      trailing: FilledButton.tonal(
-                        onPressed: entry.canCraft
-                            ? () {
-                                ref
-                                    .read(equipmentCraftControllerProvider)
-                                    .craftEquipment(entry.id);
-                              }
-                            : null,
-                        child: const Text('등록'),
-                      ),
-                    );
-                  })
-                  .toList(growable: false),
-            ),
+            child: blueprints.isEmpty
+                ? const AppEmptyState('등록 가능한 장비가 없습니다')
+                : ResourceIconGrid(
+                    items: blueprints
+                        .map((TownEquipmentBlueprintView entry) {
+                          return ResourceIconGridItem(
+                            key: ValueKey<String>(
+                              'town_equipment_blueprint_${entry.id}',
+                            ),
+                            assetPath: CatalogIconAssetPaths.equipment(
+                              entry.id,
+                            ),
+                            badgeLabel: entry.canCraft
+                                ? entry.slotLabel
+                                : '재료 부족',
+                            semanticLabel: entry.name,
+                            tooltipMessage: entry.name,
+                            onTap: () => showBlueprintDetail(entry),
+                          );
+                        })
+                        .toList(growable: false),
+                  ),
           ),
           const SizedBox(height: AppSpacing.lg),
           SectionCard(
@@ -155,6 +167,54 @@ class _ForgeJobSummary extends StatelessWidget {
   }
 }
 
+class _EquipmentBlueprintDetailDialog extends StatelessWidget {
+  const _EquipmentBlueprintDetailDialog({
+    required this.entry,
+    required this.onCraft,
+  });
+
+  final TownEquipmentBlueprintView entry;
+  final VoidCallback? onCraft;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppDialogLayout(
+      title: '장비 등록',
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _EquipmentDetailHeader(
+            assetPath: CatalogIconAssetPaths.equipment(entry.id),
+            name: entry.name,
+            labels: <String>[entry.slotLabel, if (!entry.canCraft) '재료 부족'],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _EquipmentDetailSection(title: '효과', lines: entry.detailLabels),
+          const SizedBox(height: AppSpacing.md),
+          _EquipmentDetailSection(
+            title: '제작',
+            lines: <String>[
+              '재료 ${entry.materialCostLabel}',
+              '시간 ${entry.durationLabel}',
+            ],
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton.icon(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.close),
+          label: const Text('닫기'),
+        ),
+        FilledButton(onPressed: onCraft, child: const Text('등록')),
+      ],
+    );
+  }
+}
+
 class _EquipmentInventoryDetailDialog extends StatelessWidget {
   const _EquipmentInventoryDetailDialog({required this.entry});
 
@@ -163,10 +223,76 @@ class _EquipmentInventoryDetailDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppDialogLayout(
-      title: entry.name,
-      body: _EquipmentLabelBadges(
-        labels: <String>['슬롯 ${entry.slotLabel}', ...entry.detailLabels],
+      title: '장비 상세',
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _EquipmentDetailHeader(
+            assetPath: CatalogIconAssetPaths.equipment(entry.blueprintId),
+            name: entry.name,
+            labels: <String>[entry.slotLabel],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _EquipmentDetailSection(title: '효과', lines: entry.detailLabels),
+        ],
       ),
+    );
+  }
+}
+
+class _EquipmentDetailHeader extends StatelessWidget {
+  const _EquipmentDetailHeader({
+    required this.assetPath,
+    required this.name,
+    required this.labels,
+  });
+
+  final String assetPath;
+  final String name;
+  final List<String> labels;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        CatalogAssetIcon(
+          assetPath: assetPath,
+          size: 72,
+          padding: 8,
+          semanticLabel: name,
+        ),
+        const SizedBox(width: AppSpacing.lg),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(name, style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: AppSpacing.sm),
+              _EquipmentLabelBadges(labels: labels),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _EquipmentDetailSection extends StatelessWidget {
+  const _EquipmentDetailSection({required this.title, required this.lines});
+
+  final String title;
+  final List<String> lines;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(title, style: AppTextStyles.of(context).subsectionTitle),
+        const SizedBox(height: AppSpacing.sm),
+        DetailLines(lines: lines),
+      ],
     );
   }
 }
