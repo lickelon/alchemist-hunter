@@ -308,7 +308,37 @@ class _EquipmentStatSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _EquipmentDetailSection(title: '기본 스탯', lines: lines);
+    final TextStyle? detailStyle = Theme.of(context).textTheme.bodySmall
+        ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('기본 스탯', style: AppTextStyles.of(context).subsectionTitle),
+        const SizedBox(height: AppSpacing.sm),
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: AppSpacing.xs,
+          crossAxisSpacing: AppSpacing.sm,
+          childAspectRatio: 3.8,
+          children: lines
+              .map(
+                (String line) => Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    line,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: detailStyle,
+                  ),
+                ),
+              )
+              .toList(growable: false),
+        ),
+      ],
+    );
   }
 }
 
