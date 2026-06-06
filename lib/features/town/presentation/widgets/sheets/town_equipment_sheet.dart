@@ -190,7 +190,9 @@ class _EquipmentBlueprintDetailDialog extends StatelessWidget {
             labels: <String>[entry.slotLabel, if (!entry.canCraft) '재료 부족'],
           ),
           const SizedBox(height: AppSpacing.lg),
-          _EquipmentEffectSection(labels: entry.detailLabels),
+          _EquipmentStatSection(lines: entry.statLabels),
+          const SizedBox(height: AppSpacing.md),
+          _EquipmentEffectSection(labels: entry.effectLabels),
           const SizedBox(height: AppSpacing.md),
           _EquipmentDetailSection(
             title: '제작',
@@ -234,7 +236,9 @@ class _EquipmentInventoryDetailDialog extends StatelessWidget {
             labels: <String>[entry.slotLabel],
           ),
           const SizedBox(height: AppSpacing.lg),
-          _EquipmentEffectSection(labels: entry.detailLabels),
+          _EquipmentStatSection(lines: entry.statLabels),
+          const SizedBox(height: AppSpacing.md),
+          _EquipmentEffectSection(labels: entry.effectLabels),
         ],
       ),
     );
@@ -294,6 +298,17 @@ class _EquipmentDetailSection extends StatelessWidget {
         DetailLines(lines: lines),
       ],
     );
+  }
+}
+
+class _EquipmentStatSection extends StatelessWidget {
+  const _EquipmentStatSection({required this.lines});
+
+  final List<String> lines;
+
+  @override
+  Widget build(BuildContext context) {
+    return _EquipmentDetailSection(title: '기본 스탯', lines: lines);
   }
 }
 

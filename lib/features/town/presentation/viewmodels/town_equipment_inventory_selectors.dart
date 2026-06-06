@@ -1,7 +1,8 @@
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
-import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_effect_labels.dart';
 import 'package:alchemist_hunter/features/town/equipment/equipment_slot_labels.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_stat_labels.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_equipment_view_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -35,7 +36,8 @@ townEquipmentInventoryViewsProvider =
               blueprintId: entry.blueprintId,
               name: entry.name,
               slotLabel: equipmentSlotLabel(entry.slot),
-              detailLabels: equipmentInstanceDetailLabels(entry),
+              statLabels: equipmentInstanceStatLabels(entry),
+              effectLabels: equipmentInstanceEffectLabels(entry),
             );
           })
           .toList(growable: false);

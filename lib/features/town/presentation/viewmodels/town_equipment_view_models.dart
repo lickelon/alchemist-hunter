@@ -3,7 +3,8 @@ class TownEquipmentBlueprintView {
     required this.id,
     required this.name,
     required this.slotLabel,
-    required this.detailLabels,
+    required this.statLabels,
+    required this.effectLabels,
     required this.materialCostLabel,
     required this.durationLabel,
     required this.canCraft,
@@ -12,7 +13,8 @@ class TownEquipmentBlueprintView {
   final String id;
   final String name;
   final String slotLabel;
-  final List<String> detailLabels;
+  final List<String> statLabels;
+  final List<String> effectLabels;
   final String materialCostLabel;
   final String durationLabel;
   final bool canCraft;
@@ -24,14 +26,16 @@ class TownEquipmentInventoryView {
     required this.blueprintId,
     required this.name,
     required this.slotLabel,
-    required this.detailLabels,
+    required this.statLabels,
+    required this.effectLabels,
   });
 
   final String id;
   final String blueprintId;
   final String name;
   final String slotLabel;
-  final List<String> detailLabels;
+  final List<String> statLabels;
+  final List<String> effectLabels;
 }
 
 class TownForgeJobView {

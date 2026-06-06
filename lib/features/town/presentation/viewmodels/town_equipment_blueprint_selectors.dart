@@ -1,8 +1,9 @@
 import 'package:alchemist_hunter/app/catalog/app_catalog_providers.dart';
 import 'package:alchemist_hunter/app/session/app_session.dart';
 import 'package:alchemist_hunter/features/town/domain/models.dart';
-import 'package:alchemist_hunter/features/town/equipment/equipment_detail_labels.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_effect_labels.dart';
 import 'package:alchemist_hunter/features/town/equipment/equipment_slot_labels.dart';
+import 'package:alchemist_hunter/features/town/equipment/equipment_stat_labels.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_equipment_view_models.dart';
 import 'package:alchemist_hunter/features/town/presentation/viewmodels/town_service_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,7 +37,8 @@ townEquipmentBlueprintViewsProvider = Provider<List<TownEquipmentBlueprintView>>
           id: blueprint.id,
           name: blueprint.name,
           slotLabel: equipmentSlotLabel(blueprint.slot),
-          detailLabels: equipmentBlueprintDetailLabels(blueprint),
+          statLabels: equipmentBlueprintStatLabels(blueprint),
+          effectLabels: equipmentBlueprintEffectLabels(blueprint),
           materialCostLabel: adjustedCosts.entries
               .map(
                 (MapEntry<String, int> entry) =>
