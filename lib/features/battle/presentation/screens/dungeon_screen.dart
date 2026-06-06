@@ -72,6 +72,7 @@ class DungeonScreen extends ConsumerWidget {
                     children: <Widget>[
                       AppBadge(label: '편성 $assignedCount명'),
                       AppBadge(label: statusLabel),
+                      if (canClaim) const AppBadge(label: '수령 대기'),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),
