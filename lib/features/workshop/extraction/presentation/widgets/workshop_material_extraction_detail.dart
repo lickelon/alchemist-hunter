@@ -146,7 +146,7 @@ class _WorkshopMaterialExtractionDetailContentState
               materialId: detail.materialId,
               ownedQuantity: detail.ownedQuantity,
             ),
-            const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.lg),
             Expanded(child: buildBody()),
           ],
         ),
