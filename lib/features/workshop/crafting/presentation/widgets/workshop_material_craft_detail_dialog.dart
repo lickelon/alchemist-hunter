@@ -73,31 +73,24 @@ class _WorkshopMaterialCraftDetailDialogState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 CatalogAssetIcon(
                   assetPath: CatalogIconAssetPaths.material(
                     recipe.resultMaterialId,
                   ),
-                  size: 48,
-                  padding: 6,
+                  size: 64,
+                  padding: 8,
                   fallbackIcon: Icons.auto_fix_high_outlined,
                 ),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        recipe.title,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      AppBadge(
-                        label: 'x${recipe.resultQuantity * selectedQuantity}',
-                      ),
-                    ],
+                  child: Text(
+                    recipe.title,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),
+                AppBadge(label: 'x${recipe.resultQuantity * selectedQuantity}'),
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -114,7 +107,7 @@ class _WorkshopMaterialCraftDetailDialogState
               },
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('재료', style: subsectionTitleStyle),
+            Text('필요 재료', style: subsectionTitleStyle),
             const SizedBox(height: AppSpacing.md),
             ResourceIconGrid(items: materialItems),
             const SizedBox(height: AppSpacing.lg),
