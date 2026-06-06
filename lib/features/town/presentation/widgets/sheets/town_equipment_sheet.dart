@@ -190,7 +190,7 @@ class _EquipmentBlueprintDetailDialog extends StatelessWidget {
             labels: <String>[entry.slotLabel, if (!entry.canCraft) '재료 부족'],
           ),
           const SizedBox(height: AppSpacing.lg),
-          _EquipmentDetailSection(title: '효과', lines: entry.detailLabels),
+          _EquipmentEffectSection(labels: entry.detailLabels),
           const SizedBox(height: AppSpacing.md),
           _EquipmentDetailSection(
             title: '제작',
@@ -234,7 +234,7 @@ class _EquipmentInventoryDetailDialog extends StatelessWidget {
             labels: <String>[entry.slotLabel],
           ),
           const SizedBox(height: AppSpacing.lg),
-          _EquipmentDetailSection(title: '효과', lines: entry.detailLabels),
+          _EquipmentEffectSection(labels: entry.detailLabels),
         ],
       ),
     );
@@ -292,6 +292,24 @@ class _EquipmentDetailSection extends StatelessWidget {
         Text(title, style: AppTextStyles.of(context).subsectionTitle),
         const SizedBox(height: AppSpacing.sm),
         DetailLines(lines: lines),
+      ],
+    );
+  }
+}
+
+class _EquipmentEffectSection extends StatelessWidget {
+  const _EquipmentEffectSection({required this.labels});
+
+  final List<String> labels;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('효과', style: AppTextStyles.of(context).subsectionTitle),
+        const SizedBox(height: AppSpacing.sm),
+        _EquipmentLabelBadges(labels: labels),
       ],
     );
   }
